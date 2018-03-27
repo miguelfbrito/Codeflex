@@ -1,9 +1,9 @@
 # Compiled class file
 *.class
-
+.recommenders
 # Log file
 *.log
-
+application.properties
 # BlueJ files
 *.ctxt
 
