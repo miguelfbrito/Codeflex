@@ -11,12 +11,17 @@ import pt.codeflex.models.Users;
 import pt.codeflex.repositories.UsersRepository;
 
 @Controller
-@RequestMapping(path = "/demo")
 public class MainController {
 
 	@Autowired
 	private UsersRepository userRepository;
 
+
+	@GetMapping(path = "/test")
+	public String test() {
+		return "test";
+	}
+	
 	@GetMapping(path = "/add")
 	public @ResponseBody String addNewUser(@RequestParam String name, @RequestParam String email,
 			@RequestParam int age) {
@@ -31,12 +36,19 @@ public class MainController {
 
 	@GetMapping(path = "/all")
 	public @ResponseBody Iterable<Users> getAllUsers() {
-		return userRepository.findAll(); //Returns JSON
+		return userRepository.findAll(); // Returns JSON
 	}
-	
+
 	@GetMapping(path = "/under30")
-	public @ResponseBody Iterable<Users> getUsersUnder30(){
+	public @ResponseBody Iterable<Users> getUsersUnder30() {
 		return userRepository.findUsersUnder30();
 	}
 	
+	@GetMapping(path = "/test1")
+	@ResponseBody
+	public String test1() {
+		return "on test1";
+	}
+
+
 }

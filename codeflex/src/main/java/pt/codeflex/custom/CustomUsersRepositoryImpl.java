@@ -16,7 +16,7 @@ public class CustomUsersRepositoryImpl implements CustomUsersRepository {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Users> findUsersUnder30() {
-		Query query = em.createNativeQuery("select * from users where age <= 30",
+		Query query = em.createNativeQuery("select * from users where age < 30",
 				Users.class);
 		
 		return query.getResultList();
