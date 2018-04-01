@@ -14,12 +14,9 @@ public class Role {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	private String name;
-
-	@ManyToOne
-	@JoinColumn(name = "fk_users")
-	private Users user;
-
 	
+	public Role() {}
+
 	public Role(String name) {
 		this.name = name;
 	}
@@ -28,7 +25,6 @@ public class Role {
 	public Long getId() {
 		return id;
 	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}

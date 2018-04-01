@@ -9,10 +9,10 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Users_Roles_ID implements Serializable {
 
-	@Column(name = "users_id")
+	@Column(name = "users_id", nullable = false)
 	private Long users_id;
 
-	@Column(name = "roles_id")
+	@Column(name = "roles_id", nullable = false)
 	private Long roles_id;
 
 	public Long getUsers_id() {
