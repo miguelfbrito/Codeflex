@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 
 @Entity
 public class Users {
@@ -15,23 +16,13 @@ public class Users {
 	// TODO: add validation for fields
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "seq_users_id", sequenceName = "seq_users_id")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_users_id")
 	private long id;
 	private String username;
 	private String email;
 	private String password;
 	private int age;
-	
-//	@OneToMany(mappedBy="Role")
-//	private Set<Role> roles;
-//	
-//
-//	public Set<Role> getRoles() {
-//		return roles;
-//	}
-//	public void setRoles(Set<Role> roles) {
-//		this.roles = roles;
-//	}
 	
 	public void setId(long id) {
 		this.id = id;
@@ -50,10 +41,7 @@ public class Users {
 		return id;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
+	
 	public String getUsername() {
 		return username;
 	}

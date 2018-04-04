@@ -6,12 +6,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 @Entity
 public class Role {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "seq_role_id", sequenceName = "seq_role_id")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_role_id")
 	private Long id;
 	private String name;
 	

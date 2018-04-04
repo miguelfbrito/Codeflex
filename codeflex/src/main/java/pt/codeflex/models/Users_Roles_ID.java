@@ -31,14 +31,6 @@ public class Users_Roles_ID implements Serializable {
 		this.roles_id = roles_id;
 	}
 
-	public Users_Roles_ID() {
-	}
-
-	public Users_Roles_ID(Long users_id, Long roles_id) {
-		this.users_id = users_id;
-		this.roles_id = roles_id;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
