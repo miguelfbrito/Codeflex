@@ -4,30 +4,25 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
 @Entity
-public class Role {
-
+public class PractiseCategory {
+	
 	@Id
-	@SequenceGenerator(name = "seq_role_id", sequenceName = "seq_role_id")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_role_id")
+	@SequenceGenerator(name = "seq_practisecategory_id", sequenceName = "seq_practisecategory_id")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_practisecategory_id")
 	private long id;
+	
 	private String name;
-	
-	public Role() {}
 
-	public Role(String name) {
-		this.name = name;
-	}
+	public PractiseCategory() {}
 	
-	
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
-	public void setId(Long id) {
+
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -38,5 +33,4 @@ public class Role {
 	public void setName(String name) {
 		this.name = name;
 	}
-
 }

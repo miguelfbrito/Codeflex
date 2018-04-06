@@ -1,8 +1,6 @@
 package pt.codeflex.models;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,17 +8,25 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Users {
 
 	// TODO: add validation for fields
 
 	@Id
-	@SequenceGenerator(name = "seq_users_id", sequenceName = "seq_users_id")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_users_id")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(updatable = false, nullable = false)
 	private long id;
+	
+	@Column(unique = true)
 	private String username;
+	
+	@Column(unique = true)
 	private String email;
+	
+	@JsonIgnore
 	private String password;
 	private int age;
 	

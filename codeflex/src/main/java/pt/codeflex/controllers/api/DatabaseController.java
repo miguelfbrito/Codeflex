@@ -1,4 +1,4 @@
-package pt.codeflex.controllers;
+package pt.codeflex.controllers.api;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,23 +9,28 @@ import org.mockito.internal.creation.bytebuddy.SubclassByteBuddyMockMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import pt.codeflex.models.Problem;
 import pt.codeflex.models.Role;
 import pt.codeflex.models.Submissions;
+import pt.codeflex.models.TestCases;
 import pt.codeflex.models.Users;
 import pt.codeflex.models.Users_Roles;
 import pt.codeflex.models.Users_Roles_ID;
+import pt.codeflex.repositories.ProblemRepository;
 import pt.codeflex.repositories.RoleRepository;
 import pt.codeflex.repositories.SubmissionsRepository;
+import pt.codeflex.repositories.TestCasesRepository;
 import pt.codeflex.repositories.UsersRepository;
 import pt.codeflex.repositories.UsersRolesRepository;
 
 @Controller
-@RequestMapping(path = "/database")
-public class MainController {
+@RequestMapping(path = "/api/database")
+public class DatabaseController {
 
 	@Autowired
 	private UsersRepository userRepository;
@@ -37,12 +42,13 @@ public class MainController {
 	private UsersRolesRepository usersRolesRepository;
 
 	@Autowired
+	private ProblemRepository problemRepository;
+
+	@Autowired
 	private SubmissionsRepository submissionsRepository;
 
-	@GetMapping(path = "/test")
-	public String test() {
-		return "test";
-	}
+	@Autowired
+	private TestCasesRepository testCasesRepository;
 
 	@GetMapping(path = "/add/user")
 	public @ResponseBody String addNewUser(@RequestParam String username, @RequestParam String email,
@@ -97,39 +103,68 @@ public class MainController {
 		return usersRolesRepository.findAll();
 	}
 
-	@GetMapping(path = "/under30")
-	public @ResponseBody Iterable<Users> getUsersUnder30() {
-		return userRepository.findUsersUnder30();
-	}
-
-	@GetMapping(path = "/test1")
-	@ResponseBody
-	public String test1() {
-		return "on test1";
-	}
+	// SUBMISSIONS
 
 	@GetMapping(path = "/view/submissions")
 	public @ResponseBody Iterable<Submissions> viewSubmissions() {
 		return submissionsRepository.findAll();
 	}
 
-	@GetMapping(path = "/add/submissions")
-	public @ResponseBody String addSubmissions(@RequestParam long userId, @RequestParam String date,
-			@RequestParam String language, @RequestParam String code) throws ParseException {
+	@PostMapping(path = "/add/submissions")
+	public @ResponseBody String addSubmissionsPOST(@RequestParam long userId, @RequestParam long problemId,
+			@RequestParam String date, @RequestParam String language, @RequestParam String code) throws ParseException {
 		Optional<Users> u = userRepository.findById(userId);
+		Optional<Problem> p = problemRepository.findById(problemId);
 
-		if (!u.isPresent()) {
-			return "Invalid user!";
+		if (!u.isPresent() && !p.isPresent()) {
+			return "Invalid info!";
 		}
 
 		Users user = u.get();
+		Problem problem = p.get();
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		Date d = sdf.parse(date);
-		Submissions s = new Submissions(user, d, language, code);
+		Submissions s = new Submissions(problem, user, d, language, code);
 		submissionsRepository.save(s);
 		return "Submission saved!";
+	}
 
+	// PROBLEMS
+
+	@PostMapping(path = "/add/problem")
+	public @ResponseBody String addProblemPost(@RequestParam String name, @RequestParam String description)
+			throws ParseException {
+		Problem p = new Problem(name, description);
+		problemRepository.save(p);
+		return "Problem saved!";
+	}
+
+	@GetMapping(path = "/view/problems")
+	public @ResponseBody Iterable<Problem> viewProblems() {
+		return problemRepository.findAll();
+	}
+
+	// TEST CASES
+
+	@PostMapping(path = "/add/testcases")
+	public @ResponseBody String addTestCasesPOST(@RequestParam long problemId, @RequestParam String input,
+			@RequestParam String output) throws ParseException {
+		Optional<Problem> p = problemRepository.findById(problemId);
+		if (!p.isPresent()) {
+			return "Invalid info";
+		}
+		Problem problem = p.get();
+		TestCases tc = new TestCases(input, output);
+		problem.getTestCases().add(tc);
+		testCasesRepository.save(tc);
+		problemRepository.save(problem);
+		return "Problem saved!";
+	}
+
+	@GetMapping(path = "/view/testcases")
+	public @ResponseBody Iterable<TestCases> viewTestCases() {
+		return testCasesRepository.findAll();
 	}
 
 }

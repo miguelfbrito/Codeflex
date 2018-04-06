@@ -2,6 +2,7 @@ package pt.codeflex.models;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,10 +18,23 @@ public class Submissions {
 	private long id;
 	private Date date;
 	private String language;
+	
+	@Column(length = 10000)
 	private String code;
 
 	@ManyToOne
 	private Users user;
+	
+	@ManyToOne
+	private Problem problem;
+
+	public Problem getProblem() {
+		return problem;
+	}
+
+	public void setProblem(Problem problem) {
+		this.problem = problem;
+	}
 
 	public Users getUser() {
 		return user;
@@ -38,6 +52,15 @@ public class Submissions {
 		this.language = language;
 		this.code = code;
 		this.setUser(user);
+	}
+	
+
+	public Submissions(Problem problem, Users user, Date date, String language, String code) {
+		this.date = date;
+		this.language = language;
+		this.code = code;
+		this.setUser(user);
+		this.setProblem(problem);
 	}
 
 	public void setLanguage(String language) {
