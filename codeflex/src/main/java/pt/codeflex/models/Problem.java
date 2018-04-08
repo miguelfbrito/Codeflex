@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
@@ -14,16 +16,23 @@ import javax.persistence.SequenceGenerator;
 public class Problem {
 
 	@Id
-	@SequenceGenerator(name = "seq_problem_id", sequenceName = "seq_problem_id")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_problem_id")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 
 	private String name;
 	private String description;
 
 	@OneToMany
+	@JoinColumn(name = "problem_id")
 	private List<TestCases> testCases = new ArrayList<TestCases>();
-	
+
+	@OneToMany
+	@JoinColumn(name = "problem_id")
+	private List<Submissions> submissions = new ArrayList<Submissions>();
+
+	@ManyToOne
+	private Tournament tournament;
+
 	public Problem() {
 	}
 
@@ -62,6 +71,14 @@ public class Problem {
 
 	public void setTestCases(List<TestCases> testCases) {
 		this.testCases = testCases;
+	}
+
+	public List<Submissions> getSubmissions() {
+		return submissions;
+	}
+
+	public void setSubmissions(List<Submissions> submissions) {
+		this.submissions = submissions;
 	}
 
 }

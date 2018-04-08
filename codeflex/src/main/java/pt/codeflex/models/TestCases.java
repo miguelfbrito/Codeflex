@@ -1,19 +1,22 @@
 package pt.codeflex.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
 @Entity
 public class TestCases {
 
 	@Id
-	@SequenceGenerator(name = "seq_testcases_id", sequenceName = "seq_testcases_id")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_testcases_id")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 
 	// TODO : change to files instead of String's because it will probably overflow
@@ -29,6 +32,8 @@ public class TestCases {
 	@Column(length = 5000)
 	private String output;
 
+	@OneToMany
+	private List<Submissions> submission = new ArrayList<>();
 
 	public TestCases(String input, String output) {
 		this.input = input;
@@ -57,6 +62,14 @@ public class TestCases {
 
 	public void setOutput(String output) {
 		this.output = output;
+	}
+
+	public List<Submissions> getSubmission() {
+		return submission;
+	}
+
+	public void setSubmission(List<Submissions> submission) {
+		this.submission = submission;
 	}
 
 }

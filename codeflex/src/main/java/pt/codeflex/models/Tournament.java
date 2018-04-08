@@ -1,18 +1,23 @@
 package pt.codeflex.models;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
 @Entity
 public class Tournament {
 
 	@Id
-	@SequenceGenerator(name = "seq_tournament_id", sequenceName = "seq_tournament_id")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_tournament_id")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 
 	@Column(length = 50)
@@ -20,8 +25,24 @@ public class Tournament {
 
 	@Column(length = 10000)
 	private String description;
+	
+	private Date startingDate;
+
+	private int duration;
+	
+	@OneToMany
+	@JoinColumn(name = "tournament_id")
+	private List<Problem> problems = new ArrayList<Problem>();
+	
+	public Tournament(String name, String description, int duration) {
+		this.name = name;
+		this.description = description;
+		this.duration = duration;
+	}
 
 	public Tournament() {}
+	
+	
 	
 	public long getId() {
 		return id;
@@ -45,6 +66,30 @@ public class Tournament {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public List<Problem> getProblems() {
+		return problems;
+	}
+
+	public void setProblems(List<Problem> problems) {
+		this.problems = problems;
+	}
+
+	public Date getStartingDate() {
+		return startingDate;
+	}
+
+	public void setStartingDate(Date startingDate) {
+		this.startingDate = startingDate;
+	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
 	}
 
 }

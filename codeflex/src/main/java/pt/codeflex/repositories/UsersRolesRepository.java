@@ -2,8 +2,8 @@ package pt.codeflex.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 
-import pt.codeflex.models.Users_Roles;
+import pt.codeflex.models.UsersRoles;
 
-public interface UsersRolesRepository extends CrudRepository<Users_Roles, Long> {
+public interface UsersRolesRepository extends CrudRepository<UsersRoles, Long> {
 
 }

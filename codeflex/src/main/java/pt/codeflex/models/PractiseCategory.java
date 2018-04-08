@@ -10,8 +10,7 @@ import javax.persistence.SequenceGenerator;
 public class PractiseCategory {
 	
 	@Id
-	@SequenceGenerator(name = "seq_practisecategory_id", sequenceName = "seq_practisecategory_id")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_practisecategory_id")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 	
 	private String name;

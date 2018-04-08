@@ -9,12 +9,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 @Entity
 public class Submissions {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 	private Date date;
 	private String language;
@@ -22,45 +23,15 @@ public class Submissions {
 	@Column(length = 10000)
 	private String code;
 
-	@ManyToOne
-	private Users user;
-	
-	@ManyToOne
-	private Problem problem;
-
-	public Problem getProblem() {
-		return problem;
-	}
-
-	public void setProblem(Problem problem) {
-		this.problem = problem;
-	}
-
-	public Users getUser() {
-		return user;
-	}
-
-	public void setUser(Users user) {
-		this.user = user;
-	}
 
 	public Submissions() {
 	}
 
-	public Submissions(Users user, Date date, String language, String code) {
-		this.date = date;
-		this.language = language;
-		this.code = code;
-		this.setUser(user);
-	}
-	
 
-	public Submissions(Problem problem, Users user, Date date, String language, String code) {
+	public Submissions( Date date, String language, String code) {
 		this.date = date;
 		this.language = language;
 		this.code = code;
-		this.setUser(user);
-		this.setProblem(problem);
 	}
 
 	public void setLanguage(String language) {
