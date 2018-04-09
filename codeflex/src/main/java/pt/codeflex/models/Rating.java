@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @IdClass(RatingID.class)
@@ -17,14 +18,14 @@ public class Rating implements Serializable {
 
 	@Id
 	@ManyToOne
-	private Users user;
+	private Users users;
 
 	private double elo;
 	
 	public Rating(Tournament tournament, Users user, double elo) {
 		super();
 		this.tournament = tournament;
-		this.user = user;
+		this.users = user;
 		this.elo = elo;
 	}
 
@@ -37,11 +38,11 @@ public class Rating implements Serializable {
 	}
 
 	public Users getUser() {
-		return user;
+		return users;
 	}
 
 	public void setUser(Users user) {
-		this.user = user;
+		this.users = user;
 	}
 
 	public double getElo() {

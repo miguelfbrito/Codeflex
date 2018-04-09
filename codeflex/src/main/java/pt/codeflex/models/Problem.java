@@ -23,6 +23,7 @@ public class Problem {
 	private String description;
 
 	@OneToMany
+	@JoinColumn(name = "problem_id")
 	private List<TestCases> testCases = new ArrayList<TestCases>();
 
 	@ManyToOne

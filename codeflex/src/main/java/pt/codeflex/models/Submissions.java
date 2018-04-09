@@ -27,6 +27,7 @@ public class Submissions {
 	private String code;
 
 	@OneToMany
+	@JoinColumn(name = "submissions_id")
 	private List<Scoring> scoring = new ArrayList<>();
 
 	public Submissions() {

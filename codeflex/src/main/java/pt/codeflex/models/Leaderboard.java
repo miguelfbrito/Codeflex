@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -19,6 +20,7 @@ public class Leaderboard {
 	private int position;
 
 	@OneToMany
+	@JoinColumn(name = "leaderboard_id")
 	private List<Users> user = new ArrayList<>();
 	
 	public long getId() {

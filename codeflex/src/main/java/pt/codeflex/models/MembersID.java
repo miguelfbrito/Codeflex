@@ -8,27 +8,27 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class MembersID implements Serializable{
 	
-	private long group;
-	private long user;
+	private long groups;
+	private long users;
 	
 	public MembersID(long groups, long users) {
-		this.group = groups;
-		this.user= users;
+		this.groups = groups;
+		this.users= users;
 	}
 
 	public long getGroups() {
-		return group;
+		return groups;
 	}
 
 	public void setGroups(long groups) {
-		this.group = groups;
+		this.groups = groups;
 	}
 
 	public long getUsers() {
-		return user;
+		return users;
 	}
 
 	public void setUsers(long users) {
-		this.user = users;
+		this.users = users;
 	}
 }

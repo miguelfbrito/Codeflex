@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -23,6 +24,7 @@ public class Groups {
 	private String accessCode;
 	
 	@OneToMany
+	@JoinColumn(name = "groups_id")
 	private List<Members> member = new ArrayList<>();
 	
 	public Groups(String name, String accessCode) {

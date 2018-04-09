@@ -8,12 +8,12 @@ import javax.persistence.Embeddable;
 public class RatingID implements Serializable {
 
 	private long tournament;
-	private long user;
+	private long users;
 
 	public RatingID(long tournament, long user) {
 		super();
 		this.tournament = tournament;
-		this.user = user;
+		this.users = user;
 	}
 
 	public long getTournament() {
@@ -25,11 +25,11 @@ public class RatingID implements Serializable {
 	}
 
 	public long getUser() {
-		return user;
+		return users;
 	}
 
 	public void setUser(long user) {
-		this.user = user;
+		this.users = user;
 	}
 
 }

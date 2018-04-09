@@ -35,6 +35,7 @@ public class Tournament {
 	private List<Problem> problems = new ArrayList<Problem>();
 
 	@OneToMany
+	@JoinColumn(name = "tournament_id")
 	private List<Rating> rating = new ArrayList<>();
 
 	public Tournament(String name, String description, int duration) {

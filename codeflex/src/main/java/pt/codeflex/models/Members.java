@@ -13,27 +13,27 @@ public class Members implements Serializable {
 
 	@Id
 	@ManyToOne
-	private Groups group;
+	private Groups groups;
 	
 	@Id 
 	@ManyToOne
-	private Users user;
+	private Users users;
 
 	public Members() {}
 	public Groups getGroup() {
-		return group;
+		return groups;
 	}
 
 	public void setGroup(Groups group) {
-		this.group = group;
+		this.groups = group;
 	}
 
 	public Users getUser() {
-		return user;
+		return users;
 	}
 
 	public void setUser(Users user) {
-		this.user = user;
+		this.users = user;
 	}
 	
 	

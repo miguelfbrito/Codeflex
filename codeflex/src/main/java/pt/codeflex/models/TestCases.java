@@ -34,6 +34,7 @@ public class TestCases {
 	private String output;
 
 	@OneToMany
+	@JoinColumn(name = "testcases_id")
 	private List<Scoring> scoring = new ArrayList<>();
 
 	public TestCases(String input, String output) {

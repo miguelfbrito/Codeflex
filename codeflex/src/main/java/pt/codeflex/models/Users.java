@@ -40,12 +40,15 @@ public class Users {
 	private List<Submissions> submissions = new ArrayList<>();
 
 	@OneToMany
+	@JoinColumn(name = "users_id")
 	private List<Members> member = new ArrayList<>();
 	
 	@OneToMany
+	@JoinColumn(name = "users_id")
 	private List<UsersRoles> userRoles = new ArrayList<>();
 	
 	@OneToMany
+	@JoinColumn(name = "users_id")
 	private List<Rating> rating = new ArrayList<>();
 	
 	public void setId(long id) {
