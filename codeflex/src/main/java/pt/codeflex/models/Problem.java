@@ -23,12 +23,7 @@ public class Problem {
 	private String description;
 
 	@OneToMany
-	@JoinColumn(name = "problem_id")
 	private List<TestCases> testCases = new ArrayList<TestCases>();
-
-	@OneToMany
-	@JoinColumn(name = "problem_id")
-	private List<Submissions> submissions = new ArrayList<Submissions>();
 
 	@ManyToOne
 	private Tournament tournament;
@@ -73,12 +68,13 @@ public class Problem {
 		this.testCases = testCases;
 	}
 
-	public List<Submissions> getSubmissions() {
-		return submissions;
+	public Tournament getTournament() {
+		return tournament;
 	}
 
-	public void setSubmissions(List<Submissions> submissions) {
-		this.submissions = submissions;
+	public void setTournament(Tournament tournament) {
+		this.tournament = tournament;
 	}
+
 
 }

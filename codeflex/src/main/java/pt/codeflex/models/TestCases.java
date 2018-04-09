@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -33,7 +34,7 @@ public class TestCases {
 	private String output;
 
 	@OneToMany
-	private List<Submissions> submission = new ArrayList<>();
+	private List<Scoring> scoring = new ArrayList<>();
 
 	public TestCases(String input, String output) {
 		this.input = input;
@@ -64,12 +65,11 @@ public class TestCases {
 		this.output = output;
 	}
 
-	public List<Submissions> getSubmission() {
-		return submission;
+	public List<Scoring> getScoring() {
+		return scoring;
 	}
 
-	public void setSubmission(List<Submissions> submission) {
-		this.submission = submission;
+	public void setScoring(List<Scoring> scoring) {
+		this.scoring = scoring;
 	}
-
 }

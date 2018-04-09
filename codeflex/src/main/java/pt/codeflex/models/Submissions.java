@@ -1,6 +1,8 @@
 package pt.codeflex.models;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,26 +11,28 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
 @Entity
 public class Submissions {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private Date date;
 	private String language;
-	
+
 	@Column(length = 10000)
 	private String code;
 
+	@OneToMany
+	private List<Scoring> scoring = new ArrayList<>();
 
 	public Submissions() {
 	}
 
-
-	public Submissions( Date date, String language, String code) {
+	public Submissions(Date date, String language, String code) {
 		this.date = date;
 		this.language = language;
 		this.code = code;

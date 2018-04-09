@@ -41,7 +41,6 @@ public class AccountController {
 		System.out.println(user.getEmail());
 		System.out.println(user.getUsername());
 		System.out.println(user.getPassword());
-		System.out.println(user.getAge());
 		userRepository.save(user);
 		return "redirect:/all";
 	}

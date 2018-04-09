@@ -10,14 +10,5 @@ import pt.codeflex.models.Users;
 
 @Controller
 public class TestController {
-	
-	@Autowired
-	public DatabaseController databaseController;
-	// TODO : review, is this the best way to access db?
-	
-	@GetMapping(path = "/test")
-	public @ResponseBody String testDB() {
-		databaseController.addNewUser("miguelfbrito", "miguelfbrito11@gmail.com", 999);
-		return "User saved";
-	}
+
 }

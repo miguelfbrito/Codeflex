@@ -17,7 +17,7 @@ import javax.persistence.SequenceGenerator;
 public class Tournament {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@Column(length = 50)
@@ -25,25 +25,27 @@ public class Tournament {
 
 	@Column(length = 10000)
 	private String description;
-	
+
 	private Date startingDate;
 
 	private int duration;
-	
+
 	@OneToMany
 	@JoinColumn(name = "tournament_id")
 	private List<Problem> problems = new ArrayList<Problem>();
-	
+
+	@OneToMany
+	private List<Rating> rating = new ArrayList<>();
+
 	public Tournament(String name, String description, int duration) {
 		this.name = name;
 		this.description = description;
 		this.duration = duration;
 	}
 
-	public Tournament() {}
-	
-	
-	
+	public Tournament() {
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -90,6 +92,14 @@ public class Tournament {
 
 	public void setDuration(int duration) {
 		this.duration = duration;
+	}
+
+	public List<Rating> getRating() {
+		return rating;
+	}
+
+	public void setRating(List<Rating> rating) {
+		this.rating = rating;
 	}
 
 }

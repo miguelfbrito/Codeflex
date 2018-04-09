@@ -15,37 +15,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import pt.codeflex.models.Problem;
-import pt.codeflex.models.Role;
-import pt.codeflex.models.Submissions;
-import pt.codeflex.models.TestCases;
-import pt.codeflex.models.Tournament;
-import pt.codeflex.models.Users;
-import pt.codeflex.models.UsersRoles;
-import pt.codeflex.models.UsersRolesID;
-import pt.codeflex.repositories.ProblemRepository;
-import pt.codeflex.repositories.RoleRepository;
-import pt.codeflex.repositories.SubmissionsRepository;
-import pt.codeflex.repositories.TestCasesRepository;
-import pt.codeflex.repositories.TournamentRepository;
-import pt.codeflex.repositories.UsersRepository;
-import pt.codeflex.repositories.UsersRolesRepository;
+import pt.codeflex.models.*;
+
+import pt.codeflex.repositories.*;
 
 @Controller
 @RequestMapping(path = "/api/database")
 public class DatabaseController {
 
 	@Autowired
-	private UsersRepository userRepository;
+	private GroupsRepository groupsRepository;
+
+	@Autowired
+	private LeaderboardRepository leaderboardRepository;
+
+	@Autowired
+	private MembersRepository membersRepository;
+
+	@Autowired
+	private PractiseCategoryRepository practiseCategoryRepository;
+
+	@Autowired
+	private ProblemRepository problemRepository;
+
+	@Autowired
+	private RatingRepository ratingRepository;
 
 	@Autowired
 	private RoleRepository roleRepository;
 
 	@Autowired
-	private UsersRolesRepository usersRolesRepository;
-
-	@Autowired
-	private ProblemRepository problemRepository;
+	private ScoringRepository scoringRepository;
 
 	@Autowired
 	private SubmissionsRepository submissionsRepository;
@@ -56,177 +56,285 @@ public class DatabaseController {
 	@Autowired
 	private TournamentRepository tournamentRepository;
 
-	@GetMapping(path = "/add/user")
-	public @ResponseBody String addNewUser(@RequestParam String username, @RequestParam String email,
-			@RequestParam int age) {
+	@Autowired
+	private UsersRepository usersRepository;
 
-		Users n = new Users();
-		n.setUsername(username);
-		n.setEmail(email);
-		n.setAge(age);
-		userRepository.save(n);
-		return "User saved";
+	@Autowired
+	private UsersRolesRepository usersRolesRepository;
+
+	// GROUPS
+
+	@GetMapping(path = "/Groups/view")
+	public @ResponseBody Iterable<Groups> getAllGroups() {
+		return groupsRepository.findAll();
 	}
 
-	@GetMapping(path = "/add/users_roles")
-	public @ResponseBody String addNewUserRole(@RequestParam long userId, @RequestParam long roleId) {
-		Optional<Users> u = userRepository.findById(userId);
-		if (!u.isPresent()) {
-			return "User doesn't exist";
-		}
-		Optional<Role> r = roleRepository.findById(roleId);
-		if (!r.isPresent()) {
-			return "Role doesn't exist";
-		}
-
-		Users user = u.get();
-		Role role = r.get();
-		System.out.println("INFORMATION: " + user.getUsername() + " " + role.getName());
-		UsersRoles ur = new UsersRoles(user, role);
-		usersRolesRepository.save(ur);
-		return "Users_Roles saved!";
+	@PostMapping(path = "/Groups/add")
+	public void addGroups() {
 	}
 
-	@GetMapping(path = "/add/roles")
-	public @ResponseBody String addNewRole(@RequestParam String name) {
-		Role r = new Role(name);
-		roleRepository.save(r);
-		return "Role saved";
+	@PostMapping(path = "/Groups/delete/{id}")
+	public void deleteGroups(@PathVariable long id) {
+		groupsRepository.deleteById(id);
 	}
 
-	@GetMapping(path = "/view/users")
-	public @ResponseBody Iterable<Users> getAllUsers() {
-		return userRepository.findAll();
+	@GetMapping(path = "/Groups/view/{id}")
+	public @ResponseBody Optional<Groups> viewGroupsById(@PathVariable long id) {
+		return groupsRepository.findById(id);
 	}
 
-	@GetMapping(path = "/view/roles")
-	public @ResponseBody Iterable<Role> getAllRoles() {
+	// LEADERBOARD
+
+	@GetMapping(path = "/Leaderboard/view")
+	public @ResponseBody Iterable<Leaderboard> getAllLeaderboard() {
+		return leaderboardRepository.findAll();
+	}
+
+	@PostMapping(path = "/Leaderboard/add")
+	public void addLeaderboard() {
+	}
+
+	@PostMapping(path = "/Leaderboard/delete/{id}")
+	public void deleteLeaderboard(@PathVariable long id) {
+		leaderboardRepository.deleteById(id);
+	}
+
+	@GetMapping(path = "/Leaderboard/view/{id}")
+	public @ResponseBody Optional<Leaderboard> viewLeaderboardById(@PathVariable long id) {
+		return leaderboardRepository.findById(id);
+	}
+
+	// MEMBERS
+
+	@GetMapping(path = "/Members/view")
+	public @ResponseBody Iterable<Members> getAllMembers() {
+		return membersRepository.findAll();
+	}
+
+	@PostMapping(path = "/Members/add")
+	public void addMembers() {
+	}
+
+	@PostMapping(path = "/Members/delete/{id}")
+	public void deleteMembers(@PathVariable long id) {
+		membersRepository.deleteById(id);
+	}
+
+	@GetMapping(path = "/Members/view/{id}")
+	public @ResponseBody Optional<Members> viewMembersById(@PathVariable long id) {
+		return membersRepository.findById(id);
+	}
+
+	// PRACTISECATEGORY
+
+	@GetMapping(path = "/PractiseCategory/view")
+	public @ResponseBody Iterable<PractiseCategory> getAllPractiseCategory() {
+		return practiseCategoryRepository.findAll();
+	}
+
+	@PostMapping(path = "/PractiseCategory/add")
+	public void addPractiseCategory() {
+	}
+
+	@PostMapping(path = "/PractiseCategory/delete/{id}")
+	public void deletePractiseCategory(@PathVariable long id) {
+		practiseCategoryRepository.deleteById(id);
+	}
+
+	@GetMapping(path = "/PractiseCategory/view/{id}")
+	public @ResponseBody Optional<PractiseCategory> viewPractiseCategoryById(@PathVariable long id) {
+		return practiseCategoryRepository.findById(id);
+	}
+
+	// PROBLEM
+
+	@GetMapping(path = "/Problem/view")
+	public @ResponseBody Iterable<Problem> getAllProblem() {
+		return problemRepository.findAll();
+	}
+
+	@PostMapping(path = "/Problem/add")
+	public void addProblem() {
+	}
+
+	@PostMapping(path = "/Problem/delete/{id}")
+	public void deleteProblem(@PathVariable long id) {
+		problemRepository.deleteById(id);
+	}
+
+	@GetMapping(path = "/Problem/view/{id}")
+	public @ResponseBody Optional<Problem> viewProblemById(@PathVariable long id) {
+		return problemRepository.findById(id);
+	}
+
+	// RATING
+
+	@GetMapping(path = "/Rating/view")
+	public @ResponseBody Iterable<Rating> getAllRating() {
+		return ratingRepository.findAll();
+	}
+
+	@PostMapping(path = "/Rating/add")
+	public void addRating() {
+	}
+
+	@PostMapping(path = "/Rating/delete/{id}")
+	public void deleteRating(@PathVariable long id) {
+		ratingRepository.deleteById(id);
+	}
+
+	@GetMapping(path = "/Rating/view/{id}")
+	public @ResponseBody Optional<Rating> viewRatingById(@PathVariable long id) {
+		return ratingRepository.findById(id);
+	}
+
+	// ROLE
+
+	@GetMapping(path = "/Role/view")
+	public @ResponseBody Iterable<Role> getAllRole() {
 		return roleRepository.findAll();
 	}
 
-	@GetMapping(path = "/view/users_roles")
-	public @ResponseBody Iterable<UsersRoles> getAllUsersRoles() {
-		return usersRolesRepository.findAll();
+	@PostMapping(path = "/Role/add")
+	public void addRole() {
+	}
+
+	@PostMapping(path = "/Role/delete/{id}")
+	public void deleteRole(@PathVariable long id) {
+		roleRepository.deleteById(id);
+	}
+
+	@GetMapping(path = "/Role/view/{id}")
+	public @ResponseBody Optional<Role> viewRoleById(@PathVariable long id) {
+		return roleRepository.findById(id);
+	}
+
+	// SCORING
+
+	@GetMapping(path = "/Scoring/view")
+	public @ResponseBody Iterable<Scoring> getAllScoring() {
+		return scoringRepository.findAll();
+	}
+
+	@PostMapping(path = "/Scoring/add")
+	public void addScoring() {
+	}
+
+	@PostMapping(path = "/Scoring/delete/{id}")
+	public void deleteScoring(@PathVariable long id) {
+		scoringRepository.deleteById(id);
+	}
+
+	@GetMapping(path = "/Scoring/view/{id}")
+	public @ResponseBody Optional<Scoring> viewScoringById(@PathVariable long id) {
+		return scoringRepository.findById(id);
 	}
 
 	// SUBMISSIONS
 
-	@PostMapping(path = "/add/submissions")
-	public @ResponseBody String addSubmissionsPOST(@RequestParam long userId, @RequestParam long problemId,
-			@RequestParam String date, @RequestParam String language, @RequestParam String code) throws ParseException {
-		Optional<Users> u = userRepository.findById(userId);
-		Optional<Problem> p = problemRepository.findById(problemId);
-
-		if (!u.isPresent() && !p.isPresent()) {
-			return "Invalid info!";
-		}
-
-		Users user = u.get();
-		Problem problem = p.get();
-
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		Date d = sdf.parse(date);
-		Submissions s = new Submissions(d, language, code);
-		user.getSubmissions().add(s);
-		submissionsRepository.save(s);
-
-		problem.getSubmissions().add(s);
-		problemRepository.save(problem);
-		userRepository.save(user);
-
-		return "Submission saved!";
-	}
-
-	@PostMapping(path = "/delete/submissions/{id}")
-	public @ResponseBody String deleteSubmission(@PathVariable long id) {
-		submissionsRepository.deleteById(id);
-		return "Submission removed";
-	}
-
-	@GetMapping(path = "/view/submissions")
-	public @ResponseBody Iterable<Submissions> viewSubmissions() {
+	@GetMapping(path = "/Submissions/view")
+	public @ResponseBody Iterable<Submissions> getAllSubmissions() {
 		return submissionsRepository.findAll();
-
 	}
 
-	@GetMapping(path = "/view/submissions/{id}")
+	@PostMapping(path = "/Submissions/add")
+	public void addSubmissions() {
+	}
+
+	@PostMapping(path = "/Submissions/delete/{id}")
+	public void deleteSubmissions(@PathVariable long id) {
+		submissionsRepository.deleteById(id);
+	}
+
+	@GetMapping(path = "/Submissions/view/{id}")
 	public @ResponseBody Optional<Submissions> viewSubmissionsById(@PathVariable long id) {
 		return submissionsRepository.findById(id);
 	}
-	// PROBLEMS
 
-	@PostMapping(path = "/add/problem")
-	public @ResponseBody String addProblemPost(@RequestParam String name, @RequestParam String description)
-			throws ParseException {
-		Problem p = new Problem(name, description);
-		problemRepository.save(p);
-		return "Problem saved!";
-	}
+	// TESTCASES
 
-	@GetMapping(path = "/view/problems")
-	public @ResponseBody Iterable<Problem> viewProblems() {
-		return problemRepository.findAll();
-	}
-
-	@PostMapping(path = "/delete/problem")
-	public @ResponseBody String deleteProblem(@RequestParam long id) {
-		if (problemRepository.existsById(id)) {
-			problemRepository.deleteById(id);
-			return "Problem removed";
-		} else {
-			return "Problem not found";
-		}
-	}
-
-	// TEST CASES
-
-	@PostMapping(path = "/add/testcases")
-	public @ResponseBody String addTestCasesPOST(@RequestParam long problemId, @RequestParam String input,
-			@RequestParam String output) throws ParseException {
-		Optional<Problem> p = problemRepository.findById(problemId);
-		if (!p.isPresent()) {
-			return "Invalid info";
-		}
-		Problem problem = p.get();
-		TestCases tc = new TestCases(input, output);
-		problem.getTestCases().add(tc);
-		testCasesRepository.save(tc);
-		problemRepository.save(problem);
-		return "Problem saved!";
-	}
-
-	@GetMapping(path = "/view/testcases")
-	public @ResponseBody Iterable<TestCases> viewTestCases() {
+	@GetMapping(path = "/TestCases/view")
+	public @ResponseBody Iterable<TestCases> getAllTestCases() {
 		return testCasesRepository.findAll();
 	}
 
-	@PostMapping(path = "/delete/testcases/{id}")
-	public @ResponseBody String deleteTestCase(@PathVariable long id) {
-		Optional<TestCases> t = testCasesRepository.findById(id);
-		TestCases tc = t.get();
-		testCasesRepository.delete(tc);
-		return "Test Case removed";
+	@PostMapping(path = "/TestCases/add")
+	public void addTestCases() {
+	}
+
+	@PostMapping(path = "/TestCases/delete/{id}")
+	public void deleteTestCases(@PathVariable long id) {
+		testCasesRepository.deleteById(id);
+	}
+
+	@GetMapping(path = "/TestCases/view/{id}")
+	public @ResponseBody Optional<TestCases> viewTestCasesById(@PathVariable long id) {
+		return testCasesRepository.findById(id);
 	}
 
 	// TOURNAMENT
 
-	@PostMapping(path = "/add/tournament")
-	public @ResponseBody String addTournamentPOST(@RequestParam long problemId, @RequestParam String name,
-			@RequestParam String description, @RequestParam int duration) throws ParseException {
-		Tournament t = new Tournament(name, description, duration);
-		Optional<Problem> p = problemRepository.findById(problemId);
-		if (!p.isPresent())
-			return "Invalid info!";
-		Problem problem = p.get();
-
-		t.getProblems().add(problem);
-		tournamentRepository.save(t);
-		return "Saved tournament!";
+	@GetMapping(path = "/Tournament/view")
+	public @ResponseBody Iterable<Tournament> getAllTournament() {
+		return tournamentRepository.findAll();
 	}
 
-	@GetMapping(path = "/view/tournaments")
-	public @ResponseBody Iterable<Tournament> viewTournaments() {
-		return tournamentRepository.findAll();
+	@PostMapping(path = "/Tournament/add")
+	public void addTournament() {
+	}
+
+	@PostMapping(path = "/Tournament/delete/{id}")
+	public void deleteTournament(@PathVariable long id) {
+		tournamentRepository.deleteById(id);
+	}
+
+	@GetMapping(path = "/Tournament/view/{id}")
+	public @ResponseBody Optional<Tournament> viewTournamentById(@PathVariable long id) {
+		return tournamentRepository.findById(id);
+	}
+
+	// USERS
+
+	@GetMapping(path = "/Users/view")
+	public @ResponseBody Iterable<Users> getAllUsers() {
+		return usersRepository.findAll();
+	}
+
+	@PostMapping(path = "/Users/add")
+	public void addUsers(@RequestParam String username, @RequestParam String email, @RequestParam String password) {
+		Users user = new Users(username, email, password);
+		usersRepository.save(user);
+	}
+
+	@PostMapping(path = "/Users/delete/{id}")
+	public void deleteUsers(@PathVariable long id) {
+		usersRepository.deleteById(id);
+	}
+
+	@GetMapping(path = "/Users/view/{id}")
+	public @ResponseBody Optional<Users> viewUsersById(@PathVariable long id) {
+		return usersRepository.findById(id);
+	}
+
+	// USERSROLES
+
+	@GetMapping(path = "/UsersRoles/view")
+	public @ResponseBody Iterable<UsersRoles> getAllUsersRoles() {
+		return usersRolesRepository.findAll();
+	}
+
+	@PostMapping(path = "/UsersRoles/add")
+	public void addUsersRoles() {
+	}
+
+	@PostMapping(path = "/UsersRoles/delete/{id}")
+	public void deleteUsersRoles(@PathVariable long id) {
+		usersRolesRepository.deleteById(id);
+	}
+
+	@GetMapping(path = "/UsersRoles/view/{id}")
+	public @ResponseBody Optional<UsersRoles> viewUsersRolesById(@PathVariable long id) {
+		return usersRolesRepository.findById(id);
 	}
 
 }

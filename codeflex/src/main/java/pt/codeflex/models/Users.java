@@ -34,14 +34,19 @@ public class Users {
 
 	@JsonIgnore
 	private String password;
-	private int age;
 
 	@OneToMany
 	@JoinColumn(name = "users_id")
-	private List<Submissions> submissions = new ArrayList<Submissions>();
+	private List<Submissions> submissions = new ArrayList<>();
 
 	@OneToMany
-	private List<UsersRoles> userRoles = new ArrayList<UsersRoles>();
+	private List<Members> member = new ArrayList<>();
+	
+	@OneToMany
+	private List<UsersRoles> userRoles = new ArrayList<>();
+	
+	@OneToMany
+	private List<Rating> rating = new ArrayList<>();
 	
 	public void setId(long id) {
 		this.id = id;
@@ -84,14 +89,6 @@ public class Users {
 		this.password = password;
 	}
 
-	public int getAge() {
-		return age;
-	}
-
-	public void setAge(int age) {
-		this.age = age;
-	}
-
 	public List<Submissions> getSubmissions() {
 		return submissions;
 	}
@@ -106,6 +103,22 @@ public class Users {
 
 	public void setUserRoles(List<UsersRoles> userRoles) {
 		this.userRoles = userRoles;
+	}
+
+	public List<Members> getMember() {
+		return member;
+	}
+
+	public void setMember(List<Members> member) {
+		this.member = member;
+	}
+
+	public List<Rating> getRating() {
+		return rating;
+	}
+
+	public void setRating(List<Rating> rating) {
+		this.rating = rating;
 	}
 
 
