@@ -26,13 +26,22 @@ public class Submissions {
 	@Column(length = 10000)
 	private String code;
 
-	@OneToMany
-	@JoinColumn(name = "submissions_id")
-	private List<Scoring> scoring = new ArrayList<>();
+//	@OneToMany
+//	@JoinColumn(name = "submissions_id")
+//	private List<Scoring> scoring = new ArrayList<>();
+
+//	public List<Scoring> getScoring() {
+//		return scoring;
+//	}
+//
+//	public void setScoring(List<Scoring> scoring) {
+//		this.scoring = scoring;
+//	}
 
 	public Submissions() {
 	}
 
+	
 	public Submissions(Date date, String language, String code) {
 		this.date = date;
 		this.language = language;

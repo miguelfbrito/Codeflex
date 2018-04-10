@@ -1,22 +1,45 @@
 package pt.codeflex.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
 @Entity
 public class PractiseCategory {
-	
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	
+
 	private String name;
 
-	public PractiseCategory() {}
-	
+	public PractiseCategory(String name, List<Problem> problem) {
+		super();
+		this.name = name;
+		this.problem = problem;
+	}
+
+	@OneToMany
+	@JoinColumn(name = "practise_category_id")
+	private List<Problem> problem = new ArrayList<>();
+
+	public List<Problem> getProblem() {
+		return problem;
+	}
+
+	public void setProblem(List<Problem> problem) {
+		this.problem = problem;
+	}
+
+	public PractiseCategory() {
+	}
+
 	public long getId() {
 		return id;
 	}

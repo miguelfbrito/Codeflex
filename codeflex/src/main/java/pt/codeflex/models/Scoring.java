@@ -13,11 +13,11 @@ public class Scoring implements Serializable {
 
 	@Id
 	@ManyToOne
-	private Submissions submission;
+	private Submissions submissions;
 
 	@Id
 	@ManyToOne
-	private TestCases testCase;
+	private TestCases testcases;
 
 	private double value;
 	private boolean isRight;
@@ -26,24 +26,31 @@ public class Scoring implements Serializable {
 	}
 
 	public Scoring(Submissions submission, TestCases testCase) {
-		this.submission = submission;
-		this.testCase = testCase;
+		this.submissions = submission;
+		this.testcases = testCase;
+	}
+	
+	public Scoring(Submissions submission, TestCases testCase, double value, boolean isRight) {
+		this.submissions = submission;
+		this.testcases = testCase;
+		this.value = value;
+		this.isRight = isRight;
 	}
 
 	public Submissions getSubmission() {
-		return submission;
+		return submissions;
 	}
 
 	public void setSubmission(Submissions submission) {
-		this.submission = submission;
+		this.submissions = submission;
 	}
 
 	public TestCases getTestCase() {
-		return testCase;
+		return testcases;
 	}
 
 	public void setTestCase(TestCases testCase) {
-		this.testCase = testCase;
+		this.testcases = testCase;
 	}
 
 	public double getValue() {

@@ -7,25 +7,26 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class ScoringID implements Serializable {
 	
-	private long submission;
-	private long testCase;
-	
+	private long submissions;
+	private long testcases;
+
+	public ScoringID() {}
 	public ScoringID(long submission, long testCase) {
-		this.submission = submission;
-		this.testCase = testCase;
+		this.submissions = submission;
+		this.testcases = testCase;
 	}
 	
 	public long getSubmission() {
-		return submission;
+		return submissions;
 	}
 	public void setSubmission(long submission) {
-		this.submission = submission;
+		this.submissions = submission;
 	}
 	public long getTestCase() {
-		return testCase;
+		return testcases;
 	}
 	public void setTestCase(long testCase) {
-		this.testCase = testCase;
+		this.testcases = testCase;
 	}
 	
 	

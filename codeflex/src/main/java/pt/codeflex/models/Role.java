@@ -24,6 +24,7 @@ public class Role {
 	public Role() {}
 	
 	@OneToMany
+	@JoinColumn(name = "role_id")
 	private List<UsersRoles> userRoles = new ArrayList<>();
 
 	public Role(String name) {

@@ -33,9 +33,9 @@ public class TestCases {
 	@Column(length = 5000)
 	private String output;
 
-	@OneToMany
-	@JoinColumn(name = "testcases_id")
-	private List<Scoring> scoring = new ArrayList<>();
+//	@OneToMany
+//	@JoinColumn(name = "testcases_id")
+//	private List<Scoring> scoring = new ArrayList<>();
 
 	public TestCases(String input, String output) {
 		this.input = input;
@@ -66,11 +66,4 @@ public class TestCases {
 		this.output = output;
 	}
 
-	public List<Scoring> getScoring() {
-		return scoring;
-	}
-
-	public void setScoring(List<Scoring> scoring) {
-		this.scoring = scoring;
-	}
 }

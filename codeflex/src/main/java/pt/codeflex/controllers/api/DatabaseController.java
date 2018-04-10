@@ -73,6 +73,16 @@ public class DatabaseController {
 	public void addGroups() {
 	}
 
+	@PostMapping(path = "/Groups/edit")
+	public void editGroups(@RequestParam long id) {
+		Optional<Groups> g = groupsRepository.findById(id);
+
+		if (g.isPresent()) {
+			Groups groups = g.get();
+			groupsRepository.save(groups);
+		}
+	}
+
 	@PostMapping(path = "/Groups/delete/{id}")
 	public void deleteGroups(@PathVariable long id) {
 		groupsRepository.deleteById(id);
@@ -92,6 +102,16 @@ public class DatabaseController {
 
 	@PostMapping(path = "/Leaderboard/add")
 	public void addLeaderboard() {
+	}
+
+	@PostMapping(path = "/Leaderboard/edit")
+	public void editLeaderboard(@RequestParam long id) {
+		Optional<Leaderboard> l = leaderboardRepository.findById(id);
+
+		if (l.isPresent()) {
+			Leaderboard leaderboard = l.get();
+			leaderboardRepository.save(leaderboard);
+		}
 	}
 
 	@PostMapping(path = "/Leaderboard/delete/{id}")
@@ -115,6 +135,16 @@ public class DatabaseController {
 	public void addMembers() {
 	}
 
+	@PostMapping(path = "/Members/edit")
+	public void editMembers(@RequestParam long id) {
+		Optional<Members> m = membersRepository.findById(id);
+
+		if (m.isPresent()) {
+			Members members = m.get();
+			membersRepository.save(members);
+		}
+	}
+
 	@PostMapping(path = "/Members/delete/{id}")
 	public void deleteMembers(@PathVariable long id) {
 		membersRepository.deleteById(id);
@@ -136,6 +166,16 @@ public class DatabaseController {
 	public void addPractiseCategory() {
 	}
 
+	@PostMapping(path = "/PractiseCategory/edit")
+	public void editPractiseCategory(@RequestParam long id) {
+		Optional<PractiseCategory> p = practiseCategoryRepository.findById(id);
+
+		if (p.isPresent()) {
+			PractiseCategory practiseCategory = p.get();
+			practiseCategoryRepository.save(practiseCategory);
+		}
+	}
+
 	@PostMapping(path = "/PractiseCategory/delete/{id}")
 	public void deletePractiseCategory(@PathVariable long id) {
 		practiseCategoryRepository.deleteById(id);
@@ -154,7 +194,28 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Problem/add")
-	public void addProblem() {
+	public void addProblem(@RequestParam long testcasesId, @RequestParam String name,
+			@RequestParam String description) {
+		Optional<TestCases> tc = testCasesRepository.findById(testcasesId);
+
+		Problem p = new Problem(name, description);
+		if (tc.isPresent()) {
+			TestCases testCases = tc.get();
+			p.getTestCases().add(testCases);
+			problemRepository.save(p);
+
+		}
+
+	}
+
+	@PostMapping(path = "/Problem/edit")
+	public void editProblem(@RequestParam long id) {
+		Optional<Problem> p = problemRepository.findById(id);
+
+		if (p.isPresent()) {
+			Problem problem = p.get();
+			problemRepository.save(problem);
+		}
 	}
 
 	@PostMapping(path = "/Problem/delete/{id}")
@@ -178,6 +239,16 @@ public class DatabaseController {
 	public void addRating() {
 	}
 
+	@PostMapping(path = "/Rating/edit")
+	public void editRating(@RequestParam long id) {
+		Optional<Rating> r = ratingRepository.findById(id);
+
+		if (r.isPresent()) {
+			Rating rating = r.get();
+			ratingRepository.save(rating);
+		}
+	}
+
 	@PostMapping(path = "/Rating/delete/{id}")
 	public void deleteRating(@PathVariable long id) {
 		ratingRepository.deleteById(id);
@@ -199,6 +270,16 @@ public class DatabaseController {
 	public void addRole() {
 	}
 
+	@PostMapping(path = "/Role/edit")
+	public void editRole(@RequestParam long id) {
+		Optional<Role> r = roleRepository.findById(id);
+
+		if (r.isPresent()) {
+			Role role = r.get();
+			roleRepository.save(role);
+		}
+	}
+
 	@PostMapping(path = "/Role/delete/{id}")
 	public void deleteRole(@PathVariable long id) {
 		roleRepository.deleteById(id);
@@ -217,7 +298,25 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Scoring/add")
-	public void addScoring() {
+	public void addScoring(@RequestParam long submissionsId, @RequestParam long testCasesId, @RequestParam double value,
+			@RequestParam boolean isRight) {
+		Optional<Submissions> s = submissionsRepository.findById(submissionsId);
+		Optional<TestCases> tc = testCasesRepository.findById(testCasesId);
+
+		if (s.isPresent() && tc.isPresent()) {
+			Scoring sc = new Scoring(s.get(), tc.get(), value, isRight);
+			scoringRepository.save(sc);
+		}
+	}
+
+	@PostMapping(path = "/Scoring/edit")
+	public void editScoring(@RequestParam long id) {
+		Optional<Scoring> s = scoringRepository.findById(id);
+
+		if (s.isPresent()) {
+			Scoring scoring = s.get();
+			scoringRepository.save(scoring);
+		}
 	}
 
 	@PostMapping(path = "/Scoring/delete/{id}")
@@ -238,7 +337,29 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Submissions/add")
-	public void addSubmissions() {
+	public void addSubmissions(@RequestParam long usersId, @RequestParam String date, @RequestParam String language,
+			@RequestParam String code) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		Date d = sdf.parse(date);
+		Optional<Users> u = usersRepository.findById(usersId);
+		if (u.isPresent()) {
+			Users user = u.get();
+			Submissions s = new Submissions(d, language, code);
+			user.getSubmissions().add(s);
+			submissionsRepository.save(s);
+			usersRepository.save(user);
+		}
+
+	}
+
+	@PostMapping(path = "/Submissions/edit")
+	public void editSubmissions(@RequestParam long id) {
+		Optional<Submissions> s = submissionsRepository.findById(id);
+
+		if (s.isPresent()) {
+			Submissions submissions = s.get();
+			submissionsRepository.save(submissions);
+		}
 	}
 
 	@PostMapping(path = "/Submissions/delete/{id}")
@@ -259,7 +380,19 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/TestCases/add")
-	public void addTestCases() {
+	public void addTestCases(@RequestParam String input, @RequestParam String output) {
+		TestCases tc = new TestCases(input, output);
+		testCasesRepository.save(tc);
+	}
+
+	@PostMapping(path = "/TestCases/edit")
+	public void editTestCases(@RequestParam long id) {
+		Optional<TestCases> t = testCasesRepository.findById(id);
+
+		if (t.isPresent()) {
+			TestCases testCases = t.get();
+			testCasesRepository.save(testCases);
+		}
 	}
 
 	@PostMapping(path = "/TestCases/delete/{id}")
@@ -283,6 +416,16 @@ public class DatabaseController {
 	public void addTournament() {
 	}
 
+	@PostMapping(path = "/Tournament/edit")
+	public void editTournament(@RequestParam long id) {
+		Optional<Tournament> t = tournamentRepository.findById(id);
+
+		if (t.isPresent()) {
+			Tournament tournament = t.get();
+			tournamentRepository.save(tournament);
+		}
+	}
+
 	@PostMapping(path = "/Tournament/delete/{id}")
 	public void deleteTournament(@PathVariable long id) {
 		tournamentRepository.deleteById(id);
@@ -302,8 +445,18 @@ public class DatabaseController {
 
 	@PostMapping(path = "/Users/add")
 	public void addUsers(@RequestParam String username, @RequestParam String email, @RequestParam String password) {
-		Users user = new Users(username, email, password);
-		usersRepository.save(user);
+		Users u = new Users(username, email, password);
+		usersRepository.save(u);
+	}
+
+	@PostMapping(path = "/Users/edit")
+	public void editUsers(@RequestParam long id) {
+		Optional<Users> u = usersRepository.findById(id);
+
+		if (u.isPresent()) {
+			Users users = u.get();
+			usersRepository.save(users);
+		}
 	}
 
 	@PostMapping(path = "/Users/delete/{id}")
@@ -325,6 +478,16 @@ public class DatabaseController {
 
 	@PostMapping(path = "/UsersRoles/add")
 	public void addUsersRoles() {
+	}
+
+	@PostMapping(path = "/UsersRoles/edit")
+	public void editUsersRoles(@RequestParam long id) {
+		Optional<UsersRoles> u = usersRolesRepository.findById(id);
+
+		if (u.isPresent()) {
+			UsersRoles usersRoles = u.get();
+			usersRolesRepository.save(usersRoles);
+		}
 	}
 
 	@PostMapping(path = "/UsersRoles/delete/{id}")

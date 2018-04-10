@@ -50,7 +50,7 @@ public class Users {
 	@OneToMany
 	@JoinColumn(name = "users_id")
 	private List<Rating> rating = new ArrayList<>();
-	
+
 	public void setId(long id) {
 		this.id = id;
 	}

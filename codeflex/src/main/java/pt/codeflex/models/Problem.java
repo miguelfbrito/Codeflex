@@ -16,7 +16,7 @@ import javax.persistence.SequenceGenerator;
 public class Problem {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	private String name;
@@ -76,6 +76,5 @@ public class Problem {
 	public void setTournament(Tournament tournament) {
 		this.tournament = tournament;
 	}
-
 
 }
