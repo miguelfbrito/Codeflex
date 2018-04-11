@@ -10,5 +10,13 @@ import pt.codeflex.models.Users;
 
 @Controller
 public class TestController {
- 
+
+	@Autowired
+	private DatabaseController databaseController;
+	
+	@GetMapping("/test")
+	public @ResponseBody String test() {
+		Users u = databaseController.addUsers("Test Username", "test@gmail.com", "5102510fosdf!#");
+		return u.getUsername();
+	}
 }

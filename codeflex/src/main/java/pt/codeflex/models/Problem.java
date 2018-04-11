@@ -26,8 +26,6 @@ public class Problem {
 	@JoinColumn(name = "problem_id")
 	private List<TestCases> testCases = new ArrayList<TestCases>();
 
-	@ManyToOne
-	private Tournament tournament;
 
 	public Problem() {
 	}
@@ -69,12 +67,5 @@ public class Problem {
 		this.testCases = testCases;
 	}
 
-	public Tournament getTournament() {
-		return tournament;
-	}
-
-	public void setTournament(Tournament tournament) {
-		this.tournament = tournament;
-	}
 
 }

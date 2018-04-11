@@ -19,10 +19,8 @@ public class PractiseCategory {
 
 	private String name;
 
-	public PractiseCategory(String name, List<Problem> problem) {
-		super();
+	public PractiseCategory(String name) {
 		this.name = name;
-		this.problem = problem;
 	}
 
 	@OneToMany

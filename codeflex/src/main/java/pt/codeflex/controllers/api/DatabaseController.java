@@ -163,15 +163,23 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/PractiseCategory/add")
-	public void addPractiseCategory() {
+	public PractiseCategory addPractiseCategory(@RequestParam String name ) {
+		PractiseCategory pc = new PractiseCategory(name);
+		return practiseCategoryRepository.save(pc);
 	}
 
 	@PostMapping(path = "/PractiseCategory/edit")
-	public void editPractiseCategory(@RequestParam long id) {
-		Optional<PractiseCategory> p = practiseCategoryRepository.findById(id);
-
-		if (p.isPresent()) {
-			PractiseCategory practiseCategory = p.get();
+	public void editPractiseCategory(@RequestParam long id, @RequestParam long problemId) {
+		Optional<PractiseCategory> pc = practiseCategoryRepository.findById(id);
+		Optional<Problem> p = problemRepository.findById(problemId);
+		if (pc.isPresent()) {
+			PractiseCategory practiseCategory = pc.get();
+			
+			if(p.isPresent()) {
+				Problem problem = p.get();
+				practiseCategory.getProblem().add(problem);
+			}
+			
 			practiseCategoryRepository.save(practiseCategory);
 		}
 	}
@@ -413,15 +421,26 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Tournament/add")
-	public void addTournament() {
+	public Tournament addTournament(@RequestParam String name, @RequestParam String startingDate,
+			@RequestParam String description, @RequestParam int duration) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		Date d = sdf.parse(startingDate);
+		Tournament t = new Tournament(name, d, description, duration);
+		return tournamentRepository.save(t);
 	}
 
 	@PostMapping(path = "/Tournament/edit")
-	public void editTournament(@RequestParam long id) {
+	public void editTournament(@RequestParam long id, @RequestParam long problemId) {
 		Optional<Tournament> t = tournamentRepository.findById(id);
+		Optional<Problem> p = problemRepository.findById(problemId);
 
 		if (t.isPresent()) {
 			Tournament tournament = t.get();
+
+			if (p.isPresent()) {
+				Problem problem = p.get();
+				tournament.getProblems().add(problem);
+			}
 			tournamentRepository.save(tournament);
 		}
 	}
@@ -444,9 +463,9 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Users/add")
-	public void addUsers(@RequestParam String username, @RequestParam String email, @RequestParam String password) {
+	public Users addUsers(@RequestParam String username, @RequestParam String email, @RequestParam String password) {
 		Users u = new Users(username, email, password);
-		usersRepository.save(u);
+		return usersRepository.save(u);
 	}
 
 	@PostMapping(path = "/Users/edit")

@@ -38,8 +38,9 @@ public class Tournament {
 	@JoinColumn(name = "tournament_id")
 	private List<Rating> rating = new ArrayList<>();
 
-	public Tournament(String name, String description, int duration) {
+	public Tournament(String name, Date startingDate, String description, int duration) {
 		this.name = name;
+		this.startingDate = startingDate;
 		this.description = description;
 		this.duration = duration;
 	}
