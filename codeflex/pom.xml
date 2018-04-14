@@ -48,6 +48,21 @@
 			<version>2.0.0.RELEASE</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/net.schmizz/sshj -->
+		<dependency>
+			<groupId>net.schmizz</groupId>
+			<artifactId>sshj</artifactId>
+			<version>0.10.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.jcraft/jsch -->
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+			<version>0.1.54</version>
+		</dependency>
+
+
 
 		<!-- <dependency> <groupId>org.springframework.security</groupId> <artifactId>spring-security-web</artifactId> 
 			</dependency> <dependency> <groupId>org.springframework.security</groupId> 
