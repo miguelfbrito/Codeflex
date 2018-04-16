@@ -23,6 +23,17 @@ public class Submissions {
 	private Date date;
 	private String language;
 
+	@ManyToOne
+	private Problem problem;
+	public Problem getProblem() {
+		return problem;
+	}
+
+
+	public void setProblem(Problem problem) {
+		this.problem = problem;
+	}
+
 	@Column(length = 10000)
 	private String code;
 
@@ -41,6 +52,12 @@ public class Submissions {
 	public Submissions() {
 	}
 
+	public Submissions(Problem problem, Date date, String language, String code) {
+		this.problem = problem;
+		this.date = date;
+		this.language = language;
+		this.code = code;
+	}
 	
 	public Submissions(Date date, String language, String code) {
 		this.date = date;

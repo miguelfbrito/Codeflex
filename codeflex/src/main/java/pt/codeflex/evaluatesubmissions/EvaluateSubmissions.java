@@ -5,11 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Properties;
 import java.util.Queue;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.IOUtils;
@@ -20,9 +20,10 @@ import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.xfer.FileSystemFile;
 import pt.codeflex.controllers.api.DatabaseController;
 import pt.codeflex.models.Submissions;
-import pt.codeflex.repositories.SubmissionsRepository;
 
-public class EvaluateSubmissions {
+@Component
+@Scope("prototype")
+public class EvaluateSubmissions implements Runnable{
 
 	private static final String SUBMISSIONS_FILE_DIR = System.getProperty("user.home") + File.separator + "Submissions";
 	private static final String SUBMISSIONS_SERVER = "/home/mbrito/Desktop/Submissions";
@@ -34,8 +35,6 @@ public class EvaluateSubmissions {
 	private DatabaseController databaseController;
 
 	public EvaluateSubmissions() {
-		this.uniqueId++;
-		Iterable<Submissions> sub = databaseController.getAllSubmissions();
 	}
 
 	public static SSHClient ssh = null;
@@ -60,7 +59,7 @@ public class EvaluateSubmissions {
 
 	}
 
-	public static void compileAndRun(String language, String code, String input, String output) {
+	public void compileAndRun(String language, String code, String input, String output) {
 
 		String fileName = "Solution";
 		createFile(code, uniqueId);
@@ -86,21 +85,21 @@ public class EvaluateSubmissions {
 		switch (language) {
 		case "JAVA":
 			command += "javac " + fileName + ".java 2> " + compileError + " && cat " + input + " | timeout 3s java "
-					+ fileName + " > " + compileOutput + " &"; // && disown
+					+ fileName + " > " + compileOutput + ""; // && disown
 			break;
 		case "C++11":
-			command += "g++ -std=c++11 -o " + fileName + "_exec_" + uniqueId + ".cpp " + fileName + " 2> "
-					+ compileError + " && cat " + input + " | timeout 2 ./" + fileName + "_exec_" + uniqueId + " 2> "
-					+ compileError + " > " + compileOutput + " &";
+			command += "nohup g++ -std=c++11 -o " + fileName + "_exec_" + uniqueId + ".cpp " + fileName + " 2> "
+					+ compileError + " && nohup cat " + input + " | timeout 2 ./" + fileName + "_exec_" + uniqueId + " 2> "
+					+ compileError + " > " + compileOutput + "";
 			break;
 		case "PYTHON":
-			command += "cat " + input + " | timeout 10 python " + fileName + ".py 2> " + compileError + " > "
-					+ compileOutput + " &";
+			command += "nohup cat " + input + " | nohup timeout 10 python " + fileName + ".py 2> " + compileError + " > "
+					+ compileOutput + "";
 			break;
 		case "C#":
-			command += "mcs -out:" + fileName + "_exec_" + uniqueId + " " + fileName + ".cs 2> " + compileError
-					+ " && cat " + input + " | mono " + fileName + "_exec_" + uniqueId + " 2> " + compileError + " > "
-					+ compileOutput + " &";
+			command += "nohup mcs -out:" + fileName + "_exec_" + uniqueId + " " + fileName + ".cs 2> " + compileError
+					+ " && cat " + input + " | nohup mono " + fileName + "_exec_" + uniqueId + " 2> " + compileError + " > "
+					+ compileOutput + "";
 			break;
 		default:
 			System.out.println("Language not found");
@@ -192,6 +191,25 @@ public class EvaluateSubmissions {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void run() {
+		System.out.println("THREAD!!!!! ");
+		compileAndRun("JAVA", "import java.io.*;\r\n" + "import java.util.*;\r\n"
+				+ "import java.text.*;\r\n" + "import java.math.*;\r\n" + "import java.util.regex.*;\r\n" + "\r\n"
+				+ "public class Solution {\r\n" + "\r\n" + "	public static void main(String[] args) {\r\n"
+				+ "		Scanner in = new Scanner(System.in);\r\n" + "		int n = in.nextInt();\r\n"
+				+ "		int scores[] = new int[n];\r\n" + "		for (int i = 0; i < n; i++) {\r\n"
+				+ "			scores[i] = in.nextInt();\r\n" + "		}\r\n"
+				+ "		minimumDistances(n, scores);\r\n" + "	}\r\n" + "\r\n"
+				+ "	static void minimumDistances(int n, int array[]) {\r\n"
+				+ "		int min = Integer.MAX_VALUE;\r\n" + "		for (int i = 0; i < n-1; i++) {\r\n"
+				+ "			for(int j = i+1; j<n; j++) {\r\n" + "				if(array[i] == array[j]){\r\n"
+				+ "					min = Math.min(min,  Math.abs(i-j));\r\n" + "				}\r\n"
+				+ "			}\r\n" + "		}\r\n" + "		if(min==Integer.MAX_VALUE) {\r\n"
+				+ "			min = -1;\r\n" + "		}\r\n" + "		System.out.println(min);\r\n" + "	}\r\n"
+				+ "\r\n" + "\r\n" + "}", "input.txt", "nothing");
 	}
 
 }

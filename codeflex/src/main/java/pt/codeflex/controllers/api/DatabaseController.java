@@ -163,7 +163,7 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/PractiseCategory/add")
-	public PractiseCategory addPractiseCategory(@RequestParam String name ) {
+	public PractiseCategory addPractiseCategory(@RequestParam String name) {
 		PractiseCategory pc = new PractiseCategory(name);
 		return practiseCategoryRepository.save(pc);
 	}
@@ -174,12 +174,12 @@ public class DatabaseController {
 		Optional<Problem> p = problemRepository.findById(problemId);
 		if (pc.isPresent()) {
 			PractiseCategory practiseCategory = pc.get();
-			
-			if(p.isPresent()) {
+
+			if (p.isPresent()) {
 				Problem problem = p.get();
 				practiseCategory.getProblem().add(problem);
 			}
-			
+
 			practiseCategoryRepository.save(practiseCategory);
 		}
 	}
@@ -345,17 +345,23 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Submissions/add")
-	public void addSubmissions(@RequestParam long usersId, @RequestParam String date, @RequestParam String language,
-			@RequestParam String code) throws ParseException {
+	public void addSubmissions(@RequestParam long usersId, @RequestParam long problemId, @RequestParam String date,
+			@RequestParam String language, @RequestParam String code) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		Date d = sdf.parse(date);
 		Optional<Users> u = usersRepository.findById(usersId);
+		Optional<Problem> p = problemRepository.findById(problemId);
+
 		if (u.isPresent()) {
 			Users user = u.get();
-			Submissions s = new Submissions(d, language, code);
-			user.getSubmissions().add(s);
-			submissionsRepository.save(s);
-			usersRepository.save(user);
+			Problem problem;
+			if (p.isPresent()) {
+				problem = p.get();
+				Submissions s = new Submissions(problem, d, language, code);
+				user.getSubmissions().add(s);
+				submissionsRepository.save(s);
+				usersRepository.save(user);
+			}
 		}
 
 	}
