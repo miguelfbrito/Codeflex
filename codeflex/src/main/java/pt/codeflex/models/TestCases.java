@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class TestCases {
 
@@ -24,12 +26,14 @@ public class TestCases {
 	// for large data
 	// TODO : change 1 -> N to N -> N ?
 
+	@JsonIgnore
 	@Column(length = 5000)
 	private String input;
 
 	public TestCases() {
 	}
 
+	@JsonIgnore
 	@Column(length = 5000)
 	private String output;
 

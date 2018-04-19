@@ -25,9 +25,11 @@ import net.schmizz.sshj.connection.channel.direct.Session.Command;
 import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.xfer.FileSystemFile;
 import pt.codeflex.controllers.api.DatabaseController;
+import pt.codeflex.models.Scoring;
 import pt.codeflex.models.Submissions;
 import pt.codeflex.models.TestCases;
 import pt.codeflex.models.Users;
+import pt.codeflex.repositories.ScoringRepository;
 import pt.codeflex.repositories.SubmissionsRepository;
 import pt.codeflex.repositories.UsersRepository;
 
@@ -38,16 +40,31 @@ public class EvaluateSubmissions implements Runnable {
 	@Autowired
 	private UsersRepository usersRepository;
 
-	private Queue<Submissions> queue = new ArrayDeque<>();
+	@Autowired
+	private ScoringRepository scoringRepository;
+
+	private String host;
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	private static int count = 0;
+	private static volatile Queue<Submissions> queue = new ArrayDeque<>();
 	private final String PATH_SPRING = System.getProperty("user.home") + File.separator + "Submissions";
 	private final String PATH_SERVER = "/home/mbrito/Desktop/Submissions";
 	private long uniqueId;
 
-	public void getSubmissions(long id) {
+	public Queue<Submissions> getSubmissions(long id) {
 		Optional<Users> u = usersRepository.findById(id);
 
 		if (u.isPresent()) {
-			connect();
+			connect(getHost());
+
 			Users us = u.get();
 			List<Submissions> submissions = us.getSubmissions();
 
@@ -55,31 +72,42 @@ public class EvaluateSubmissions implements Runnable {
 				queue.add(s);
 			}
 
-			System.out.println("QUEUE");
-			while (!queue.isEmpty()) {
-				Submissions s = queue.poll();
-				compileSubmission(s);
+			// TESTING PURPOSE
+			if (count++ < 2) {
+				try {
+					Session session = ssh.startSession();
+					Command cmd = session.exec("cd " + PATH_SERVER + " && rm -rf *");
+					session.close();
+				} catch (ConnectionException | TransportException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				while (!queue.isEmpty()) {
+					Submissions s = queue.poll();
+					compileSubmission(s);
+				}
 			}
 
 		}
-
+		return queue;
 	}
 
 	public SSHClient ssh = null;
 
-	public void connect() {
+	public void connect(String host) {
 		ssh = new SSHClient();
 		ssh.addHostKeyVerifier("33:02:cb:3b:13:b1:bd:fa:66:ff:29:96:ea:ff:dc:78");
 		try {
 			ssh.loadKnownHosts();
-			ssh.connect("10.214.104.233");
+			ssh.connect(host);
 			ssh.authPassword("mbrito", "gomas");
 			Session session = ssh.startSession();
 			Command cmd = session.exec("ls");
-			System.out.println(IOUtils.readFully(cmd.getInputStream()).toString());
+			//System.out.println(IOUtils.readFully(cmd.getInputStream()).toString());
 
 		} catch (IOException e) {
-			System.out.println("Error connecting!");
+			//System.out.println("Error connecting!");
 			e.printStackTrace();
 		}
 
@@ -102,26 +130,22 @@ public class EvaluateSubmissions implements Runnable {
 
 		switch (submission.getLanguage()) {
 		case "JAVA":
-			command += "javac " + fileName + ".java 2> " + compileError; // && disown
+			command += "javac " + fileName + ".java 2> " + compileError + ""; // && disown
 			suffix = ".java";
 			break;
 		case "C++11":
 			command += "g++ -std=c++11 -o " + fileName + "_exec_" + uniqueId + " " + fileName + ".cpp 2> "
-					+ compileError;
+					+ compileError + "";
 			suffix = ".cpp";
 			break;
-		// case "PYTHON":
-		// command += "cat " + input + " | timeout 10 python " + fileName + ".py 2> " +
-		// compileError + " > "
-		// + compileOutput + "";
-		// suffix = ".py";
-		// break;
+		case "PYTHON":
+			break;
 		case "C#":
-			command += "mcs -out:" + fileName + "_exec_" + uniqueId + " " + fileName + ".cs 2> " + compileError;
+			command += "mcs -out:" + fileName + "_exec_" + uniqueId + " " + fileName + ".cs 2> " + compileError + "";
 			suffix = ".cs";
 			break;
 		default:
-			System.out.println("Language not found");
+			//System.out.println("Language not found");
 			break;
 		}
 
@@ -141,7 +165,7 @@ public class EvaluateSubmissions implements Runnable {
 
 		try {
 			session = ssh.startSession();
-			System.out.println("COMANDO DE EXEC: " + command);
+			//System.out.println("COMANDO DE EXEC: " + command);
 			cmd = session.exec(command);
 
 			cmd.close();
@@ -154,8 +178,8 @@ public class EvaluateSubmissions implements Runnable {
 				scp(PATH_SPRING + "/" + tcFileName,
 						PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage() + "/");
 
-				System.out.println("Running tests case " + tc.getId() + " for " + submission.getLanguage());
-				runSubmission(submission.getLanguage(), fileName, tcFileName, submission.getId(), tc.getId());
+				//System.out.println("Running tests case " + tc.getId() + " for " + submission.getLanguage());
+				runSubmission(submission, tc, fileName);
 			}
 		} catch (ConnectionException | TransportException e) {
 			// TODO Auto-generated catch block
@@ -164,7 +188,7 @@ public class EvaluateSubmissions implements Runnable {
 
 	}
 
-	public void runSubmission(String language, String fileName, String input, long submissionId, long testCaseId) {
+	public void runSubmission(Submissions submission, TestCases testCase, String fileName) {
 		Session session = null;
 		try {
 			session = ssh.startSession();
@@ -172,67 +196,54 @@ public class EvaluateSubmissions implements Runnable {
 			e.printStackTrace();
 		}
 
-		String command = "cd " + PATH_SERVER + "/" + submissionId + "_" + language + " && ";
-		String runError = "error_" + submissionId + ".txt";
-		String runOutput = "output_" + submissionId + "_" + testCaseId + ".txt";
+		String command = "cd " + PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage() + " && ";
+		String runError = "error_" + submission.getId() + ".txt";
+		String runOutput = "output_" + submission.getId() + "_" + testCase.getId() + ".txt";
 
 		// TODO : add memory limit
-		switch (language) {
+		switch (submission.getLanguage()) {
 		case "JAVA":
-			command += "cat " + input + " | timeout 3s java " + fileName + " 2> " + runError + " > " + runOutput + ""; // &&
-																														// disown
-			break;
-		case "C++11":
-			command += "cat " + input + " | timeout 2 ./" + fileName + "_exec_" + uniqueId + " 2> " + runError + " > "
+			command += "cat " + testCase.getId() + " | timeout 3s java " + fileName + " 2> " + runError + " > "
 					+ runOutput + "";
 			break;
+		case "C++11":
+			command += "cat " + testCase.getId() + " | timeout 2 ./" + fileName + "_exec_" + uniqueId + " 2> "
+					+ runError + " > " + runOutput + "";
+			break;
 		case "PYTHON":
-			command += "cat " + input + " | timeout 10 python " + fileName + ".py 2> " + runError + " > " + runOutput
-					+ "";
+			command += "cat " + testCase.getId() + " | timeout 10 python " + fileName + ".py 2> " + runError + " > "
+					+ runOutput + "";
 			break;
 		case "C#":
-			command += "cat " + input + " | ./" + fileName + "_exec_" + uniqueId + " 2> " + runError + " > " + runOutput
-					+ "";
+			command += "cat " + testCase.getId() + " | timeout 3 ./" + fileName + "_exec_" + uniqueId + " 2> "
+					+ runError + " > " + runOutput + "";
 			break;
 		default:
-			System.out.println("Language not found");
+			//System.out.println("Language not found");
 			break;
 		}
 
+		command += " && cat " + runOutput;
+
 		try {
 			Command cmd = session.exec(command);
+			String output = IOUtils.readFully(cmd.getInputStream()).toString();
+
+			Scoring sc = new Scoring(submission, testCase, 10, validateResult(testCase.getOutput(), output));
+			scoringRepository.save(sc);
 
 			cmd.close();
-		} catch (ConnectionException | TransportException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	public void getFinishedJobs() { // TODO : review
-		Session session = null;
-		String output = "";
-		try {
-			session = ssh.startSession();
-		} catch (ConnectionException | TransportException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+	private boolean validateResult(String tcOutput, String output) {
+		if (tcOutput.trim().equals(output.trim())) {
+			return true;
 		}
-
-		String command = "cd Desktop/Submissions && cat output_*";
-		try {
-			Command cmd = session.exec(command);
-			output = IOUtils.readFully(cmd.getInputStream()).toString();
-		} catch (ConnectionException | TransportException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		System.out.println(output);
-
+		return false;
 	}
 
 	public void createFile(String text, String fileName) {
@@ -251,8 +262,8 @@ public class EvaluateSubmissions implements Runnable {
 	public void scp(String src, String dest) {
 
 		try {
-			System.out.println("SRC: " + src);
-			System.out.println("DEST: " + dest);
+			//System.out.println("SRC: " + src);
+			//System.out.println("DEST: " + dest);
 			ssh.newSCPFileTransfer().upload(new FileSystemFile(src), dest);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -262,9 +273,9 @@ public class EvaluateSubmissions implements Runnable {
 
 	@Override
 	public void run() {
-		System.out.println("Thread starting!");
+		//System.out.println("Thread starting!");
 
-		System.out.println("Connection established!");
+		//System.out.println("Connection established!");
 		getSubmissions(1);
 
 	}
