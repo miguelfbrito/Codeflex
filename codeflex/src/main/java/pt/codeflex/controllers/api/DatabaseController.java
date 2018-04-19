@@ -202,18 +202,23 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Problem/add")
-	public void addProblem(@RequestParam long testcasesId, @RequestParam String name,
+	public void addProblem( @RequestParam String name,
 			@RequestParam String description) {
-		Optional<TestCases> tc = testCasesRepository.findById(testcasesId);
-
 		Problem p = new Problem(name, description);
-		if (tc.isPresent()) {
-			TestCases testCases = tc.get();
-			p.getTestCases().add(testCases);
 			problemRepository.save(p);
 
+	}
+	
+	@PostMapping(path = "/Problem/addTestCase")
+	public void addTestCasesToProblem(@RequestParam long problemId, @RequestParam long testCaseId) {
+		Optional<TestCases> tc = testCasesRepository.findById(testCaseId);
+		Optional<Problem> p = problemRepository.findById(problemId);
+		
+		if(p.isPresent() && tc.isPresent()) {
+			Problem problem = p.get();
+			problem.getTestCases().add(tc.get());
+			problemRepository.save(problem);
 		}
-
 	}
 
 	@PostMapping(path = "/Problem/edit")

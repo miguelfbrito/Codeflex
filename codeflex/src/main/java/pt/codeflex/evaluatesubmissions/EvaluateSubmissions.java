@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayDeque;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
@@ -25,6 +26,7 @@ import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.xfer.FileSystemFile;
 import pt.codeflex.controllers.api.DatabaseController;
 import pt.codeflex.models.Submissions;
+import pt.codeflex.models.TestCases;
 import pt.codeflex.models.Users;
 import pt.codeflex.repositories.SubmissionsRepository;
 import pt.codeflex.repositories.UsersRepository;
@@ -33,65 +35,58 @@ import pt.codeflex.repositories.UsersRepository;
 @Scope("prototype")
 public class EvaluateSubmissions implements Runnable {
 
-		@Autowired
-	private DatabaseController databaseController;
-
 	@Autowired
-	private SubmissionsRepository submissionsRepository;
+	private UsersRepository usersRepository;
 
 	private Queue<Submissions> queue = new ArrayDeque<>();
-	private static final String SUBMISSIONS_FILE_DIR = System.getProperty("user.home") + File.separator + "Submissions";
-	private static final String SUBMISSIONS_SERVER_DIR = "/home/mbrito/Desktop/Submissions";
-	private static long uniqueId = 1000;
+	private final String PATH_SPRING = System.getProperty("user.home") + File.separator + "Submissions";
+	private final String PATH_SERVER = "/home/mbrito/Desktop/Submissions";
+	private long uniqueId;
 
 	public void getSubmissions(long id) {
-		Iterable<Users> u = databaseController.getAllUsers();
-		
-		for (Users us : u) {
-			if (us.getId() == id) {
-				List<Submissions> submissions = us.getSubmissions();
-				for (Submissions s : submissions) {
-					System.out.println("SUBMISSAO");
-					System.out.println(s.getCode());
-					System.out.println(s.getLanguage());
-					System.out.println(s.getDate());
-					System.out.println();
-					
-					queue.add(s);
-				}
-				System.out.println("QUEUE");
-				while (!queue.isEmpty()) {
-					Submissions s = queue.poll();
-					System.out.println(s.getLanguage());
-					System.out.println(s.getCode());
-				}
+		Optional<Users> u = usersRepository.findById(id);
+
+		if (u.isPresent()) {
+			connect();
+			Users us = u.get();
+			List<Submissions> submissions = us.getSubmissions();
+
+			for (Submissions s : submissions) {
+				queue.add(s);
 			}
+
+			System.out.println("QUEUE");
+			while (!queue.isEmpty()) {
+				Submissions s = queue.poll();
+				compileSubmission(s);
+			}
+
 		}
 
 	}
 
-	public static SSHClient ssh = null;
+	public SSHClient ssh = null;
 
-	public static void connect() {
+	public void connect() {
 		ssh = new SSHClient();
 		ssh.addHostKeyVerifier("33:02:cb:3b:13:b1:bd:fa:66:ff:29:96:ea:ff:dc:78");
 		try {
-			ssh.connect("192.168.1.55");
+			ssh.loadKnownHosts();
+			ssh.connect("10.214.104.233");
 			ssh.authPassword("mbrito", "gomas");
 			Session session = ssh.startSession();
 			Command cmd = session.exec("ls");
 			System.out.println(IOUtils.readFully(cmd.getInputStream()).toString());
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println("ERROR CONNETING");
+			System.out.println("Error connecting!");
 			e.printStackTrace();
 		}
 
 	}
 
-	public void compileSubmission(String language, String code, String input, String output) {
-		uniqueId++;
+	public void compileSubmission(Submissions submission) {
+		uniqueId = submission.getId();
 		Session session = null;
 		try {
 			session = ssh.startSession();
@@ -101,26 +96,26 @@ public class EvaluateSubmissions implements Runnable {
 
 		String fileName = "Solution";
 		String suffix = "";
-		String compileError = "error_" + uniqueId + ".txt";
-		String compileOutput = "output_" + uniqueId + ".txt";
-		String command = "cd Desktop/Submissions/" + uniqueId + "_" + language + " && ";
+		String compileError = "compiler_error_" + uniqueId + ".txt";
+		String command = "cd Desktop/Submissions/" + uniqueId + "_" + submission.getLanguage() + " && ";
 		// TODO : add memory limit
 
-		switch (language) {
+		switch (submission.getLanguage()) {
 		case "JAVA":
 			command += "javac " + fileName + ".java 2> " + compileError; // && disown
 			suffix = ".java";
 			break;
 		case "C++11":
-			command += "g++ -std=c++11 -o " + fileName + "_exec_" + uniqueId + ".cpp " + fileName + " 2> "
+			command += "g++ -std=c++11 -o " + fileName + "_exec_" + uniqueId + " " + fileName + ".cpp 2> "
 					+ compileError;
 			suffix = ".cpp";
 			break;
-		case "PYTHON":
-			command += "cat " + input + " | timeout 10 python " + fileName + ".py 2> " + compileError + " > "
-					+ compileOutput + "";
-			suffix = ".py";
-			break;
+		// case "PYTHON":
+		// command += "cat " + input + " | timeout 10 python " + fileName + ".py 2> " +
+		// compileError + " > "
+		// + compileOutput + "";
+		// suffix = ".py";
+		// break;
 		case "C#":
 			command += "mcs -out:" + fileName + "_exec_" + uniqueId + " " + fileName + ".cs 2> " + compileError;
 			suffix = ".cs";
@@ -130,54 +125,46 @@ public class EvaluateSubmissions implements Runnable {
 			break;
 		}
 
-		// Create file from the code submitted
-		createFile(code, "Solution");
-
-		// Create file from the input submitted
-		createFile(input, "input.txt");
-
 		Command cmd;
 		try {
-			cmd = session.exec("mkdir Desktop/Submissions/" + uniqueId + "_" + language);
+			cmd = session.exec("mkdir Desktop/Submissions/" + uniqueId + "_" + submission.getLanguage());
 			cmd.close();
-			session.close();
+
 		} catch (ConnectionException | TransportException e1) {
 			e1.printStackTrace();
 		}
 
-		// Send compilation file to the server
-		scp(SUBMISSIONS_FILE_DIR + "/" + fileName,
-				SUBMISSIONS_SERVER_DIR + "/" + uniqueId + "_" + language + "/Solution" + suffix);
-
-		// Send input file to the server
+		// Create and send the code to the server
+		createFile(new String(Base64.getDecoder().decode(submission.getCode())), "Solution");
+		scp(PATH_SPRING + "/" + fileName,
+				PATH_SERVER + "/" + uniqueId + "_" + submission.getLanguage() + "/Solution" + suffix);
 
 		try {
 			session = ssh.startSession();
 			System.out.println("COMANDO DE EXEC: " + command);
 			cmd = session.exec(command);
-			// System.out.println(IOUtils.readFully(cmd.getInputStream()).toString());
 
-			session.close();
 			cmd.close();
-			for (int i = 0; i < 25; i++) {
-				System.out.println("Running tests after compiling!");
-				runSubmission(language, fileName, String.valueOf(uniqueId), input, i);
-			}
 
-		} catch (ConnectionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransportException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
+			List<TestCases> testCases = submission.getProblem().getTestCases();
+			for (TestCases tc : testCases) {
+
+				String tcFileName = String.valueOf(tc.getId());
+				createFile(tc.getInput(), tcFileName);
+				scp(PATH_SPRING + "/" + tcFileName,
+						PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage() + "/");
+
+				System.out.println("Running tests case " + tc.getId() + " for " + submission.getLanguage());
+				runSubmission(submission.getLanguage(), fileName, tcFileName, submission.getId(), tc.getId());
+			}
+		} catch (ConnectionException | TransportException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
 
-	public void runSubmission(String language, String fileName, String id, String input, int count) {
+	public void runSubmission(String language, String fileName, String input, long submissionId, long testCaseId) {
 		Session session = null;
 		try {
 			session = ssh.startSession();
@@ -185,28 +172,27 @@ public class EvaluateSubmissions implements Runnable {
 			e.printStackTrace();
 		}
 
-		String command = "cd " + SUBMISSIONS_SERVER_DIR + "/" + id + "_" + language + " && ";
-		Command cmd;
-
-		String compileError = "error_" + uniqueId + ".txt";
-		String compileOutput = "output_" + uniqueId + "_" + count + ".txt";
+		String command = "cd " + PATH_SERVER + "/" + submissionId + "_" + language + " && ";
+		String runError = "error_" + submissionId + ".txt";
+		String runOutput = "output_" + submissionId + "_" + testCaseId + ".txt";
 
 		// TODO : add memory limit
 		switch (language) {
 		case "JAVA":
-			command += "cat " + input + " | timeout 3s java " + fileName + " > " + compileOutput + ""; // && disown
+			command += "cat " + input + " | timeout 3s java " + fileName + " 2> " + runError + " > " + runOutput + ""; // &&
+																														// disown
 			break;
 		case "C++11":
-			command += "cat " + input + " | timeout 2 ./" + fileName + "_exec_" + uniqueId + " 2> " + compileError
-					+ " > " + compileOutput + "";
+			command += "cat " + input + " | timeout 2 ./" + fileName + "_exec_" + uniqueId + " 2> " + runError + " > "
+					+ runOutput + "";
 			break;
 		case "PYTHON":
-			command += "cat " + input + " | timeout 10 python " + fileName + ".py 2> " + compileError + " > "
-					+ compileOutput + "";
+			command += "cat " + input + " | timeout 10 python " + fileName + ".py 2> " + runError + " > " + runOutput
+					+ "";
 			break;
 		case "C#":
-			command += "cat " + input + " | mono " + fileName + "_exec_" + uniqueId + " 2> " + compileError + " > "
-					+ compileOutput + "";
+			command += "cat " + input + " | ./" + fileName + "_exec_" + uniqueId + " 2> " + runError + " > " + runOutput
+					+ "";
 			break;
 		default:
 			System.out.println("Language not found");
@@ -214,8 +200,8 @@ public class EvaluateSubmissions implements Runnable {
 		}
 
 		try {
-			cmd = session.exec(command);
-			session.close();
+			Command cmd = session.exec(command);
+
 			cmd.close();
 		} catch (ConnectionException | TransportException e) {
 			e.printStackTrace();
@@ -223,7 +209,7 @@ public class EvaluateSubmissions implements Runnable {
 
 	}
 
-	public static void getFinishedJobs() { // TODO : review
+	public void getFinishedJobs() { // TODO : review
 		Session session = null;
 		String output = "";
 		try {
@@ -249,11 +235,11 @@ public class EvaluateSubmissions implements Runnable {
 
 	}
 
-	public static void createFile(String code, String fileName) {
+	public void createFile(String text, String fileName) {
 		PrintWriter writer = null;
 		try {
-			writer = new PrintWriter(SUBMISSIONS_FILE_DIR + "/" + fileName, "UTF-8");
-			writer.print(code);
+			writer = new PrintWriter(PATH_SPRING + "/" + fileName, "UTF-8");
+			writer.print(text);
 			writer.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -262,7 +248,7 @@ public class EvaluateSubmissions implements Runnable {
 		}
 	}
 
-	public static void scp(String src, String dest) {
+	public void scp(String src, String dest) {
 
 		try {
 			System.out.println("SRC: " + src);
@@ -276,20 +262,11 @@ public class EvaluateSubmissions implements Runnable {
 
 	@Override
 	public void run() {
-		System.out.println("THREAD!!!!! ");
-		compileSubmission("JAVA", "import java.io.*;\r\n" + "import java.util.*;\r\n" + "import java.text.*;\r\n"
-				+ "import java.math.*;\r\n" + "import java.util.regex.*;\r\n" + "\r\n" + "public class Solution {\r\n"
-				+ "\r\n" + "	public static void main(String[] args) {\r\n"
-				+ "		Scanner in = new Scanner(System.in);\r\n" + "		int n = in.nextInt();\r\n"
-				+ "		int scores[] = new int[n];\r\n" + "		for (int i = 0; i < n; i++) {\r\n"
-				+ "			scores[i] = in.nextInt();\r\n" + "		}\r\n" + "		minimumDistances(n, scores);\r\n"
-				+ "	}\r\n" + "\r\n" + "	static void minimumDistances(int n, int array[]) {\r\n"
-				+ "		int min = Integer.MAX_VALUE;\r\n" + "		for (int i = 0; i < n-1; i++) {\r\n"
-				+ "			for(int j = i+1; j<n; j++) {\r\n" + "				if(array[i] == array[j]){\r\n"
-				+ "					min = Math.min(min,  Math.abs(i-j));\r\n" + "				}\r\n"
-				+ "			}\r\n" + "		}\r\n" + "		if(min==Integer.MAX_VALUE) {\r\n"
-				+ "			min = -1;\r\n" + "		}\r\n" + "		System.out.println(min);\r\n" + "	}\r\n" + "\r\n"
-				+ "\r\n" + "}", "../input.txt", "nothing");
+		System.out.println("Thread starting!");
+
+		System.out.println("Connection established!");
+		getSubmissions(1);
+
 	}
 
 }
