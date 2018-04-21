@@ -13,23 +13,39 @@
 </style>
 
 
-	
 </head>
 <body>
-<div id="editor-container" style="width:100px; height:100px">
-	<div id="editor" style="width:700px; height:100px; position:relative">public static void main(String argrs[]){
-	System.out.println("Hello there!");
-}
+	<!--  script src="../../js/ace/main-ace.js"></script> -->
+	<script src="../../js/jquery-3.3.1.js"></script>
+	<script src="../../js/ace/src-min-noconflict/ace.js"
+		type="text/javascript" charset="utf-8"></script>
+	<script>function submitCode(){
+		$.post(
+	            "http://localhost:8080/submission",
+	            {
+	            	language: 'JAVA',
+            		code: btoa(ace.edit('editor').getValue())
+	            }
+	        );	
+	}</script>
+
+	<div id="editor-container" >
+		<div id="editor"
+			style="width: 700px; height: 600px; position: relative">public
+			static void main(String args[]){ Syout.println("Hello there!"); }</div>
+		<script>
+			var editor = ace.edit("editor");
+			editor.setTheme("ace/theme-tomorrow");
+			editor.session.setMode("ace/mode/java");
+		</script>
+
+
+		$('.ace_text-layer').innerText
+
+
 	</div>
-	<script src="../../js/ace/src-min-noconflict/ace.js" type="text/javascript"
-		charset="utf-8"></script>
-	<script>
-		var editor = ace.edit("editor");
-		editor.setTheme("ace/theme-tomorrow");
-		editor.session.setMode("ace/mode/java");
-	</script>
-	<script src="../../js/ace/main-ace.js"></script>	
-</div>
+
+	</div>
 	<div id="btn">
 		<button type="submit" onClick="submitCode()">Submit</button>
 	</div>

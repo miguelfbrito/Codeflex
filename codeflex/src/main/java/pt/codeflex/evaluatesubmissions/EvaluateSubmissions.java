@@ -42,6 +42,9 @@ public class EvaluateSubmissions implements Runnable {
 
 	@Autowired
 	private ScoringRepository scoringRepository;
+	
+	@Autowired
+	private SubmissionsRepository submissionsRepository;
 
 	private String host;
 
@@ -64,29 +67,43 @@ public class EvaluateSubmissions implements Runnable {
 
 		if (u.isPresent()) {
 			connect(getHost());
-
+			System.out.println("After connecting");
 			Users us = u.get();
-			List<Submissions> submissions = us.getSubmissions();
-
-			for (Submissions s : submissions) {
+			List<Submissions> submissions = submissionsRepository.findSubmissionsToAvaliate();
+					
+			for(Submissions s: submissions) {
+				System.out.println(s.getId());
+				System.out.println(s.getLanguage());
+				System.out.println(s.getCode());
 				queue.add(s);
 			}
+			
+			
+//			for (Submissions s : submissions) {
+//				Iterable<Scoring> sc = scoringRepository.findAll();
+//				while (sc.iterator().hasNext()) {
+//					if (sc.iterator().next().getSubmission().getId() == s.getId()) {
+//						break;
+//					}
+//				}
+//				queue.add(s);
+//			}
 
-			// TESTING PURPOSE
-			if (count++ < 2) {
-				try {
+			// TESTING PURPOSE TODO : remove
+			try {
+				if (count++ < 2) {
 					Session session = ssh.startSession();
 					Command cmd = session.exec("cd " + PATH_SERVER + " && rm -rf *");
 					session.close();
-				} catch (ConnectionException | TransportException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
+			} catch (ConnectionException | TransportException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-				while (!queue.isEmpty()) {
-					Submissions s = queue.poll();
-					compileSubmission(s);
-				}
+			while (!queue.isEmpty()) {
+				Submissions s = queue.poll();
+				compileSubmission(s);
 			}
 
 		}
@@ -104,10 +121,10 @@ public class EvaluateSubmissions implements Runnable {
 			ssh.authPassword("mbrito", "gomas");
 			Session session = ssh.startSession();
 			Command cmd = session.exec("ls");
-			//System.out.println(IOUtils.readFully(cmd.getInputStream()).toString());
+			// System.out.println(IOUtils.readFully(cmd.getInputStream()).toString());
 
 		} catch (IOException e) {
-			//System.out.println("Error connecting!");
+			// System.out.println("Error connecting!");
 			e.printStackTrace();
 		}
 
@@ -145,7 +162,7 @@ public class EvaluateSubmissions implements Runnable {
 			suffix = ".cs";
 			break;
 		default:
-			//System.out.println("Language not found");
+			// System.out.println("Language not found");
 			break;
 		}
 
@@ -165,7 +182,7 @@ public class EvaluateSubmissions implements Runnable {
 
 		try {
 			session = ssh.startSession();
-			//System.out.println("COMANDO DE EXEC: " + command);
+			// System.out.println("COMANDO DE EXEC: " + command);
 			cmd = session.exec(command);
 
 			cmd.close();
@@ -178,7 +195,8 @@ public class EvaluateSubmissions implements Runnable {
 				scp(PATH_SPRING + "/" + tcFileName,
 						PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage() + "/");
 
-				//System.out.println("Running tests case " + tc.getId() + " for " + submission.getLanguage());
+				// System.out.println("Running tests case " + tc.getId() + " for " +
+				// submission.getLanguage());
 				runSubmission(submission, tc, fileName);
 			}
 		} catch (ConnectionException | TransportException e) {
@@ -219,7 +237,7 @@ public class EvaluateSubmissions implements Runnable {
 					+ runError + " > " + runOutput + "";
 			break;
 		default:
-			//System.out.println("Language not found");
+			// System.out.println("Language not found");
 			break;
 		}
 
@@ -262,8 +280,8 @@ public class EvaluateSubmissions implements Runnable {
 	public void scp(String src, String dest) {
 
 		try {
-			//System.out.println("SRC: " + src);
-			//System.out.println("DEST: " + dest);
+			// System.out.println("SRC: " + src);
+			// System.out.println("DEST: " + dest);
 			ssh.newSCPFileTransfer().upload(new FileSystemFile(src), dest);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -273,9 +291,8 @@ public class EvaluateSubmissions implements Runnable {
 
 	@Override
 	public void run() {
-		//System.out.println("Thread starting!");
-
-		//System.out.println("Connection established!");
+		System.out.println("Thread starting!");
+		System.out.println("Connection established!");
 		getSubmissions(1);
 
 	}
