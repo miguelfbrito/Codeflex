@@ -1,0 +1,12 @@
+.navbar {
+    border-radius: 0px !important;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+.navbar-header {
+    margin-left: 7% !important;
+}
