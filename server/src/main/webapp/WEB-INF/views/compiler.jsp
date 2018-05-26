@@ -19,17 +19,23 @@
 	<script src="../../js/jquery-3.3.1.js"></script>
 	<script src="../../js/ace/src-min-noconflict/ace.js"
 		type="text/javascript" charset="utf-8"></script>
-	<script>function submitCode(){
-		$.post(
-	            "http://localhost:8080/submission",
-	            {
-	            	language: 'JAVA',
-            		code: btoa(ace.edit('editor').getValue())
-	            }
-	        );	
-	}</script>
+	<select id="language">
+		<option value="JAVA">Java</option>
+		<option value="C#">C#</option>
+		<option value="C++11">C++11</option>
+		<option value="PYTHON">Python</option>
+	</select>
 
-	<div id="editor-container" >
+	<script>
+		function submitCode() {
+			$.post("http://localhost:8080/submission", {
+				language : $('#language').val(),
+				code : btoa(ace.edit('editor').getValue())
+			});
+		}
+	</script>
+
+	<div id="editor-container">
 		<div id="editor"
 			style="width: 700px; height: 600px; position: relative">public
 			static void main(String args[]){ Syout.println("Hello there!"); }</div>
@@ -38,11 +44,6 @@
 			editor.setTheme("ace/theme-tomorrow");
 			editor.session.setMode("ace/mode/java");
 		</script>
-
-
-		$('.ace_text-layer').innerText
-
-
 	</div>
 
 	</div>
