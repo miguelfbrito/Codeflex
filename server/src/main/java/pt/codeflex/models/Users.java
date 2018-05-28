@@ -1,6 +1,10 @@
 package pt.codeflex.models;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -33,7 +37,6 @@ public class Users {
 	@Column(unique = true)
 	private String email;
 
-	@JsonIgnore
 	private String password;
 
 	@OneToMany(fetch = FetchType.EAGER)
@@ -62,7 +65,19 @@ public class Users {
 	public Users(String username, String email, String password) {
 		this.username = username;
 		this.email = email;
-		this.password = password;
+		
+		MessageDigest digest = null;
+
+		try {
+			digest = MessageDigest.getInstance("SHA-256");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+
+		byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+		String encoded = Base64.getEncoder().encodeToString(hash);
+
+		this.password = encoded;
 	}
 
 	public long getId() {
@@ -123,6 +138,16 @@ public class Users {
 
 	public void setRating(List<Rating> rating) {
 		this.rating = rating;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Users [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password
+				+ ", submissions=" + submissions + ", member=" + member + ", userRoles=" + userRoles + ", rating="
+				+ rating + "]";
 	}
 
 

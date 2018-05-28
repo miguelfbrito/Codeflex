@@ -1,0 +1,15 @@
+.problem-container h2{
+    margin-bottom: 25px;
+}
+
+.problem-container p{
+    font-size: 12pt;
+    text-align: justify;
+    color: black;
+    line-height: 20pt;
+}
+
+.ace-editor {
+    margin-top: 35px;
+    width: 75vw;
+}

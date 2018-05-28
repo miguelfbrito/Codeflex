@@ -1,0 +1,61 @@
+* {
+    transition: all 250ms ease-in-out;
+    -moz-transition: all 250ms ease-in-out;
+    -webkit-transition: all 250ms ease-in-out;
+    -o-transition: all 250ms ease-in-out;
+}
+
+.login-container {
+    text-align: center;
+    background-color: antiquewhite;
+    width: 300px;
+    padding: 25px 0;
+    box-shadow: 7px 7px 10px -4px #aaa;
+}
+
+.login-container p {
+    font-size: 14pt;
+    margin: 20px 0 0 0;
+}
+
+.login-container input {
+    padding: 5px 15px;
+}
+
+#img-user {
+    width: 125px;
+    filter: drop-shadow(0px 0px 3px #222222);
+}
+
+
+
+.username,
+.password, .email, .passwordConfirmation {
+    border: 0.5px solid #aaa;
+    box-shadow: 0px 10px 10px -8px #333;
+    width: 250px;
+}
+
+.username:focus,
+.password:focus,
+.email:focus,
+.passwordConfirmation:focus {
+    border: 0.5px solid #aaa;
+    box-shadow: 0px 10px 10px -5px #333;
+}
+
+.buttons-container {
+    margin-top: 25px;
+}
+
+.btn {
+    width: 80px;
+    box-shadow: 0px 9px 10px -8px #333;
+}
+
+.btn:nth-child(1){
+    margin-right: 10px;
+}
+.btn:hover {
+    box-shadow: 0px 10px 10px -5px #333;
+}

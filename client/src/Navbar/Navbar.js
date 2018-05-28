@@ -13,16 +13,16 @@ class Navbar extends Component {
 
                     <ul className="nav navbar-nav navbar-right nav-menus">
                         <li className="active"><a href="#">Home</a></li>
-                        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Page 1 <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
+                        <li className="dropdown"><a className="dropdown-toggle" data-toggle="dropdown" href="#">Page 1 <span className="caret"></span></a>
+                            <ul className="dropdown-menu">
                                 <li><a href="#">Page 1-1</a></li>
                                 <li><a href="#">Page 1-2</a></li>
                                 <li><a href="#">Page 1-3</a></li>
                             </ul>
                         </li>
                         <li><Link to="/problem">Problems</Link></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                        <li id="item-signup"><Link to="/signup"><span className="glyphicon glyphicon-user"></span>Sign Up</Link></li>
+                        <li id="item-login" ><Link to="/login"><span className="glyphicon glyphicon-log-in"></span>Login</Link></li>
                     </ul>
                 </div>
             </nav>

@@ -10,6 +10,8 @@ import pt.codeflex.custom.CustomUsersRepository;
 //@Transactional
 @Repository
 public interface UsersRepository extends CrudRepository<Users, Long>, CustomUsersRepository{
-	List<Users> findByEmail(String email);
+	List<Users> findAllByEmail(String email);
+	Users findByUsername(String username);
+	Users findByEmail(String email);
 
 }

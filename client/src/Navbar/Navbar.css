@@ -7,6 +7,15 @@
     margin-left: -50vw;
     margin-right: -50vw;
 }
+
 .navbar-header {
-    margin-left: 7% !important;
+    margin-left: 10% !important;
+}
+
+#item-login {
+    margin-right: 100px;
+}
+
+#item-login span, #item-signup span {
+    margin-right: 5px;
 }
