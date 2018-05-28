@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
 import pt.codeflex.controllers.api.DatabaseController;
-import pt.codeflex.models.Submissions;
-import pt.codeflex.models.TestCases;
-import pt.codeflex.models.Users;
+import pt.codeflex.databasemodels.Submissions;
+import pt.codeflex.databasemodels.TestCases;
+import pt.codeflex.databasemodels.Users;
 
 @Controller
 public class TestController {

@@ -6,7 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import pt.codeflex.models.Users;
+import pt.codeflex.databasemodels.Users;
 
 public class CustomUsersRepositoryImpl implements CustomUsersRepository {
 

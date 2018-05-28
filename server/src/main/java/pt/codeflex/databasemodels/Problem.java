@@ -1,4 +1,4 @@
-package pt.codeflex.models;
+package pt.codeflex.databasemodels;
 
 import java.util.List;
 import java.util.ArrayList;

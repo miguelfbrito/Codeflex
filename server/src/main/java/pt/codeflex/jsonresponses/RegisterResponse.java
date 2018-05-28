@@ -1,6 +1,6 @@
 package pt.codeflex.jsonresponses;
 
-import pt.codeflex.models.Users;
+import pt.codeflex.databasemodels.Users;
 
 public class RegisterResponse {
 

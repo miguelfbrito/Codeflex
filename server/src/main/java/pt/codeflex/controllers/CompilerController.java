@@ -1,9 +1,9 @@
 package pt.codeflex.controllers;
 
+import pt.codeflex.databasemodels.Problem;
+import pt.codeflex.databasemodels.Submissions;
+import pt.codeflex.databasemodels.Users;
 import pt.codeflex.evaluatesubmissions.*;
-import pt.codeflex.models.Problem;
-import pt.codeflex.models.Submissions;
-import pt.codeflex.models.Users;
 import pt.codeflex.repositories.ProblemRepository;
 import pt.codeflex.repositories.SubmissionsRepository;
 import pt.codeflex.repositories.UsersRepository;

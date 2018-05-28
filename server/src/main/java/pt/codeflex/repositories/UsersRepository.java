@@ -4,8 +4,8 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import pt.codeflex.models.Users;
 import pt.codeflex.custom.CustomUsersRepository;
+import pt.codeflex.databasemodels.Users;
 
 //@Transactional
 @Repository

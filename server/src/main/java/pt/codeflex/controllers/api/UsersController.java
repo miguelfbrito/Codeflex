@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import pt.codeflex.databasemodels.Users;
+import pt.codeflex.jsonresponses.GenericResponse;
 import pt.codeflex.jsonresponses.RegisterResponse;
-import pt.codeflex.models.Users;
+import pt.codeflex.models.UserLessInfo;
 import pt.codeflex.repositories.UsersRepository;
 
 @RestController
@@ -29,29 +31,30 @@ public class UsersController {
 	private UsersRepository usersRepository;
 
 	@PostMapping("/login")
-	public Users login(@RequestBody Users user) {
+	public GenericResponse login(@RequestBody Users user) {
 		Users currentUser = usersRepository.findByUsername(user.getUsername());
-		System.out.println(user.toString());
 
-		MessageDigest digest = null;
+		if (currentUser != null) {
+			MessageDigest digest = null;
 
-		try {
-			digest = MessageDigest.getInstance("SHA-256");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-		byte[] hash = digest.digest(user.getPassword().getBytes(StandardCharsets.UTF_8));
-		String encoded = Base64.getEncoder().encodeToString(hash);
+			try {
+				digest = MessageDigest.getInstance("SHA-256");
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			}
+			byte[] hash = digest.digest(user.getPassword().getBytes(StandardCharsets.UTF_8));
+			String encoded = Base64.getEncoder().encodeToString(hash);
 
-		if (currentUser.getPassword().equals(user.getPassword())) {
-			// Workaround to send a response with less data, TODO : check Json views,
-			// desiarizable
-			Users newUser = new Users(currentUser.getUsername(), currentUser.getEmail(), currentUser.getPassword());
-			newUser.setId(currentUser.getId());
-			return newUser;
-		}
+			if (currentUser.getPassword().equals(encoded)) {
 
-		return new Users();
+				UserLessInfo finalUser = new UserLessInfo();
+				finalUser.convert(user);
+				
+				return new GenericResponse(finalUser, "Logged in");
+			}
+		} 
+		
+		return new GenericResponse(null, "Invalid username or password");
 	}
 
 	@PostMapping("/register")
@@ -62,7 +65,7 @@ public class UsersController {
 		Users findByEmail = usersRepository.findByEmail(user.getEmail());
 
 		if (findByUsername != null) {
-			registerResponse = new RegisterResponse( 0, "Username already in use");
+			registerResponse = new RegisterResponse(0, "Username already in use");
 
 			if (findByEmail != null) {
 				registerResponse = new RegisterResponse(2, "Username and email in use");
@@ -72,13 +75,13 @@ public class UsersController {
 				registerResponse = new RegisterResponse(1, "Email in use");
 			}
 		}
-		
-		if(registerResponse == null) {
+
+		if (registerResponse == null) {
 			Users newUser = new Users(user.getUsername(), user.getEmail(), user.getPassword());
 			newUser = usersRepository.save(newUser);
 			registerResponse = new RegisterResponse(3, "Account created");
 		}
-		
+
 		return registerResponse;
 	}
 }

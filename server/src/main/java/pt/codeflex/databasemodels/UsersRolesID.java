@@ -1,4 +1,4 @@
-package pt.codeflex.models;
+package pt.codeflex.databasemodels;
 
 import java.io.Serializable;
 import java.util.Objects;
