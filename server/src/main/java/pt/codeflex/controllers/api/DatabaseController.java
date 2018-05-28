@@ -3,6 +3,7 @@ package pt.codeflex.controllers.api;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.mockito.internal.creation.bytebuddy.SubclassByteBuddyMockMaker;
@@ -14,11 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import pt.codeflex.databasemodels.*;
 import pt.codeflex.repositories.*;
 
-@Controller
+@RestController
 @RequestMapping(path = "/api/database")
 public class DatabaseController {
 
@@ -157,8 +159,8 @@ public class DatabaseController {
 	// PRACTISECATEGORY
 
 	@GetMapping(path = "/PractiseCategory/view")
-	public @ResponseBody Iterable<PractiseCategory> getAllPractiseCategory() {
-		return practiseCategoryRepository.findAll();
+	public @ResponseBody List<PractiseCategory> getAllPractiseCategory() {
+		return (List<PractiseCategory>) practiseCategoryRepository.findAll();
 	}
 
 	@PostMapping(path = "/PractiseCategory/add")

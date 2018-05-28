@@ -1,4 +1,8 @@
-* {
+h2 {
+    text-align: center;
+}
+
+.login-container input, p {
     transition: all 250ms ease-in-out;
     -moz-transition: all 250ms ease-in-out;
     -webkit-transition: all 250ms ease-in-out;
@@ -7,10 +11,10 @@
 
 .login-container {
     text-align: center;
-    background-color: antiquewhite;
-    width: 300px;
+    background-color: rgb(243, 243, 255); /*antiquewhite*/
+    width: 325px;
     padding: 25px 0;
-    box-shadow: 7px 7px 10px -4px #aaa;
+    box-shadow: 3px 3px 10px 3px #aaa;
 }
 
 .login-container p {
@@ -20,14 +24,14 @@
 
 .login-container input {
     padding: 5px 15px;
+    margin: 5px 5px;
 }
 
 #img-user {
     width: 125px;
+    margin-bottom: 10px;
     filter: drop-shadow(0px 0px 3px #222222);
 }
-
-
 
 .username,
 .password, .email, .passwordConfirmation {
@@ -45,17 +49,23 @@
 }
 
 .buttons-container {
-    margin-top: 25px;
+    margin-top: 10px;
 }
 
 .btn {
     width: 80px;
     box-shadow: 0px 9px 10px -8px #333;
+    border-radius: 0px ;
 }
 
 .btn:nth-child(1){
     margin-right: 10px;
 }
 .btn:hover {
+    transform: scale(1.05);
     box-shadow: 0px 10px 10px -5px #333;
+}
+
+.login-container {
+    margin: 40px auto auto auto;
 }

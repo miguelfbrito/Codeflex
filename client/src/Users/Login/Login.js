@@ -21,11 +21,11 @@ class Login extends Component {
     }
 
     handleChange(e) {
-        this.setState({ [e.target.className] : e.target.value });
+        this.setState({ [e.target.className]: e.target.value });
     }
 
     login() {
-        
+
         const data = { username: this.state.username, password: this.state.password };
 
         fetch(URL + ':8080/api/login', {
@@ -34,18 +34,25 @@ class Login extends Component {
             headers: new Headers({
                 'Content-Type': 'application/json'
             })
-        }).then(res => res.json)
+        }).then(res => res.json()).then(data => {
+            if (data.message === 'Logged in') {
+                localStorage.setItem('userData', JSON.stringify({ id: data.object.id, username: data.object.username, email: data.object.email }));
+                window.location.href = URL + ":3000/";
+            }
+
+            // TODO : notify the user about invalid data
+        })
 
     }
 
-    register(){
+    register() {
 
-        if(this.state.passwordConfirmation !== this.state.password){
+        if (this.state.passwordConfirmation !== this.state.password) {
             console.log('Passwords do not match'); // TODO : add notification 
             return;
         }
-        
-        const data = { username: this.state.username, email : this.state.email, password: this.state.password };
+
+        const data = { username: this.state.username, email: this.state.email, password: this.state.password };
 
         fetch(URL + ':8080/api/register', {
             method: 'POST',
@@ -53,12 +60,14 @@ class Login extends Component {
             headers: new Headers({
                 'Content-Type': 'application/json'
             })
-        }).then(res => res.json).then(data => {
+        }).then(res => res.json()).then(data => {
             console.log(data);
+            if (data.object != null) {
+                window.location.href = URL + ":3000/";
+                const userData = { id: data.object.id, username: data.object.username, email: data.object.email };
+                localStorage.setItem('userData', JSON.stringify(userData));
+            }
         })
-
-        
-
 
     }
 
@@ -82,19 +91,15 @@ class Login extends Component {
     renderLoginOrSignup() {
         if (this.state.isLoggingIn) {
             return (<div>
-                <p>Password</p>
-                <input className="password" type="password" onChange={this.handleChange} placeholder="Password" required /> <br />
+                <input className="password" type="password" onChange={this.handleChange} placeholder="Password" required />
             </div>);
         } else if (this.state.isSigninUp) {
             return (<div>
-                <p>Email</p>
-                <input key="1" className="email" type="email" onChange={this.handleChange} placeholder="Email" required /> <br />
+                <input key="1" className="email" type="email" onChange={this.handleChange} placeholder="Email" required />
 
-                <p>Password</p>
-                <input key="2" className="password" type="password" onChange={this.handleChange} placeholder="Password" required /> <br />
+                <input key="2" className="password" type="password" onChange={this.handleChange} placeholder="Password" required />
 
-                <p>Confirm Password</p>
-                <input key="3" className="passwordConfirmation" type="password" onChange={this.handleChange} placeholder="Confirm password" required /> <br />
+                <input key="3" className="passwordConfirmation" type="password" onChange={this.handleChange} placeholder="Confirm password" required />
             </div>);
         }
     }
@@ -106,12 +111,14 @@ class Login extends Component {
         return (
 
             <div className="row ">
-                <div className="col-md-1"></div>
-                <div className="col-md-10">
+                <div className="col-md-12 cont">
+                    <h2>Login or create your Codeflex account today!</h2>
                     <form className="login-container">
                         <img id="img-user" src={require('../../images/login_icon.png')} alt="User flat image" />
-                        <p>Username</p>
-                        <input className="username" type="text" onChange={this.handleChange} placeholder="Username" required />
+                        <div>
+                            <h4>Account Details</h4>
+                            <input key="0" className="username" type="text" onChange={this.handleChange} placeholder="Username" required />
+                        </div>
 
                         {loginOrSignup}
 
@@ -122,7 +129,6 @@ class Login extends Component {
                     </form>
                 </div>
 
-                <div className="col-md-1"></div>
             </div>
 
 

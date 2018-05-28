@@ -3,7 +3,19 @@ package pt.codeflex.jsonresponses;
 public class GenericResponse {
 
 	private Object object;
+	private int code;
 	private String message;
+
+	public GenericResponse(int code, String message) {
+		this.code = code;
+		this.message = message;
+	}
+
+	public GenericResponse(int code, Object object, String message) {
+		this.code = code;
+		this.message = message;
+		this.object = object;
+	}
 
 	public GenericResponse(Object object, String message) {
 		super();
@@ -25,6 +37,14 @@ public class GenericResponse {
 
 	public void setObject(Object object) {
 		this.object = object;
+	}
+
+	public int getCode() {
+		return code;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
 	}
 
 }

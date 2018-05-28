@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import pt.codeflex.databasemodels.Users;
 import pt.codeflex.jsonresponses.GenericResponse;
-import pt.codeflex.jsonresponses.RegisterResponse;
+import pt.codeflex.jsonresponses.GenericResponse;
 import pt.codeflex.models.UserLessInfo;
 import pt.codeflex.repositories.UsersRepository;
 
@@ -48,7 +48,7 @@ public class UsersController {
 			if (currentUser.getPassword().equals(encoded)) {
 
 				UserLessInfo finalUser = new UserLessInfo();
-				finalUser.convert(user);
+				finalUser.convert(currentUser);
 				
 				return new GenericResponse(finalUser, "Logged in");
 			}
@@ -58,30 +58,34 @@ public class UsersController {
 	}
 
 	@PostMapping("/register")
-	public RegisterResponse register(@RequestBody Users user) {
-		RegisterResponse registerResponse = null;
+	public GenericResponse register(@RequestBody Users user) {
+		GenericResponse genericResponse = null;
 
 		Users findByUsername = usersRepository.findByUsername(user.getUsername());
 		Users findByEmail = usersRepository.findByEmail(user.getEmail());
 
 		if (findByUsername != null) {
-			registerResponse = new RegisterResponse(0, "Username already in use");
+			genericResponse = new GenericResponse(0, "Username already in use");
 
 			if (findByEmail != null) {
-				registerResponse = new RegisterResponse(2, "Username and email in use");
+				genericResponse = new GenericResponse(2, "Username and email in use");
 			}
 		} else {
 			if (findByEmail != null) {
-				registerResponse = new RegisterResponse(1, "Email in use");
+				genericResponse = new GenericResponse(1, "Email in use");
 			}
 		}
 
-		if (registerResponse == null) {
+		if (genericResponse == null) {
 			Users newUser = new Users(user.getUsername(), user.getEmail(), user.getPassword());
-			newUser = usersRepository.save(newUser);
-			registerResponse = new RegisterResponse(3, "Account created");
+			usersRepository.save(newUser);
+			
+			UserLessInfo finalUser = new UserLessInfo();
+			finalUser.convert(newUser);
+			
+			genericResponse = new GenericResponse(3, finalUser, "Account created");
 		}
 
-		return registerResponse;
+		return genericResponse;
 	}
 }
