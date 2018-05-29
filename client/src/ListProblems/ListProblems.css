@@ -1,0 +1,52 @@
+.category-container {
+    padding-left: 30px;
+    height: 200px;
+    margin-right: 5%;
+    margin-bottom: 5%;
+    background-color: rgb(243, 247, 255);
+    box-shadow: 3px 5px 12px 0px #aaa;
+    transition: all 250ms ease-in-out;
+}
+
+.category-container:hover {
+    box-shadow: 3px 5px 15px -5px #aaa;
+}
+
+.category-container h2 {
+    text-align: left;
+}
+
+.button-container input {
+    margin-top: 50px;
+    border-radius: 0;
+    color: black;
+    background-color: rgb(201, 208, 253);
+    transition: all 250ms ease-in-out;
+}
+
+.button-container input:hover {
+    background-color: white;
+    color: black;
+}
+
+.button-container input:focus {
+    background-color: white;
+    color: black;
+}
+
+.button-container input:active {
+    background-color: white;
+    color: black;
+}
+
+.progress-bar {
+    width: 95%;
+    height: 9px;
+    background-color: rgb(201, 208, 253);
+    border: none;
+}
+
+.bar {
+    height: 9px;
+    background-color: rgb(18, 26, 78);
+}

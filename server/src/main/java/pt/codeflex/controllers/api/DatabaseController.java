@@ -2,13 +2,17 @@ package pt.codeflex.controllers.api;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.mockito.internal.creation.bytebuddy.SubclassByteBuddyMockMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,9 +28,10 @@ import pt.codeflex.models.ProblemDifficulty;
 import pt.codeflex.repositories.*;
 
 @RestController
+@CrossOrigin
 @RequestMapping(path = "/api/database")
 public class DatabaseController {
-	
+
 	@Autowired
 	private GroupsRepository groupsRepository;
 
@@ -68,9 +73,6 @@ public class DatabaseController {
 
 	@Autowired
 	private DifficultyRepository difficultyRepository;
-	
-	
-	
 
 	// DIFFICULTY
 
@@ -221,12 +223,31 @@ public class DatabaseController {
 	public @ResponseBody Optional<PractiseCategory> viewPractiseCategoryById(@PathVariable long id) {
 		return practiseCategoryRepository.findById(id);
 	}
-	
-	@GetMapping(path = "/PractiseCategory/listWithStats")
-	public ListCategoriesWithStats listCategoriesWithStats() {
+
+	@GetMapping(path = "/PractiseCategory/listWithStats/{id}")
+	public List<ListCategoriesWithStats> listCategoriesWithStats(@PathVariable long id) {
 		List<PractiseCategory> allCategories = getAllPractiseCategory();
+
+		Optional<Users> u = usersRepository.findById(id);
+
+		List<ListCategoriesWithStats> listOfCategoriesWithStats = null;
+		if (u.isPresent()) {
+			listOfCategoriesWithStats = practiseCategoryRepository.listCategoriesWithStatsByUserId(u.get().getId());
+		}
+
+		List<String> categoriesName = new ArrayList<>();
+
+		for(ListCategoriesWithStats l : listOfCategoriesWithStats) {
+			categoriesName.add(l.getName());
+		}
 		
-		return null;
+		for (PractiseCategory pc : allCategories) { 
+			if(!categoriesName.contains(pc.getName()) && pc.getProblem().size() > 0){
+				listOfCategoriesWithStats.add(new ListCategoriesWithStats(pc.getId(), pc.getName(), 0, pc.getProblem().size()));
+			}
+		}
+
+		return listOfCategoriesWithStats;
 	}
 
 	// PROBLEM
@@ -238,7 +259,7 @@ public class DatabaseController {
 
 	@PostMapping(path = "/Problem/add")
 	public Problem addProblem(@RequestBody ProblemDifficulty problemDifficulty) {
-		
+
 		Optional<Difficulty> f = difficultyRepository.findById(problemDifficulty.getDifficulty().getId());
 
 		if (f.isPresent()) {
@@ -246,7 +267,7 @@ public class DatabaseController {
 			p.setDifficulty(f.get());
 			return problemRepository.save(p);
 		}
-		
+
 		return null;
 	}
 

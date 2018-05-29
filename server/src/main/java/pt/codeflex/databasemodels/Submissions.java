@@ -18,13 +18,14 @@ public class Submissions {
 	private long id;
 	private Date date;
 	private String language;
+	private boolean isRight;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Problem problem;
+
 	public Problem getProblem() {
 		return problem;
 	}
-
 
 	public void setProblem(Problem problem) {
 		this.problem = problem;
@@ -33,19 +34,27 @@ public class Submissions {
 	@Column(length = 10000)
 	private String code;
 
-//	@OneToMany
-//	@JoinColumn(name = "submissions_id")
-//	private List<Scoring> scoring = new ArrayList<>();
+	// @OneToMany
+	// @JoinColumn(name = "submissions_id")
+	// private List<Scoring> scoring = new ArrayList<>();
 
-//	public List<Scoring> getScoring() {
-//		return scoring;
-//	}
-//
-//	public void setScoring(List<Scoring> scoring) {
-//		this.scoring = scoring;
-//	}
+	// public List<Scoring> getScoring() {
+	// return scoring;
+	// }
+	//
+	// public void setScoring(List<Scoring> scoring) {
+	// this.scoring = scoring;
+	// }
 
 	public Submissions() {
+	}
+
+	public Submissions(Problem problem, Date date, String language, String code, boolean isRight) {
+		this.problem = problem;
+		this.date = date;
+		this.language = language;
+		this.code = code;
+		this.isRight = isRight;
 	}
 
 	public Submissions(Problem problem, Date date, String language, String code) {
@@ -53,12 +62,14 @@ public class Submissions {
 		this.date = date;
 		this.language = language;
 		this.code = code;
+		this.isRight = false;
 	}
-	
+
 	public Submissions(Date date, String language, String code) {
 		this.date = date;
 		this.language = language;
 		this.code = code;
+		this.isRight = false;
 	}
 
 	public void setLanguage(String language) {
@@ -91,5 +102,13 @@ public class Submissions {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public boolean isRight() {
+		return isRight;
+	}
+
+	public void setRight(boolean isRight) {
+		this.isRight = isRight;
 	}
 }

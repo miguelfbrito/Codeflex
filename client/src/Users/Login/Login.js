@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Login.css'
 
-import { URL } from '../../commons/constants';
+import { URL } from '../../commons/Constants';
 
 class Login extends Component {
 

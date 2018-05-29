@@ -52,16 +52,16 @@ h2 {
     margin-top: 10px;
 }
 
-.btn {
+.buttons-container input {
     width: 80px;
     box-shadow: 0px 9px 10px -8px #333;
     border-radius: 0px ;
 }
 
-.btn:nth-child(1){
+.buttons-container input:nth-child(1){
     margin-right: 10px;
 }
-.btn:hover {
+.buttons-container input:hover {
     transform: scale(1.05);
     box-shadow: 0px 10px 10px -5px #333;
 }

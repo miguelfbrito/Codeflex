@@ -24,7 +24,8 @@ class Navbar extends Component {
 
     userLoggedIn() {
         return (<ul className="nav navbar-nav navbar-right nav-menus">
-            <li><Link to="/problem">Problems</Link></li>
+            <li><Link to="/practise">Practise</Link></li>
+            <li><Link to="/compete">Compete</Link></li>
             {/*  <li id="item-signup"><Link to="/signup"><span className="glyphicon glyphicon-user"></span>Sign Up</Link></li>`*/}
             <li id="item-login" onClick={this.logoutUser}><Link to="/"><span className="glyphicon glyphicon-log-in"></span>Logout</Link></li>
         </ul>);
