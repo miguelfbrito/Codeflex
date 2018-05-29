@@ -8,6 +8,8 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import pt.codeflex.databasecomposites.RatingID;
+
 @IdClass(RatingID.class)
 @Entity
 public class Rating implements Serializable {

@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 
+import pt.codeflex.databasecomposites.MembersID;
+
 @IdClass(MembersID.class)
 @Entity
 public class Members implements Serializable {

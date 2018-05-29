@@ -15,6 +15,8 @@ import javax.persistence.MapsId;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import pt.codeflex.databasecomposites.UsersRolesID;
+
 // https://vladmihalcea.com/the-best-way-to-map-a-composite-primary-key-with-jpa-and-hibernate/
 
 @IdClass(UsersRolesID.class)

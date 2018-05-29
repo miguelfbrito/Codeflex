@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 
+import pt.codeflex.databasecomposites.ScoringID;
+
 @IdClass(ScoringID.class)
 @Entity
 public class Scoring implements Serializable {

@@ -21,15 +21,15 @@ public class Groups {
 	@Column(length = 50)
 	private String name;
 	
-	private String accessCode;
+	private String password;
 	
 	@OneToMany
 	@JoinColumn(name = "groups_id")
 	private List<Members> member = new ArrayList<>();
 	
-	public Groups(String name, String accessCode) {
+	public Groups(String name, String password) {
 		this.name = name;
-		this.accessCode = accessCode;
+		this.password = password;
 	}
 
 	public long getId() {
@@ -48,12 +48,12 @@ public class Groups {
 		this.name = name;
 	}
 
-	public String getAccessCode() {
-		return accessCode;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setAccessCode(String accessCode) {
-		this.accessCode = accessCode;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public List<Members> getMember() {

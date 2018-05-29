@@ -32,10 +32,6 @@ public class Tournament {
 
 	@OneToMany
 	@JoinColumn(name = "tournament_id")
-	private List<Problem> problems = new ArrayList<Problem>();
-
-	@OneToMany
-	@JoinColumn(name = "tournament_id")
 	private List<Rating> rating = new ArrayList<>();
 
 	public Tournament(String name, Date startingDate, String description, int duration) {
@@ -70,14 +66,6 @@ public class Tournament {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public List<Problem> getProblems() {
-		return problems;
-	}
-
-	public void setProblems(List<Problem> problems) {
-		this.problems = problems;
 	}
 
 	public Date getStartingDate() {

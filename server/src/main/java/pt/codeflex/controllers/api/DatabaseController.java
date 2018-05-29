@@ -12,12 +12,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import pt.codeflex.databasemodels.*;
+import pt.codeflex.models.ProblemDifficulty;
 import pt.codeflex.repositories.*;
 
 @RestController
@@ -62,6 +64,26 @@ public class DatabaseController {
 
 	@Autowired
 	private UsersRolesRepository usersRolesRepository;
+
+	@Autowired
+	private DifficultyRepository difficultyRepository;
+
+	// DIFFICULTY
+
+	@GetMapping(path = "/Difficulty/view")
+	public @ResponseBody Iterable<Difficulty> getAllDifficulties() {
+		return difficultyRepository.findAll();
+	}
+
+	@PostMapping(path = "/Difficulty/add")
+	public Difficulty addDifficulty(@RequestBody Difficulty difficulty) {
+		return difficultyRepository.save(new Difficulty(difficulty.getName()));
+	}
+
+	@GetMapping(path = "/Difficulty/view/{id}")
+	public @ResponseBody Optional<Difficulty> viewDifficultyById(@PathVariable long id) {
+		return difficultyRepository.findById(id);
+	}
 
 	// GROUPS
 
@@ -136,25 +158,26 @@ public class DatabaseController {
 	public void addMembers() {
 	}
 
-	@PostMapping(path = "/Members/edit")
-	public void editMembers(@RequestParam long id) {
-		Optional<Members> m = membersRepository.findById(id);
-
-		if (m.isPresent()) {
-			Members members = m.get();
-			membersRepository.save(members);
-		}
-	}
-
-	@PostMapping(path = "/Members/delete/{id}")
-	public void deleteMembers(@PathVariable long id) {
-		membersRepository.deleteById(id);
-	}
-
-	@GetMapping(path = "/Members/view/{id}")
-	public @ResponseBody Optional<Members> viewMembersById(@PathVariable long id) {
-		return membersRepository.findById(id);
-	}
+	// @PostMapping(path = "/Members/edit")
+	// public void editMembers(@RequestParam long id) {
+	// Optional<Members> m = membersRepository.findById(id);
+	//
+	// if (m.isPresent()) {
+	// Members members = m.get();
+	// membersRepository.save(members);
+	// }
+	// }
+	//
+	// @PostMapping(path = "/Members/delete/{id}")
+	// public void deleteMembers(@PathVariable long id) {
+	// membersRepository.deleteById(id);
+	// }
+	//
+	// @GetMapping(path = "/Members/view/{id}")
+	// public @ResponseBody Optional<Members> viewMembersById(@PathVariable long id)
+	// {
+	// return membersRepository.findById(id);
+	// }
 
 	// PRACTISECATEGORY
 
@@ -203,19 +226,25 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Problem/add")
-	public void addProblem( @RequestParam String name,
-			@RequestParam String description) {
-		Problem p = new Problem(name, description);
-			problemRepository.save(p);
+	public Problem addProblem(@RequestBody ProblemDifficulty problemDifficulty) {
+		
+		Optional<Difficulty> f = difficultyRepository.findById(problemDifficulty.getDifficulty().getId());
 
+		if (f.isPresent()) {
+			Problem p = problemDifficulty.getProblem();
+			p.setDifficulty(f.get());
+			return problemRepository.save(p);
+		}
+		
+		return null;
 	}
-	
+
 	@PostMapping(path = "/Problem/addTestCase")
 	public void addTestCasesToProblem(@RequestParam long problemId, @RequestParam long testCaseId) {
 		Optional<TestCases> tc = testCasesRepository.findById(testCaseId);
 		Optional<Problem> p = problemRepository.findById(problemId);
-		
-		if(p.isPresent() && tc.isPresent()) {
+
+		if (p.isPresent() && tc.isPresent()) {
 			Problem problem = p.get();
 			problem.getTestCases().add(tc.get());
 			problemRepository.save(problem);
@@ -441,21 +470,23 @@ public class DatabaseController {
 		return tournamentRepository.save(t);
 	}
 
-	@PostMapping(path = "/Tournament/edit")
-	public void editTournament(@RequestParam long id, @RequestParam long problemId) {
-		Optional<Tournament> t = tournamentRepository.findById(id);
-		Optional<Problem> p = problemRepository.findById(problemId);
-
-		if (t.isPresent()) {
-			Tournament tournament = t.get();
-
-			if (p.isPresent()) {
-				Problem problem = p.get();
-				tournament.getProblems().add(problem);
-			}
-			tournamentRepository.save(tournament);
-		}
-	}
+	// TODO : refactor if needed
+	// @PostMapping(path = "/Tournament/edit")
+	// public void editTournament(@RequestParam long id, @RequestParam long
+	// problemId) {
+	// Optional<Tournament> t = tournamentRepository.findById(id);
+	// Optional<Problem> p = problemRepository.findById(problemId);
+	//
+	// if (t.isPresent()) {
+	// Tournament tournament = t.get();
+	//
+	// if (p.isPresent()) {
+	// Problem problem = p.get();
+	// tournament.getProblems().add(problem);
+	// }
+	// tournamentRepository.save(tournament);
+	// }
+	// }
 
 	@PostMapping(path = "/Tournament/delete/{id}")
 	public void deleteTournament(@PathVariable long id) {

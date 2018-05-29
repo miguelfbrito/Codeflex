@@ -25,8 +25,10 @@ public class Problem {
 
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "problem_id")
-	private List<TestCases> testCases = new ArrayList<TestCases>();
+	private List<TestCases> testCases = new ArrayList<>();
 
+	@ManyToOne
+	private Difficulty difficulty;
 
 	public Problem() {
 	}
@@ -34,6 +36,12 @@ public class Problem {
 	public Problem(String name, String description) {
 		this.name = name;
 		this.description = description;
+	}
+
+	public Problem(String name, String description, Difficulty difficulty) {
+		this.name = name;
+		this.description = description;
+		this.difficulty = difficulty;
 	}
 
 	public long getId() {
@@ -68,5 +76,18 @@ public class Problem {
 		this.testCases = testCases;
 	}
 
+	public Difficulty getDifficulty() {
+		return difficulty;
+	}
+
+	public void setDifficulty(Difficulty difficulty) {
+		this.difficulty = difficulty;
+	}
+
+	@Override
+	public String toString() {
+		return "Problem [id=" + id + ", name=" + name + ", description=" + description + ", testCases=" + testCases
+				+ ", difficulty=" + difficulty + "]";
+	}
 
 }
