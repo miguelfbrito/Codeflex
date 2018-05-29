@@ -19,13 +19,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import pt.codeflex.databasemodels.*;
+import pt.codeflex.models.ListCategoriesWithStats;
 import pt.codeflex.models.ProblemDifficulty;
 import pt.codeflex.repositories.*;
 
 @RestController
 @RequestMapping(path = "/api/database")
 public class DatabaseController {
-
+	
 	@Autowired
 	private GroupsRepository groupsRepository;
 
@@ -67,6 +68,9 @@ public class DatabaseController {
 
 	@Autowired
 	private DifficultyRepository difficultyRepository;
+	
+	
+	
 
 	// DIFFICULTY
 
@@ -216,6 +220,13 @@ public class DatabaseController {
 	@GetMapping(path = "/PractiseCategory/view/{id}")
 	public @ResponseBody Optional<PractiseCategory> viewPractiseCategoryById(@PathVariable long id) {
 		return practiseCategoryRepository.findById(id);
+	}
+	
+	@GetMapping(path = "/PractiseCategory/listWithStats")
+	public ListCategoriesWithStats listCategoriesWithStats() {
+		List<PractiseCategory> allCategories = getAllPractiseCategory();
+		
+		return null;
 	}
 
 	// PROBLEM

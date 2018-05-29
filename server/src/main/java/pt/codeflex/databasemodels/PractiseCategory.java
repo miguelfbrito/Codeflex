@@ -9,6 +9,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.SqlResultSetMapping;
+
+import pt.codeflex.models.ListCategoriesWithStats;
+
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
+
+@SqlResultSetMapping(name = "CategoriesWithStatsMapping", classes = @ConstructorResult(targetClass = ListCategoriesWithStats.class, columns = {
+	    @ColumnResult(name = "id", type = Long.class), @ColumnResult(name = "name"),
+	    @ColumnResult(name = "finishedProblems", type = Integer.class), @ColumnResult(name = "totalProblems", type = Integer.class)}))
 
 @Entity
 public class PractiseCategory {

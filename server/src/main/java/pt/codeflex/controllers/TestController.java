@@ -12,31 +12,21 @@ import pt.codeflex.controllers.api.DatabaseController;
 import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.TestCases;
 import pt.codeflex.databasemodels.Users;
+import pt.codeflex.models.ListCategoriesWithStats;
+import pt.codeflex.models.ListCategoriesWithStatsImpl;
+import pt.codeflex.models.ListCategoriesWithStatsInterface;
+import pt.codeflex.repositories.PractiseCategoryRepository;
 
 @Controller
 public class TestController {
 
 	@Autowired
-	private DatabaseController databaseController;
+	private PractiseCategoryRepository practiseCategoryRepository;
 
 	@GetMapping("/test")
-	public @ResponseBody String test() {
-		Iterable<Submissions> s = databaseController.getAllSubmissions();
-		for (Submissions su : s) {
-			System.out.println(su.getId());
-			System.out.println(su.getCode());
-			System.out.println(su.getLanguage());
-			List<TestCases> tc = su.getProblem().getTestCases();
-			for(TestCases t : tc) {
-				System.out.println(t.getId());
-				System.out.println(t.getInput());
-				System.out.println(t.getOutput());
-			}
-			System.out.println(su.getDate());
-			System.out.println(" --- ");
-
-		}
-		return "";
+	public @ResponseBody List<ListCategoriesWithStats> test() {
+		return practiseCategoryRepository.listCategoriesWithStatsByUserId(1);
 	}
+	
 
 }

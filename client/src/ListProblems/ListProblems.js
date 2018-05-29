@@ -19,7 +19,7 @@ class ListProblems extends Component {
 
         return (
             <div>
-                <p>List all the problems here!</p>
+                <p id="texto">List all the problems here!</p>
             </div>
         );
     }

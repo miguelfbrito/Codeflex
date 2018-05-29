@@ -4,10 +4,11 @@ import './Navbar.css';
 
 class Navbar extends Component {
 
+    // TODO : consts para os uri
 
     userLoggedOut() {
         return (<ul className="nav navbar-nav navbar-right nav-menus">
-            <li><Link to="/practice">Practise</Link></li>
+            <li><Link to="/practise">Practise</Link></li>
             {/*<li className="dropdown"><a className="dropdown-toggle" data-toggle="dropdown" href="#">Page 1 <span className="caret"></span></a>
                 <ul className="dropdown-menu">
                     <li><a href="#">Page 1-1</a></li>
