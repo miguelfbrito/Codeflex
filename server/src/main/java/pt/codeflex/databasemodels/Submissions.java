@@ -1,5 +1,6 @@
 package pt.codeflex.databasemodels;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -49,24 +50,24 @@ public class Submissions {
 	public Submissions() {
 	}
 
-	public Submissions(Problem problem, Date date, String language, String code, boolean isRight) {
+	public Submissions(Problem problem, String language, String code, boolean isRight) {
 		this.problem = problem;
-		this.date = date;
+		this.date = Calendar.getInstance().getTime();
 		this.language = language;
 		this.code = code;
 		this.isRight = isRight;
 	}
 
-	public Submissions(Problem problem, Date date, String language, String code) {
+	public Submissions(Problem problem,String language, String code) {
 		this.problem = problem;
-		this.date = date;
+		this.date = Calendar.getInstance().getTime();
 		this.language = language;
 		this.code = code;
 		this.isRight = false;
 	}
 
-	public Submissions(Date date, String language, String code) {
-		this.date = date;
+	public Submissions(String language, String code) {
+		this.date = Calendar.getInstance().getTime();
 		this.language = language;
 		this.code = code;
 		this.isRight = false;

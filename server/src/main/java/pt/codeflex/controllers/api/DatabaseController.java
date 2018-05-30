@@ -431,10 +431,9 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Submissions/add")
-	public void addSubmissions(@RequestParam long usersId, @RequestParam long problemId, @RequestParam String date,
+	public void addSubmissions(@RequestParam long usersId, @RequestParam long problemId,
 			@RequestParam String language, @RequestParam String code) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		Date d = sdf.parse(date);
+		
 		Optional<Users> u = usersRepository.findById(usersId);
 		Optional<Problem> p = problemRepository.findById(problemId);
 
@@ -443,7 +442,7 @@ public class DatabaseController {
 			Problem problem;
 			if (p.isPresent()) {
 				problem = p.get();
-				Submissions s = new Submissions(problem, d, language, code);
+				Submissions s = new Submissions(problem, language, code);
 				user.getSubmissions().add(s);
 				submissionsRepository.save(s);
 				usersRepository.save(user);

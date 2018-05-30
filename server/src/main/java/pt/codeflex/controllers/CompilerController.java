@@ -100,7 +100,7 @@ public class CompilerController {
 		if (p.isPresent() && u.isPresent()) {
 			Problem problem = p.get();
 			Users user = u.get();
-			Submissions s = new Submissions(problem, Calendar.getInstance().getTime(), language, code);
+			Submissions s = new Submissions(problem, language, code);
 		
 			user.getSubmissions().add(s);
 			submissionsRepository.save(s);

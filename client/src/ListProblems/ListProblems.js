@@ -10,21 +10,18 @@ class ListProblems extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            problems: []
+            problems: [],
+            difficulties: []
         }
 
     }
 
     componentDidMount() {
-        fetch(URL + ':8080/api/database/PractiseCategory/getAllProblemsByCategoryId/' + this.props.location.state.categoryId//, {
-            //headers: new Headers({
-            // 'Content-Type': 'application/json',
-            //'Authorization': 'Token ' + localUser.token
-            // })
-        ).then(res => res.json()).then(data => {
-            this.setState({ problems: data })
-            console.log(this.state.problems);
-        })
+        fetch(URL + ':8080/api/database/PractiseCategory/getAllProblemsByCategoryId/' + this.props.location.state.categoryId)
+            .then(res => res.json()).then(data => { this.setState({ problems: data }) })
+
+        fetch(URL + ':8080/api/database/difficulty/view')
+            .then(res => res.json()).then(data => { this.setState({ difficulties: data }); console.log(data) })
     }
 
 
@@ -47,22 +44,26 @@ class ListProblems extends Component {
                                     </p>
                                 </div>
                                 <div id="button-container">
-                                    <input type="submit" className="btn btn-primary" id="problem-button" value="Solve Problem"/>
+                                    <input type="submit" className="btn btn-primary" id="problem-button" value="Solve Problem" />
                                 </div>
                             </div>
                         ))}
                     </div>
                     <div className="col-sm-1"></div>
-                    <div className="col-sm-2">
+                    <div className="col-sm-2 problem-info">
                         <h3>Status</h3>
+                        <input type="checkbox" />
                         <p>Solved</p>
+                        <input type="checkbox" />
                         <p>Unsolved</p>
                         <hr />
                         <h3>Difficulty</h3>
-                        <p>Easy</p>
-                        <p>Medium</p>
-                        <p>Hard</p>
-                        <p>Expert</p>
+                        {this.state.difficulties.map((difficulty, diffIndex) => (
+                            <div>
+                                <input type="checkbox" />
+                                <p>{difficulty.name}</p>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

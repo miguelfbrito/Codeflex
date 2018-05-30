@@ -1,6 +1,8 @@
 package pt.codeflex.databasemodels;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -23,7 +25,8 @@ public class Scoring implements Serializable {
 
 	private double value;
 	private boolean isRight;
-
+	private Date date;
+	
 	public Scoring() {
 	}
 
@@ -37,6 +40,7 @@ public class Scoring implements Serializable {
 		this.testcases = testCase;
 		this.value = value;
 		this.isRight = isRight;
+		this.date = Calendar.getInstance().getTime();
 	}
 
 	public Submissions getSubmission() {
@@ -69,5 +73,29 @@ public class Scoring implements Serializable {
 
 	public void setRight(boolean isRight) {
 		this.isRight = isRight;
+	}
+
+	public Submissions getSubmissions() {
+		return submissions;
+	}
+
+	public void setSubmissions(Submissions submissions) {
+		this.submissions = submissions;
+	}
+
+	public TestCases getTestcases() {
+		return testcases;
+	}
+
+	public void setTestcases(TestCases testcases) {
+		this.testcases = testcases;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 }

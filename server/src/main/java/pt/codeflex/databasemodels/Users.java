@@ -5,6 +5,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -38,6 +40,8 @@ public class Users {
 	private String email;
 
 	private String password;
+	
+	private Date registrationDate;
 
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "users_id")
@@ -65,6 +69,7 @@ public class Users {
 	public Users(String username, String email, String password) {
 		this.username = username;
 		this.email = email;
+		this.registrationDate = Calendar.getInstance().getTime();
 		
 		MessageDigest digest = null;
 
@@ -148,6 +153,14 @@ public class Users {
 		return "Users [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password
 				+ ", submissions=" + submissions + ", member=" + member + ", userRoles=" + userRoles + ", rating="
 				+ rating + "]";
+	}
+
+	public Date getRegistrationDate() {
+		return registrationDate;
+	}
+
+	public void setRegistrationDate(Date registrationDate) {
+		this.registrationDate = registrationDate;
 	}
 
 

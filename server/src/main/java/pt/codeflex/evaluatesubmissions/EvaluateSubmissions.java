@@ -57,7 +57,7 @@ public class EvaluateSubmissions implements Runnable {
 	}
 
 	private static int count = 0;
-	private static volatile Queue<Submissions> queue = new ArrayDeque<>();
+	private static volatile Queue<Submissions> submissionsQueue = new ArrayDeque<>();
 	private final String PATH_SPRING = System.getProperty("user.home") + File.separator + "Submissions";
 	private final String PATH_SERVER = "/home/mbrito/Desktop/Submissions";
 	private long uniqueId;
@@ -75,7 +75,7 @@ public class EvaluateSubmissions implements Runnable {
 				System.out.println(s.getId());
 				System.out.println(s.getLanguage());
 				System.out.println(s.getCode());
-				queue.add(s);
+				submissionsQueue.add(s);
 			}
 			
 			
@@ -101,13 +101,13 @@ public class EvaluateSubmissions implements Runnable {
 				e.printStackTrace();
 			}
 
-			while (!queue.isEmpty()) {
-				Submissions s = queue.poll();
+			while (!submissionsQueue.isEmpty()) {
+				Submissions s = submissionsQueue.poll();
 				compileSubmission(s);
 			}
 
 		}
-		return queue;
+		return submissionsQueue;
 	}
 
 	public SSHClient ssh = null;
@@ -207,11 +207,12 @@ public class EvaluateSubmissions implements Runnable {
 	}
 
 	public void runSubmission(Submissions submission, TestCases testCase, String fileName) {
+		
 		Session session = null;
 		try {
 			session = ssh.startSession();
 		} catch (ConnectionException | TransportException e) {
-			e.printStackTrace();
+
 		}
 
 		String command = "cd " + PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage() + " && ";
@@ -237,7 +238,6 @@ public class EvaluateSubmissions implements Runnable {
 					+ runError + " > " + runOutput + "";
 			break;
 		default:
-			// System.out.println("Language not found");
 			break;
 		}
 
@@ -249,7 +249,7 @@ public class EvaluateSubmissions implements Runnable {
 
 			Scoring sc = new Scoring(submission, testCase, 10, validateResult(testCase.getOutput(), output));
 			scoringRepository.save(sc);
-
+		
 			cmd.close();
 		} catch (IOException e) {
 			e.printStackTrace();
