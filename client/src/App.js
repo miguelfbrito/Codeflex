@@ -15,9 +15,9 @@ class App extends Component {
         <div>
           <NavBar />
           <Switch>
-            <Route exact path="/practise" component={ListCategories} />
-            <Route exact path="/practise/:categoryName" component={ListProblems} />
             <Route exact path="/practise/:categoryName/:problemName" component={Problem} />
+            <Route exact path="/practise/:categoryName" component={ListProblems} />
+            <Route exact path="/practise" component={ListCategories} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/problem" component={Problem} />
             <Route component={PageNotFound} />

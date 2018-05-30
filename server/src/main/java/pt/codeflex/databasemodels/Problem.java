@@ -22,6 +22,7 @@ public class Problem {
 
 	private String name;
 	private String description;
+	private int maxScore;
 
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "problem_id")
@@ -42,6 +43,13 @@ public class Problem {
 		this.name = name;
 		this.description = description;
 		this.difficulty = difficulty;
+	}
+
+	public Problem(String name, String description, Difficulty difficulty, int maxScore) {
+		this.name = name;
+		this.description = description;
+		this.difficulty = difficulty;
+		this.maxScore = maxScore;
 	}
 
 	public long getId() {
@@ -88,6 +96,14 @@ public class Problem {
 	public String toString() {
 		return "Problem [id=" + id + ", name=" + name + ", description=" + description + ", testCases=" + testCases
 				+ ", difficulty=" + difficulty + "]";
+	}
+
+	public int getMaxScore() {
+		return maxScore;
+	}
+
+	public void setMaxScore(int maxScore) {
+		this.maxScore = maxScore;
 	}
 
 }

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pt.codeflex.databasemodels.*;
 import pt.codeflex.models.ListCategoriesWithStats;
 import pt.codeflex.models.ProblemDifficulty;
+import pt.codeflex.models.ProblemWithoutTestCases;
 import pt.codeflex.repositories.*;
 
 @RestController
@@ -220,8 +221,12 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/PractiseCategory/view/{id}")
-	public @ResponseBody Optional<PractiseCategory> viewPractiseCategoryById(@PathVariable long id) {
-		return practiseCategoryRepository.findById(id);
+	public @ResponseBody PractiseCategory viewPractiseCategoryById(@PathVariable long id) {
+		Optional<PractiseCategory> practiseCategory = practiseCategoryRepository.findById(id);
+		if(practiseCategory.isPresent()) {
+			return practiseCategory.get();
+		}
+		return new PractiseCategory();
 	}
 
 	@GetMapping(path = "/PractiseCategory/listWithStats/{id}")
@@ -248,6 +253,20 @@ public class DatabaseController {
 		}
 
 		return listOfCategoriesWithStats;
+	}
+	
+	@GetMapping(path = "/PractiseCategory/getAllProblemsByCategoryId/{id}")
+	public List<ProblemWithoutTestCases> getAllProblemsByCategoryId(@PathVariable long id){
+		PractiseCategory categoryData = viewPractiseCategoryById(id);
+		List<Problem> problems = categoryData.getProblem();
+
+		List<ProblemWithoutTestCases> problemWithoutTestCases = new ArrayList<>();
+
+		for(Problem p : problems) {
+			problemWithoutTestCases.add(new ProblemWithoutTestCases(p.getId(), p.getName(), p.getDescription(), p.getDifficulty()));
+		}
+		
+		return problemWithoutTestCases;
 	}
 
 	// PROBLEM

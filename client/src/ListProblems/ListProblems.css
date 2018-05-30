@@ -1,0 +1,54 @@
+
+.problems-container {
+    box-shadow: 0px 4px 10px 0px #aaa;
+    margin: 0;
+    padding: 0;
+    transition: all 250ms ease-in-out;
+}
+
+.problem-container {
+    height: 100px;
+    padding: 25px;
+    transition: all 250ms ease-in-out;
+}
+
+.problem-container {
+    border-bottom: 1px solid #ccc;
+}
+
+.problem-container:last-child {
+    border-bottom: none;
+}
+
+
+.problem-container:hover {
+    background-color: rgb(230, 245, 255) !important; /* darkcyan*/
+}
+
+#problem-name {
+    font-size: 15pt;
+}
+
+#problem-difficulty {
+    color: #ccc;
+    margin-top: -10px;
+    font-size: 11pt;
+}
+
+#button-container {
+    margin-top: -50px;
+    float: right;
+}
+
+#problem-button {
+    border-radius: 0;
+    background-color: white;
+    color: black;
+    transition: all 250ms ease-in-out;
+}
+
+#problem-button:hover{
+    background-color: rgb(113, 194, 252);
+    box-shadow: 0px 0px 15px 0px #ccc;
+}
+

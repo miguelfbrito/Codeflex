@@ -68,6 +68,16 @@
     }
 }
 
-#practise-title {
+.page-title {
+    margin-top: 0px;
     text-align: left;
+    font-family: 'Roboto Condensed', sans-serif;
+
+}
+
+.p-small-text {
+    color: #ccc;
+    text-align: left;
+    padding-top: 5px;
+    font-size: 10pt;
 }

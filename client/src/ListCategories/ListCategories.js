@@ -33,7 +33,7 @@ class ListProblems extends Component {
     render() {
         return (
             <div className="container">
-                <h2 id="practise-title">Choose your category</h2>
+                <h2 className="page-title">Choose your category</h2>
                 <hr style={{width:'100%', height:'10px'}}/>
                 <div className="row">
                     {this.state.categories.map((category, index) => (
@@ -41,10 +41,10 @@ class ListProblems extends Component {
                             <h2>{category.name}</h2>
                             <div className="progress-bar">
                                 <div className="bar" style={{ width: (category.finishedProblems / category.totalProblems * 100) + '%' }}></div>
-                                <p style={{ color: '#ccc', textAlign: 'left', paddingTop: '5px', fontSize: '10pt' }}>You have completed {category.finishedProblems} ({category.finishedProblems / category.totalProblems * 100}%) out of the {category.totalProblems} available problems.</p>
+                                <p className="p-small-text">You have completed {category.finishedProblems} ({category.finishedProblems / category.totalProblems * 100}%) out of the {category.totalProblems} available problems.</p>
                             </div>
                             <div className="button-container">
-                                <Link to={"/practise/" + textToLowerCaseNoSpaces(category.name)}><input type="submit" className="btn btn-primary" value="Explore problems" /></Link>
+                                <Link to={{pathname: "/practise/" + textToLowerCaseNoSpaces(category.name), state : {categoryId: category.id}}}><input type="submit" className="btn btn-primary" value="Explore problems" /></Link>
                             </div>
                         </div>
                     ))}
