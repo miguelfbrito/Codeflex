@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { URL } from '../commons/Constants';
-import './ListProblems.css';
+import './ListCategories.css';
 import {Link} from 'react-router-dom';
+import {textToLowerCaseNoSpaces} from '../commons/Utils';
+
 class ListProblems extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            problems: []
+            categories: []
         }
 
     }
@@ -24,15 +26,17 @@ class ListProblems extends Component {
         })
     }
 
+    onChange(newValue) {
+        console.log(newValue);
+    }
 
     render() {
         return (
             <div className="container">
-                <p>{this.props.match.url}</p>
-                <h2>Problems</h2>
+                <h2 id="practise-title">Choose your category</h2>
                 <hr style={{width:'100%', height:'10px'}}/>
                 <div className="row">
-                    {/*this.state.categories.map((category, index) => (
+                    {this.state.categories.map((category, index) => (
                         <div key={category.id} className="col-sm-6 category-container">
                             <h2>{category.name}</h2>
                             <div className="progress-bar">
@@ -40,10 +44,10 @@ class ListProblems extends Component {
                                 <p style={{ color: '#ccc', textAlign: 'left', paddingTop: '5px', fontSize: '10pt' }}>You have completed {category.finishedProblems} ({category.finishedProblems / category.totalProblems * 100}%) out of the {category.totalProblems} available problems.</p>
                             </div>
                             <div className="button-container">
-                                <Link to=""><input type="submit" className="btn btn-primary" value="Explore problems" /></Link>
+                                <Link to={"/practise/" + textToLowerCaseNoSpaces(category.name)}><input type="submit" className="btn btn-primary" value="Explore problems" /></Link>
                             </div>
                         </div>
-                    ))*/}
+                    ))}
                 </div>
             </div>
         );

@@ -33,12 +33,12 @@ nav {
 }
 
 .navbar-header {
-    margin-left: 10% !important;
+    margin-left: 11vw !important;
     vertical-align: middle !important;
 }
 
 #item-login {
-    margin-right: 100px;
+    margin-right: 11vw;
 }
 
 #item-login span,

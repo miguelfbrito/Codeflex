@@ -42,6 +42,7 @@ class Problem extends Component {
 
         return (
             <div className="problem-container">
+            <p>{this.props.match.params.name}</p>
                 {problemName}
 
                 {problemDescription}
