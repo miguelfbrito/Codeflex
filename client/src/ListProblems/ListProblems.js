@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { URL } from '../commons/Constants';
 import { Link } from 'react-router-dom';
-import { splitUrl } from '../commons/Utils';
+import { splitUrl, textToLowerCaseNoSpaces } from '../commons/Utils';
 
 import './ListProblems.css';
 
@@ -17,11 +17,19 @@ class ListProblems extends Component {
     }
 
     componentDidMount() {
-        fetch(URL + ':8080/api/database/PractiseCategory/getAllProblemsByCategoryId/' + this.props.location.state.categoryId)
-            .then(res => res.json()).then(data => { this.setState({ problems: data }) })
+        const currentCategory = splitUrl(this.props.location.pathname)[1];
+        fetch(URL + ':8080/api/database/PractiseCategory/getAllWithoutTestCases/')
+            .then(res => res.json()).then(data => {
+                let newData = data.filter(d => textToLowerCaseNoSpaces(d.name) === currentCategory)
+                if (JSON.stringify(newData) === '[]') {
+                    window.location.href = '/'
+                } else {
+                    this.setState({ problems: newData[0].problem });
+                }
+            })
 
         fetch(URL + ':8080/api/database/difficulty/view')
-            .then(res => res.json()).then(data => { this.setState({ difficulties: data }); console.log(data) })
+            .then(res => res.json()).then(data => { this.setState({ difficulties: data }) })
     }
 
 
@@ -44,7 +52,12 @@ class ListProblems extends Component {
                                     </p>
                                 </div>
                                 <div id="button-container">
-                                    <input type="submit" className="btn btn-primary" id="problem-button" value="Solve Problem" />
+                                    <Link to={{
+                                        pathname: this.props.location.pathname + '/' + textToLowerCaseNoSpaces(problem.name), state: {
+                                            problemId: problem.id,
+                                            problemName: problem.name
+                                        }
+                                    }}><input type="submit" className="btn btn-primary" id="problem-button" value="Solve Problem" /></Link>
                                 </div>
                             </div>
                         ))}

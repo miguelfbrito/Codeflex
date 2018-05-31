@@ -22,6 +22,11 @@ public class Problem {
 
 	private String name;
 	private String description;
+
+	private String inputFormat;
+	private String outputFormat;
+	private String constraints;
+
 	private int maxScore;
 
 	@OneToMany(fetch = FetchType.EAGER)
@@ -37,12 +42,14 @@ public class Problem {
 	public Problem(String name, String description) {
 		this.name = name;
 		this.description = description;
+		this.maxScore = 10;
 	}
 
 	public Problem(String name, String description, Difficulty difficulty) {
 		this.name = name;
 		this.description = description;
 		this.difficulty = difficulty;
+		this.maxScore = 10;
 	}
 
 	public Problem(String name, String description, Difficulty difficulty, int maxScore) {
@@ -104,6 +111,30 @@ public class Problem {
 
 	public void setMaxScore(int maxScore) {
 		this.maxScore = maxScore;
+	}
+
+	public String getInputFormat() {
+		return inputFormat;
+	}
+
+	public void setInputFormat(String inputFormat) {
+		this.inputFormat = inputFormat;
+	}
+
+	public String getOutputFormat() {
+		return outputFormat;
+	}
+
+	public void setOutputFormat(String outputFormat) {
+		this.outputFormat = outputFormat;
+	}
+
+	public String getConstraints() {
+		return constraints;
+	}
+
+	public void setConstraints(String constraints) {
+		this.constraints = constraints;
 	}
 
 }

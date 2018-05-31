@@ -14,6 +14,7 @@ class ListProblems extends Component {
 
     }
 
+
     componentDidMount() {
         fetch(URL + ':8080/api/database/PractiseCategory/listwithstats/' + JSON.parse(localStorage.getItem('userData')).id //, {
             //headers: new Headers({

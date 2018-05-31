@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class TestCases {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	// TODO : change to files instead of String's because it will probably overflow
@@ -30,20 +30,28 @@ public class TestCases {
 	@Column(length = 5000)
 	private String input;
 
-	public TestCases() {
-	}
-
 	@JsonIgnore
 	@Column(length = 5000)
 	private String output;
 
-//	@OneToMany
-//	@JoinColumn(name = "testcases_id")
-//	private List<Scoring> scoring = new ArrayList<>();
+	private String description;
+
+	private boolean shown;
+
+	public TestCases() {
+	}
 
 	public TestCases(String input, String output) {
 		this.input = input;
 		this.output = output;
+		this.shown = false;
+	}
+
+	public TestCases(String input, String output, String description, boolean shown) {
+		this.input = input;
+		this.output = output;
+		this.description = description;
+		this.shown = shown;
 	}
 
 	public long getId() {
@@ -68,6 +76,22 @@ public class TestCases {
 
 	public void setOutput(String output) {
 		this.output = output;
+	}
+
+	public boolean isShown() {
+		return shown;
+	}
+
+	public void setShown(boolean shown) {
+		this.shown = shown;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import pt.codeflex.databasemodels.*;
+import pt.codeflex.models.CategoriesWithoutTestCases;
 import pt.codeflex.models.ListCategoriesWithStats;
 import pt.codeflex.models.ProblemDifficulty;
 import pt.codeflex.models.ProblemWithoutTestCases;
@@ -223,7 +224,7 @@ public class DatabaseController {
 	@GetMapping(path = "/PractiseCategory/view/{id}")
 	public @ResponseBody PractiseCategory viewPractiseCategoryById(@PathVariable long id) {
 		Optional<PractiseCategory> practiseCategory = practiseCategoryRepository.findById(id);
-		if(practiseCategory.isPresent()) {
+		if (practiseCategory.isPresent()) {
 			return practiseCategory.get();
 		}
 		return new PractiseCategory();
@@ -242,30 +243,59 @@ public class DatabaseController {
 
 		List<String> categoriesName = new ArrayList<>();
 
-		for(ListCategoriesWithStats l : listOfCategoriesWithStats) {
+		for (ListCategoriesWithStats l : listOfCategoriesWithStats) {
 			categoriesName.add(l.getName());
 		}
-		
-		for (PractiseCategory pc : allCategories) { 
-			if(!categoriesName.contains(pc.getName()) && pc.getProblem().size() > 0){
-				listOfCategoriesWithStats.add(new ListCategoriesWithStats(pc.getId(), pc.getName(), 0, pc.getProblem().size()));
+
+		for (PractiseCategory pc : allCategories) {
+			if (!categoriesName.contains(pc.getName()) && pc.getProblem().size() > 0) {
+				listOfCategoriesWithStats
+						.add(new ListCategoriesWithStats(pc.getId(), pc.getName(), 0, pc.getProblem().size()));
 			}
 		}
 
 		return listOfCategoriesWithStats;
 	}
-	
-	@GetMapping(path = "/PractiseCategory/getAllProblemsByCategoryId/{id}")
-	public List<ProblemWithoutTestCases> getAllProblemsByCategoryId(@PathVariable long id){
-		PractiseCategory categoryData = viewPractiseCategoryById(id);
-		List<Problem> problems = categoryData.getProblem();
 
+	@GetMapping(path = "/PractiseCategory/getAllWithoutTestCases")
+	public List<CategoriesWithoutTestCases> getAllCategoriesWithoutTestCases() {
+		List<PractiseCategory> allCategories = getAllPractiseCategory();
+		List<CategoriesWithoutTestCases> categoriesWithoutTestCases = new ArrayList<>();
+
+		if (allCategories != null) {
+			for (PractiseCategory pc : allCategories) {
+				List<Problem> problems = pc.getProblem();
+				List<ProblemWithoutTestCases> problemsWithoutTestCases = new ArrayList<>();
+				if (problems != null) {
+					for (Problem p : problems) {
+						problemsWithoutTestCases.add(new ProblemWithoutTestCases(p.getId(), p.getName(),
+								p.getDescription(), p.getDifficulty()));
+					}
+				}
+				categoriesWithoutTestCases
+						.add(new CategoriesWithoutTestCases(pc.getId(), pc.getName(), problemsWithoutTestCases));
+			}
+		}
+
+		return categoriesWithoutTestCases;
+	}
+
+	@GetMapping(path = "/PractiseCategory/getAllProblemsByCategoryName/{categoryName}")
+	public List<ProblemWithoutTestCases> getAllProblemsByCategoryId(@PathVariable String categoryName) {
+		categoryName = categoryName.replace("-", " ");
+
+		PractiseCategory categoryData = practiseCategoryRepository.findByName(categoryName);
 		List<ProblemWithoutTestCases> problemWithoutTestCases = new ArrayList<>();
 
-		for(Problem p : problems) {
-			problemWithoutTestCases.add(new ProblemWithoutTestCases(p.getId(), p.getName(), p.getDescription(), p.getDifficulty()));
+		if (categoryData != null) {
+			List<Problem> problems = categoryData.getProblem();
+
+			for (Problem p : problems) {
+				problemWithoutTestCases.add(
+						new ProblemWithoutTestCases(p.getId(), p.getName(), p.getDescription(), p.getDifficulty()));
+			}
 		}
-		
+
 		return problemWithoutTestCases;
 	}
 
@@ -320,6 +350,16 @@ public class DatabaseController {
 	@GetMapping(path = "/Problem/view/{id}")
 	public @ResponseBody Optional<Problem> viewProblemById(@PathVariable long id) {
 		return problemRepository.findById(id);
+	}
+
+	@GetMapping(path = "/Problem/getProblemByName/{problemName}")
+	public Problem getProblemByName(@PathVariable String problemName) {
+		problemName = problemName.replace("-", " ");
+		Problem p = problemRepository.findByName(problemName);
+		if (p != null) {
+			return p;
+		}
+		return new Problem();
 	}
 
 	// RATING
@@ -431,9 +471,9 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Submissions/add")
-	public void addSubmissions(@RequestParam long usersId, @RequestParam long problemId,
-			@RequestParam String language, @RequestParam String code) throws ParseException {
-		
+	public void addSubmissions(@RequestParam long usersId, @RequestParam long problemId, @RequestParam String language,
+			@RequestParam String code) throws ParseException {
+
 		Optional<Users> u = usersRepository.findById(usersId);
 		Optional<Problem> p = problemRepository.findById(problemId);
 

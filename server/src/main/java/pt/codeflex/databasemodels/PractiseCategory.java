@@ -13,6 +13,7 @@ import javax.persistence.SqlResultSetMapping;
 
 import pt.codeflex.models.ListCategoriesWithStats;
 
+import javax.persistence.Column;
 import javax.persistence.ColumnResult;
 import javax.persistence.ConstructorResult;
 
@@ -27,6 +28,7 @@ public class PractiseCategory {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
+	@Column(unique = true)
 	private String name;
 
 	public PractiseCategory(String name) {

@@ -9,5 +9,5 @@ import pt.codeflex.databasemodels.PractiseCategory;
 
 @Repository
 public interface PractiseCategoryRepository extends CrudRepository<PractiseCategory, Long>, CustomPractiseCategoryRepository{
-
+	PractiseCategory findByName(String name);
 }

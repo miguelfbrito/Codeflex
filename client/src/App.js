@@ -7,6 +7,7 @@ import ListProblems from './ListProblems/ListProblems'
 import Login from '../src/Users/Login/Login';
 import PageNotFound from '../src/PageNotFound/PageNotFound';
 import Problem from '../src/Problem/Problem';
+import Footer from '../src/Footer/Footer';
 
 class App extends Component {
   render() {
@@ -22,6 +23,7 @@ class App extends Component {
             <Route exact path="/problem" component={Problem} />
             <Route component={PageNotFound} />
           </Switch>
+          <Footer />
         </div>
 
       </Router>

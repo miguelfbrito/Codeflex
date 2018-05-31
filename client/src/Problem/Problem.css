@@ -1,15 +1,19 @@
-.problem-container h2{
-    margin-bottom: 25px;
+.problem-info-container {
+    float:right;
 }
 
-.problem-container p{
-    font-size: 12pt;
-    text-align: justify;
-    color: black;
-    line-height: 20pt;
+.ace-editor-navbar {
+    background-color: #f0f0f0;
+    margin-bottom: -1px;
+    border: 1px solid #ccc;
+    box-shadow: 0px 0px 8px 0px #ccc;
+    min-width: 85%;
+    max-width: 85%;
 }
 
+.ace-editor-navbar p {
+    display: inline-block;
+}
 .ace-editor {
-    margin-top: 35px;
-    width: 75vw;
+    margin-top: 25px;
 }

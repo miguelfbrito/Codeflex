@@ -8,5 +8,5 @@ import pt.codeflex.databasemodels.Problem;
 
 @Repository
 public interface ProblemRepository extends JpaRepository<Problem, Long> {
-
+	Problem findByName(String name);
 }

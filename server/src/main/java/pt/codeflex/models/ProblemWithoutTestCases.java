@@ -8,8 +8,6 @@ public class ProblemWithoutTestCases {
 	private String name;
 	private String description;
 	private Difficulty difficulty;
-	
-	
 
 	public ProblemWithoutTestCases(long id, String name, String description, Difficulty difficulty) {
 		super();
