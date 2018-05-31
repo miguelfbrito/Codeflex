@@ -17,7 +17,7 @@ public class CustomSubmissionsRepositoryImpl implements CustomSubmissionsReposit
 	@Override
 	public List<Submissions> findSubmissionsToAvaliate() {
 		Query query = em.createNativeQuery(
-				"select s.id, s.code, s.date, s.language, s.problem_id, s.users_id from submissions s where s.id not in (select sc.submissions_id from scoring sc);", Submissions.class);
+				"select s.id, s.code, s.date, s.is_right, s.language, s.problem_id, s.users_id from submissions s where s.id not in (select sc.submissions_id from scoring sc);", Submissions.class);
 		return query.getResultList();
 	}
 

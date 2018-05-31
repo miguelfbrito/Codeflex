@@ -50,6 +50,14 @@ public class Submissions {
 	public Submissions() {
 	}
 
+	public Submissions(Problem problem, String language, String code) {
+		this.problem = problem;
+		this.date = Calendar.getInstance().getTime();
+		this.language = language;
+		this.code = code;
+		this.isRight = false;
+	}
+
 	public Submissions(Problem problem, String language, String code, boolean isRight) {
 		this.problem = problem;
 		this.date = Calendar.getInstance().getTime();
@@ -58,14 +66,12 @@ public class Submissions {
 		this.isRight = isRight;
 	}
 
-	public Submissions(Problem problem,String language, String code) {
-		this.problem = problem;
-		this.date = Calendar.getInstance().getTime();
+	public Submissions(long id, String code, String language) {
+		this.id = id;
 		this.language = language;
 		this.code = code;
-		this.isRight = false;
 	}
-
+	
 	public Submissions(String language, String code) {
 		this.date = Calendar.getInstance().getTime();
 		this.language = language;

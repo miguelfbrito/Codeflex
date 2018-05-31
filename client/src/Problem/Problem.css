@@ -9,10 +9,12 @@
     box-shadow: 0px 0px 8px 0px #ccc;
     min-width: 85%;
     max-width: 85%;
+    text-align: right;
 }
 
-.ace-editor-navbar p {
-    display: inline-block;
+.ace-editor-navbar select {
+    margin: 5px 5px;
+    padding: 5px;
 }
 .ace-editor {
     margin-top: 25px;

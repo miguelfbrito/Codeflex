@@ -42,7 +42,7 @@ public class EvaluateSubmissions implements Runnable {
 
 	@Autowired
 	private ScoringRepository scoringRepository;
-	
+
 	@Autowired
 	private SubmissionsRepository submissionsRepository;
 
@@ -70,24 +70,23 @@ public class EvaluateSubmissions implements Runnable {
 			System.out.println("After connecting");
 			Users us = u.get();
 			List<Submissions> submissions = submissionsRepository.findSubmissionsToAvaliate();
-					
-			for(Submissions s: submissions) {
+
+			for (Submissions s : submissions) {
 				System.out.println(s.getId());
 				System.out.println(s.getLanguage());
 				System.out.println(s.getCode());
 				submissionsQueue.add(s);
 			}
-			
-			
-//			for (Submissions s : submissions) {
-//				Iterable<Scoring> sc = scoringRepository.findAll();
-//				while (sc.iterator().hasNext()) {
-//					if (sc.iterator().next().getSubmission().getId() == s.getId()) {
-//						break;
-//					}
-//				}
-//				queue.add(s);
-//			}
+
+			// for (Submissions s : submissions) {
+			// Iterable<Scoring> sc = scoringRepository.findAll();
+			// while (sc.iterator().hasNext()) {
+			// if (sc.iterator().next().getSubmission().getId() == s.getId()) {
+			// break;
+			// }
+			// }
+			// queue.add(s);
+			// }
 
 			// TESTING PURPOSE TODO : remove
 			try {
@@ -162,7 +161,6 @@ public class EvaluateSubmissions implements Runnable {
 			suffix = ".cs";
 			break;
 		default:
-			// System.out.println("Language not found");
 			break;
 		}
 
@@ -207,7 +205,7 @@ public class EvaluateSubmissions implements Runnable {
 	}
 
 	public void runSubmission(Submissions submission, TestCases testCase, String fileName) {
-		
+
 		Session session = null;
 		try {
 			session = ssh.startSession();
@@ -249,7 +247,7 @@ public class EvaluateSubmissions implements Runnable {
 
 			Scoring sc = new Scoring(submission, testCase, 10, validateResult(testCase.getOutput(), output));
 			scoringRepository.save(sc);
-		
+
 			cmd.close();
 		} catch (IOException e) {
 			e.printStackTrace();
