@@ -25,56 +25,58 @@ class Problem extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            problem: '',
+            problem: [],
+            waitingForResults: false,
+            sentSubmission: [],
+            scoringResults: [],
             language: 'java',
             theme: 'github',
             code: `import java.io.*;
-            import java.util.*;
-            import java.text.*;
-            import java.math.*;
-            import java.util.regex.*;
-            
-            public class Solution {
-            
-                public static void main(String[] args) {
-                    Scanner in = new Scanner(System.in);
-                    int n = in.nextInt();
-                    int scores[] = new int[n];
-                    for (int i = 0; i < n; i++) {
-                        scores[i] = in.nextInt();
-                    }
-                    minimumDistances(n, scores);
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int n = in.nextInt();
+        int scores[] = new int[n];
+        for (int i = 0; i < n; i++) {
+            scores[i] = in.nextInt();
+        }
+        minimumDistances(n, scores);
+    }
+
+    static void minimumDistances(int n, int array[]) {
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < n-1; i++) {
+            for(int j = i+1; j<n; j++) {
+                if(array[i] == array[j]){
+                    min = Math.min(min,  Math.abs(i-j));
                 }
-            
-                static void minimumDistances(int n, int array[]) {
-                    int min = Integer.MAX_VALUE;
-                    for (int i = 0; i < n-1; i++) {
-                        for(int j = i+1; j<n; j++) {
-                            if(array[i] == array[j]){
-                                min = Math.min(min,  Math.abs(i-j));
-                            }
-                        }
-                    }
-                    if(min==Integer.MAX_VALUE) {
-                        min = -1;
-                    }
-                    System.out.println(min);
-                }
-            
-            
-            }`
+            }
+        }
+        if(min==Integer.MAX_VALUE) {
+            min = -1;
+        }
+        System.out.println(min);
+    }
+
+
+}`
         }
         this.handleSelectBoxChange = this.handleSelectBoxChange.bind(this);
         this.onAceChange = this.onAceChange.bind(this);
         this.submitSubmission = this.submitSubmission.bind(this);
-
+        this.fetchForResults = this.fetchForResults.bind(this);
     }
 
     componentDidMount() {
         let currentProblem = splitUrl(this.props.location.pathname)[2];
         console.log(currentProblem);
         fetch(URL + ':8080/api/database/problem/getProblemByName/' + currentProblem).then(res => res.json()).then(data => { this.setState({ problem: data }); console.log(data) });
-
     }
 
     onAceChange(newValue) {
@@ -90,9 +92,10 @@ class Problem extends Component {
     submitSubmission() {
         console.log(this.state);
         console.log(this.state.language);
+        console.log(btoa(this.state.code));
         let data = {
             code: btoa(this.state.code),
-            language: this.state.language,
+            language: 'JAVA',
             users: { id: JSON.parse(localStorage.getItem('userData')).id },
             problem: { name: textToLowerCaseNoSpaces(this.state.problem.name) }
         }
@@ -105,7 +108,27 @@ class Problem extends Component {
             headers: new Headers({
                 'Content-Type': 'application/json'
             })
+        }).then(res => res.json()).then(data => {
+            console.log(data);
+            this.setState({ waitingForResults: true, sentSubmission: data })
+
+            this.fetchForResults();
         });
+
+
+
+    }
+
+    fetchForResults() {
+        console.log('Fetching results');
+            setInterval(() => this.fetchForResults, 5000);
+        fetch(URL + ':8080/api/database/Scoring/viewBySubmissionId/' + this.state.sentSubmission.id).then(res => res.json())
+            .then(data => {
+                console.log(data);
+                if (JSON.stringify(data) !== '[]') {
+                    this.setState({ scoringResults: data, waitingForResults: false })
+                }
+            })
     }
 
     render() {
@@ -120,18 +143,18 @@ class Problem extends Component {
         return (
             <div className="container" >
                 <div className="row">
-                    <MathJax/>
                     <h2 className="page-title"> {this.state.problem.name}</h2>
                     <hr />
                     <div className="col-sm-10 problem-description-container ">
-                        <p>{this.state.problem.description}</p>
+                        <MathJax text={this.state.problem.description} />
+
+
                         <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloremque voluptate officia eum natus facilis ratione pariatur et iusto amet numquam reiciendis non nesciunt quaerat ipsam eveniet neque voluptatem corporis, possimus mollitia. Ratione animi mollitia asperiores dolore perferendis. Sapiente aliquid eaque nobis officiis sit aspernatur earum cupiditate atque. Hic nemo, inventore, dolorem quisquam architecto eius in nulla quia quo magni itaque accusantium. Iste excepturi maiores veritatis omnis itaque saepe hic est reprehenderit? Explicabo aliquid temporibus, atque dolore numquam excepturi sit iusto, debitis deleniti ex impedit quas voluptas quia! Molestias totam, minus labore quae aliquid explicabo accusamus nostrum magnam architecto laborum provident impedit temporibus error, nihil voluptate magni, quisquam et praesentium deserunt unde aperiam? Voluptatum, quasi quidem dignissimos alias atque fuga omnis voluptate veritatis recusandae nostrum excepturi odio optio ducimus dicta quos aliquid tempora cupiditate autem fugiat, ab aspernatur enim? Delectus illo reiciendis nemo magni, ab maiores qui sed! Nihil, quisquam explicabo! Itaque sapiente odit quae. Eum voluptates et error amet aliquid quibusdam veniam reprehenderit doloribus. Vitae earum cumque animi excepturi eveniet reiciendis rerum commodi nisi quos, repellat ipsam non veniam eos ea repellendus. Voluptate amet harum mollitia et magni quo officiis veniam, rerum odit quis magnam ducimus laborum quae, quod molestiae sequi consectetur. Labore dolore aliquam earum quidem consequatur dignissimos voluptate temporibus. Reiciendis esse fugit, debitis iusto consequuntur at nisi ducimus repellat hic cum aspernatur ab obcaecati exercitationem inventore, expedita accusamus pariatur quos beatae est in. Ipsam similique ab doloremque! Non dolore reiciendis, aut ducimus, esse inventore sunt odit dicta sed beatae eaque id? Quod at, culpa eligendi fugit, ex mollitia reprehenderit deserunt minima unde, consequuntur commodi adipisci sapiente doloribus odio enim iusto? Autem officia tempora sint ut magnam inventore cumque recusandae sapiente rem molestias sit obcaecati natus itaque, aliquid perferendis earum quaerat ducimus, modi sed facere assumenda ex. Reprehenderit, dolore!</p>
                     </div>
                     <div className="col-sm-2 problem-info-container ">
                         <p>USER</p>
                         <p>DIFFICULTY</p>
                     </div>
-
                     <div className="col-sm-12 ace-editor-container">
                         <div className="ace-editor">
                             <div className="ace-editor-navbar">

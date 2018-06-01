@@ -28,6 +28,9 @@ public class Problem {
 	private String constraints;
 
 	private int maxScore;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Users owner;
 
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "problem_id")
@@ -57,6 +60,19 @@ public class Problem {
 		this.description = description;
 		this.difficulty = difficulty;
 		this.maxScore = maxScore;
+	}
+	
+	public Problem(String name, String description, String inputFormat, String outputFormat, String constraints,
+			int maxScore, Users owner, Difficulty difficulty) {
+		super();
+		this.name = name;
+		this.description = description;
+		this.inputFormat = inputFormat;
+		this.outputFormat = outputFormat;
+		this.constraints = constraints;
+		this.maxScore = maxScore;
+		this.owner = owner;
+		this.difficulty = difficulty;
 	}
 
 	public long getId() {
@@ -135,6 +151,14 @@ public class Problem {
 
 	public void setConstraints(String constraints) {
 		this.constraints = constraints;
+	}
+
+	public Users getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Users owner) {
+		this.owner = owner;
 	}
 
 }

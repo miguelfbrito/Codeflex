@@ -463,6 +463,16 @@ public class DatabaseController {
 		return scoringRepository.findById(id);
 	}
 
+	@GetMapping(path = "/Scoring/viewBySubmissionId/{submissionId}")
+	public List<Scoring> viewBySubmissionId(@PathVariable long submissionId) {
+		System.out.println("View by submission id");
+		Optional<Submissions> submission = submissionsRepository.findById(submissionId);
+		List<Scoring> listScoring = new ArrayList<>();
+		if(submission.isPresent()) {
+			listScoring = scoringRepository.findAllBySubmissions(submission.get());
+		}
+		return listScoring;
+	}
 	// SUBMISSIONS
 
 	@GetMapping(path = "/Submissions/view")

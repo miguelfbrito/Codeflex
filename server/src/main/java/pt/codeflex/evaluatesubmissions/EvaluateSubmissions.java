@@ -248,6 +248,28 @@ public class EvaluateSubmissions implements Runnable {
 			Scoring sc = new Scoring(submission, testCase, 10, validateResult(testCase.getOutput(), output));
 			scoringRepository.save(sc);
 
+			List<Scoring> scoringBySubmission = scoringRepository.findAllBySubmissions(submission);
+			int totalScoring = scoringBySubmission.size();
+			int totalTestCasesForProblem = submission.getProblem().getTestCases().size();
+
+			System.out.println("Total Scoring " + totalScoring);
+			System.out.println("Total TestCases " + totalTestCasesForProblem);
+			
+			int countCorrectScoring = 0;
+			if (totalScoring == totalTestCasesForProblem) {
+				for (Scoring s : scoringBySubmission) {
+					if (s.isRight()){
+						countCorrectScoring++;
+					}
+				}
+				
+				if(countCorrectScoring == totalTestCasesForProblem) {
+					System.out.println("Correct problem!");
+					submission.setRight(true);
+					submissionsRepository.save(submission);
+				}
+			}
+
 			cmd.close();
 		} catch (IOException e) {
 			e.printStackTrace();

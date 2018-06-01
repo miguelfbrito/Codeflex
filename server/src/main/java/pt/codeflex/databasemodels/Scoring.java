@@ -43,22 +43,6 @@ public class Scoring implements Serializable {
 		this.date = Calendar.getInstance().getTime();
 	}
 
-	public Submissions getSubmission() {
-		return submissions;
-	}
-
-	public void setSubmission(Submissions submission) {
-		this.submissions = submission;
-	}
-
-	public TestCases getTestCase() {
-		return testcases;
-	}
-
-	public void setTestCase(TestCases testCase) {
-		this.testcases = testCase;
-	}
-
 	public double getValue() {
 		return value;
 	}
@@ -97,5 +81,11 @@ public class Scoring implements Serializable {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	@Override
+	public String toString() {
+		return "Scoring [submissions=" + submissions + ", testcases=" + testcases + ", value=" + value + ", isRight="
+				+ isRight + ", date=" + date + "]";
 	}
 }

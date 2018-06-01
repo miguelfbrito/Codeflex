@@ -10,10 +10,14 @@
     height: 55px;
 }
 
-h2, p {
+h2 {
     font-family: 'Roboto Condensed', sans-serif;
 }
 
+p{
+    font-family:  'Roboto', sans-serif;
+    text-align: justify;
+}
 .navbar-header p, li > * {
     font-family: 'Roboto Condensed', sans-serif;
     color: #FFFAFF !important;
