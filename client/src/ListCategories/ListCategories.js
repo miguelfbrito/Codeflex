@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { URL } from '../commons/Constants';
 import './ListCategories.css';
-import {Link} from 'react-router-dom';
-import {textToLowerCaseNoSpaces} from '../commons/Utils';
+import { Link } from 'react-router-dom';
+import { textToLowerCaseNoSpaces } from '../commons/Utils';
 
 class ListProblems extends Component {
 
@@ -31,12 +31,14 @@ class ListProblems extends Component {
         console.log(newValue);
     }
 
+
+
     render() {
         return (
             <div className="container">
-                <h2 className="page-title">Choose your category</h2>
-                <hr style={{width:'100%', height:'10px'}}/>
                 <div className="row">
+                    <h2 className="page-title">Choose your category</h2>
+                    <hr style={{ width: '100%', height: '10px' }} />
                     {this.state.categories.map((category, index) => (
                         <div key={category.id} className="col-sm-6 category-container">
                             <h2>{category.name}</h2>
@@ -45,7 +47,7 @@ class ListProblems extends Component {
                                 <p className="p-small-text">You have completed {category.finishedProblems} ({category.finishedProblems / category.totalProblems * 100}%) out of the {category.totalProblems} available problems.</p>
                             </div>
                             <div className="button-container">
-                                <Link to={{pathname: "/practise/" + textToLowerCaseNoSpaces(category.name), state : {categoryId: category.id}}}><input type="submit" className="btn btn-primary" value="Explore problems" /></Link>
+                                <Link to={{ pathname: "/practise/" + textToLowerCaseNoSpaces(category.name), state: { categoryId: category.id } }}><input type="submit" className="btn btn-primary" value="Explore problems" /></Link>
                             </div>
                         </div>
                     ))}

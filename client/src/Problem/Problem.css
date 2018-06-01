@@ -1,7 +1,13 @@
 .problem-info-container {
     float:right;
 }
+.problem-description-container {
+    padding: 0;
+}
 
+.ace-editor-container {
+    padding: 0;
+}
 .ace-editor-navbar {
     background-color: #f0f0f0;
     margin-bottom: -1px;

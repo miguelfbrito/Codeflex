@@ -36,10 +36,10 @@ class ListProblems extends Component {
     render() {
         return (
             <div className="container">
-                <p>{splitUrl(this.props.match.url)[1].toUpperCase().replace('-', ' ')}</p>
-                <h2 className="page-title">Problems</h2>
-                <hr style={{ width: '100%', height: '10px' }} />
                 <div className="row">
+                    <p>{splitUrl(this.props.match.url)[1].toUpperCase().replace('-', ' ')}</p>
+                    <h2 className="page-title">Problems</h2>
+                    <hr style={{ width: '100%', height: '10px' }} />
                     <div className="col-sm-9 problems-container">
                         {this.state.problems.map((problem, index) => (
                             <div className="problem-container">
