@@ -26,9 +26,12 @@ class Problem extends Component {
         super(props);
         this.state = {
             problem: [],
-            waitingForResults: false,
-            sentSubmission: [],
-            scoringResults: [],
+            sentSubmission: {
+                submitting: false,
+                waitingForResults: false,
+                submission: [],
+                scoring: []
+            },
             language: 'java',
             theme: 'github',
             code: `import java.io.*;
@@ -93,6 +96,7 @@ public class Solution {
         console.log(this.state);
         console.log(this.state.language);
         console.log(btoa(this.state.code));
+        this.setState({ sentSubmission: { submitting: true } })
         let data = {
             code: btoa(this.state.code),
             language: 'JAVA',
@@ -110,9 +114,9 @@ public class Solution {
             })
         }).then(res => res.json()).then(data => {
             console.log(data);
-            this.setState({ waitingForResults: true, sentSubmission: data })
-
-            this.fetchForResults();
+            this.setState({ sentSubmission: { submitting: true, waitingForResults: true, submission: data } })
+            console.log(data.problem.testCases.length);
+            window.resultsListener = setInterval(this.fetchForResults, 3000);
         });
 
 
@@ -121,12 +125,13 @@ public class Solution {
 
     fetchForResults() {
         console.log('Fetching results');
-            setInterval(() => this.fetchForResults, 5000);
-        fetch(URL + ':8080/api/database/Scoring/viewBySubmissionId/' + this.state.sentSubmission.id).then(res => res.json())
+        fetch(URL + ':8080/api/database/Scoring/viewBySubmissionId/' + this.state.sentSubmission.submission.id).then(res => res.json())
             .then(data => {
                 console.log(data);
-                if (JSON.stringify(data) !== '[]') {
-                    this.setState({ scoringResults: data, waitingForResults: false })
+                console.log(data.length);
+                if (JSON.stringify(data) !== '[]' && this.state.sentSubmission.submission.problem.testCases.length === data.length) {
+                    this.setState({ sentSubmission: { submitting: false, scoringResults: data, waitingForResults: false } })
+                    clearInterval(window.resultsListener);
                 }
             })
     }
@@ -135,9 +140,22 @@ public class Solution {
 
         const aceStyle = {
             border: '1px solid #ccc',
-            width: '85%',
+            width: '100%',
             boxShadow: '0px 3px 8px 0px #ccc',
             marginLeft: '0'
+        }
+
+        let showLoading = "";
+        if (this.state.sentSubmission.submitting) {
+            showLoading =
+                <div className="loader-container">
+                    <h3>Evaluating your submission...</h3>
+                    <div className="loader"></div>
+                </div>
+        } else {
+            showLoading = <div className="button-container" style={{ marginTop: '-15px' }}>
+                <input type="submit" className="btn btn-primary" value="Submit your code!" onClick={this.submitSubmission} />
+            </div>
         }
 
         return (
@@ -145,6 +163,13 @@ public class Solution {
                 <div className="row">
                     <h2 className="page-title"> {this.state.problem.name}</h2>
                     <hr />
+                    <div className="problem-nav">
+                        <ul>
+                            <li className="active">Problem</li>
+                            <li>Submissions</li>
+                            <li>Leaderboard</li>
+                        </ul>
+                    </div>
                     <div className="col-sm-10 problem-description-container ">
                         <MathJax text={this.state.problem.description} />
 
@@ -192,12 +217,13 @@ public class Solution {
                                     tabSize: 3,
                                 }} />
                         </div>
-                        <div className="button-container" style={{ marginTop: '-15px' }}>
-                            <input type="submit" className="btn btn-primary" value="Submit your code!" onClick={this.submitSubmission} />
-                        </div>
+
+
+                        {showLoading}
+
                     </div>
                 </div>
-            </div>
+            </div >
         );
     }
 }

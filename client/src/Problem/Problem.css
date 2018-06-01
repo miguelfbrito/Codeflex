@@ -1,20 +1,45 @@
 .problem-info-container {
-    float:right;
+    float: right;
 }
+
 .problem-description-container {
-    padding: 0;
+    padding: 30px;
+    box-shadow: 0px 7px 10px 0px #ccc;
+}
+
+.problem-nav {
+    text-decoration: none;
+}
+
+.problem-nav li {
+    float: left;
+    text-decoration: none;
+    list-style-type: none;
+    padding: 10px 15px;
+    font-size: 15pt;
+    margin-bottom: 0px;
+    cursor: pointer;
+}
+
+.problem-nav .active {
+    background-color: rgb(236, 236, 236);
+}
+
+.problem-nav li:first-child {
+    margin-left: -40px;
 }
 
 .ace-editor-container {
     padding: 0;
 }
+
 .ace-editor-navbar {
     background-color: #f0f0f0;
     margin-bottom: -1px;
     border: 1px solid #ccc;
     box-shadow: 0px 0px 8px 0px #ccc;
-    min-width: 85%;
-    max-width: 85%;
+    min-width: 100%;
+    max-width: 100%;
     text-align: right;
 }
 
@@ -22,6 +47,40 @@
     margin: 5px 5px;
     padding: 5px;
 }
+
 .ace-editor {
     margin-top: 25px;
+}
+
+.button-container {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.loader-container {
+    margin-top: 50px;
+    text-align: center;
+}
+
+.loader {
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 25px;
+    border: 10px solid #f3f3f3;
+    /* Light grey */
+    border-top: 10px solid #3498db;
+    /* Blue */
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 850ms ease-out infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

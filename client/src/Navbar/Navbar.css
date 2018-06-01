@@ -17,6 +17,7 @@ h2 {
 p{
     font-family:  'Roboto', sans-serif;
     text-align: justify;
+    line-height: 20pt;
 }
 .navbar-header p, li > * {
     font-family: 'Roboto Condensed', sans-serif;
