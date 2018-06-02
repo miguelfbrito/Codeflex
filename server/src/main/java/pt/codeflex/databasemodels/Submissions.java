@@ -20,6 +20,9 @@ public class Submissions {
 	private Date date;
 	private String language;
 	private boolean isRight;
+	
+	@ManyToOne
+	private Result result;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Problem problem;
@@ -117,5 +120,13 @@ public class Submissions {
 
 	public void setRight(boolean isRight) {
 		this.isRight = isRight;
+	}
+
+	public Result getResult() {
+		return result;
+	}
+
+	public void setResult(Result result) {
+		this.result = result;
 	}
 }

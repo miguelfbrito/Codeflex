@@ -214,7 +214,7 @@ public class EvaluateSubmissions implements Runnable {
 		}
 
 		String command = "cd " + PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage() + " && ";
-		String runError = "error_" + submission.getId() + ".txt";
+		String runError = "runtime_error_" + submission.getId() + ".txt";
 		String runOutput = "output_" + submission.getId() + "_" + testCase.getId() + ".txt";
 
 		// TODO : add memory limit
