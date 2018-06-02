@@ -72,12 +72,31 @@ public class DatabaseController {
 
 	@Autowired
 	private DifficultyRepository difficultyRepository;
-	
+
 	@Autowired
 	private ResultRepository resultRepository;
-	
+
+	@Autowired
+	private LanguageRepository languageRepository;
+
+	// LANGUAGE
+	@GetMapping(path = "/Language/view")
+	public List<Language> getAllLanguages() {
+		return languageRepository.findAll();
+	}
+
+	@PostMapping(path = "/Language/add")
+	public Language addLanguage(@RequestBody Language language) {
+		return languageRepository.save(new Language(language.getName(), language.getCompilerName()));
+	}
+
+	@GetMapping(path = "/Language/view/{id}")
+	public Optional<Language> viewLanguageById(@PathVariable long id) {
+		return languageRepository.findById(id);
+	}
+
 	// RESULT
-	
+
 	@GetMapping(path = "/Result/view")
 	public List<Result> getAllResults() {
 		return resultRepository.findAll();
@@ -92,12 +111,11 @@ public class DatabaseController {
 	public Optional<Result> viewResultById(@PathVariable long id) {
 		return resultRepository.findById(id);
 	}
-	
 
 	// DIFFICULTY
 
 	@GetMapping(path = "/Difficulty/view")
-	public  Iterable<Difficulty> getAllDifficulties() {
+	public Iterable<Difficulty> getAllDifficulties() {
 		return difficultyRepository.findAll();
 	}
 
@@ -107,14 +125,14 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Difficulty/view/{id}")
-	public  Optional<Difficulty> viewDifficultyById(@PathVariable long id) {
+	public Optional<Difficulty> viewDifficultyById(@PathVariable long id) {
 		return difficultyRepository.findById(id);
 	}
 
 	// GROUPS
 
 	@GetMapping(path = "/Groups/view")
-	public  Iterable<Groups> getAllGroups() {
+	public Iterable<Groups> getAllGroups() {
 		return groupsRepository.findAll();
 	}
 
@@ -138,14 +156,14 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Groups/view/{id}")
-	public  Optional<Groups> viewGroupsById(@PathVariable long id) {
+	public Optional<Groups> viewGroupsById(@PathVariable long id) {
 		return groupsRepository.findById(id);
 	}
 
 	// LEADERBOARD
 
 	@GetMapping(path = "/Leaderboard/view")
-	public  Iterable<Leaderboard> getAllLeaderboard() {
+	public Iterable<Leaderboard> getAllLeaderboard() {
 		return leaderboardRepository.findAll();
 	}
 
@@ -169,14 +187,14 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Leaderboard/view/{id}")
-	public  Optional<Leaderboard> viewLeaderboardById(@PathVariable long id) {
+	public Optional<Leaderboard> viewLeaderboardById(@PathVariable long id) {
 		return leaderboardRepository.findById(id);
 	}
 
 	// MEMBERS
 
 	@GetMapping(path = "/Members/view")
-	public  Iterable<Members> getAllMembers() {
+	public Iterable<Members> getAllMembers() {
 		return membersRepository.findAll();
 	}
 
@@ -200,7 +218,7 @@ public class DatabaseController {
 	// }
 	//
 	// @GetMapping(path = "/Members/view/{id}")
-	// public  Optional<Members> viewMembersById(@PathVariable long id)
+	// public Optional<Members> viewMembersById(@PathVariable long id)
 	// {
 	// return membersRepository.findById(id);
 	// }
@@ -208,7 +226,7 @@ public class DatabaseController {
 	// PRACTISECATEGORY
 
 	@GetMapping(path = "/PractiseCategory/view")
-	public  List<PractiseCategory> getAllPractiseCategory() {
+	public List<PractiseCategory> getAllPractiseCategory() {
 		return (List<PractiseCategory>) practiseCategoryRepository.findAll();
 	}
 
@@ -240,7 +258,7 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/PractiseCategory/view/{id}")
-	public  PractiseCategory viewPractiseCategoryById(@PathVariable long id) {
+	public PractiseCategory viewPractiseCategoryById(@PathVariable long id) {
 		Optional<PractiseCategory> practiseCategory = practiseCategoryRepository.findById(id);
 		if (practiseCategory.isPresent()) {
 			return practiseCategory.get();
@@ -289,7 +307,8 @@ public class DatabaseController {
 						List<Submissions> submissions = getAllSubmissionsByUserIdAndProblemId(userId, p.getId());
 						boolean solved = false;
 						for (Submissions s : submissions) {
-							if (s.isRight()) {
+							Result result = s.getResult();
+							if (result != null && result.getName().equals("Correct")) {
 								solved = true;
 							}
 						}
@@ -327,7 +346,7 @@ public class DatabaseController {
 	// PROBLEM
 
 	@GetMapping(path = "/Problem/view")
-	public  Iterable<Problem> getAllProblem() {
+	public Iterable<Problem> getAllProblem() {
 		return problemRepository.findAll();
 	}
 
@@ -373,7 +392,7 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Problem/view/{id}")
-	public  Optional<Problem> viewProblemById(@PathVariable long id) {
+	public Optional<Problem> viewProblemById(@PathVariable long id) {
 		return problemRepository.findById(id);
 	}
 
@@ -390,7 +409,7 @@ public class DatabaseController {
 	// RATING
 
 	@GetMapping(path = "/Rating/view")
-	public  Iterable<Rating> getAllRating() {
+	public Iterable<Rating> getAllRating() {
 		return ratingRepository.findAll();
 	}
 
@@ -414,14 +433,14 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Rating/view/{id}")
-	public  Optional<Rating> viewRatingById(@PathVariable long id) {
+	public Optional<Rating> viewRatingById(@PathVariable long id) {
 		return ratingRepository.findById(id);
 	}
 
 	// ROLE
 
 	@GetMapping(path = "/Role/view")
-	public  Iterable<Role> getAllRole() {
+	public Iterable<Role> getAllRole() {
 		return roleRepository.findAll();
 	}
 
@@ -445,14 +464,14 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Role/view/{id}")
-	public  Optional<Role> viewRoleById(@PathVariable long id) {
+	public Optional<Role> viewRoleById(@PathVariable long id) {
 		return roleRepository.findById(id);
 	}
 
 	// SCORING
 
 	@GetMapping(path = "/Scoring/view")
-	public  Iterable<Scoring> getAllScoring() {
+	public Iterable<Scoring> getAllScoring() {
 		return scoringRepository.findAll();
 	}
 
@@ -484,7 +503,7 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Scoring/view/{id}")
-	public  Optional<Scoring> viewScoringById(@PathVariable long id) {
+	public Optional<Scoring> viewScoringById(@PathVariable long id) {
 		return scoringRepository.findById(id);
 	}
 
@@ -501,12 +520,12 @@ public class DatabaseController {
 	// SUBMISSIONS
 
 	@GetMapping(path = "/Submissions/view")
-	public  List<Submissions> getAllSubmissions() {
+	public List<Submissions> getAllSubmissions() {
 		return (List<Submissions>) submissionsRepository.findAll();
 	}
 
 	@GetMapping(path = "/Submissions/viewByUserId/{userId}")
-	public  List<Submissions> getAllSubmissionsByUserId(@PathVariable long userId) {
+	public List<Submissions> getAllSubmissionsByUserId(@PathVariable long userId) {
 		Optional<Users> user = usersRepository.findById(userId);
 		return user.get().getSubmissions();
 	}
@@ -541,7 +560,9 @@ public class DatabaseController {
 			Problem problem;
 			if (p.isPresent()) {
 				problem = p.get();
-				Submissions s = new Submissions(problem, language, code);
+				Language l = languageRepository.findByName(language);
+
+				Submissions s = new Submissions(problem, l, code);
 				user.getSubmissions().add(s);
 				submissionsRepository.save(s);
 				usersRepository.save(user);
@@ -566,14 +587,14 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Submissions/view/{id}")
-	public  Optional<Submissions> viewSubmissionsById(@PathVariable long id) {
+	public Optional<Submissions> viewSubmissionsById(@PathVariable long id) {
 		return submissionsRepository.findById(id);
 	}
 
 	// TESTCASES
 
 	@GetMapping(path = "/TestCases/view")
-	public  Iterable<TestCases> getAllTestCases() {
+	public Iterable<TestCases> getAllTestCases() {
 		return testCasesRepository.findAll();
 	}
 
@@ -599,14 +620,14 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/TestCases/view/{id}")
-	public  Optional<TestCases> viewTestCasesById(@PathVariable long id) {
+	public Optional<TestCases> viewTestCasesById(@PathVariable long id) {
 		return testCasesRepository.findById(id);
 	}
 
 	// TOURNAMENT
 
 	@GetMapping(path = "/Tournament/view")
-	public  Iterable<Tournament> getAllTournament() {
+	public Iterable<Tournament> getAllTournament() {
 		return tournamentRepository.findAll();
 	}
 
@@ -643,14 +664,14 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Tournament/view/{id}")
-	public  Optional<Tournament> viewTournamentById(@PathVariable long id) {
+	public Optional<Tournament> viewTournamentById(@PathVariable long id) {
 		return tournamentRepository.findById(id);
 	}
 
 	// USERS
 
 	@GetMapping(path = "/Users/view")
-	public  List<Users> getAllUsers() {
+	public List<Users> getAllUsers() {
 		return (List<Users>) usersRepository.findAll();
 	}
 
@@ -676,14 +697,14 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Users/view/{id}")
-	public  Optional<Users> viewUsersById(@PathVariable long id) {
+	public Optional<Users> viewUsersById(@PathVariable long id) {
 		return usersRepository.findById(id);
 	}
 
 	// USERSROLES
 
 	@GetMapping(path = "/UsersRoles/view")
-	public  Iterable<UsersRoles> getAllUsersRoles() {
+	public Iterable<UsersRoles> getAllUsersRoles() {
 		return usersRolesRepository.findAll();
 	}
 
@@ -707,7 +728,7 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/UsersRoles/view/{id}")
-	public  Optional<UsersRoles> viewUsersRolesById(@PathVariable long id) {
+	public Optional<UsersRoles> viewUsersRolesById(@PathVariable long id) {
 		return usersRolesRepository.findById(id);
 	}
 

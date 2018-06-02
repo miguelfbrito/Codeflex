@@ -29,6 +29,7 @@ import pt.codeflex.databasemodels.Scoring;
 import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.TestCases;
 import pt.codeflex.databasemodels.Users;
+import pt.codeflex.repositories.ResultRepository;
 import pt.codeflex.repositories.ScoringRepository;
 import pt.codeflex.repositories.SubmissionsRepository;
 import pt.codeflex.repositories.UsersRepository;
@@ -45,6 +46,9 @@ public class EvaluateSubmissions implements Runnable {
 
 	@Autowired
 	private SubmissionsRepository submissionsRepository;
+	
+	@Autowired
+	private ResultRepository resultRepository;
 
 	private String host;
 
@@ -144,19 +148,19 @@ public class EvaluateSubmissions implements Runnable {
 		String command = "cd Desktop/Submissions/" + uniqueId + "_" + submission.getLanguage() + " && ";
 		// TODO : add memory limit
 
-		switch (submission.getLanguage()) {
-		case "JAVA":
+		switch (submission.getLanguage().getCompilerName()) {
+		case "Java 8":
 			command += "javac " + fileName + ".java 2> " + compileError + ""; // && disown
 			suffix = ".java";
 			break;
-		case "C++11":
+		case "C++11 (gcc 5.4.0)":
 			command += "g++ -std=c++11 -o " + fileName + "_exec_" + uniqueId + " " + fileName + ".cpp 2> "
 					+ compileError + "";
 			suffix = ".cpp";
 			break;
-		case "PYTHON":
+		case "Python 2.7":
 			break;
-		case "C#":
+		case "C# (mono 4.2.1)":
 			command += "mcs -out:" + fileName + "_exec_" + uniqueId + " " + fileName + ".cs 2> " + compileError + "";
 			suffix = ".cs";
 			break;
@@ -218,20 +222,20 @@ public class EvaluateSubmissions implements Runnable {
 		String runOutput = "output_" + submission.getId() + "_" + testCase.getId() + ".txt";
 
 		// TODO : add memory limit
-		switch (submission.getLanguage()) {
-		case "JAVA":
+		switch (submission.getLanguage().getCompilerName()) {
+		case "Java 8":
 			command += "cat " + testCase.getId() + " | timeout 3s java " + fileName + " 2> " + runError + " > "
 					+ runOutput + "";
 			break;
-		case "C++11":
+		case "C++11 (gcc 5.4.0)":
 			command += "cat " + testCase.getId() + " | timeout 2 ./" + fileName + "_exec_" + uniqueId + " 2> "
 					+ runError + " > " + runOutput + "";
 			break;
-		case "PYTHON":
+		case "Python 2.7":
 			command += "cat " + testCase.getId() + " | timeout 10 python " + fileName + ".py 2> " + runError + " > "
 					+ runOutput + "";
 			break;
-		case "C#":
+		case "C# (mono 4.2.1)":
 			command += "cat " + testCase.getId() + " | timeout 3 ./" + fileName + "_exec_" + uniqueId + " 2> "
 					+ runError + " > " + runOutput + "";
 			break;
@@ -251,9 +255,6 @@ public class EvaluateSubmissions implements Runnable {
 			List<Scoring> scoringBySubmission = scoringRepository.findAllBySubmissions(submission);
 			int totalScoring = scoringBySubmission.size();
 			int totalTestCasesForProblem = submission.getProblem().getTestCases().size();
-
-			System.out.println("Total Scoring " + totalScoring);
-			System.out.println("Total TestCases " + totalTestCasesForProblem);
 			
 			int countCorrectScoring = 0;
 			if (totalScoring == totalTestCasesForProblem) {
@@ -265,7 +266,7 @@ public class EvaluateSubmissions implements Runnable {
 				
 				if(countCorrectScoring == totalTestCasesForProblem) {
 					System.out.println("Correct problem!");
-					submission.setRight(true);
+					submission.setResult(resultRepository.findByName("Correct"));
 					submissionsRepository.save(submission);
 				}
 			}

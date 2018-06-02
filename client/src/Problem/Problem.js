@@ -103,7 +103,7 @@ public class Solution {
         this.setState({ sentSubmission: { submitting: true } })
         let data = {
             code: btoa(this.state.code),
-            language: 'JAVA',
+            language: {name : "Java"},
             users: { id: JSON.parse(localStorage.getItem('userData')).id },
             problem: { name: textToLowerCaseNoSpaces(this.state.problem.name) }
         }

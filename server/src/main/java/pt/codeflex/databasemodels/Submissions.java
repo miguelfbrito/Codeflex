@@ -10,21 +10,25 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+import javax.transaction.Transactional;
 
 @Entity
+@Transactional
 public class Submissions {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private Date date;
-	private String language;
-	private boolean isRight;
+	private double score;
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Language language;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Result result;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Problem problem;
 
 	public Problem getProblem() {
@@ -38,57 +42,26 @@ public class Submissions {
 	@Column(length = 10000)
 	private String code;
 
-	// @OneToMany
-	// @JoinColumn(name = "submissions_id")
-	// private List<Scoring> scoring = new ArrayList<>();
-
-	// public List<Scoring> getScoring() {
-	// return scoring;
-	// }
-	//
-	// public void setScoring(List<Scoring> scoring) {
-	// this.scoring = scoring;
-	// }
-
 	public Submissions() {
 	}
 
-	public Submissions(Problem problem, String language, String code) {
+	public Submissions(Problem problem, Language language, String code) {
 		this.problem = problem;
-		this.date = Calendar.getInstance().getTime();
-		this.language = language;
-		this.code = code;
-		this.isRight = false;
-	}
-
-	public Submissions(Problem problem, String language, String code, boolean isRight) {
-		this.problem = problem;
-		this.date = Calendar.getInstance().getTime();
-		this.language = language;
-		this.code = code;
-		this.isRight = isRight;
-	}
-
-	public Submissions(long id, String code, String language) {
-		this.id = id;
 		this.language = language;
 		this.code = code;
 	}
 	
-	public Submissions(String language, String code) {
-		this.date = Calendar.getInstance().getTime();
+	public Submissions(Date date, double score, Language language, Result result, Problem problem, String code) {
+		super();
+		this.date = date;
+		this.score = score;
 		this.language = language;
+		this.result = result;
+		this.problem = problem;
 		this.code = code;
-		this.isRight = false;
 	}
 
-	public void setLanguage(String language) {
-		this.language = language;
-	}
-
-	public String getLanguage() {
-		return language;
-	}
+	
 
 	public String getCode() {
 		return code;
@@ -114,19 +87,27 @@ public class Submissions {
 		this.date = date;
 	}
 
-	public boolean isRight() {
-		return isRight;
-	}
-
-	public void setRight(boolean isRight) {
-		this.isRight = isRight;
-	}
-
 	public Result getResult() {
 		return result;
 	}
 
 	public void setResult(Result result) {
 		this.result = result;
+	}
+
+	public double getScore() {
+		return score;
+	}
+
+	public void setScore(double score) {
+		this.score = score;
+	}
+
+	public Language getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(Language language) {
+		this.language = language;
 	}
 }
