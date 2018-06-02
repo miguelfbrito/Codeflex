@@ -5,7 +5,7 @@
     min-width: 250px;
     margin-bottom: 4%;
     background-color: rgb(243, 247, 255);
-    box-shadow: 0px 0px 10px 0px #aaa;
+    box-shadow: 0px 4px 10px 0px #aaa;
     transition: all 250ms ease-in-out;
 }
 
@@ -27,6 +27,7 @@
 
 .button-container input {
     margin-top: 50px;
+    margin-right: 25px;
     border-radius: 0;
     color: black;
     background-color: rgb(201, 208, 253);

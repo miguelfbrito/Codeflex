@@ -1,5 +1,7 @@
 package pt.codeflex.controllers.api;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -257,8 +259,8 @@ public class DatabaseController {
 		return listOfCategoriesWithStats;
 	}
 
-	@GetMapping(path = "/PractiseCategory/getAllWithoutTestCases")
-	public List<CategoriesWithoutTestCases> getAllCategoriesWithoutTestCases() {
+	@GetMapping(path = "/PractiseCategory/getAllWithoutTestCases/{userId}")
+	public List<CategoriesWithoutTestCases> getAllCategoriesWithoutTestCases(@PathVariable long userId) {
 		List<PractiseCategory> allCategories = getAllPractiseCategory();
 		List<CategoriesWithoutTestCases> categoriesWithoutTestCases = new ArrayList<>();
 
@@ -268,8 +270,15 @@ public class DatabaseController {
 				List<ProblemWithoutTestCases> problemsWithoutTestCases = new ArrayList<>();
 				if (problems != null) {
 					for (Problem p : problems) {
+						List<Submissions> submissions = getAllSubmissionsByUserIdAndProblemId(userId, p.getId());
+						boolean solved = false;
+						for (Submissions s : submissions) {
+							if (s.isRight()) {
+								solved = true;
+							}
+						}
 						problemsWithoutTestCases.add(new ProblemWithoutTestCases(p.getId(), p.getName(),
-								p.getDescription(), p.getDifficulty()));
+								p.getDescription(), p.getDifficulty(), solved));
 					}
 				}
 				categoriesWithoutTestCases
@@ -468,7 +477,7 @@ public class DatabaseController {
 		System.out.println("View by submission id");
 		Optional<Submissions> submission = submissionsRepository.findById(submissionId);
 		List<Scoring> listScoring = new ArrayList<>();
-		if(submission.isPresent()) {
+		if (submission.isPresent()) {
 			listScoring = scoringRepository.findAllBySubmissions(submission.get());
 		}
 		return listScoring;
@@ -476,8 +485,32 @@ public class DatabaseController {
 	// SUBMISSIONS
 
 	@GetMapping(path = "/Submissions/view")
-	public @ResponseBody Iterable<Submissions> getAllSubmissions() {
-		return submissionsRepository.findAll();
+	public @ResponseBody List<Submissions> getAllSubmissions() {
+		return (List<Submissions>) submissionsRepository.findAll();
+	}
+
+	@GetMapping(path = "/Submissions/viewByUserId/{userId}")
+	public @ResponseBody List<Submissions> getAllSubmissionsByUserId(@PathVariable long userId) {
+		Optional<Users> user = usersRepository.findById(userId);
+		return user.get().getSubmissions();
+	}
+
+	@GetMapping(path = "/Submissions/viewByUserIdAndProblemId/{userId}/{problemId}")
+	public List<Submissions> getAllSubmissionsByUserIdAndProblemId(@PathVariable long userId,
+			@PathVariable long problemId) {
+		List<Submissions> submissions = getAllSubmissionsByUserId(userId);
+		Optional<Problem> problem = problemRepository.findById(problemId);
+
+		List<Submissions> finalList = new ArrayList<>();
+		if (problem.isPresent()) {
+			for (Submissions s : submissions) {
+				if (s.getProblem() == problem.get()) {
+					finalList.add(s);
+				}
+			}
+		}
+
+		return finalList;
 	}
 
 	@PostMapping(path = "/Submissions/add")
@@ -601,8 +634,8 @@ public class DatabaseController {
 	// USERS
 
 	@GetMapping(path = "/Users/view")
-	public @ResponseBody Iterable<Users> getAllUsers() {
-		return usersRepository.findAll();
+	public @ResponseBody List<Users> getAllUsers() {
+		return (List<Users>) usersRepository.findAll();
 	}
 
 	@PostMapping(path = "/Users/add")

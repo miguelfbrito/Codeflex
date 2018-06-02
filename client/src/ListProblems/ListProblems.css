@@ -40,14 +40,15 @@
     float: right;
 }
 
-#problem-button {
+.problem-button {
+    min-width: 125px;
     border-radius: 0;
     background-color: white;
     color: black;
     transition: all 250ms ease-in-out;
 }
 
-#problem-button:hover{
+.problem-button:hover{
     background-color: rgb(113, 194, 252);
     box-shadow: 0px 0px 15px 0px #ccc;
 }

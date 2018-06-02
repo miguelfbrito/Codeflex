@@ -8,6 +8,7 @@ public class ProblemWithoutTestCases {
 	private String name;
 	private String description;
 	private Difficulty difficulty;
+	private boolean solved;
 
 	public ProblemWithoutTestCases(long id, String name, String description, Difficulty difficulty) {
 		super();
@@ -15,6 +16,15 @@ public class ProblemWithoutTestCases {
 		this.name = name;
 		this.description = description;
 		this.difficulty = difficulty;
+	}
+
+	public ProblemWithoutTestCases(long id, String name, String description, Difficulty difficulty, boolean solved) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.difficulty = difficulty;
+		this.solved = solved;
 	}
 
 	public long getId() {
@@ -47,5 +57,13 @@ public class ProblemWithoutTestCases {
 
 	public void setDifficulty(Difficulty difficulty) {
 		this.difficulty = difficulty;
+	}
+
+	public boolean isSolved() {
+		return solved;
+	}
+
+	public void setSolved(boolean solved) {
+		this.solved = solved;
 	}
 }
