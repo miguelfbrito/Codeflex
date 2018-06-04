@@ -1,7 +1,8 @@
 package pt.codeflex.databasemodels;
 
+import java.util.Calendar;
 import java.util.Date;
-
+import java.util.TimeZone;
 
 import javax.persistence.Column;
 import javax.persistence.ColumnResult;
@@ -45,10 +46,11 @@ public class Submissions {
 		this.id = id;
 	}
 
-	public Submissions(Problem problem, Language language, String code) {
+	public Submissions(Problem problem, Language language, String code ) {
 		this.problem = problem;
 		this.language = language;
 		this.code = code;
+		this.date = Calendar.getInstance().getTime();
 	}
 
 	public Submissions(Date date, double score, Language language, Result result, Problem problem, String code) {

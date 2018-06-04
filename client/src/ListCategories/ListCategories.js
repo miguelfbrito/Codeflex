@@ -3,6 +3,7 @@ import { URL } from '../commons/Constants';
 import './ListCategories.css';
 import { Link } from 'react-router-dom';
 import { textToLowerCaseNoSpaces } from '../commons/Utils';
+import PathLink from '../PathLink/PathLink';
 
 class ListProblems extends Component {
 
@@ -37,8 +38,8 @@ class ListProblems extends Component {
         return (
             <div className="container">
                 <div className="row">
-                    <h2 className="page-title">Choose your category</h2>
-                    <hr style={{ width: '100%', height: '10px' }} />
+                    <PathLink path={this.props.location.pathname} title="Categories"/>   
+                                    
                     {this.state.categories.map((category, index) => (
                         <div key={category.id} className="col-sm-6 category-container">
                             <h2>{category.name}</h2>

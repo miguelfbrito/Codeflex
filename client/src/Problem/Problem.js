@@ -9,6 +9,7 @@ import MathJax from './MathJax/MathJax';
 import Submissions from './Submissions/Submissions';
 import Leaderboard from './Leaderboard/Leaderboard';
 import CompilerError from './CompilerError/CompilerError';
+import PathLink from '../PathLink/PathLink';
 
 import 'brace/mode/java';
 import 'brace/mode/javascript';
@@ -280,8 +281,7 @@ public class Solution {
         return (
             <div className="container" >
                 <div className="row">
-                    <h2 className="page-title"> {this.state.problem.name}</h2>
-                    <hr />
+                <PathLink path={this.props.location.pathname} title={this.state.problem.name}/>
                     <div className="problem-nav">
                         <ul onClick={this.onPageClick}>
                             <li className={this.state.page.problem ? 'active' : ''}>Problem</li>
@@ -292,8 +292,9 @@ public class Solution {
 
                     {sectionToRender}
 
-                    {this.state.results.error === 'Compiler Error' ? <CompilerError errorMessage={this.state.results.result.message} /> : ''}
-
+                </div>
+                <div className="row">
+                    {this.state.results.error === 'Compiler Error' && this.state.page.problem ? <CompilerError errorMessage={this.state.results.result.message} /> : ''}
                 </div>
             </div >
         );

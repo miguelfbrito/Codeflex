@@ -1,0 +1,31 @@
+.header-link-container div{
+    display: inline-block;
+    text-transform:capitalize;
+    font-size: 10pt;
+}
+
+.header-link-container p {
+    cursor: pointer;
+    color: black;
+}
+.header-link-container i {
+    font-size: 8pt;
+    font-weight: bold;
+    text-align: center;
+    padding: 0 7px;
+}
+
+.header-link-container div i:last-child{
+    color : rgb(132, 132, 255);
+    font-weight: bold;
+}
+
+.page-title-container{
+    text-align:left !important;
+}
+.page-title-container h2 {
+    text-transform: capitalize;
+    margin-top: -5px;
+    text-align: left !important;
+    font-family: 'Roboto Condensed', sans-serif;
+}

@@ -483,10 +483,10 @@ public class DatabaseController {
 
 		// TODO : alterar de boolean para int puro
 		int tmp = 1;
-		if(!isRight) {
+		if (!isRight) {
 			tmp = 0;
 		}
-		
+
 		if (s.isPresent() && tc.isPresent()) {
 			Scoring sc = new Scoring(s.get(), tc.get(), value, tmp);
 			scoringRepository.save(sc);

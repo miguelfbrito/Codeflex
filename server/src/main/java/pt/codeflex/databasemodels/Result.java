@@ -1,5 +1,6 @@
 package pt.codeflex.databasemodels;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +14,8 @@ public class Result {
 	private long id;
 
 	private String name;
+	
+	@Column(length = 2500)
 	private String message;
 	
 	public Result(String name, String message) {

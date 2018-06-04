@@ -10,7 +10,7 @@
 }
 
 .category-container:nth-child(odd) {
-    float: left;
+    float:left;
 }
 
 .category-container:nth-child(even) {
@@ -69,12 +69,6 @@
     }
 }
 
-.page-title {
-    margin-top: 0px;
-    text-align: left;
-    font-family: 'Roboto Condensed', sans-serif;
-
-}
 
 .p-small-text {
     color: #ccc;

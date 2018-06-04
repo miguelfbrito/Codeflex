@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { URL } from '../commons/Constants';
 import { Link } from 'react-router-dom';
 import { splitUrl, textToLowerCaseNoSpaces } from '../commons/Utils';
+import PathLink from '../PathLink/PathLink';
 
 import './ListProblems.css';
 
@@ -111,9 +112,7 @@ class ListProblems extends Component {
         return (
             <div className="container">
                 <div className="row">
-                    <p>{splitUrl(this.props.match.url)[1].toUpperCase().replace('-', ' ')}</p>
-                    <h2 className="page-title">Problems</h2>
-                    <hr style={{ width: '100%', height: '10px' }} />
+                    <PathLink path={this.props.location.pathname} title={splitUrl(this.props.match.url)[1]}/>                   
                     <div className="col-sm-9 problems-container">
                         {this.state.filteredProblems.map((problem, index) => (
                             <div className="problem-container">

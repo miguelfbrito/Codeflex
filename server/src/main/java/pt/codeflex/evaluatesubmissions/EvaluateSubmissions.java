@@ -187,11 +187,23 @@ public class EvaluateSubmissions implements Runnable {
 						+ compilerError;
 				cmd = session.exec(command);
 				String output = IOUtils.readFully(cmd.getInputStream()).toString();
-				System.out.println("OUTPUT DO COMPILADOR " + output);
+
 				if (!output.equals("")) {
-					Result r = new Result("Compiler Error", output);
-					resultRepository.save(r);
-					submission.setResult(r);
+					List<Result> current = resultRepository.findAllByName("Compiler Error");
+
+					boolean exists = false;
+					for (Result r : current) {
+						if (r.getMessage() != null && r.getMessage().equals(output)) {
+							exists = true;
+							submission.setResult(r);
+						}
+					}
+
+					if (!exists) {
+						Result r = new Result("Compiler Error", output);
+						resultRepository.save(r);
+						submission.setResult(r);
+					}
 
 					Scoring sc = new Scoring(submission, new TestCases(), 0, 0);
 					scoringRepository.save(sc);
@@ -200,6 +212,7 @@ public class EvaluateSubmissions implements Runnable {
 					System.out.println("Compiler error!");
 					return;
 				}
+
 			} catch (IOException e) {
 
 				e.printStackTrace();
@@ -213,12 +226,9 @@ public class EvaluateSubmissions implements Runnable {
 				scp(PATH_SPRING + "/" + tcFileName,
 						PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName() + "/");
 
-				// System.out.println("Running tests case " + tc.getId() + " for " +
-				// submission.getLanguage());
 				runSubmission(submission, tc, fileName);
 			}
 		} catch (ConnectionException | TransportException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -263,8 +273,7 @@ public class EvaluateSubmissions implements Runnable {
 		command += " && cat " + runOutput;
 
 		try {
-			
-			
+
 			Command cmd = session.exec(command);
 			String output = IOUtils.readFully(cmd.getInputStream()).toString();
 
