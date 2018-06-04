@@ -193,7 +193,7 @@ public class EvaluateSubmissions implements Runnable {
 					resultRepository.save(r);
 					submission.setResult(r);
 
-					Scoring sc = new Scoring(submission, new TestCases(), 0, false);
+					Scoring sc = new Scoring(submission, new TestCases(), 0, 0);
 					scoringRepository.save(sc);
 
 					submissionsRepository.save(submission);
@@ -263,11 +263,13 @@ public class EvaluateSubmissions implements Runnable {
 		command += " && cat " + runOutput;
 
 		try {
+			
+			
 			Command cmd = session.exec(command);
 			String output = IOUtils.readFully(cmd.getInputStream()).toString();
 
-			boolean isRight = validateResult(testCase.getOutput(), output);
-			double score = isRight ? submission.getProblem().getMaxScore() : 0;
+			int isRight = validateResult(testCase.getOutput(), output);
+			double score = isRight == 1 ? submission.getProblem().getMaxScore() : 0;
 
 			Scoring sc = new Scoring(submission, testCase, score, isRight);
 			scoringRepository.save(sc);
@@ -279,7 +281,7 @@ public class EvaluateSubmissions implements Runnable {
 			int countCorrectScoring = 0;
 			if (totalScoring == totalTestCasesForProblem) {
 				for (Scoring s : scoringBySubmission) {
-					if (s.isRight()) {
+					if (s.getIsRight() == 1) {
 						countCorrectScoring++;
 					}
 				}
@@ -298,11 +300,13 @@ public class EvaluateSubmissions implements Runnable {
 
 	}
 
-	private boolean validateResult(String tcOutput, String output) {
+	private int validateResult(String tcOutput, String output) {
 		if (tcOutput.trim().equals(output.trim())) {
-			return true;
+			return 1;
+		} else if (tcOutput.trim().equals("")) {
+			return -1;
 		}
-		return false;
+		return 0;
 	}
 
 	public void createFile(String text, String fileName) {

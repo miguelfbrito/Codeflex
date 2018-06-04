@@ -105,7 +105,7 @@ public class Solution {
         console.log(this.state);
         console.log(this.state.language);
         console.log(btoa(this.state.code));
-        this.setState({ sentSubmission: { submitting: true } })
+        this.setState({ sentSubmission: { submitting: true }, results: { result: [], error: '' } })
         let data = {
             code: btoa(this.state.code),
             language: { name: "Java" },
@@ -142,24 +142,26 @@ public class Solution {
                     clearInterval(window.resultsListener);
                 }
 
-                if (data.length == 1) {
+                if (data.length === 1) {
                     let submissionResult = data[0].submissions.result;
                     let name = submissionResult.name;
                     let errorMessage = submissionResult.message
 
 
-                    if (name == 'Compiler Error') {
+                    if (name === 'Compiler Error') {
                         console.log(submissionResult);
                         this.setState({
                             sentSubmission: {
                                 submitting: false, scoringResults: [], waitingForResults: false
                             },
                             results: {
-                                result: {...submissionResult},
+                                result: { ...submissionResult },
                                 error: 'Compiler Error'
                             }
                         })
                         clearInterval(window.resultsListener);
+                    } else if (name === 'Runtime Error') {
+
                     }
                     console.log("error message " + this.state.results.result.message);
                 }

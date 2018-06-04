@@ -481,8 +481,14 @@ public class DatabaseController {
 		Optional<Submissions> s = submissionsRepository.findById(submissionsId);
 		Optional<TestCases> tc = testCasesRepository.findById(testCasesId);
 
+		// TODO : alterar de boolean para int puro
+		int tmp = 1;
+		if(!isRight) {
+			tmp = 0;
+		}
+		
 		if (s.isPresent() && tc.isPresent()) {
-			Scoring sc = new Scoring(s.get(), tc.get(), value, isRight);
+			Scoring sc = new Scoring(s.get(), tc.get(), value, tmp);
 			scoringRepository.save(sc);
 		}
 	}

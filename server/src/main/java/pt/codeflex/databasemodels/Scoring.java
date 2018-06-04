@@ -24,7 +24,7 @@ public class Scoring implements Serializable {
 	private TestCases testcases;
 
 	private double value;
-	private boolean isRight;
+	private int isRight;
 	private Date date;
 	
 	public Scoring() {
@@ -35,7 +35,7 @@ public class Scoring implements Serializable {
 		this.testcases = testCase;
 	}
 	
-	public Scoring(Submissions submission, TestCases testCase, double value, boolean isRight) {
+	public Scoring(Submissions submission, TestCases testCase, double value, int isRight) {
 		this.submissions = submission;
 		this.testcases = testCase;
 		this.value = value;
@@ -51,13 +51,6 @@ public class Scoring implements Serializable {
 		this.value = value;
 	}
 
-	public boolean isRight() {
-		return isRight;
-	}
-
-	public void setRight(boolean isRight) {
-		this.isRight = isRight;
-	}
 
 	public Submissions getSubmissions() {
 		return submissions;
@@ -87,5 +80,13 @@ public class Scoring implements Serializable {
 	public String toString() {
 		return "Scoring [submissions=" + submissions + ", testcases=" + testcases + ", value=" + value + ", isRight="
 				+ isRight + ", date=" + date + "]";
+	}
+
+	public int getIsRight() {
+		return isRight;
+	}
+
+	public void setIsRight(int isRight) {
+		this.isRight = isRight;
 	}
 }
