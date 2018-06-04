@@ -46,7 +46,7 @@ public class EvaluateSubmissions implements Runnable {
 
 	@Autowired
 	private SubmissionsRepository submissionsRepository;
-	
+
 	@Autowired
 	private ResultRepository resultRepository;
 
@@ -66,50 +66,36 @@ public class EvaluateSubmissions implements Runnable {
 	private final String PATH_SERVER = "/home/mbrito/Desktop/Submissions";
 	private long uniqueId;
 
-	public Queue<Submissions> getSubmissions(long id) {
-		Optional<Users> u = usersRepository.findById(id);
+	public Queue<Submissions> getSubmissions() {
 
-		if (u.isPresent()) {
-			connect(getHost());
-			System.out.println("After connecting");
-			Users us = u.get();
-			List<Submissions> submissions = submissionsRepository.findSubmissionsToAvaliate();
-
-			for (Submissions s : submissions) {
-				System.out.println(s.getId());
-				System.out.println(s.getLanguage());
-				System.out.println(s.getCode());
-				submissionsQueue.add(s);
-			}
-
-			// for (Submissions s : submissions) {
-			// Iterable<Scoring> sc = scoringRepository.findAll();
-			// while (sc.iterator().hasNext()) {
-			// if (sc.iterator().next().getSubmission().getId() == s.getId()) {
-			// break;
-			// }
-			// }
-			// queue.add(s);
-			// }
-
-			// TESTING PURPOSE TODO : remove
-			try {
-				if (count++ < 2) {
-					Session session = ssh.startSession();
-					Command cmd = session.exec("cd " + PATH_SERVER + " && rm -rf *");
-					session.close();
-				}
-			} catch (ConnectionException | TransportException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			while (!submissionsQueue.isEmpty()) {
-				Submissions s = submissionsQueue.poll();
-				compileSubmission(s);
-			}
-
+		connect(getHost());
+		System.out.println("After connecting");
+		List<Submissions> submissions = submissionsRepository.findSubmissionsToAvaliate();
+		
+		for (Submissions s : submissions) {
+			System.out.println(s.getId());
+			System.out.println(s.getLanguage().getName());
+			System.out.println(s.getCode());
+			submissionsQueue.add(s);
 		}
+
+		// TESTING PURPOSE TODO : remove
+		try {
+			if (count++ < 2) {
+				Session session = ssh.startSession();
+				Command cmd = session.exec("cd " + PATH_SERVER + " && rm -rf *");
+				session.close();
+			}
+		} catch (ConnectionException | TransportException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		while (!submissionsQueue.isEmpty()) {
+			Submissions s = submissionsQueue.poll();
+			compileSubmission(s);
+		}
+
 		return submissionsQueue;
 	}
 
@@ -145,7 +131,7 @@ public class EvaluateSubmissions implements Runnable {
 		String fileName = "Solution";
 		String suffix = "";
 		String compileError = "compiler_error_" + uniqueId + ".txt";
-		String command = "cd Desktop/Submissions/" + uniqueId + "_" + submission.getLanguage() + " && ";
+		String command = "cd Desktop/Submissions/" + uniqueId + "_" + submission.getLanguage().getName() + " && ";
 		// TODO : add memory limit
 
 		switch (submission.getLanguage().getCompilerName()) {
@@ -170,7 +156,7 @@ public class EvaluateSubmissions implements Runnable {
 
 		Command cmd;
 		try {
-			cmd = session.exec("mkdir Desktop/Submissions/" + uniqueId + "_" + submission.getLanguage());
+			cmd = session.exec("mkdir Desktop/Submissions/" + uniqueId + "_" + submission.getLanguage().getName());
 			cmd.close();
 
 		} catch (ConnectionException | TransportException e1) {
@@ -180,11 +166,10 @@ public class EvaluateSubmissions implements Runnable {
 		// Create and send the code to the server
 		createFile(new String(Base64.getDecoder().decode(submission.getCode())), "Solution");
 		scp(PATH_SPRING + "/" + fileName,
-				PATH_SERVER + "/" + uniqueId + "_" + submission.getLanguage() + "/Solution" + suffix);
+				PATH_SERVER + "/" + uniqueId + "_" + submission.getLanguage().getName() + "/Solution" + suffix);
 
 		try {
 			session = ssh.startSession();
-			// System.out.println("COMANDO DE EXEC: " + command);
 			cmd = session.exec(command);
 
 			cmd.close();
@@ -195,7 +180,7 @@ public class EvaluateSubmissions implements Runnable {
 				String tcFileName = String.valueOf(tc.getId());
 				createFile(tc.getInput(), tcFileName);
 				scp(PATH_SPRING + "/" + tcFileName,
-						PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage() + "/");
+						PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName() + "/");
 
 				// System.out.println("Running tests case " + tc.getId() + " for " +
 				// submission.getLanguage());
@@ -217,7 +202,7 @@ public class EvaluateSubmissions implements Runnable {
 
 		}
 
-		String command = "cd " + PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage() + " && ";
+		String command = "cd " + PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName() + " && ";
 		String runError = "runtime_error_" + submission.getId() + ".txt";
 		String runOutput = "output_" + submission.getId() + "_" + testCase.getId() + ".txt";
 
@@ -255,16 +240,16 @@ public class EvaluateSubmissions implements Runnable {
 			List<Scoring> scoringBySubmission = scoringRepository.findAllBySubmissions(submission);
 			int totalScoring = scoringBySubmission.size();
 			int totalTestCasesForProblem = submission.getProblem().getTestCases().size();
-			
+
 			int countCorrectScoring = 0;
 			if (totalScoring == totalTestCasesForProblem) {
 				for (Scoring s : scoringBySubmission) {
-					if (s.isRight()){
+					if (s.isRight()) {
 						countCorrectScoring++;
 					}
 				}
-				
-				if(countCorrectScoring == totalTestCasesForProblem) {
+
+				if (countCorrectScoring == totalTestCasesForProblem) {
 					System.out.println("Correct problem!");
 					submission.setResult(resultRepository.findByName("Correct"));
 					submissionsRepository.save(submission);
@@ -314,7 +299,7 @@ public class EvaluateSubmissions implements Runnable {
 	public void run() {
 		System.out.println("Thread starting!");
 		System.out.println("Connection established!");
-		getSubmissions(1);
+		getSubmissions();
 
 	}
 

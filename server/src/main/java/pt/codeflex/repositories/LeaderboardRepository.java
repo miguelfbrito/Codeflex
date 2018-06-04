@@ -1,11 +1,12 @@
 package pt.codeflex.repositories;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import pt.codeflex.databasemodels.Leaderboard;
 
 @Repository
-public interface LeaderboardRepository extends CrudRepository<Leaderboard, Long>{
+public interface LeaderboardRepository extends JpaRepository<Leaderboard, Long>{
 
 }

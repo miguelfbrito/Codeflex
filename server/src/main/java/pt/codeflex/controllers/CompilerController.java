@@ -1,11 +1,13 @@
 package pt.codeflex.controllers;
 
+import pt.codeflex.databasemodels.Language;
 import pt.codeflex.databasemodels.Problem;
 import pt.codeflex.databasemodels.Scoring;
 import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.Users;
 import pt.codeflex.evaluatesubmissions.*;
 import pt.codeflex.models.SubmitSubmission;
+import pt.codeflex.repositories.LanguageRepository;
 import pt.codeflex.repositories.ProblemRepository;
 import pt.codeflex.repositories.ScoringRepository;
 import pt.codeflex.repositories.SubmissionsRepository;
@@ -20,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
+
+import javax.transaction.Transactional;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +64,9 @@ public class CompilerController {
 
 	@Autowired
 	private ScoringRepository scoringRepository;
+	
+	@Autowired
+	private LanguageRepository languageRepository;
 
 	@GetMapping("/compiler")
 	public String compiler() {
@@ -93,20 +100,21 @@ public class CompilerController {
 		return "";
 	}
 
+	@Transactional
 	@PostMapping("/submission")
 	public Submissions submit(@RequestBody SubmitSubmission submitSubmission) {
 
 		Problem problem = problemRepository.findByName(submitSubmission.getProblem().getName().replaceAll("-", " "));
-		Optional<Users> u = usersRepository.findById((submitSubmission.getUsers().getId()));
+		Optional<Users> u = usersRepository.findById(submitSubmission.getUsers().getId());
+		Language language = languageRepository.findByName(submitSubmission.getLanguage().getName());
 
 		Submissions submission = new Submissions();
-		if (problem != null && u.isPresent()) {
-			submission = new Submissions(problem, submitSubmission.getLanguage(), submitSubmission.getCode());
+		if (problem != null && language != null && u.isPresent()) {
+			submission = new Submissions(problem, language, submitSubmission.getCode());
+			submissionsRepository.save(submission);
 			Users user = u.get();
 			user.getSubmissions().add(submission);
-			submissionsRepository.save(submission);
 			usersRepository.save(user);
-
 			try {
 				ssh();
 			} catch (IOException e) {

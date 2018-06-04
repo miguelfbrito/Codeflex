@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.transaction.Transactional;
 
 @Entity
 public class Language {
@@ -47,6 +48,11 @@ public class Language {
 
 	public void setCompilerName(String compilerName) {
 		this.compilerName = compilerName;
+	}
+
+	@Override
+	public String toString() {
+		return "Language [id=" + id + ", name=" + name + ", compilerName=" + compilerName + "]";
 	}
 
 }

@@ -1,16 +1,12 @@
 package pt.codeflex.databasemodels;
 
-import java.util.Calendar;
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 import javax.transaction.Transactional;
 
 @Entity
@@ -22,22 +18,15 @@ public class Submissions {
 	private long id;
 	private Date date;
 	private double score;
-	@ManyToOne(fetch = FetchType.EAGER)
-	private Language language;
-	
-	@ManyToOne(fetch = FetchType.EAGER)
+
+	@ManyToOne
 	private Result result;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	private Problem problem;
 
-	public Problem getProblem() {
-		return problem;
-	}
-
-	public void setProblem(Problem problem) {
-		this.problem = problem;
-	}
+	@ManyToOne
+	private Language language;
 
 	@Column(length = 10000)
 	private String code;
@@ -50,7 +39,7 @@ public class Submissions {
 		this.language = language;
 		this.code = code;
 	}
-	
+
 	public Submissions(Date date, double score, Language language, Result result, Problem problem, String code) {
 		super();
 		this.date = date;
@@ -61,7 +50,23 @@ public class Submissions {
 		this.code = code;
 	}
 
-	
+	public Submissions(long id, String code, Date date, Double score, Language language, Problem problem,
+			Result result) {
+		this.id = id;
+		this.code = code;
+		this.date = date;
+		this.result = result;
+		this.language = language;
+		this.problem = problem;
+	}
+
+	public Problem getProblem() {
+		return problem;
+	}
+
+	public void setProblem(Problem problem) {
+		this.problem = problem;
+	}
 
 	public String getCode() {
 		return code;
@@ -109,5 +114,11 @@ public class Submissions {
 
 	public void setLanguage(Language language) {
 		this.language = language;
+	}
+
+	@Override
+	public String toString() {
+		return "Submissions [id=" + id + ", date=" + date + ", score=" + score + ", result=" + result + ", problem="
+				+ problem + ", language=" + language + ", code=" + code + "]";
 	}
 }
