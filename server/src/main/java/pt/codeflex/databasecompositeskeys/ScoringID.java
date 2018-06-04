@@ -1,4 +1,4 @@
-package pt.codeflex.databasecomposites;
+package pt.codeflex.databasecompositeskeys;
 
 import java.io.Serializable;
 

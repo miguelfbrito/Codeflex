@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 
-import pt.codeflex.databasecomposites.ProblemTournamentID;
+import pt.codeflex.databasecompositeskeys.ProblemTournamentID;
 
 @IdClass(ProblemTournamentID.class)
 @Entity

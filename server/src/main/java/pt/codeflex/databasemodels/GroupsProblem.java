@@ -5,7 +5,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 
-import pt.codeflex.databasecomposites.GroupsProblemID;
+import pt.codeflex.databasecompositeskeys.GroupsProblemID;
 
 @IdClass(GroupsProblemID.class)
 @Entity

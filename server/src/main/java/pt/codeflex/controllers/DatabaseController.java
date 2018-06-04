@@ -1,4 +1,4 @@
-package pt.codeflex.controllers.api;
+package pt.codeflex.controllers;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 
@@ -509,7 +509,7 @@ public class DatabaseController {
 
 	@GetMapping(path = "/Scoring/viewBySubmissionId/{submissionId}")
 	public List<Scoring> viewBySubmissionId(@PathVariable long submissionId) {
-		System.out.println("View by submission id");
+
 		Optional<Submissions> submission = submissionsRepository.findById(submissionId);
 		List<Scoring> listScoring = new ArrayList<>();
 		if (submission.isPresent()) {

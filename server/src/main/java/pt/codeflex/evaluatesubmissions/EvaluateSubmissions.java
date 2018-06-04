@@ -24,7 +24,8 @@ import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.direct.Session.Command;
 import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.xfer.FileSystemFile;
-import pt.codeflex.controllers.api.DatabaseController;
+import pt.codeflex.controllers.DatabaseController;
+import pt.codeflex.databasemodels.Result;
 import pt.codeflex.databasemodels.Scoring;
 import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.TestCases;
@@ -62,21 +63,21 @@ public class EvaluateSubmissions implements Runnable {
 
 	private static int count = 0;
 	private static volatile Queue<Submissions> submissionsQueue = new ArrayDeque<>();
-	private final String PATH_SPRING = System.getProperty("user.home") + File.separator + "Submissions";
-	private final String PATH_SERVER = "/home/mbrito/Desktop/Submissions";
+	private final static String PATH_SPRING = System.getProperty("user.home") + File.separator + "Submissions";
+	private final static String PATH_SERVER = "/home/mbrito/Desktop/Submissions";
 	private long uniqueId;
 
-	public Queue<Submissions> getSubmissions() {
+	public void getSubmissions() {
 
-		connect(getHost());
-		System.out.println("After connecting");
+		System.out.println("Connecting thread!");
 		List<Submissions> submissions = submissionsRepository.findSubmissionsToAvaliate();
-		
+		List<Submissions> listSubmissions = submissionsRepository.findAll();
+
 		for (Submissions s : submissions) {
-			System.out.println(s.getId());
-			System.out.println(s.getLanguage().getName());
-			System.out.println(s.getCode());
-			submissionsQueue.add(s);
+			Optional<Submissions> submission = submissionsRepository.findById(s.getId());
+			if (submission.isPresent()) {
+				submissionsQueue.add(submission.get());
+			}
 		}
 
 		// TESTING PURPOSE TODO : remove
@@ -91,12 +92,18 @@ public class EvaluateSubmissions implements Runnable {
 			e.printStackTrace();
 		}
 
+		System.out.println(submissionsQueue.toString());
+
+	}
+
+	public void distributeSubmissions() {
+		connect(getHost());
+
 		while (!submissionsQueue.isEmpty()) {
 			Submissions s = submissionsQueue.poll();
 			compileSubmission(s);
 		}
 
-		return submissionsQueue;
 	}
 
 	public SSHClient ssh = null;
@@ -130,24 +137,24 @@ public class EvaluateSubmissions implements Runnable {
 
 		String fileName = "Solution";
 		String suffix = "";
-		String compileError = "compiler_error_" + uniqueId + ".txt";
+		String compilerError = "compiler_error_" + uniqueId + ".txt";
 		String command = "cd Desktop/Submissions/" + uniqueId + "_" + submission.getLanguage().getName() + " && ";
 		// TODO : add memory limit
 
 		switch (submission.getLanguage().getCompilerName()) {
 		case "Java 8":
-			command += "javac " + fileName + ".java 2> " + compileError + ""; // && disown
+			command += "javac " + fileName + ".java 2> " + compilerError + ""; // && disown
 			suffix = ".java";
 			break;
 		case "C++11 (gcc 5.4.0)":
 			command += "g++ -std=c++11 -o " + fileName + "_exec_" + uniqueId + " " + fileName + ".cpp 2> "
-					+ compileError + "";
+					+ compilerError + "";
 			suffix = ".cpp";
 			break;
 		case "Python 2.7":
 			break;
 		case "C# (mono 4.2.1)":
-			command += "mcs -out:" + fileName + "_exec_" + uniqueId + " " + fileName + ".cs 2> " + compileError + "";
+			command += "mcs -out:" + fileName + "_exec_" + uniqueId + " " + fileName + ".cs 2> " + compilerError + "";
 			suffix = ".cs";
 			break;
 		default:
@@ -171,8 +178,32 @@ public class EvaluateSubmissions implements Runnable {
 		try {
 			session = ssh.startSession();
 			cmd = session.exec(command);
-
 			cmd.close();
+
+			// Verifica se houve erro
+			try {
+				session = ssh.startSession();
+				command = "cat " + PATH_SERVER + "/" + uniqueId + "_" + submission.getLanguage().getName() + "/"
+						+ compilerError;
+				cmd = session.exec(command);
+				String output = IOUtils.readFully(cmd.getInputStream()).toString();
+				System.out.println("OUTPUT DO COMPILADOR " + output);
+				if (!output.equals("")) {
+					Result r = new Result("Compiler Error", output);
+					resultRepository.save(r);
+					submission.setResult(r);
+
+					Scoring sc = new Scoring(submission, new TestCases(), 0, false);
+					scoringRepository.save(sc);
+
+					submissionsRepository.save(submission);
+					System.out.println("Compiler error!");
+					return;
+				}
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
 
 			List<TestCases> testCases = submission.getProblem().getTestCases();
 			for (TestCases tc : testCases) {
@@ -202,7 +233,8 @@ public class EvaluateSubmissions implements Runnable {
 
 		}
 
-		String command = "cd " + PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName() + " && ";
+		String command = "cd " + PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName()
+				+ " && ";
 		String runError = "runtime_error_" + submission.getId() + ".txt";
 		String runOutput = "output_" + submission.getId() + "_" + testCase.getId() + ".txt";
 
@@ -234,7 +266,10 @@ public class EvaluateSubmissions implements Runnable {
 			Command cmd = session.exec(command);
 			String output = IOUtils.readFully(cmd.getInputStream()).toString();
 
-			Scoring sc = new Scoring(submission, testCase, 10, validateResult(testCase.getOutput(), output));
+			boolean isRight = validateResult(testCase.getOutput(), output);
+			double score = isRight ? submission.getProblem().getMaxScore() : 0;
+
+			Scoring sc = new Scoring(submission, testCase, score, isRight);
 			scoringRepository.save(sc);
 
 			List<Scoring> scoringBySubmission = scoringRepository.findAllBySubmissions(submission);
@@ -299,8 +334,7 @@ public class EvaluateSubmissions implements Runnable {
 	public void run() {
 		System.out.println("Thread starting!");
 		System.out.println("Connection established!");
-		getSubmissions();
-
+		distributeSubmissions();
 	}
 
 }

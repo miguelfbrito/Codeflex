@@ -8,7 +8,7 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import pt.codeflex.databasecomposites.RatingID;
+import pt.codeflex.databasecompositeskeys.RatingID;
 
 @IdClass(RatingID.class)
 @Entity

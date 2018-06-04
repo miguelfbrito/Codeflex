@@ -68,6 +68,8 @@ public class CompilerController {
 	@Autowired
 	private LanguageRepository languageRepository;
 
+	@Autowired 
+	private EvaluateSubmissions evaluateSubmissions;
 	@GetMapping("/compiler")
 	public String compiler() {
 		return "compiler";
@@ -76,6 +78,13 @@ public class CompilerController {
 	@GetMapping("/ssh")
 	public String ssh() throws IOException {
 		long inicial = System.currentTimeMillis();
+		
+		
+		// Adds all the submissions into a volatile queue. The queue is then distributed to the threads
+		evaluateSubmissions.connect(host1);
+		evaluateSubmissions.connect(host1);
+		evaluateSubmissions.getSubmissions();
+		
 		EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
 		evaluateSubmissions1.setHost(host1);
 		evaluateSubmissions1.connect(host1);

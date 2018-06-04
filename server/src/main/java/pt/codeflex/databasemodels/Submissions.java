@@ -1,16 +1,23 @@
 package pt.codeflex.databasemodels;
 
 import java.util.Date;
+
+
 import javax.persistence.Column;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.transaction.Transactional;
+import javax.persistence.SqlResultSetMapping;
+
+
+@SqlResultSetMapping(name = "SubmissionsToAvaliateMapping", classes = @ConstructorResult(targetClass = Submissions.class, columns = {
+		@ColumnResult(name = "id", type = Long.class) }))
 
 @Entity
-@Transactional
 public class Submissions {
 
 	@Id
@@ -34,6 +41,10 @@ public class Submissions {
 	public Submissions() {
 	}
 
+	public Submissions(long id) {
+		this.id = id;
+	}
+
 	public Submissions(Problem problem, Language language, String code) {
 		this.problem = problem;
 		this.language = language;
@@ -48,16 +59,6 @@ public class Submissions {
 		this.result = result;
 		this.problem = problem;
 		this.code = code;
-	}
-
-	public Submissions(long id, String code, Date date, Double score, Language language, Problem problem,
-			Result result) {
-		this.id = id;
-		this.code = code;
-		this.date = date;
-		this.result = result;
-		this.language = language;
-		this.problem = problem;
 	}
 
 	public Problem getProblem() {

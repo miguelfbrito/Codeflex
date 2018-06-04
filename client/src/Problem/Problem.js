@@ -103,7 +103,7 @@ public class Solution {
         this.setState({ sentSubmission: { submitting: true } })
         let data = {
             code: btoa(this.state.code),
-            language: {name : "Java"},
+            language: { name: "Java" },
             users: { id: JSON.parse(localStorage.getItem('userData')).id },
             problem: { name: textToLowerCaseNoSpaces(this.state.problem.name) }
         }
@@ -123,8 +123,6 @@ public class Solution {
             window.resultsListener = setInterval(this.fetchForResults, 3000);
         });
 
-
-
     }
 
     fetchForResults() {
@@ -137,6 +135,8 @@ public class Solution {
                     this.setState({ sentSubmission: { submitting: false, scoringResults: data, waitingForResults: false } })
                     clearInterval(window.resultsListener);
                 }
+
+                // HERE
             })
     }
 

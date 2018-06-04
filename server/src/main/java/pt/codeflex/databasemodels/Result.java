@@ -13,7 +13,13 @@ public class Result {
 	private long id;
 
 	private String name;
+	private String message;
 	
+	public Result(String name, String message) {
+		this.name = name;
+		this.message = message;
+	}
+
 	public Result() {}
 
 	public Result(String name) {
@@ -40,5 +46,13 @@ public class Result {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 }

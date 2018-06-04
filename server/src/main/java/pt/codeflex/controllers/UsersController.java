@@ -1,4 +1,4 @@
-package pt.codeflex.controllers.api;
+package pt.codeflex.controllers;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
