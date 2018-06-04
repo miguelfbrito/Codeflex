@@ -16,7 +16,7 @@
 }
 
 .header-link-container div i:last-child{
-    color : rgb(132, 132, 255);
+    color : #6A44FF;
     font-weight: bold;
 }
 
@@ -28,4 +28,9 @@
     margin-top: -5px;
     text-align: left !important;
     font-family: 'Roboto Condensed', sans-serif;
+}
+
+hr {
+    margin-bottom: 35px;
+    border: 2px solid #6A44FF;
 }

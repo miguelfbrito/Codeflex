@@ -10,11 +10,11 @@
 }
 
 .category-container:nth-child(odd) {
-    float:left;
+    float:right;
 }
 
 .category-container:nth-child(even) {
-    float: right;
+    float:left;
 }
 
 .category-container:hover {

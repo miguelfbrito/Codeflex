@@ -113,7 +113,7 @@ class ListProblems extends Component {
             <div className="container">
                 <div className="row">
                     <PathLink path={this.props.location.pathname} title={splitUrl(this.props.match.url)[1]}/>                   
-                    <div className="col-sm-9 problems-container">
+                    <div className="col-sm-10 problems-container">
                         {this.state.filteredProblems.map((problem, index) => (
                             <div className="problem-container">
                                 <div>
@@ -135,7 +135,6 @@ class ListProblems extends Component {
                             </div>
                         ))}
                     </div>
-                    <div className="col-sm-1"></div>
                     <div className="col-sm-2 problem-info" ref={this.checkBoxFilter} onChange={this.onChangeSelectBox}>
                         <h3>Status</h3>
                         <input name="Solved" type="checkbox" />

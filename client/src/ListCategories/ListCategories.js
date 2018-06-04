@@ -39,7 +39,6 @@ class ListProblems extends Component {
             <div className="container">
                 <div className="row">
                     <PathLink path={this.props.location.pathname} title="Categories"/>   
-                                    
                     {this.state.categories.map((category, index) => (
                         <div key={category.id} className="col-sm-6 category-container">
                             <h2>{category.name}</h2>

@@ -49,16 +49,14 @@ class Navbar extends Component {
         }
 
         return (
-            <nav className="navbar navbar-inverse">
-                <div className="container-fluid">
-                    <div className="navbar-header">
-                        <p id="codeflex">codeflex</p>
-                        {/* <img id="logo-img" src={require('../images/brain.png')} alt=""/>*/}
-                    </div>
-
-                    {items}
-
+            <nav className="navbar navbar-inverse container-fluid">
+                <div className="navbar-header">
+                    <p id="codeflex">codeflex</p>
+                    {/* <img id="logo-img" src={require('../images/brain.png')} alt=""/>*/}
                 </div>
+
+                {items}
+
             </nav>
         );
     }
