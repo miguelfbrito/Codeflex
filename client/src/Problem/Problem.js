@@ -8,6 +8,7 @@ import { splitUrl, textToLowerCaseNoSpaces } from '../commons/Utils';
 import MathJax from './MathJax/MathJax';
 import Submissions from './Submissions/Submissions';
 import Leaderboard from './Leaderboard/Leaderboard';
+import CompilerError from './CompilerError/CompilerError';
 
 import 'brace/mode/java';
 import 'brace/mode/javascript';
@@ -35,6 +36,10 @@ class Problem extends Component {
                 scoring: []
             },
             page: { problem: true, submissions: false, leaderboard: false },
+            results: {
+                result: [],
+                error: ''
+            },
             language: 'java',
             theme: 'github',
             code: `import java.io.*;
@@ -131,9 +136,32 @@ public class Solution {
             .then(data => {
                 console.log(data);
                 console.log(data.length);
+                console.log(this.state.sentSubmission.submission.problem.testCases.length);
                 if (JSON.stringify(data) !== '[]' && this.state.sentSubmission.submission.problem.testCases.length === data.length) {
                     this.setState({ sentSubmission: { submitting: false, scoringResults: data, waitingForResults: false } })
                     clearInterval(window.resultsListener);
+                }
+
+                if (data.length == 1) {
+                    let submissionResult = data[0].submissions.result;
+                    let name = submissionResult.name;
+                    let errorMessage = submissionResult.message
+
+
+                    if (name == 'Compiler Error') {
+                        console.log(submissionResult);
+                        this.setState({
+                            sentSubmission: {
+                                submitting: false, scoringResults: [], waitingForResults: false
+                            },
+                            results: {
+                                result: {...submissionResult},
+                                error: 'Compiler Error'
+                            }
+                        })
+                        clearInterval(window.resultsListener);
+                    }
+                    console.log("error message " + this.state.results.result.message);
                 }
 
                 // HERE
@@ -261,6 +289,8 @@ public class Solution {
                     </div>
 
                     {sectionToRender}
+
+                    {this.state.results.error === 'Compiler Error' ? <CompilerError errorMessage={this.state.results.result.message} /> : ''}
 
                 </div>
             </div >
