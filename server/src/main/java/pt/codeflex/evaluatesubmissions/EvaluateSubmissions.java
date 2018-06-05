@@ -298,8 +298,10 @@ public class EvaluateSubmissions implements Runnable {
 				if (countCorrectScoring == totalTestCasesForProblem) {
 					System.out.println("Correct problem!");
 					submission.setResult(resultRepository.findByName("Correct"));
-					submissionsRepository.save(submission);
+				} else {
+					submission.setResult(resultRepository.findByName("Incorrect"));
 				}
+				submissionsRepository.save(submission);
 			}
 
 			cmd.close();
@@ -312,7 +314,7 @@ public class EvaluateSubmissions implements Runnable {
 	private int validateResult(String tcOutput, String output) {
 		if (tcOutput.trim().equals(output.trim())) {
 			return 1;
-		} else if (tcOutput.trim().equals("")) {
+		} else if (output.trim().equals("")) {
 			return -1;
 		}
 		return 0;

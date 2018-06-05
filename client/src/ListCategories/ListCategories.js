@@ -17,7 +17,7 @@ class ListProblems extends Component {
 
 
     componentDidMount() {
-        fetch(URL + ':8080/api/database/PractiseCategory/listwithstats/' + JSON.parse(localStorage.getItem('userData')).id //, {
+        fetch(URL + '/api/database/PractiseCategory/listwithstats/' + JSON.parse(localStorage.getItem('userData')).id //, {
             //headers: new Headers({
             // 'Content-Type': 'application/json',
             //'Authorization': 'Token ' + localUser.token

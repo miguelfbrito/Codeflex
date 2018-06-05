@@ -43,18 +43,21 @@ class ViewResults extends Component {
         if (typeof scoringResults !== undefined) {
             console.log('Logging scoring results on vr')
             console.log(scoringResults);
-            finalRender = <div className="testcase-container">
-                {scoringResults.map((s, index) => (
-                    <div className="col-sm-4 testcase">
-                        <div className="testcase-icons">
-                            {s.isRight === 1 ? <i className="material-icons green-icon">check_circle</i> :
-                                s.isRight === 0 ? <i className="material-icons red-icon">highlight_off</i> :
-                                    <i className="material-icons">error</i>}
+            finalRender =
+                <div className="testcase-container">
+                    {scoringResults.map((s, index) => (
+                        <div className="col-sm-4">
+                            <div className="col-sm-11 testcase">
+                                <div className="testcase-icons">
+                                    {s.isRight === 1 ? <i className="material-icons green-icon">check_circle_outline</i> :
+                                        s.isRight === 0 ? <i className="material-icons red-icon">highlight_off</i> :
+                                            <i className="material-icons red-icon">error</i>}
+                                </div>
+                                <p>Test Case {index + 1}</p>
+                            </div>
                         </div>
-                        <p>Test Case {index + 1}</p>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
         }
 
 

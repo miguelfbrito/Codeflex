@@ -5,7 +5,14 @@
 }
 
 .testcase  {
-    padding: 15px;
+    padding: 20px;
+    box-shadow: 0px 0px 5px 0px #aaa;
+    margin: 15px;
+    transition: all 250ms ease-in-out;
+}
+
+.testcase:hover{
+    transform: scale(1.04);
 }
 
 .testcase i, .testcase p{
@@ -15,7 +22,7 @@
 }
 
 .testcase i {
-    font-size: 20pt;
+    font-size: 22pt;
 }
 
 .testcase p {

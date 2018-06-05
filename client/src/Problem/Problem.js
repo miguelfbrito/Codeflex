@@ -91,7 +91,7 @@ public class Solution {
     componentDidMount() {
         let currentProblem = splitUrl(this.props.location.pathname)[2];
         console.log(currentProblem);
-        fetch(URL + ':8080/api/database/problem/getProblemByName/' + currentProblem).then(res => res.json()).then(data => { this.setState({ problem: data }); console.log(data) });
+        fetch(URL + '/api/database/problem/getProblemByName/' + currentProblem).then(res => res.json()).then(data => { this.setState({ problem: data }); console.log(data) });
     }
 
     onAceChange(newValue) {
@@ -118,7 +118,7 @@ public class Solution {
 
         console.log(data);
 
-        fetch(URL + ':8080/submission', {
+        fetch(URL + '/submission', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: new Headers({
@@ -135,7 +135,7 @@ public class Solution {
 
     fetchForResults() {
         console.log('Fetching results');
-        fetch(URL + ':8080/api/database/Scoring/viewBySubmissionId/' + this.state.sentSubmission.submission.id).then(res => res.json())
+        fetch(URL + '/api/database/Scoring/viewBySubmissionId/' + this.state.sentSubmission.submission.id).then(res => res.json())
             .then(data => {
                 console.log(data);
                 console.log(data.length);
@@ -263,10 +263,9 @@ public class Solution {
 
         const submissionSection =
             <div>
-                <div className="col-sm-10 problem-description-container ">
+                <div className="col-sm-12 problem-description-container ">
                     <Submissions />
                 </div>
-                {problemInformation}
             </div>;
 
         const leaderboardSection =

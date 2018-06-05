@@ -7,9 +7,11 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import pt.codeflex.custom.CustomSubmissionsRepository;
+import pt.codeflex.databasemodels.Problem;
 import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.Users;
 
 @Repository
 public interface SubmissionsRepository extends JpaRepository<Submissions, Long>, CustomSubmissionsRepository{
+	List<Submissions> findAllByProblem(Problem problem);
 }

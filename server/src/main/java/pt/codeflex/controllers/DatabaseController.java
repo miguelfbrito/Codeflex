@@ -536,6 +536,20 @@ public class DatabaseController {
 		return user.get().getSubmissions();
 	}
 
+	@GetMapping(path = "/Submissions/viewByProblemName/{problemName}")
+	public List<Submissions> getAllSubmissionsByProblemName(@PathVariable String problemName) {
+
+		problemName = problemName.replace('-', ' ');
+		
+		Problem currentProblem = problemRepository.findByName(problemName);
+
+		List<Submissions> submissions = new ArrayList<>();
+		if (currentProblem != null) {
+			submissions = submissionsRepository.findAllByProblem(currentProblem);
+		}
+		return submissions;
+	}
+
 	@GetMapping(path = "/Submissions/viewByUserIdAndProblemId/{userId}/{problemId}")
 	public List<Submissions> getAllSubmissionsByUserIdAndProblemId(@PathVariable long userId,
 			@PathVariable long problemId) {

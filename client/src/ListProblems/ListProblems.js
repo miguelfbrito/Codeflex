@@ -22,7 +22,7 @@ class ListProblems extends Component {
 
     componentDidMount() {
         const currentCategory = splitUrl(this.props.location.pathname)[1];
-        fetch(URL + ':8080/api/database/PractiseCategory/getAllWithoutTestCases/' + JSON.parse(localStorage.getItem('userData')).id)
+        fetch(URL + '/api/database/PractiseCategory/getAllWithoutTestCases/' + JSON.parse(localStorage.getItem('userData')).id)
             .then(res => res.json()).then(data => {
                 let newData = data.filter(d => textToLowerCaseNoSpaces(d.name) === currentCategory)
                 if (JSON.stringify(newData) === '[]') {
@@ -33,7 +33,7 @@ class ListProblems extends Component {
                 }
             })
 
-        fetch(URL + ':8080/api/database/difficulty/view')
+        fetch(URL + '/api/database/difficulty/view')
             .then(res => res.json()).then(data => { this.setState({ difficulties: data }) })
     }
 

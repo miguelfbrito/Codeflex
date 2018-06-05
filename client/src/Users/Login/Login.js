@@ -28,7 +28,7 @@ class Login extends Component {
 
         const data = { username: this.state.username, password: this.state.password };
 
-        fetch(URL + ':8080/api/login', {
+        fetch(URL + '/api/login', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: new Headers({
@@ -37,7 +37,7 @@ class Login extends Component {
         }).then(res => res.json()).then(data => {
             if (data.message === 'Logged in') {
                 localStorage.setItem('userData', JSON.stringify({ id: data.object.id, username: data.object.username, email: data.object.email }));
-                window.location.href = URL + ":3000/";
+                window.location.href = "http://localhost:3000/";
             }
 
             // TODO : notify the user about invalid data
@@ -54,7 +54,7 @@ class Login extends Component {
 
         const data = { username: this.state.username, email: this.state.email, password: this.state.password };
 
-        fetch(URL + ':8080/api/register', {
+        fetch(URL + '/api/register', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: new Headers({
@@ -63,7 +63,7 @@ class Login extends Component {
         }).then(res => res.json()).then(data => {
             console.log(data);
             if (data.object != null) {
-                window.location.href = URL + ":3000/";
+                window.location.href = "http://localhost:3000/";
                 const userData = { id: data.object.id, username: data.object.username, email: data.object.email };
                 localStorage.setItem('userData', JSON.stringify(userData));
             }
