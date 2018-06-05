@@ -3,6 +3,7 @@ import Script from 'react-load-script';
 import AceEditor from 'react-ace';
 import brace from 'brace';
 
+import { Redirect } from 'react-router-dom';
 import { URL } from '../commons/Constants';
 import { splitUrl, textToLowerCaseNoSpaces } from '../commons/Utils';
 import MathJax from './MathJax/MathJax';
@@ -34,10 +35,11 @@ class Problem extends Component {
                 submitting: false,
                 waitingForResults: false,
                 submission: [],
-                scoring: []
+                scoringResults: []
             },
             page: { problem: true, submissions: false, leaderboard: false },
             results: {
+                loaded: false,
                 result: [],
                 error: ''
             },
@@ -139,8 +141,12 @@ public class Solution {
                 console.log(data.length);
                 console.log(this.state.sentSubmission.submission.problem.testCases.length);
                 if (JSON.stringify(data) !== '[]' && this.state.sentSubmission.submission.problem.testCases.length === data.length) {
-                    this.setState({ sentSubmission: { submitting: false, scoringResults: data, waitingForResults: false } })
+                    this.setState({
+                        sentSubmission: { submitting: false, scoringResults: data, waitingForResults: false },
+                        results: { loaded: true }
+                    })
                     clearInterval(window.resultsListener);
+
                 }
 
                 if (data.length === 1) {
@@ -281,7 +287,7 @@ public class Solution {
         return (
             <div className="container" >
                 <div className="row">
-                <PathLink path={this.props.location.pathname} title={this.state.problem.name}/>
+                    <PathLink path={this.props.location.pathname} title={this.state.problem.name} />
                     <div className="problem-nav">
                         <ul onClick={this.onPageClick}>
                             <li className={this.state.page.problem ? 'active' : ''}>Problem</li>
@@ -291,6 +297,12 @@ public class Solution {
                     </div>
 
                     {sectionToRender}
+
+                    {this.state.results.loaded ? 
+                        <Redirect to={{pathname : this.props.location.pathname + "/view-results", state : {
+                            information : this.state.sentSubmission.scoringResults
+                        } }}/> : ''
+                    }
 
                 </div>
                 <div className="row">
