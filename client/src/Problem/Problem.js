@@ -264,7 +264,7 @@ public class Solution {
         const submissionSection =
             <div>
                 <div className="col-sm-12 problem-description-container ">
-                    <Submissions />
+                    <Submissions pathname={this.props.location.pathname}/>
                 </div>
             </div>;
 

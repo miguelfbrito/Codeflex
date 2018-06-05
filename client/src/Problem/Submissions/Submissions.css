@@ -1,0 +1,25 @@
+.submission-title-container > div {
+    font-size: 16pt;
+    border-bottom: 2px solid #6A44FF;
+}
+
+.submission-container > div {
+    border-bottom: 1px solid #aaa;
+    padding-top: 15px;
+    text-align: center !important;
+}
+
+.submission-container > div > p, .submission-title-container >div>p {
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+}
+
+.green-text {
+    color: green;
+}
+
+.red-text {
+    color: red;
+}
+
+

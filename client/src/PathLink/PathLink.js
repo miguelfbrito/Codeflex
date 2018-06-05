@@ -16,6 +16,19 @@ class PathLink extends React.Component {
         });
     }
 
+    buildPath(pathname, index){
+        let finalPath = '/';
+        for(let i = 0; i<=index; i++){
+            finalPath += pathname[i];
+            if(i < index){
+                finalPath += '/';
+            }
+        }
+        console.log(finalPath);
+        return finalPath;
+    }
+
+
     render() {
         let pathname = splitUrl(this.props.path);
         console.log('Logging pathname ')
@@ -31,9 +44,10 @@ class PathLink extends React.Component {
                 <div className="header-link-container">
                     {pathname.map((p, index) => (
                         <div key={index}>
-                            <Link to={{ pathname: '/' }}>
+                            <Link key={index} to={{ pathname: this.buildPath(pathname, index) }}>
                                 <p style={{ display: 'inline-block' }}>
                                     {p}
+                                    {console.log(p + " " + index)}
                                 </p>
                             </Link>
                             {index < pathname.length - 1 ? <i class="material-icons">keyboard_arrow_right</i> : ''}
