@@ -42,8 +42,8 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 public class CompilerController {
 
-	private final String host1 = "192.168.1.55"; // "10.214.104.240"; "192.168.1.55"
-	private final String host2 = "192.168.1.65"; // "10.214.104.235"; "192.168.1.65"
+	private final String host1 = "192.168.43.250"; // "10.214.104.240"; "192.168.1.55"
+	private final String host2 = "192.168.43.155"; // "10.214.104.235"; "192.168.1.65"
 
 	private Queue<Submissions> queue = new ArrayDeque<>();
 
@@ -119,11 +119,9 @@ public class CompilerController {
 
 		Submissions submission = new Submissions();
 		if (problem != null && language != null && u.isPresent()) {
-			submission = new Submissions(problem, language, submitSubmission.getCode());
-			submissionsRepository.save(submission);
 			Users user = u.get();
-			user.getSubmissions().add(submission);
-			usersRepository.save(user);
+			submission = new Submissions(problem, language, submitSubmission.getCode(), user);
+			submissionsRepository.save(submission);
 			try {
 				ssh();
 			} catch (IOException e) {

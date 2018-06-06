@@ -3,6 +3,7 @@ package pt.codeflex.databasemodels;
 import java.util.List;
 import java.util.ArrayList;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,7 +13,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 
 @Entity
 public class Problem {
@@ -30,11 +38,11 @@ public class Problem {
 	private String constraints;
 
 	private int maxScore;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	private Users owner;
 
-	@OneToMany(fetch = FetchType.EAGER)
+	@ManyToOne
+	private Users users;
+
+	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "problem_id")
 	private List<TestCases> testCases = new ArrayList<>();
 
@@ -63,17 +71,16 @@ public class Problem {
 		this.difficulty = difficulty;
 		this.maxScore = maxScore;
 	}
-	
+
 	public Problem(String name, String description, String inputFormat, String outputFormat, String constraints,
-			int maxScore, Users owner, Difficulty difficulty) {
-		super();
+			int maxScore, Users users, Difficulty difficulty) {
 		this.name = name;
 		this.description = description;
 		this.inputFormat = inputFormat;
 		this.outputFormat = outputFormat;
 		this.constraints = constraints;
 		this.maxScore = maxScore;
-		this.owner = owner;
+		this.users = users;
 		this.difficulty = difficulty;
 	}
 
@@ -155,12 +162,12 @@ public class Problem {
 		this.constraints = constraints;
 	}
 
-	public Users getOwner() {
-		return owner;
+	public void setUsers(Users users) {
+		this.users = users;
 	}
 
-	public void setOwner(Users owner) {
-		this.owner = owner;
+	public Users getUsers() {
+		return users;
 	}
 
 }

@@ -43,10 +43,6 @@ public class Users {
 	
 	private Date registrationDate;
 
-	@OneToMany(fetch = FetchType.EAGER)
-	@JoinColumn(name = "users_id")
-	private List<Submissions> submissions = new ArrayList<>();
-
 	@OneToMany
 	@JoinColumn(name = "users_id")
 	private List<Members> member = new ArrayList<>();
@@ -113,13 +109,6 @@ public class Users {
 		this.password = password;
 	}
 
-	public List<Submissions> getSubmissions() {
-		return submissions;
-	}
-
-	public void setSubmissions(List<Submissions> submissions) {
-		this.submissions = submissions;
-	}
 
 	public List<UsersRoles> getUserRoles() {
 		return userRoles;
@@ -151,7 +140,7 @@ public class Users {
 	@Override
 	public String toString() {
 		return "Users [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password
-				+ ", submissions=" + submissions + ", member=" + member + ", userRoles=" + userRoles + ", rating="
+				+ ", member=" + member + ", userRoles=" + userRoles + ", rating="
 				+ rating + "]";
 	}
 

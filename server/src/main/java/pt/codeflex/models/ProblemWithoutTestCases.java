@@ -1,6 +1,9 @@
 package pt.codeflex.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import pt.codeflex.databasemodels.Difficulty;
+import pt.codeflex.databasemodels.Users;
 
 public class ProblemWithoutTestCases {
 
@@ -8,6 +11,7 @@ public class ProblemWithoutTestCases {
 	private String name;
 	private String description;
 	private Difficulty difficulty;
+	private Users users;
 	private boolean solved;
 
 	public ProblemWithoutTestCases(long id, String name, String description, Difficulty difficulty) {
@@ -24,6 +28,18 @@ public class ProblemWithoutTestCases {
 		this.name = name;
 		this.description = description;
 		this.difficulty = difficulty;
+		this.solved = solved;
+	}
+	
+	
+
+	public ProblemWithoutTestCases(long id, String name, String description, Difficulty difficulty, Users users,
+			boolean solved) {
+		super();
+		this.name = name;
+		this.description = description;
+		this.difficulty = difficulty;
+		this.users = users;
 		this.solved = solved;
 	}
 
@@ -65,5 +81,13 @@ public class ProblemWithoutTestCases {
 
 	public void setSolved(boolean solved) {
 		this.solved = solved;
+	}
+
+	public Users getUsers() {
+		return users;
+	}
+
+	public void setUsers(Users users) {
+		this.users = users;
 	}
 }

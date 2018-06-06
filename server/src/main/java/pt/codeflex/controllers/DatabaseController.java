@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pt.codeflex.databasemodels.*;
 import pt.codeflex.models.CategoriesWithoutTestCases;
 import pt.codeflex.models.ListCategoriesWithStats;
-import pt.codeflex.models.ProblemDifficulty;
+import pt.codeflex.models.AddProblem;
 import pt.codeflex.models.ProblemWithoutTestCases;
 import pt.codeflex.repositories.*;
 
@@ -313,7 +313,7 @@ public class DatabaseController {
 							}
 						}
 						problemsWithoutTestCases.add(new ProblemWithoutTestCases(p.getId(), p.getName(),
-								p.getDescription(), p.getDifficulty(), solved));
+								p.getDescription(), p.getDifficulty(), p.getUsers(), solved));
 					}
 				}
 				categoriesWithoutTestCases
@@ -351,17 +351,27 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Problem/add")
-	public Problem addProblem(@RequestBody ProblemDifficulty problemDifficulty) {
+	public Problem addProblem(@RequestBody AddProblem addProblem) {
 
-		Optional<Difficulty> f = difficultyRepository.findById(problemDifficulty.getDifficulty().getId());
+		Problem p = addProblem.getProblem();
 
-		if (f.isPresent()) {
-			Problem p = problemDifficulty.getProblem();
-			p.setDifficulty(f.get());
-			return problemRepository.save(p);
+		if (addProblem.getDifficulty() != null) {
+			Optional<Difficulty> f = difficultyRepository.findById(addProblem.getDifficulty().getId());
+			if (f.isPresent()) {
+				p.setDifficulty(f.get());
+			}
 		}
 
-		return null;
+		if (addProblem.getUsers() != null) {
+			System.out.println(addProblem.getUsers().toString());
+			Optional<Users> u = usersRepository.findById(addProblem.getUsers().getId());
+			if (u.isPresent()) {
+				System.out.println(u.get().toString());
+				p.setUsers(u.get());
+			}
+		}
+
+		return problemRepository.save(p);
 	}
 
 	@PostMapping(path = "/Problem/addTestCase")
@@ -533,14 +543,24 @@ public class DatabaseController {
 	@GetMapping(path = "/Submissions/viewByUserId/{userId}")
 	public List<Submissions> getAllSubmissionsByUserId(@PathVariable long userId) {
 		Optional<Users> user = usersRepository.findById(userId);
-		return user.get().getSubmissions();
+		List<Submissions> submissions = submissionsRepository.findAll();
+		
+		if (user.isPresent()) {
+			for (Submissions s : submissions) {
+				if (s.getUsers() != user.get()) {
+					submissions.remove(s);
+				}
+			}
+		}
+
+		return submissions;
 	}
 
 	@GetMapping(path = "/Submissions/viewByProblemName/{problemName}")
 	public List<Submissions> getAllSubmissionsByProblemName(@PathVariable String problemName) {
 
 		problemName = problemName.replace('-', ' ');
-		
+
 		Problem currentProblem = problemRepository.findByName(problemName);
 
 		List<Submissions> submissions = new ArrayList<>();
@@ -575,17 +595,15 @@ public class DatabaseController {
 		Optional<Users> u = usersRepository.findById(usersId);
 		Optional<Problem> p = problemRepository.findById(problemId);
 
-		if (u.isPresent()) {
+		if (u.isPresent() && p.isPresent()) {
 			Users user = u.get();
 			Problem problem;
 			if (p.isPresent()) {
 				problem = p.get();
-				Language l = languageRepository.findByName(language);
+				Language lang = languageRepository.findByName(language);
 
-				Submissions s = new Submissions(problem, l, code);
-				user.getSubmissions().add(s);
+				Submissions s = new Submissions(problem, lang, code, user);
 				submissionsRepository.save(s);
-				usersRepository.save(user);
 			}
 		}
 

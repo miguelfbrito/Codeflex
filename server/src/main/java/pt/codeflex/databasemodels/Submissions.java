@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.SqlResultSetMapping;
 
-
 @SqlResultSetMapping(name = "SubmissionsToAvaliateMapping", classes = @ConstructorResult(targetClass = Submissions.class, columns = {
 		@ColumnResult(name = "id", type = Long.class) }))
 
@@ -26,6 +25,9 @@ public class Submissions {
 	private long id;
 	private Date date;
 	private double score;
+
+	@ManyToOne
+	private Users users;
 
 	@ManyToOne
 	private Result result;
@@ -46,11 +48,30 @@ public class Submissions {
 		this.id = id;
 	}
 
-	public Submissions(Problem problem, Language language, String code ) {
+	public Submissions(Date date, double score, Users users, Result result, Problem problem, Language language,
+			String code) {
+		super();
+		this.date = date;
+		this.score = score;
+		this.users = users;
+		this.result = result;
+		this.problem = problem;
+		this.language = language;
+		this.code = code;
+	}
+	public Submissions(Problem problem, Language language, String code) {
 		this.problem = problem;
 		this.language = language;
 		this.code = code;
 		this.date = Calendar.getInstance().getTime();
+	}
+
+	public Submissions(Problem problem, Language language, String code, Users user) {
+		this.problem = problem;
+		this.language = language;
+		this.code = code;
+		this.date = Calendar.getInstance().getTime();
+		this.users = user;
 	}
 
 	public Submissions(Date date, double score, Language language, Result result, Problem problem, String code) {
@@ -123,5 +144,13 @@ public class Submissions {
 	public String toString() {
 		return "Submissions [id=" + id + ", date=" + date + ", score=" + score + ", result=" + result + ", problem="
 				+ problem + ", language=" + language + ", code=" + code + "]";
+	}
+
+	public Users getUsers() {
+		return users;
+	}
+
+	public void setUsers(Users users) {
+		this.users = users;
 	}
 }
