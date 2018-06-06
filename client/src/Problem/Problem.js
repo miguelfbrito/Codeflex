@@ -97,11 +97,12 @@ public class Solution {
             console.log(data)
         });
 
-        if(typeof localStorage.getItem('problem-page') === "undefined"){
-            localStorage.setItem('problem-page', JSON.stringify(this.state.page));
-            console.log('Page exists')
-        } else {
+        if(localStorage.getItem('problem-page') != null){
             this.setState({page : JSON.parse(localStorage.getItem('problem-page'))});
+            console.log('Storage exist');
+        } else {
+            console.log('Storage doesnt exists');
+            localStorage.setItem('problem-page', JSON.stringify(this.state.page));
         }
     }
 
@@ -318,6 +319,8 @@ public class Solution {
             </div>;
 
         let sectionToRender = problemSection;
+        console.log('STATE')
+        console.log(this.state);
         if (this.state.page.submissions) {
             sectionToRender = submissionSection;
         } else if (this.state.page.leaderboard) {

@@ -541,30 +541,36 @@ public class DatabaseController {
 	public List<Submissions> getAllSubmissionsByUserId(@PathVariable long userId) {
 		Optional<Users> user = usersRepository.findById(userId);
 		List<Submissions> submissions = submissionsRepository.findAll();
-
-		if (user.isPresent()) {
+		List<Submissions> finalSubmissions = new ArrayList<>();
+		if (user.isPresent() && submissions != null) {
 			for (Submissions s : submissions) {
-				if (s.getUsers() != user.get()) {
-					submissions.remove(s);
+				if (s.getUsers() == user.get()) {
+					finalSubmissions.add(s);
 				}
 			}
 		}
 
-		return submissions;
+		return finalSubmissions;
 	}
 
-	@GetMapping(path = "/Submissions/viewByProblemName/{problemName}")
-	public List<Submissions> getAllSubmissionsByProblemName(@PathVariable String problemName) {
+	@GetMapping(path = "/Submissions/viewByProblemNameByUserId/{problemName}/{userId}")
+	public List<Submissions> getAllSubmissionsByProblemName(@PathVariable String problemName, @PathVariable long userId) {
 
 		problemName = problemName.replace('-', ' ');
-
+		
+		System.out.println("Problem name " + problemName + "  :  userId " + userId);
 		Problem currentProblem = problemRepository.findByName(problemName);
-
-		List<Submissions> submissions = new ArrayList<>();
+		List<Submissions> finalSubmissions = new ArrayList<>();
+		
 		if (currentProblem != null) {
-			submissions = submissionsRepository.findAllByProblem(currentProblem);
+			List<Submissions> submissions = submissionsRepository.findAllByProblem(currentProblem);
+			for(Submissions s : submissions) {
+				if(s.getUsers().getId() == userId) {
+					finalSubmissions.add(s);
+				}
+			}
 		}
-		return submissions;
+		return finalSubmissions;
 	}
 
 	@GetMapping(path = "/Submissions/viewByUserIdAndProblemId/{userId}/{problemId}")

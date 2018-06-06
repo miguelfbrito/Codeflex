@@ -16,8 +16,8 @@ class Submissions extends React.Component {
 
     componentDidMount() {
         let problemName = splitUrl(this.props.pathname)[2];
-
-        fetch(URL + '/api/database/Submissions/viewByProblemName/' + problemName).then(res => res.json()).then(data => {
+        let user = JSON.parse(localStorage.getItem('userData'));
+        fetch(URL + '/api/database/Submissions/viewByProblemNameByUserId/' + problemName+'/'+user.id).then(res => res.json()).then(data => {
             this.setState({ results: data });
             console.log('results');
             console.log(data);
