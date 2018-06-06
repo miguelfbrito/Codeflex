@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 
 @Entity
@@ -35,6 +36,10 @@ public class Problem {
 
 	private int maxScore;
 
+	
+	@ManyToOne
+	private Tournament tournament;
+	
 	@ManyToOne
 	private Users owner;
 	
@@ -178,5 +183,15 @@ public class Problem {
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
+
+	public Tournament getTournament() {
+		return tournament;
+	}
+
+	public void setTournament(Tournament tournament) {
+		this.tournament = tournament;
+	}
+
+
 
 }

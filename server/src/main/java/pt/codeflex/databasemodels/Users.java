@@ -42,6 +42,8 @@ public class Users {
 	private String password;
 	
 	private Date registrationDate;
+	
+	private int globalRating;
 
 	@OneToMany
 	@JoinColumn(name = "users_id")
@@ -51,10 +53,6 @@ public class Users {
 	@JoinColumn(name = "users_id")
 	private List<UsersRoles> userRoles = new ArrayList<>();
 	
-	@OneToMany
-	@JoinColumn(name = "users_id")
-	private List<Rating> rating = new ArrayList<>();
-
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -66,6 +64,7 @@ public class Users {
 		this.username = username;
 		this.email = email;
 		this.registrationDate = Calendar.getInstance().getTime();
+		this.globalRating = 1500;
 		
 		MessageDigest digest = null;
 
@@ -77,7 +76,6 @@ public class Users {
 
 		byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
 		String encoded = Base64.getEncoder().encodeToString(hash);
-
 		this.password = encoded;
 	}
 
@@ -126,22 +124,10 @@ public class Users {
 		this.member = member;
 	}
 
-	public List<Rating> getRating() {
-		return rating;
-	}
-
-	public void setRating(List<Rating> rating) {
-		this.rating = rating;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "Users [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password
-				+ ", member=" + member + ", userRoles=" + userRoles + ", rating="
-				+ rating + "]";
+				+ ", member=" + member + ", userRoles=" + userRoles;
 	}
 
 	public Date getRegistrationDate() {
@@ -150,6 +136,14 @@ public class Users {
 
 	public void setRegistrationDate(Date registrationDate) {
 		this.registrationDate = registrationDate;
+	}
+
+	public int getGlobalRating() {
+		return globalRating;
+	}
+
+	public void setGlobalRating(int globalRating) {
+		this.globalRating = globalRating;
 	}
 
 

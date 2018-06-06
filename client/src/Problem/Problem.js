@@ -161,6 +161,16 @@ public class Solution {
                 }
 
                 if (data.length === 1) {
+
+                    /* TODO : corrigir este corner case
+                        caso a solução seja válida e faça 
+                        um update que dará uma length de 1 emitirá um erro
+
+                        alterar o if para garantir que apenas soluções
+                        com erro o ativem
+
+                    */
+
                     let submissionResult = data[0].submissions.result;
                     let name = submissionResult.name;
                     let errorMessage = submissionResult.message

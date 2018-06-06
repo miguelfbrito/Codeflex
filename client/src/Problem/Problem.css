@@ -55,6 +55,8 @@
 
 .active {
     background-color: #6A44FF;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
     color: white;
 }
 

@@ -25,12 +25,14 @@ import net.schmizz.sshj.connection.channel.direct.Session.Command;
 import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.xfer.FileSystemFile;
 import pt.codeflex.controllers.DatabaseController;
+import pt.codeflex.databasemodels.Leaderboard;
 import pt.codeflex.databasemodels.Problem;
 import pt.codeflex.databasemodels.Result;
 import pt.codeflex.databasemodels.Scoring;
 import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.TestCases;
 import pt.codeflex.databasemodels.Users;
+import pt.codeflex.repositories.LeaderboardRepository;
 import pt.codeflex.repositories.ResultRepository;
 import pt.codeflex.repositories.ScoringRepository;
 import pt.codeflex.repositories.SubmissionsRepository;
@@ -51,6 +53,9 @@ public class EvaluateSubmissions implements Runnable {
 
 	@Autowired
 	private ResultRepository resultRepository;
+
+	@Autowired
+	private LeaderboardRepository leaderboardRepository;
 
 	private String host;
 
@@ -281,15 +286,17 @@ public class EvaluateSubmissions implements Runnable {
 			Problem problem = submission.getProblem();
 			int isRight = validateResult(testCase.getOutput(), output);
 			int totalTestCasesForProblem = problem.getTestCases().size();
-	
+
 			int givenTestCases = 0;
-			for(TestCases tc : problem.getTestCases()) {
-				if(tc.isShown()) {
+			for (TestCases tc : problem.getTestCases()) {
+				if (tc.isShown()) {
 					givenTestCases++;
 				}
 			}
-			
-			double score = isRight == 1 ? (submission.getProblem().getMaxScore()/(totalTestCasesForProblem-givenTestCases)) : 0;
+
+			double score = isRight == 1
+					? (submission.getProblem().getMaxScore() / (totalTestCasesForProblem - givenTestCases))
+					: 0;
 
 			Scoring sc = new Scoring(submission, testCase, score, isRight);
 			scoringRepository.save(sc);
@@ -315,6 +322,37 @@ public class EvaluateSubmissions implements Runnable {
 				}
 				submission.setScore(totalScore);
 				submissionsRepository.save(submission);
+
+				List<Leaderboard> highestSubmissionOnLeaderboard = leaderboardRepository
+						.findHighestScoreByUserByProblem(submission.getUsers(), submission.getProblem());
+
+				Leaderboard newLeaderboard = new Leaderboard(totalScore, submission.getUsers(),
+						submission.getProblem());
+
+				if (highestSubmissionOnLeaderboard.size() > 0) {
+
+					Leaderboard maxScoreSubmission = highestSubmissionOnLeaderboard.get(0);
+
+					// ugly, can't figure out how to load an object using only the id from the
+					// previous query
+					Optional<Leaderboard> currentLeaderboard = leaderboardRepository
+							.findById(maxScoreSubmission.getId());
+
+					if (totalScore > maxScoreSubmission.getScore()) {
+						if (maxScoreSubmission.getScore() == -1) {
+							maxScoreSubmission = newLeaderboard;
+						} else {
+							if (currentLeaderboard.isPresent()) {
+								maxScoreSubmission = currentLeaderboard.get();
+								maxScoreSubmission.setScore(totalScore);
+							}
+						}
+						leaderboardRepository.save(maxScoreSubmission);
+					}
+				} else {
+					leaderboardRepository.save(newLeaderboard);
+				}
+
 			}
 
 			cmd.close();

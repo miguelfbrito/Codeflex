@@ -27,18 +27,15 @@ public class Tournament {
 	private String description;
 
 	private Date startingDate;
+	
+	private Date endingDate;
 
-	private int duration;
 
-	@OneToMany
-	@JoinColumn(name = "tournament_id")
-	private List<Rating> rating = new ArrayList<>();
-
-	public Tournament(String name, Date startingDate, String description, int duration) {
+	public Tournament(String name, Date startingDate, String description, Date endingDate) {
 		this.name = name;
 		this.startingDate = startingDate;
 		this.description = description;
-		this.duration = duration;
+		this.endingDate = endingDate;
 	}
 
 	public Tournament() {
@@ -76,20 +73,14 @@ public class Tournament {
 		this.startingDate = startingDate;
 	}
 
-	public int getDuration() {
-		return duration;
+	public Date getEndingDate() {
+		return endingDate;
 	}
 
-	public void setDuration(int duration) {
-		this.duration = duration;
+	public void setEndingDate(Date endingDate) {
+		this.endingDate = endingDate;
 	}
 
-	public List<Rating> getRating() {
-		return rating;
-	}
 
-	public void setRating(List<Rating> rating) {
-		this.rating = rating;
-	}
 
 }

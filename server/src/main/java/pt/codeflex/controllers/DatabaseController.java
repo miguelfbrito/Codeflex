@@ -79,7 +79,28 @@ public class DatabaseController {
 	@Autowired
 	private LanguageRepository languageRepository;
 
+	
+
+	// LEADERBOARD
+	
+	@GetMapping(path = "/Leaderboard/view")
+	public List<Leaderboard> getAllLeaderboards() {
+		return leaderboardRepository.findAll();
+	}
+
+	@PostMapping(path = "/Leaderboard/add")
+	public Leaderboard addLeaderboard(@RequestBody Leaderboard leaderboard) {
+		return leaderboardRepository.save(new Leaderboard(leaderboard.getScore(), leaderboard.getUser(), leaderboard.getProblem()));
+	}
+
+	@GetMapping(path = "/Leaderboard/view/{id}")
+	public Optional<Leaderboard> viewLeaderboardById(@PathVariable long id) {
+		return leaderboardRepository.findById(id);
+	}
+
+	
 	// LANGUAGE
+	
 	@GetMapping(path = "/Language/view")
 	public List<Language> getAllLanguages() {
 		return languageRepository.findAll();
@@ -158,37 +179,6 @@ public class DatabaseController {
 	@GetMapping(path = "/Groups/view/{id}")
 	public Optional<Groups> viewGroupsById(@PathVariable long id) {
 		return groupsRepository.findById(id);
-	}
-
-	// LEADERBOARD
-
-	@GetMapping(path = "/Leaderboard/view")
-	public Iterable<Leaderboard> getAllLeaderboard() {
-		return leaderboardRepository.findAll();
-	}
-
-	@PostMapping(path = "/Leaderboard/add")
-	public void addLeaderboard() {
-	}
-
-	@PostMapping(path = "/Leaderboard/edit")
-	public void editLeaderboard(@RequestParam long id) {
-		Optional<Leaderboard> l = leaderboardRepository.findById(id);
-
-		if (l.isPresent()) {
-			Leaderboard leaderboard = l.get();
-			leaderboardRepository.save(leaderboard);
-		}
-	}
-
-	@PostMapping(path = "/Leaderboard/delete/{id}")
-	public void deleteLeaderboard(@PathVariable long id) {
-		leaderboardRepository.deleteById(id);
-	}
-
-	@GetMapping(path = "/Leaderboard/view/{id}")
-	public Optional<Leaderboard> viewLeaderboardById(@PathVariable long id) {
-		return leaderboardRepository.findById(id);
 	}
 
 	// MEMBERS
@@ -295,6 +285,7 @@ public class DatabaseController {
 
 	@GetMapping(path = "/PractiseCategory/getAllWithoutTestCases/{userId}")
 	public List<CategoriesWithoutTestCases> getAllCategoriesWithoutTestCases(@PathVariable long userId) {
+		
 		List<PractiseCategory> allCategories = getAllPractiseCategory();
 		List<CategoriesWithoutTestCases> categoriesWithoutTestCases = new ArrayList<>();
 
@@ -420,6 +411,7 @@ public class DatabaseController {
 		}
 		return new Problem();
 	}
+	
 
 	// RATING
 
@@ -679,7 +671,7 @@ public class DatabaseController {
 			@RequestParam String description, @RequestParam int duration) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		Date d = sdf.parse(startingDate);
-		Tournament t = new Tournament(name, d, description, duration);
+		Tournament t = new Tournament(name, d, description, d);
 		return tournamentRepository.save(t);
 	}
 
