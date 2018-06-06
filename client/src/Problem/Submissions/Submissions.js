@@ -1,7 +1,7 @@
 import React from 'react';
 import {Router} from 'react-router-dom';
 import { URL } from '../../commons/Constants';
-import { splitUrl } from '../../commons/Utils';
+import { splitUrl, dateWithHoursAndDay } from '../../commons/Utils';
 import './Submissions.css';
 
 class Submissions extends React.Component {
@@ -73,12 +73,7 @@ class Submissions extends React.Component {
                             </div>
                             <div className="col-sm-2">
                                 <p>
-                                    {
-                                        new Date(r.date).getHours() + ":" + (new Date(r.date).getMinutes() < 10 ? 
-                                        "0" + new Date(r.date).getMinutes() : new Date(r.date).getMinutes())
-                                        + " " +
-                                        new Date(r.date).getDate() + "/" + new Date(r.date).getMonth() + "/" + new Date(r.date).getFullYear()
-                                    }
+                                    {dateWithHoursAndDay(r.date)}
                                 </p>
                             </div>
                             <div className="col-sm-2">

@@ -2,6 +2,8 @@ package pt.codeflex.databasemodels;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,13 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
-import javax.persistence.SequenceGenerator;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 
 @Entity
@@ -36,12 +31,13 @@ public class Problem {
 	private String inputFormat;
 	private String outputFormat;
 	private String constraints;
+	private Date creationDate;
 
 	private int maxScore;
 
 	@ManyToOne
-	private Users users;
-
+	private Users owner;
+	
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "problem_id")
 	private List<TestCases> testCases = new ArrayList<>();
@@ -50,12 +46,14 @@ public class Problem {
 	private Difficulty difficulty;
 
 	public Problem() {
+		this.creationDate = Calendar.getInstance().getTime();
 	}
 
 	public Problem(String name, String description) {
 		this.name = name;
 		this.description = description;
 		this.maxScore = 10;
+		this.creationDate = Calendar.getInstance().getTime();
 	}
 
 	public Problem(String name, String description, Difficulty difficulty) {
@@ -63,6 +61,7 @@ public class Problem {
 		this.description = description;
 		this.difficulty = difficulty;
 		this.maxScore = 10;
+		this.creationDate = Calendar.getInstance().getTime();
 	}
 
 	public Problem(String name, String description, Difficulty difficulty, int maxScore) {
@@ -70,18 +69,20 @@ public class Problem {
 		this.description = description;
 		this.difficulty = difficulty;
 		this.maxScore = maxScore;
+		this.creationDate = Calendar.getInstance().getTime();
 	}
 
 	public Problem(String name, String description, String inputFormat, String outputFormat, String constraints,
-			int maxScore, Users users, Difficulty difficulty) {
+			int maxScore, Users owner, Difficulty difficulty) {
 		this.name = name;
 		this.description = description;
 		this.inputFormat = inputFormat;
 		this.outputFormat = outputFormat;
 		this.constraints = constraints;
 		this.maxScore = maxScore;
-		this.users = users;
+		this.owner = owner;
 		this.difficulty = difficulty;
+		this.creationDate = Calendar.getInstance().getTime();
 	}
 
 	public long getId() {
@@ -162,12 +163,20 @@ public class Problem {
 		this.constraints = constraints;
 	}
 
-	public void setUsers(Users users) {
-		this.users = users;
+	public Users getOwner() {
+		return owner;
 	}
 
-	public Users getUsers() {
-		return users;
+	public void setOwner(Users owner) {
+		this.owner = owner;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
 }

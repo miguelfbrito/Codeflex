@@ -31,8 +31,6 @@ class PathLink extends React.Component {
 
     render() {
         let pathname = splitUrl(this.props.path);
-        console.log('Logging pathname ')
-        console.log(pathname);
        
         let title = this.props.title;
         if(typeof title !== 'undefined'){

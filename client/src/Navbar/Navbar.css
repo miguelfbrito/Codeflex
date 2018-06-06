@@ -41,7 +41,7 @@ li>* {
     box-shadow: 0px 3px 10px 0px #bbb;
 }
 
-li:hover {
+.navbar li:hover {
     border-bottom: 5px solid rgb(255, 255, 255);
     margin-bottom: -10px !important;
 }

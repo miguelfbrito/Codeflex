@@ -7,8 +7,8 @@ import pt.codeflex.databasemodels.Users;
 public class AddProblem {
 	private Problem problem;
 	private Difficulty difficulty;
-	private Users users;
-
+	private Users owner;
+	
 	public Problem getProblem() {
 		return problem;
 	}
@@ -23,11 +23,11 @@ public class AddProblem {
 		this.difficulty = difficulty;
 	}
 
-	public AddProblem(Problem problem, Difficulty difficulty, Users users) {
+	public AddProblem(Problem problem, Difficulty difficulty, Users owner) {
 		super();
 		this.problem = problem;
+		this.owner = owner;
 		this.difficulty = difficulty;
-		this.users = users;
 	}
 
 	public void setProblem(Problem problem) {
@@ -42,11 +42,12 @@ public class AddProblem {
 		this.difficulty = difficulty;
 	}
 
-	public Users getUsers() {
-		return users;
+	public Users getOwner() {
+		return owner;
 	}
 
-	public void setOwner(Users users) {
-		this.users = users;
+	public void setOwner(Users owner) {
+		this.owner = owner;
 	}
+
 }

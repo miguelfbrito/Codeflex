@@ -313,7 +313,7 @@ public class DatabaseController {
 							}
 						}
 						problemsWithoutTestCases.add(new ProblemWithoutTestCases(p.getId(), p.getName(),
-								p.getDescription(), p.getDifficulty(), p.getUsers(), solved));
+								p.getDescription(), p.getDifficulty(), p.getOwner(), solved));
 					}
 				}
 				categoriesWithoutTestCases
@@ -362,12 +362,17 @@ public class DatabaseController {
 			}
 		}
 
-		if (addProblem.getUsers() != null) {
-			System.out.println(addProblem.getUsers().toString());
-			Optional<Users> u = usersRepository.findById(addProblem.getUsers().getId());
+		if (addProblem.getOwner() != null) {
+			Optional<Users> u = usersRepository.findById(addProblem.getOwner().getId());
 			if (u.isPresent()) {
 				System.out.println(u.get().toString());
-				p.setUsers(u.get());
+				p.setOwner(u.get());
+			}
+		} else {
+			// TODO : remove. Adding a random user for now
+			Optional<Users> u = usersRepository.findById((long) 2);
+			if (u.isPresent()) {
+				p.setOwner(u.get());
 			}
 		}
 
@@ -544,7 +549,7 @@ public class DatabaseController {
 	public List<Submissions> getAllSubmissionsByUserId(@PathVariable long userId) {
 		Optional<Users> user = usersRepository.findById(userId);
 		List<Submissions> submissions = submissionsRepository.findAll();
-		
+
 		if (user.isPresent()) {
 			for (Submissions s : submissions) {
 				if (s.getUsers() != user.get()) {

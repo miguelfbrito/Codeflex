@@ -1,14 +1,42 @@
-.problem-info-container {
-    float: right;
+.problem-info-container table {
+    margin: 0 auto;
+    text-align: right;
+}
+.problem-info-container p {
+    padding: 5px;
+}
+
+.problem-info-container tr {
+    border-bottom: 1px solid #aaa;
+}
+
+.problem-info-container th {
+    padding: 0px 10px;
+}
+.align-left {
+    text-align: left;
+}
+.align-right {
+    text-align: right;
 }
 
 .problem-description-container {
     padding: 30px;
     box-shadow: 0px 7px 10px 0px #ccc;
+    border-top: 2px solid #6A44FF;
 }
 
 .problem-nav {
     text-decoration: none;
+    position: relative;
+    margin: 0;
+    transition: all 250ms ease-in-out;
+}
+
+.problem-nav > ul > li {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 18pt;
+    padding: 2px 20px;
 }
 
 .problem-nav li {
@@ -21,12 +49,13 @@
     cursor: pointer;
 }
 
-.problem-nav .active {
-    background-color: rgb(236, 236, 236);
-}
-
 .problem-nav li:first-child {
     margin-left: -40px;
+}
+
+.active {
+    background-color: #6A44FF;
+    color: white;
 }
 
 .ace-editor-container {
@@ -34,6 +63,7 @@
 }
 
 .ace-editor-navbar {
+    margin-top: 50px;
     background-color: #f0f0f0;
     margin-bottom: -1px;
     border: 1px solid #ccc;
@@ -83,4 +113,16 @@
     100% {
         transform: rotate(360deg);
     }
+}
+
+@media only screen and (max-width: 850px) {
+    .problem-info-container table{
+        margin-top: 15px;
+    }
+
+    .problem-info-container p {
+        margin-top: 35px;
+    }
+
+    
 }

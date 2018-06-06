@@ -12,3 +12,15 @@ export const splitUrl = (text) => {
     }
     return text.split('/');
 }
+
+export const dateWithDay = (date) => {
+    let d = new Date(date);
+    return d.getDate() + "/" + d.getMonth() + "/" + d.getFullYear();
+}
+
+export const dateWithHoursAndDay = (date) => {
+    let d = new Date(date);
+
+    return d.getHours() + ":" + (d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes()) + " " +
+    d.getDate() + "/" + d.getMonth() + "/" + d.getFullYear();
+}

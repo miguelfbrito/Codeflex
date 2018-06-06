@@ -11,7 +11,7 @@ public class ProblemWithoutTestCases {
 	private String name;
 	private String description;
 	private Difficulty difficulty;
-	private Users users;
+	private Users owner;
 	private boolean solved;
 
 	public ProblemWithoutTestCases(long id, String name, String description, Difficulty difficulty) {
@@ -30,16 +30,14 @@ public class ProblemWithoutTestCases {
 		this.difficulty = difficulty;
 		this.solved = solved;
 	}
-	
-	
 
-	public ProblemWithoutTestCases(long id, String name, String description, Difficulty difficulty, Users users,
+	public ProblemWithoutTestCases(long id, String name, String description, Difficulty difficulty, Users owner,
 			boolean solved) {
 		super();
 		this.name = name;
 		this.description = description;
 		this.difficulty = difficulty;
-		this.users = users;
+		this.owner = owner;
 		this.solved = solved;
 	}
 
@@ -83,11 +81,11 @@ public class ProblemWithoutTestCases {
 		this.solved = solved;
 	}
 
-	public Users getUsers() {
-		return users;
+	public Users getOwner() {
+		return owner;
 	}
 
-	public void setUsers(Users users) {
-		this.users = users;
+	public void setOwner(Users owner) {
+		this.owner = owner;
 	}
 }
