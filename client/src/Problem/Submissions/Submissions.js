@@ -1,5 +1,5 @@
 import React from 'react';
-import {Router} from 'react-router-dom';
+import { Router, Link } from 'react-router-dom';
 import { URL } from '../../commons/Constants';
 import { splitUrl, dateWithHoursAndDay } from '../../commons/Utils';
 import './Submissions.css';
@@ -14,16 +14,13 @@ class Submissions extends React.Component {
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         let problemName = splitUrl(this.props.pathname)[2];
-        console.log('DATA')
-        console.log(problemName);
-
 
         fetch(URL + '/api/database/Submissions/viewByProblemName/' + problemName).then(res => res.json()).then(data => {
-            console.log('submi');
-            console.log(data);
             this.setState({ results: data });
+            console.log('results');
+            console.log(data);
         })
 
     }
@@ -77,7 +74,7 @@ class Submissions extends React.Component {
                                 </p>
                             </div>
                             <div className="col-sm-2">
-                                <p>View Results</p>
+                                <Link to={{pathname : this.props.pathname +'/view-results', state : {submissionId : r.id}}}><p>View Results</p></Link>
                             </div>
                             <div className="col-sm-2">
                                 <p>View Submissions</p>

@@ -12,40 +12,48 @@ class ViewResults extends Component {
         this.state = {
             results: []
         }
+        this.fetchScoringResults = this.fetchScoringResults.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         // TODO : mudar para a App
-        if (!('submissionId' in this.props)) {
+        /*if (!('submissionId' in this.props)) {
             console.log("Doesn't exist");
+        }   */
+        
+        if (typeof this.props.location.state.information !== "undefined") {
+            this.setState({results : this.props.location.state.information});
+            console.log('HI');
+        } else {
+            console.log('CALLING FETCH RESULTS')
+            this.fetchScoringResults();
         }
     }
-    componentDidMount() {
 
+    fetchScoringResults() {
         let pathname = splitUrl(this.props.location.pathname)[2];
 
         console.log('Fetching view-results');
         console.log(pathname);
-        /*fetch(URL + ':8080/api/database/Scoring/viewBySubmissionId/' + this.state.sentSubmission.submission.id).then(res => res.json())
+        fetch(URL + '/api/database/Scoring/viewBySubmissionId/' + this.props.location.state.submissionId).then(res => res.json())
             .then(data => {
+                console.log('VIEW RESULTS')
                 console.log(data);
                 console.log(data.length);
-            });*/
+                this.setState({results : data})
+            });
+
     }
 
     render() {
 
-
-
         let finalRender = '';
-        let scoringResults = this.props.location.state.information;
 
-        if (typeof scoringResults !== undefined) {
+        if (typeof this.state.results != 'undefined') {
             console.log('Logging scoring results on vr')
-            console.log(scoringResults);
             finalRender =
                 <div className="testcase-container">
-                    {scoringResults.map((s, index) => (
+                    {this.state.results.map((s, index) => (
                         <div className="col-sm-4">
                             <div className="col-sm-11 testcase">
                                 <div className="testcase-icons">

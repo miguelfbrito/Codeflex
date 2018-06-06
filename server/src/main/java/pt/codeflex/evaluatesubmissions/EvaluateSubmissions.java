@@ -25,6 +25,7 @@ import net.schmizz.sshj.connection.channel.direct.Session.Command;
 import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.xfer.FileSystemFile;
 import pt.codeflex.controllers.DatabaseController;
+import pt.codeflex.databasemodels.Problem;
 import pt.codeflex.databasemodels.Result;
 import pt.codeflex.databasemodels.Scoring;
 import pt.codeflex.databasemodels.Submissions;
@@ -277,22 +278,33 @@ public class EvaluateSubmissions implements Runnable {
 			Command cmd = session.exec(command);
 			String output = IOUtils.readFully(cmd.getInputStream()).toString();
 
+			Problem problem = submission.getProblem();
 			int isRight = validateResult(testCase.getOutput(), output);
-			double score = isRight == 1 ? submission.getProblem().getMaxScore() : 0;
+			int totalTestCasesForProblem = problem.getTestCases().size();
+	
+			int givenTestCases = 0;
+			for(TestCases tc : problem.getTestCases()) {
+				if(tc.isShown()) {
+					givenTestCases++;
+				}
+			}
+			
+			double score = isRight == 1 ? (submission.getProblem().getMaxScore()/(totalTestCasesForProblem-givenTestCases)) : 0;
 
 			Scoring sc = new Scoring(submission, testCase, score, isRight);
 			scoringRepository.save(sc);
 
 			List<Scoring> scoringBySubmission = scoringRepository.findAllBySubmissions(submission);
 			int totalScoring = scoringBySubmission.size();
-			int totalTestCasesForProblem = submission.getProblem().getTestCases().size();
 
 			int countCorrectScoring = 0;
 			if (totalScoring == totalTestCasesForProblem) {
+				double totalScore = 0;
 				for (Scoring s : scoringBySubmission) {
 					if (s.getIsRight() == 1) {
 						countCorrectScoring++;
 					}
+					totalScore += s.getValue();
 				}
 
 				if (countCorrectScoring == totalTestCasesForProblem) {
@@ -301,6 +313,7 @@ public class EvaluateSubmissions implements Runnable {
 				} else {
 					submission.setResult(resultRepository.findByName("Incorrect"));
 				}
+				submission.setScore(totalScore);
 				submissionsRepository.save(submission);
 			}
 

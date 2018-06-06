@@ -96,6 +96,13 @@ public class Solution {
             this.setState({ problem: data, problemLoaded: true });
             console.log(data)
         });
+
+        if(typeof localStorage.getItem('problem-page') === "undefined"){
+            localStorage.setItem('problem-page', JSON.stringify(this.state.page));
+            console.log('Page exists')
+        } else {
+            this.setState({page : JSON.parse(localStorage.getItem('problem-page'))});
+        }
     }
 
     onAceChange(newValue) {
@@ -193,6 +200,7 @@ public class Solution {
             }
         }
         this.setState({ page: newPage });
+        localStorage.setItem('problem-page', JSON.stringify(newPage));
         console.log(this.state.page);
     }
 
@@ -221,32 +229,34 @@ public class Solution {
         const problemInformation =
             <div className="col-sm-2 problem-info-container ">
                 <table>
-                    <tr>
-                        <th><p className="align-left">Difficulty</p></th>
-                        <th>
-                            <p className="align-right">{this.state.problemLoaded ? this.state.problem.difficulty.name : ''}</p>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th><p className="align-left">Creator</p></th>
-                        <th>
-                            <p className="align-right">{this.state.problemLoaded ? this.state.problem.owner.username : ''}</p>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th><p className="align-left">Date</p></th>
-                        <th>
-                            <p className="align-right">{this.state.problemLoaded ? dateWithDay(this.state.problem.creationDate) : ''}</p>
-                        </th>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <th><p className="align-left">Difficulty</p></th>
+                            <th>
+                                <p className="align-right">{this.state.problemLoaded ? this.state.problem.difficulty.name : ''}</p>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th><p className="align-left">Creator</p></th>
+                            <th>
+                                <p className="align-right">{this.state.problemLoaded ? this.state.problem.owner.username : ''}</p>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th><p className="align-left">Date</p></th>
+                            <th>
+                                <p className="align-right">{this.state.problemLoaded ? dateWithDay(this.state.problem.creationDate) : ''}</p>
+                            </th>
+                        </tr>
+                    </tbody>
                 </table>
             </div>;
 
         const problemSection =
             <div>
                 <div className="col-sm-10 problem-description-container ">
-                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloremque voluptate officia eum natus facilis ratione pariatur et iusto amet numquam reiciendis non nesciunt quaerat ipsam eveniet neque voluptatem corporis, possimus mollitia. Ratione animi mollitia asperiores dolore perferendis. Sapiente aliquid eaque nobis officiis sit aspernatur earum cupiditate atque. Hic nemo, inventore, dolorem quisquam architecto eius in nulla quia quo magni itaque accusantium. Iste excepturi maiores veritatis omnis itaque saepe hic est reprehenderit? Explicabo aliquid temporibus, atque dolore numquam excepturi sit iusto, debitis deleniti ex impedit quas voluptas quia! Molestias totam, minus labore quae aliquid explicabo accusamus nostrum magnam architecto laborum provident impedit temporibus error, nihil voluptate magni, quisquam et praesentium deserunt unde aperiam? Voluptatum, quasi quidem dignissimos alias atque fuga omnis voluptate veritatis recusandae nostrum excepturi odio optio ducimus dicta quos aliquid tempora cupiditate autem fugiat, ab aspernatur enim? Delectus illo reiciendis nemo magni, ab maiores qui sed! Nihil, quisquam explicabo! Itaque sapiente odit quae. Eum voluptates et error amet aliquid quibusdam veniam reprehenderit doloribus. Vitae earum cumque animi excepturi eveniet reiciendis rerum commodi nisi quos, repellat ipsam non veniam eos ea repellendus. Voluptate amet harum mollitia et magni quo officiis veniam, rerum odit quis magnam ducimus laborum quae, quod molestiae sequi consectetur. Labore dolore aliquam earum quidem consequatur dignissimos voluptate temporibus. Reiciendis esse fugit, debitis iusto consequuntur at nisi ducimus repellat hic cum aspernatur ab obcaecati exercitationem inventore, expedita accusamus pariatur quos beatae est in. Ipsam similique ab doloremque! Non dolore reiciendis, aut ducimus, esse inventore sunt odit dicta sed beatae eaque id? Quod at, culpa eligendi fugit, ex mollitia reprehenderit deserunt minima unde, consequuntur commodi adipisci sapiente doloribus odio enim iusto? Autem officia tempora sint ut magnam inventore cumque recusandae sapiente rem molestias sit obcaecati natus itaque, aliquid perferendis earum quaerat ducimus, modi sed facere assumenda ex. Reprehenderit, dolore!</p>
                     <MathJax text={this.state.problem.description} />
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloremque voluptate officia eum natus facilis ratione pariatur et iusto amet numquam reiciendis non nesciunt quaerat ipsam eveniet neque voluptatem corporis, possimus mollitia. Ratione animi mollitia asperiores dolore perferendis. Sapiente aliquid eaque nobis officiis sit aspernatur earum cupiditate atque. Hic nemo, inventore, dolorem quisquam architecto eius in nulla quia quo magni itaque accusantium. Iste excepturi maiores veritatis omnis itaque saepe hic est reprehenderit? Explicabo aliquid temporibus, atque dolore numquam excepturi sit iusto, debitis deleniti ex impedit quas voluptas quia! Molestias totam, minus labore quae aliquid explicabo accusamus nostrum magnam architecto laborum provident impedit temporibus error, nihil voluptate magni, quisquam et praesentium deserunt unde aperiam? Voluptatum, quasi quidem dignissimos alias atque fuga omnis voluptate veritatis recusandae nostrum excepturi odio optio ducimus dicta quos aliquid tempora cupiditate autem fugiat, ab aspernatur enim? Delectus illo reiciendis nemo magni, ab maiores qui sed! Nihil, quisquam explicabo! Itaque sapiente odit quae. Eum voluptates et error amet aliquid quibusdam veniam reprehenderit doloribus. Vitae earum cumque animi excepturi eveniet reiciendis rerum commodi nisi quos, repellat ipsam non veniam eos ea repellendus. Voluptate amet harum mollitia et magni quo officiis veniam, rerum odit quis magnam ducimus laborum quae, quod molestiae sequi consectetur. Labore dolore aliquam earum quidem consequatur dignissimos voluptate temporibus. Reiciendis esse fugit, debitis iusto consequuntur at nisi ducimus repellat hic cum aspernatur ab obcaecati exercitationem inventore, expedita accusamus pariatur quos beatae est in. Ipsam similique ab doloremque! Non dolore reiciendis, aut ducimus, esse inventore sunt odit dicta sed beatae eaque id? Quod at, culpa eligendi fugit, ex mollitia reprehenderit deserunt minima unde, consequuntur commodi adipisci sapiente doloribus odio enim iusto? Autem officia tempora sint ut magnam inventore cumque recusandae sapiente rem molestias sit obcaecati natus itaque, aliquid perferendis earum quaerat ducimus, modi sed facere assumenda ex. Reprehenderit, dolore!</p>
                 </div>
                 {problemInformation}
                 <div className="col-sm-12 ace-editor-container">
