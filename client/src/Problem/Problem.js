@@ -161,7 +161,7 @@ public class Solution {
 
                 }
 
-                if (data.length === 1) {
+                if (data.length === 1 && typeof data[0].submissions.result != null) {
 
                     /* TODO : corrigir este corner case
                         caso a solução seja válida e faça 

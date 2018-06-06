@@ -24,7 +24,6 @@ class PathLink extends React.Component {
                 finalPath += '/';
             }
         }
-        console.log(finalPath);
         return finalPath;
     }
 
@@ -45,7 +44,6 @@ class PathLink extends React.Component {
                             <Link key={index} to={{ pathname: this.buildPath(pathname, index) }}>
                                 <p style={{ display: 'inline-block' }}>
                                     {p}
-                                    {console.log(p + " " + index)}
                                 </p>
                             </Link>
                             {index < pathname.length - 1 ? <i class="material-icons">keyboard_arrow_right</i> : ''}

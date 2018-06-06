@@ -76,37 +76,33 @@ public class CompilerController {
 	}
 
 	@GetMapping("/ssh")
-	public String ssh() throws IOException {
+	public void startThreads() throws IOException, InterruptedException {
 		long inicial = System.currentTimeMillis();
 		
 		
 		// Adds all the submissions into a volatile queue. The queue is then distributed to the threads
 		evaluateSubmissions.connect(host1);
-		evaluateSubmissions.connect(host1);
 		evaluateSubmissions.getSubmissions();
 		
 		EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
-		evaluateSubmissions1.setHost(host1);
 		evaluateSubmissions1.connect(host1);
 		taskExecutor.execute(evaluateSubmissions1);
 
 		EvaluateSubmissions evaluateSubmissions2 = applicationContext.getBean(EvaluateSubmissions.class);
-		evaluateSubmissions2.setHost(host2);
 		evaluateSubmissions2.connect(host2);
 		taskExecutor.execute(evaluateSubmissions2);
 
-		EvaluateSubmissions evaluateSubmissions3 = applicationContext.getBean(EvaluateSubmissions.class);
-		evaluateSubmissions3.setHost(host1);
-		evaluateSubmissions3.connect(host1);
-		taskExecutor.execute(evaluateSubmissions3);
-
-		EvaluateSubmissions evaluateSubmissions4 = applicationContext.getBean(EvaluateSubmissions.class);
-		evaluateSubmissions4.setHost(host2);
-		evaluateSubmissions4.connect(host2);
-		taskExecutor.execute(evaluateSubmissions4);
+//		EvaluateSubmissions evaluateSubmissions3 = applicationContext.getBean(EvaluateSubmissions.class);
+//		evaluateSubmissions3.setHost(host1);
+//		evaluateSubmissions3.connect(host1);
+//		taskExecutor.execute(evaluateSubmissions3);
+//
+//		EvaluateSubmissions evaluateSubmissions4 = applicationContext.getBean(EvaluateSubmissions.class);
+//		evaluateSubmissions4.setHost(host2);
+//		evaluateSubmissions4.connect(host2);
+//		taskExecutor.execute(evaluateSubmissions4);
 
 		System.out.println("TEMPO DE PROCESSAMENTO : " + (System.currentTimeMillis() - inicial));
-		return "";
 	}
 
 	@Transactional
@@ -123,8 +119,8 @@ public class CompilerController {
 			submission = new Submissions(problem, language, submitSubmission.getCode(), user);
 			submissionsRepository.save(submission);
 			try {
-				ssh();
-			} catch (IOException e) {
+				startThreads();
+			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
 			}
 		}

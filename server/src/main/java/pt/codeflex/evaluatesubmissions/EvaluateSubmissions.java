@@ -3,6 +3,8 @@ package pt.codeflex.evaluatesubmissions;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayDeque;
@@ -69,10 +71,36 @@ public class EvaluateSubmissions implements Runnable {
 
 	private static int count = 0;
 	private static volatile Queue<Submissions> submissionsQueue = new ArrayDeque<>();
-	private final static String PATH_SPRING = System.getProperty("user.home") + File.separator + "Submissions";
-	private final static String PATH_SERVER = "/home/mbrito/Desktop/Submissions";
+	private static final String PATH_SPRING = System.getProperty("user.home") + File.separator + "Submissions";
+	private static final String PATH_SERVER = "/home/mbrito/Desktop/Submissions";
 	private long uniqueId;
 
+	@Override
+	public void run() {
+		System.out.println("Thread starting!");
+		System.out.println("Connection established!");
+
+		distributeSubmissions();
+	}
+
+	public void connect(String host) {
+		ssh = new SSHClient();
+		ssh.addHostKeyVerifier("33:02:cb:3b:13:b1:bd:fa:66:ff:29:96:ea:ff:dc:78");
+		try {
+			//ssh.loadKnownHosts();
+			ssh.connect(host);
+			ssh.authPublickey("mbrito");
+			Session session = ssh.startSession();
+			Command cmd = session.exec("ls");
+			System.out.println(IOUtils.readFully(cmd.getInputStream()).toString());
+
+		} catch (IOException e) {
+			// System.out.println("Error connecting!");
+			e.printStackTrace();
+		}
+
+	}
+	
 	public void getSubmissions() {
 
 		System.out.println("Connecting thread!");
@@ -103,34 +131,14 @@ public class EvaluateSubmissions implements Runnable {
 	}
 
 	public void distributeSubmissions() {
-		connect(getHost());
-
 		while (!submissionsQueue.isEmpty()) {
 			Submissions s = submissionsQueue.poll();
 			compileSubmission(s);
 		}
-
 	}
 
 	public SSHClient ssh = null;
 
-	public void connect(String host) {
-		ssh = new SSHClient();
-		ssh.addHostKeyVerifier("33:02:cb:3b:13:b1:bd:fa:66:ff:29:96:ea:ff:dc:78");
-		try {
-			ssh.loadKnownHosts();
-			ssh.connect(host);
-			ssh.authPassword("mbrito", "gomas");
-			Session session = ssh.startSession();
-			Command cmd = session.exec("ls");
-			// System.out.println(IOUtils.readFully(cmd.getInputStream()).toString());
-
-		} catch (IOException e) {
-			// System.out.println("Error connecting!");
-			e.printStackTrace();
-		}
-
-	}
 
 	public void compileSubmission(Submissions submission) {
 		uniqueId = submission.getId();
@@ -396,11 +404,6 @@ public class EvaluateSubmissions implements Runnable {
 		}
 	}
 
-	@Override
-	public void run() {
-		System.out.println("Thread starting!");
-		System.out.println("Connection established!");
-		distributeSubmissions();
-	}
+	
 
 }
