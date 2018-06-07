@@ -311,7 +311,7 @@ public class EvaluateSubmissions implements Runnable {
 						.findHighestScoreByUserByProblem(submission.getUsers(), submission.getProblem());
 
 				Leaderboard newLeaderboard = new Leaderboard(totalScore, submission.getUsers(),
-						submission.getProblem());
+						submission.getProblem(), submission.getLanguage().getName());
 
 				if (highestSubmissionOnLeaderboard.size() > 0) {
 

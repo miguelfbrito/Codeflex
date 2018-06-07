@@ -26,6 +26,7 @@ import pt.codeflex.models.CategoriesWithoutTestCases;
 import pt.codeflex.models.ListCategoriesWithStats;
 import pt.codeflex.models.AddProblem;
 import pt.codeflex.models.ProblemWithoutTestCases;
+import pt.codeflex.models.UserOnProblemLeaderboard;
 import pt.codeflex.repositories.*;
 
 @RestController
@@ -82,18 +83,33 @@ public class DatabaseController {
 	@Autowired
 	private LanguageRepository languageRepository;
 
-	
-
 	// LEADERBOARD
-	
+
 	@GetMapping(path = "/Leaderboard/view")
 	public List<Leaderboard> getAllLeaderboards() {
 		return leaderboardRepository.findAll();
 	}
 
+	@GetMapping(path = "/Leaderboard/viewByProblemName/{problemName}")
+	public List<UserOnProblemLeaderboard> getAllLeaderboardsByProblemName(@PathVariable String problemName) {
+		Problem findProblembyName = problemRepository.findByName(problemName.replace("-", " "));
+		List<UserOnProblemLeaderboard> userOnLeaderboard = new ArrayList<>();
+		
+		if (findProblembyName != null) {
+			List<Leaderboard> findByProblem = leaderboardRepository.findAllByProblem(findProblembyName);
+			for(Leaderboard l : findByProblem) {
+				userOnLeaderboard.add(new UserOnProblemLeaderboard(l.getUser().getUsername(), l.getScore(), l.getLanguage()));
+			}
+			
+		}
+		
+		return userOnLeaderboard;
+	}
+
 	@PostMapping(path = "/Leaderboard/add")
 	public Leaderboard addLeaderboard(@RequestBody Leaderboard leaderboard) {
-		return leaderboardRepository.save(new Leaderboard(leaderboard.getScore(), leaderboard.getUser(), leaderboard.getProblem()));
+		return leaderboardRepository
+				.save(new Leaderboard(leaderboard.getScore(), leaderboard.getUser(), leaderboard.getProblem(), leaderboard.getLanguage()));
 	}
 
 	@GetMapping(path = "/Leaderboard/view/{id}")
@@ -101,9 +117,8 @@ public class DatabaseController {
 		return leaderboardRepository.findById(id);
 	}
 
-	
 	// LANGUAGE
-	
+
 	@GetMapping(path = "/Language/view")
 	public List<Language> getAllLanguages() {
 		return languageRepository.findAll();
@@ -288,7 +303,7 @@ public class DatabaseController {
 
 	@GetMapping(path = "/PractiseCategory/getAllWithoutTestCases/{userId}")
 	public List<CategoriesWithoutTestCases> getAllCategoriesWithoutTestCases(@PathVariable long userId) {
-		
+
 		List<PractiseCategory> allCategories = getAllPractiseCategory();
 		List<CategoriesWithoutTestCases> categoriesWithoutTestCases = new ArrayList<>();
 
@@ -414,7 +429,6 @@ public class DatabaseController {
 		}
 		return new Problem();
 	}
-	
 
 	// RATING
 
@@ -557,18 +571,19 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Submissions/viewByProblemNameByUserId/{problemName}/{userId}")
-	public List<Submissions> getAllSubmissionsByProblemName(@PathVariable String problemName, @PathVariable long userId) {
+	public List<Submissions> getAllSubmissionsByProblemName(@PathVariable String problemName,
+			@PathVariable long userId) {
 
 		problemName = problemName.replace('-', ' ');
-		
+
 		System.out.println("Problem name " + problemName + "  :  userId " + userId);
 		Problem currentProblem = problemRepository.findByName(problemName);
 		List<Submissions> finalSubmissions = new ArrayList<>();
-		
+
 		if (currentProblem != null) {
 			List<Submissions> submissions = submissionsRepository.findAllByProblem(currentProblem);
-			for(Submissions s : submissions) {
-				if(s.getUsers().getId() == userId) {
+			for (Submissions s : submissions) {
+				if (s.getUsers().getId() == userId) {
 					finalSubmissions.add(s);
 				}
 			}

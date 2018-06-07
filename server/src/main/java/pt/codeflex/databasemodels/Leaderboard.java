@@ -36,6 +36,8 @@ public class Leaderboard {
 	@OneToOne
 	private Problem problem;
 	
+	private String language;
+	
 	public Leaderboard() {
 		
 	}
@@ -51,10 +53,11 @@ public class Leaderboard {
 		this.user = user;
 		this.problem = problem;
 	}
-	public Leaderboard(double score, Users user, Problem problem) {
+	public Leaderboard(double score, Users user, Problem problem, String language) {
 		this.score = score;
 		this.user = user;
 		this.problem = problem;
+		this.language = language;
 	}
 
 	public long getId() {
@@ -87,5 +90,13 @@ public class Leaderboard {
 
 	public void setProblem(Problem problem) {
 		this.problem = problem;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 }

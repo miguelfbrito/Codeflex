@@ -13,4 +13,5 @@ import pt.codeflex.databasemodels.Users;
 
 @Repository
 public interface LeaderboardRepository extends JpaRepository<Leaderboard, Long>, CustomLeaderboardRepository{
+	List<Leaderboard> findAllByProblem(Problem problem);
 }
