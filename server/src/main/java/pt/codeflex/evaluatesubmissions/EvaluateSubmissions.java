@@ -1,13 +1,11 @@
 package pt.codeflex.evaluatesubmissions;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -15,28 +13,24 @@ import java.util.Queue;
 
 import javax.transaction.Transactional;
 
-import org.hibernate.boot.model.relational.Database;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import net.schmizz.sshj.DefaultConfig;
-import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.IOUtils;
 import net.schmizz.sshj.connection.ConnectionException;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.direct.Session.Command;
 import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.xfer.FileSystemFile;
-import pt.codeflex.controllers.DatabaseController;
 import pt.codeflex.databasemodels.Leaderboard;
 import pt.codeflex.databasemodels.Problem;
 import pt.codeflex.databasemodels.Result;
 import pt.codeflex.databasemodels.Scoring;
 import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.TestCases;
-import pt.codeflex.databasemodels.Users;
 import pt.codeflex.models.Host;
+import pt.codeflex.models.TestCaseForExecution;
 import pt.codeflex.repositories.LeaderboardRepository;
 import pt.codeflex.repositories.ResultRepository;
 import pt.codeflex.repositories.ScoringRepository;
@@ -64,9 +58,12 @@ public class EvaluateSubmissions implements Runnable {
 	private LeaderboardRepository leaderboardRepository;
 
 	private Host host;
+	private Submissions submission;
 
-	private static int count = 0;
 	private static volatile Queue<Submissions> submissionsQueue = new ArrayDeque<>();
+	private static volatile Queue<TestCaseForExecution> testCasesQueue = new ArrayDeque<>();
+	private static volatile List<Host> listOfHosts = new ArrayList<>();
+
 	private static final String PATH_SPRING = System.getProperty("user.home") + File.separator + "Submissions";
 	private static final String PATH_SERVER = "/home/mbrito/Desktop/Submissions";
 
@@ -77,34 +74,48 @@ public class EvaluateSubmissions implements Runnable {
 		System.out.println("Thread starting!");
 		System.out.println("Connection established!");
 
-		distributeSubmissions();
+		//distributeSubmissions();
+		compileSubmission(submission);
 	}
+	
+	public List<Submissions> getSubmissions() {
 
-	public void getSubmissions() {
-
-		System.out.println("Connecting thread!");
 		List<Submissions> submissions = submissionsRepository.findSubmissionsToAvaliate();
-		List<Submissions> listSubmissions = submissionsRepository.findAll();
-
+		List<Submissions> finalSubmissions = new ArrayList<>();
+		
 		for (Submissions s : submissions) {
 			Optional<Submissions> submission = submissionsRepository.findById(s.getId());
 			if (submission.isPresent()) {
-				submissionsQueue.add(submission.get());
+				finalSubmissions.add(submission.get());
+			//	submissionsQueue.add(submission.get());
 			}
 		}
-
-		System.out.println(submissionsQueue.toString());
+		
+		return finalSubmissions;
 
 	}
 
 	public void distributeSubmissions() {
 		while (!submissionsQueue.isEmpty()) {
-			Submissions s = submissionsQueue.poll();
-			compileSubmission(s);
+			Submissions submission = submissionsQueue.poll();
+			compileSubmission(submission);
+			System.out.println("Compiling submission! " + Thread.currentThread().getName() + " from host " + host.getIp() + "\n\n\n");
+			
+			
+			
+			
+			
+//			while (!testCasesQueue.isEmpty()) {
+//				TestCaseForExecution testCase = testCasesQueue.poll();
+//				runTestCase(testCase.getSubmission(), testCase.getTestCase(), testCase.getFileName());
+//				System.out.println("Running test case! " + Thread.currentThread().getName() + "\n\n");
+//			}
+
 		}
 	}
 
 	public void compileSubmission(Submissions submission) {
+		System.out.println(submission.toString()+"\n\n\n\n");
 		uniqueId = submission.getId();
 		Session session = null;
 		try {
@@ -155,7 +166,7 @@ public class EvaluateSubmissions implements Runnable {
 
 		try {
 			session = host.getSsh().startSession();
-			cmd = session.exec(command);
+			cmd = session.exec(command );
 			cmd.close();
 
 			// Verifica se houve erro
@@ -204,7 +215,8 @@ public class EvaluateSubmissions implements Runnable {
 				scp(PATH_SPRING + "/" + tcFileName,
 						PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName() + "/");
 
-				runSubmission(submission, tc, fileName);
+				//testCasesQueue.add(new TestCaseForExecution(tc, submission, fileName));
+				runTestCase(submission, tc, fileName);
 			}
 		} catch (ConnectionException | TransportException e) {
 			e.printStackTrace();
@@ -212,7 +224,7 @@ public class EvaluateSubmissions implements Runnable {
 
 	}
 
-	public void runSubmission(Submissions submission, TestCases testCase, String fileName) {
+	public void runTestCase(Submissions submission, TestCases testCase, String fileName) {
 
 		Session session = null;
 		try {
@@ -252,7 +264,7 @@ public class EvaluateSubmissions implements Runnable {
 
 		try {
 
-			Command cmd = session.exec(command);
+			Command cmd = session.exec(command + " &");
 			String output = IOUtils.readFully(cmd.getInputStream()).toString();
 
 			Problem problem = submission.getProblem();
@@ -379,6 +391,14 @@ public class EvaluateSubmissions implements Runnable {
 
 	public void setHost(Host host) {
 		this.host = host;
+	}
+
+	public Submissions getSubmission() {
+		return submission;
+	}
+
+	public void setSubmission(Submissions submission) {
+		this.submission = submission;
 	}
 
 }

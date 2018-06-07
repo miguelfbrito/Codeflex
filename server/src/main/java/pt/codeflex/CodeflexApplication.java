@@ -28,8 +28,8 @@ public class CodeflexApplication {
 
 		List<Host> hostList = new ArrayList<>();
 
-		Host h1 = new Host("192.168.1.55", "mbrito", new SSHClient());
-		Host h2 = new Host("192.168.1.65", "mbrito", new SSHClient());
+		Host h1 = new Host("192.168.1.55", "mbrito", new SSHClient(), false);
+		Host h2 = new Host("192.168.1.65", "mbrito", new SSHClient(), false);
 
 		connect(h1);
 		connect(h2);

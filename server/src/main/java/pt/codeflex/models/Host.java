@@ -1,5 +1,8 @@
 package pt.codeflex.models;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import net.schmizz.sshj.SSHClient;
 
 public class Host {
@@ -8,12 +11,24 @@ public class Host {
 
 	private String user;
 	private SSHClient ssh;
-
+	private boolean beingUsed;
+	private Date lastDateAttributed;
+	
 	public Host(String ip, String user, SSHClient ssh) {
 		super();
 		this.ip = ip;
 		this.user = user;
 		this.ssh = ssh;
+		this.lastDateAttributed = Calendar.getInstance().getTime();
+	}
+
+	public Host(String ip, String user, SSHClient ssh, boolean beingUsed) {
+		super();
+		this.ip = ip;
+		this.user = user;
+		this.ssh = ssh;
+		this.beingUsed = beingUsed;
+		this.lastDateAttributed = Calendar.getInstance().getTime();
 	}
 
 	public String getIp() {
@@ -40,8 +55,27 @@ public class Host {
 		this.ssh = ssh;
 	}
 
+	public boolean isBeingUsed() {
+		return beingUsed;
+	}
+
+	public void setBeingUsed(boolean beingUsed) {
+		this.beingUsed = beingUsed;
+	}
+
+	public Date getLastDateAttributed() {
+		return lastDateAttributed;
+	}
+
+	public void setLastDateAttributed(Date lastDateAttributed) {
+		this.lastDateAttributed = lastDateAttributed;
+	}
+
 	@Override
 	public String toString() {
-		return "Host [ip=" + ip + ", user=" + user + ", ssh=" + ssh + "]";
+		return "Host [ip=" + ip + ", user=" + user + ", ssh=" + ssh + ", beingUsed=" + beingUsed
+				+ ", lastDateAttributed=" + lastDateAttributed + "]";
 	}
+
+	
 }

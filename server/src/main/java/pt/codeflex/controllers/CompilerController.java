@@ -19,6 +19,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.yaml.snakeyaml.util.ArrayUtils;
 
 @RestController
 @CrossOrigin
@@ -85,20 +87,41 @@ public class CompilerController {
 		long inicial = System.currentTimeMillis();
 
 		evaluateSubmissions.setHost(hostList.get(0));
-		evaluateSubmissions.getSubmissions();
+		List<Submissions> submissions = evaluateSubmissions.getSubmissions();
 
-		for (Host h : hostList) {
-				System.out.println("\n\n\nStarting thread  with host " + h.getIp() + "\n");
-				EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
-				evaluateSubmissions1.setHost(h);
-				taskExecutor.execute(evaluateSubmissions1);
+		System.out.println(submissions.toString());
+		
+		int totalHosts = hostList.size();
+		int totalSubmissions = submissions.size();
 
-				System.out.println("Starting thread  with host " + h.getIp() + "\n");
-				EvaluateSubmissions evaluateSubmissions2 = applicationContext.getBean(EvaluateSubmissions.class);
-				evaluateSubmissions2.setHost(h);
-				taskExecutor.execute(evaluateSubmissions1);
-				System.out.println("\n\n\n");
+		for (Submissions s : submissions) {
+
+			hostList.sort((Host h1, Host h2) -> (int) (h1.getLastDateAttributed().getTime() - h2.getLastDateAttributed().getTime()));
+
+			Host lessUsedHost = hostList.get(0);
+			hostList.forEach(System.out::println);
+
+			lessUsedHost.setLastDateAttributed(Calendar.getInstance().getTime());
+			lessUsedHost.setBeingUsed(true);
+
+			
+			System.out.println("\n\n\nStarting thread  with host " + lessUsedHost.getIp() + "\n");
+
+			EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
+			evaluateSubmissions1.setSubmission(s);
+			evaluateSubmissions1.setHost(lessUsedHost);
+			taskExecutor.execute(evaluateSubmissions1);
+
 		}
+
+		// for (Host h : hostList) {
+		// // System.out.println("Starting thread with host " + h.getIp() + "\n");
+		// EvaluateSubmissions evaluateSubmissions2 =
+		// applicationContext.getBean(EvaluateSubmissions.class);
+		// evaluateSubmissions2.setHost(h);
+		// taskExecutor.execute(evaluateSubmissions1);
+		// System.out.println("\n\n\n");
+		// }
 
 		// Adds all the submissions into a volatile queue. The queue is then distributed
 		// to the threads
