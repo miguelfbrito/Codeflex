@@ -11,13 +11,21 @@ import ch.qos.logback.core.net.SyslogOutputStream;
 import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.TestCases;
 import pt.codeflex.databasemodels.Users;
+import pt.codeflex.models.Host;
 import pt.codeflex.models.ListCategoriesWithStats;
 import pt.codeflex.repositories.PractiseCategoryRepository;
 
 @Controller
 public class TestController {
 
-
+	@Autowired
+	private List<Host> fetchHosts1;
+	
+	@GetMapping("/test")
+	public void teste() {
+		System.out.println("Logging hosts");
+		System.out.println(fetchHosts1.toString());
+	}
 	
 
 }

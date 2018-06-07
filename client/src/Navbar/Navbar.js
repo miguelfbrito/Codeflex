@@ -27,7 +27,7 @@ class Navbar extends Component {
             <li><Link to="/practise">Practise</Link></li>
             <li><Link to="/compete">Compete</Link></li>
             {/*  <li id="item-signup"><Link to="/signup"><span className="glyphicon glyphicon-user"></span>Sign Up</Link></li>`*/}
-            <li id="item-login" onClick={this.logoutUser}><Link to="/"><span className="glyphicon glyphicon-log-in"></span>Logout</Link></li>
+            <li id="item-login" onClick={this.logoutUser}><Link to="/"><span className="glyphicon glyphicon-log-in"></span>{JSON.parse(localStorage.getItem('userData')).username}</Link></li>
         </ul>);
     }
 

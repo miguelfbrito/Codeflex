@@ -140,7 +140,7 @@ public class Solution {
             console.log(data);
             this.setState({ sentSubmission: { submitting: true, waitingForResults: true, submission: data } })
             console.log(data.problem.testCases.length);
-            window.resultsListener = setInterval(this.fetchForResults, 3000);
+            window.resultsListener = setInterval(this.fetchForResults, 1000);
         });
 
     }
@@ -161,7 +161,7 @@ public class Solution {
 
                 }
 
-                if (data.length === 1 && typeof data[0].submissions.result != null) {
+                if (data.length === 1 && data[0].submissions.result != null) {
 
                     /* TODO : corrigir este corner case
                         caso a solução seja válida e faça 

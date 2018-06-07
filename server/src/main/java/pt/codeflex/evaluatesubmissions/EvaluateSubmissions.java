@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 
+import javax.transaction.Transactional;
+
 import org.hibernate.boot.model.relational.Database;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -34,6 +36,7 @@ import pt.codeflex.databasemodels.Scoring;
 import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.TestCases;
 import pt.codeflex.databasemodels.Users;
+import pt.codeflex.models.Host;
 import pt.codeflex.repositories.LeaderboardRepository;
 import pt.codeflex.repositories.ResultRepository;
 import pt.codeflex.repositories.ScoringRepository;
@@ -41,6 +44,7 @@ import pt.codeflex.repositories.SubmissionsRepository;
 import pt.codeflex.repositories.UsersRepository;
 
 @Component
+@Transactional
 @Scope("prototype")
 public class EvaluateSubmissions implements Runnable {
 
@@ -59,20 +63,13 @@ public class EvaluateSubmissions implements Runnable {
 	@Autowired
 	private LeaderboardRepository leaderboardRepository;
 
-	private String host;
-
-	public String getHost() {
-		return host;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
-	}
+	private Host host;
 
 	private static int count = 0;
 	private static volatile Queue<Submissions> submissionsQueue = new ArrayDeque<>();
 	private static final String PATH_SPRING = System.getProperty("user.home") + File.separator + "Submissions";
 	private static final String PATH_SERVER = "/home/mbrito/Desktop/Submissions";
+
 	private long uniqueId;
 
 	@Override
@@ -83,24 +80,6 @@ public class EvaluateSubmissions implements Runnable {
 		distributeSubmissions();
 	}
 
-	public void connect(String host) {
-		ssh = new SSHClient();
-		ssh.addHostKeyVerifier("33:02:cb:3b:13:b1:bd:fa:66:ff:29:96:ea:ff:dc:78");
-		try {
-			//ssh.loadKnownHosts();
-			ssh.connect(host);
-			ssh.authPublickey("mbrito");
-			Session session = ssh.startSession();
-			Command cmd = session.exec("ls");
-			System.out.println(IOUtils.readFully(cmd.getInputStream()).toString());
-
-		} catch (IOException e) {
-			// System.out.println("Error connecting!");
-			e.printStackTrace();
-		}
-
-	}
-	
 	public void getSubmissions() {
 
 		System.out.println("Connecting thread!");
@@ -114,18 +93,6 @@ public class EvaluateSubmissions implements Runnable {
 			}
 		}
 
-		// TESTING PURPOSE TODO : remove
-		try {
-			if (count++ < 2) {
-				Session session = ssh.startSession();
-				Command cmd = session.exec("cd " + PATH_SERVER + " && rm -rf *");
-				session.close();
-			}
-		} catch (ConnectionException | TransportException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 		System.out.println(submissionsQueue.toString());
 
 	}
@@ -137,14 +104,11 @@ public class EvaluateSubmissions implements Runnable {
 		}
 	}
 
-	public SSHClient ssh = null;
-
-
 	public void compileSubmission(Submissions submission) {
 		uniqueId = submission.getId();
 		Session session = null;
 		try {
-			session = ssh.startSession();
+			session = host.getSsh().startSession();
 		} catch (ConnectionException | TransportException e2) {
 			e2.printStackTrace();
 		}
@@ -190,13 +154,13 @@ public class EvaluateSubmissions implements Runnable {
 				PATH_SERVER + "/" + uniqueId + "_" + submission.getLanguage().getName() + "/Solution" + suffix);
 
 		try {
-			session = ssh.startSession();
+			session = host.getSsh().startSession();
 			cmd = session.exec(command);
 			cmd.close();
 
 			// Verifica se houve erro
 			try {
-				session = ssh.startSession();
+				session = host.getSsh().startSession();
 				command = "cat " + PATH_SERVER + "/" + uniqueId + "_" + submission.getLanguage().getName() + "/"
 						+ compilerError;
 				cmd = session.exec(command);
@@ -252,7 +216,7 @@ public class EvaluateSubmissions implements Runnable {
 
 		Session session = null;
 		try {
-			session = ssh.startSession();
+			session = host.getSsh().startSession();
 		} catch (ConnectionException | TransportException e) {
 
 		}
@@ -394,16 +358,27 @@ public class EvaluateSubmissions implements Runnable {
 
 	public void scp(String src, String dest) {
 
-		try {
-			// System.out.println("SRC: " + src);
-			// System.out.println("DEST: " + dest);
-			ssh.newSCPFileTransfer().upload(new FileSystemFile(src), dest);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		int count = 0;
+		int maxCount = 5;
+		while (count < maxCount) {
+			try {
+				System.out.println("Sending file from : " + src + " to " + dest + "\n\n");
+				host.getSsh().newSCPFileTransfer().upload(new FileSystemFile(src), dest);
+				break;
+			} catch (IOException e) {
+				e.printStackTrace();
+				count++;
+				System.out.println("Trying SCP for the " + count + " time. ");
+			}
 		}
 	}
 
-	
+	public Host getHost() {
+		return host;
+	}
+
+	public void setHost(Host host) {
+		this.host = host;
+	}
 
 }

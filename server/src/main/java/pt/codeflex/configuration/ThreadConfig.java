@@ -9,6 +9,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class ThreadConfig {
 	@Bean
 	public TaskExecutor threadPoolTaskExecutor() {
+		
+		//https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ThreadPoolExecutor.html#setCorePoolSize-int
+		
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(10);
 		executor.setMaxPoolSize(10);

@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,7 @@ import pt.codeflex.repositories.*;
 
 @RestController
 @CrossOrigin
+@Transactional
 @RequestMapping(path = "/api/database")
 public class DatabaseController {
 

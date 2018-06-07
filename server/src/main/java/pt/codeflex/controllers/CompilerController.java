@@ -6,6 +6,7 @@ import pt.codeflex.databasemodels.Scoring;
 import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.Users;
 import pt.codeflex.evaluatesubmissions.*;
+import pt.codeflex.models.Host;
 import pt.codeflex.models.SubmitSubmission;
 import pt.codeflex.repositories.LanguageRepository;
 import pt.codeflex.repositories.ProblemRepository;
@@ -43,7 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CompilerController {
 
 	private final String host1 = "192.168.1.55";// "192.168.43.250"; // "10.214.104.240"; "192.168.1.55"
-	private final String host2 = "192.168.1.65"; //"192.168.43.155"; // "10.214.104.235"; "192.168.1.65"
+	private final String host2 = "192.168.1.65"; // "192.168.43.155"; // "10.214.104.235"; "192.168.1.65"
 
 	private Queue<Submissions> queue = new ArrayDeque<>();
 
@@ -64,12 +65,16 @@ public class CompilerController {
 
 	@Autowired
 	private ScoringRepository scoringRepository;
-	
+
 	@Autowired
 	private LanguageRepository languageRepository;
 
-	@Autowired 
+	@Autowired
 	private EvaluateSubmissions evaluateSubmissions;
+
+	@Autowired
+	private List<Host> hostList;
+
 	@GetMapping("/compiler")
 	public String compiler() {
 		return "compiler";
@@ -78,29 +83,37 @@ public class CompilerController {
 	@GetMapping("/ssh")
 	public void startThreads() throws IOException, InterruptedException {
 		long inicial = System.currentTimeMillis();
-		
-		
-		// Adds all the submissions into a volatile queue. The queue is then distributed to the threads
-		evaluateSubmissions.connect(host1);
+
+		evaluateSubmissions.setHost(hostList.get(0));
 		evaluateSubmissions.getSubmissions();
-		
-		EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
-		evaluateSubmissions1.connect(host1);
-		taskExecutor.execute(evaluateSubmissions1);
 
-		EvaluateSubmissions evaluateSubmissions2 = applicationContext.getBean(EvaluateSubmissions.class);
-		evaluateSubmissions2.connect(host2);
-		taskExecutor.execute(evaluateSubmissions2);
+		for (Host h : hostList) {
+				System.out.println("\n\n\nStarting thread  with host " + h.getIp() + "\n");
+				EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
+				evaluateSubmissions1.setHost(h);
+				taskExecutor.execute(evaluateSubmissions1);
 
-//		EvaluateSubmissions evaluateSubmissions3 = applicationContext.getBean(EvaluateSubmissions.class);
-//		evaluateSubmissions3.setHost(host1);
-//		evaluateSubmissions3.connect(host1);
-//		taskExecutor.execute(evaluateSubmissions3);
-//
-//		EvaluateSubmissions evaluateSubmissions4 = applicationContext.getBean(EvaluateSubmissions.class);
-//		evaluateSubmissions4.setHost(host2);
-//		evaluateSubmissions4.connect(host2);
-//		taskExecutor.execute(evaluateSubmissions4);
+				System.out.println("Starting thread  with host " + h.getIp() + "\n");
+				EvaluateSubmissions evaluateSubmissions2 = applicationContext.getBean(EvaluateSubmissions.class);
+				evaluateSubmissions2.setHost(h);
+				taskExecutor.execute(evaluateSubmissions1);
+				System.out.println("\n\n\n");
+		}
+
+		// Adds all the submissions into a volatile queue. The queue is then distributed
+		// to the threads
+
+		// EvaluateSubmissions evaluateSubmissions3 =
+		// applicationContext.getBean(EvaluateSubmissions.class);
+		// evaluateSubmissions3.setHost(host1);
+		// evaluateSubmissions3.connect(host1);
+		// taskExecutor.execute(evaluateSubmissions3);
+		//
+		// EvaluateSubmissions evaluateSubmissions4 =
+		// applicationContext.getBean(EvaluateSubmissions.class);
+		// evaluateSubmissions4.setHost(host2);
+		// evaluateSubmissions4.connect(host2);
+		// taskExecutor.execute(evaluateSubmissions4);
 
 		System.out.println("TEMPO DE PROCESSAMENTO : " + (System.currentTimeMillis() - inicial));
 	}

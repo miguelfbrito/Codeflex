@@ -43,7 +43,7 @@ public class Problem {
 	@ManyToOne
 	private Users owner;
 	
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "problem_id")
 	private List<TestCases> testCases = new ArrayList<>();
 
@@ -114,6 +114,7 @@ public class Problem {
 		this.description = description;
 	}
 
+	
 	public List<TestCases> getTestCases() {
 		return testCases;
 	}
@@ -128,12 +129,6 @@ public class Problem {
 
 	public void setDifficulty(Difficulty difficulty) {
 		this.difficulty = difficulty;
-	}
-
-	@Override
-	public String toString() {
-		return "Problem [id=" + id + ", name=" + name + ", description=" + description + ", testCases=" + testCases
-				+ ", difficulty=" + difficulty + "]";
 	}
 
 	public int getMaxScore() {
