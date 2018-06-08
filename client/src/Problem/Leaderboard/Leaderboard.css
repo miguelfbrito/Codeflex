@@ -1,0 +1,7 @@
+#table-leaderboard thead p {
+
+}
+
+.table-active > th > p{
+    color: #6A44FF;
+}

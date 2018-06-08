@@ -312,8 +312,8 @@ public class Solution {
 
         const leaderboardSection =
             <div>
-                <div className="col-sm-10 problem-description-container ">
-                    <Leaderboard />
+                <div className="col-sm-10 problem-description-container">
+                    <Leaderboard pathname={this.props.location.pathname}/>
                 </div>
                 {problemInformation}
             </div>;
