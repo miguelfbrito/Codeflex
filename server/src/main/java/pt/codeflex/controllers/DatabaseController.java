@@ -2,6 +2,7 @@ package pt.codeflex.controllers;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,11 +22,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import pt.codeflex.databasecompositeskeys.RatingID;
 import pt.codeflex.databasemodels.*;
 import pt.codeflex.models.CategoriesWithoutTestCases;
 import pt.codeflex.models.ListCategoriesWithStats;
 import pt.codeflex.models.AddProblem;
 import pt.codeflex.models.ProblemWithoutTestCases;
+import pt.codeflex.models.TournamentIsUserRegistrated;
+import pt.codeflex.models.TournamentsToList;
 import pt.codeflex.models.UserOnProblemLeaderboard;
 import pt.codeflex.repositories.*;
 
@@ -94,22 +98,23 @@ public class DatabaseController {
 	public List<UserOnProblemLeaderboard> getAllLeaderboardsByProblemName(@PathVariable String problemName) {
 		Problem findProblembyName = problemRepository.findByName(problemName.replace("-", " "));
 		List<UserOnProblemLeaderboard> userOnLeaderboard = new ArrayList<>();
-		
+
 		if (findProblembyName != null) {
 			List<Leaderboard> findByProblem = leaderboardRepository.findAllByProblem(findProblembyName);
-			for(Leaderboard l : findByProblem) {
-				userOnLeaderboard.add(new UserOnProblemLeaderboard(l.getUser().getUsername(), l.getScore(), l.getLanguage()));
+			for (Leaderboard l : findByProblem) {
+				userOnLeaderboard
+						.add(new UserOnProblemLeaderboard(l.getUser().getUsername(), l.getScore(), l.getLanguage()));
 			}
-			
+
 		}
-		
+
 		return userOnLeaderboard;
 	}
 
 	@PostMapping(path = "/Leaderboard/add")
 	public Leaderboard addLeaderboard(@RequestBody Leaderboard leaderboard) {
-		return leaderboardRepository
-				.save(new Leaderboard(leaderboard.getScore(), leaderboard.getUser(), leaderboard.getProblem(), leaderboard.getLanguage()));
+		return leaderboardRepository.save(new Leaderboard(leaderboard.getScore(), leaderboard.getUser(),
+				leaderboard.getProblem(), leaderboard.getLanguage()));
 	}
 
 	@GetMapping(path = "/Leaderboard/view/{id}")
@@ -441,25 +446,20 @@ public class DatabaseController {
 	public void addRating() {
 	}
 
-	@PostMapping(path = "/Rating/edit")
-	public void editRating(@RequestParam long id) {
-		Optional<Rating> r = ratingRepository.findById(id);
-
-		if (r.isPresent()) {
-			Rating rating = r.get();
-			ratingRepository.save(rating);
-		}
-	}
-
-	@PostMapping(path = "/Rating/delete/{id}")
-	public void deleteRating(@PathVariable long id) {
-		ratingRepository.deleteById(id);
-	}
-
-	@GetMapping(path = "/Rating/view/{id}")
-	public Optional<Rating> viewRatingById(@PathVariable long id) {
-		return ratingRepository.findById(id);
-	}
+	/*
+	 * @PostMapping(path = "/Rating/edit") public void editRating(@RequestParam long
+	 * id) { Optional<Rating> r = ratingRepository.findById(id);
+	 * 
+	 * if (r.isPresent()) { Rating rating = r.get(); ratingRepository.save(rating);
+	 * } }
+	 * 
+	 * @PostMapping(path = "/Rating/delete/{id}") public void
+	 * deleteRating(@PathVariable long id) { ratingRepository.deleteById(id); }
+	 * 
+	 * @GetMapping(path = "/Rating/view/{id}") public Optional<Rating>
+	 * viewRatingById(@PathVariable long id) { return ratingRepository.findById(id);
+	 * }
+	 */
 
 	// ROLE
 
@@ -686,36 +686,59 @@ public class DatabaseController {
 	// TOURNAMENT
 
 	@GetMapping(path = "/Tournament/view")
-	public Iterable<Tournament> getAllTournament() {
+	public List<Tournament> getAllTournament() {
 		return tournamentRepository.findAll();
 	}
 
-	@PostMapping(path = "/Tournament/add")
-	public Tournament addTournament(@RequestParam String name, @RequestParam String startingDate,
-			@RequestParam String description, @RequestParam int duration) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		Date d = sdf.parse(startingDate);
-		Tournament t = new Tournament(name, d, description, d);
-		return tournamentRepository.save(t);
+	// Returns 2 separate lists of available and archived problems
+	@GetMapping(path = "/Tournament/viewTournamentsToList/{userId}")
+	public TournamentsToList getAllTournamentsToList(@PathVariable long userId) {
+
+		Optional<Users> user = viewUsersById(userId);
+
+		if (!user.isPresent()) {
+			return null;
+		}
+
+		TournamentsToList tournamentsToList = new TournamentsToList();
+
+		List<TournamentIsUserRegistrated> availableTournaments = new ArrayList<>();
+		List<TournamentIsUserRegistrated> archivedTournaments = new ArrayList<>();
+
+		List<Tournament> allTournaments = getAllTournament();
+
+		boolean registered;
+		for (Tournament t : allTournaments) {
+
+			registered = false;
+
+			Optional<Rating> r = ratingRepository.findById(new RatingID(t.getId(), user.get().getId()));
+
+			if (r.isPresent()) {
+				registered = true;
+			}
+
+			TournamentIsUserRegistrated tt = new TournamentIsUserRegistrated(t, registered);
+
+			if (t.getEndingDate().getTime() >= System.currentTimeMillis()) {
+				availableTournaments.add(tt);
+			} else {
+				archivedTournaments.add(tt);
+			}
+		}
+
+		tournamentsToList.setAvailableTournaments(availableTournaments);
+		tournamentsToList.setArchivedTournaments(archivedTournaments);
+
+		return tournamentsToList;
 	}
 
-	// TODO : refactor if needed
-	// @PostMapping(path = "/Tournament/edit")
-	// public void editTournament(@RequestParam long id, @RequestParam long
-	// problemId) {
-	// Optional<Tournament> t = tournamentRepository.findById(id);
-	// Optional<Problem> p = problemRepository.findById(problemId);
-	//
-	// if (t.isPresent()) {
-	// Tournament tournament = t.get();
-	//
-	// if (p.isPresent()) {
-	// Problem problem = p.get();
-	// tournament.getProblems().add(problem);
-	// }
-	// tournamentRepository.save(tournament);
-	// }
-	// }
+	@PostMapping(path = "/Tournament/add")
+	public Tournament addTournament(@RequestBody Tournament t) {
+		Tournament tournament = new Tournament(t.getName(), t.getDescription(), t.getStartingDate(), t.getEndingDate(),
+				t.getCode());
+		return tournamentRepository.save(tournament);
+	}
 
 	@PostMapping(path = "/Tournament/delete/{id}")
 	public void deleteTournament(@PathVariable long id) {

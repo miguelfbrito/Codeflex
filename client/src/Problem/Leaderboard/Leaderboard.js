@@ -37,7 +37,7 @@ class Leaderboard extends React.Component {
             toRender =
                 <table className="table table-hover" id="table-leaderboard">
                     <thead>
-                        <tr>
+                        <tr id="table-leaderboard-head">
                             <th><p>Position</p></th>
                             <th><p>Username</p></th>
                             <th><p>Language</p></th>

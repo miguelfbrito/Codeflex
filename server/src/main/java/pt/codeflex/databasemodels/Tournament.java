@@ -1,6 +1,10 @@
 package pt.codeflex.databasemodels;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+
+import pt.codeflex.utils.Hash;
 
 @Entity
 public class Tournament {
@@ -27,15 +33,24 @@ public class Tournament {
 	private String description;
 
 	private Date startingDate;
-	
+
 	private Date endingDate;
 
+	private String link;
 
-	public Tournament(String name, Date startingDate, String description, Date endingDate) {
+	private String code;
+
+	public Tournament(String name, String description, Date startingDate, Date endingDate, String code) {
 		this.name = name;
 		this.startingDate = startingDate;
 		this.description = description;
 		this.endingDate = endingDate;
+		if (code != null) {
+			String hash = Hash.getHash(name + startingDate.toString() + endingDate.toString(), "MD5");
+			System.out.println("HASH " + hash);
+			this.link = hash;
+		}
+		this.code = code;
 	}
 
 	public Tournament() {
@@ -81,6 +96,20 @@ public class Tournament {
 		this.endingDate = endingDate;
 	}
 
+	public String getLink() {
+		return link;
+	}
 
+	public void setLink(String link) {
+		this.link = link;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
 
 }

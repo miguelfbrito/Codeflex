@@ -1,5 +1,5 @@
-#table-leaderboard thead p {
-
+#table-leaderboard-head th {
+    border-bottom: 2px solid #6A44FF;
 }
 
 .table-active > th > p{

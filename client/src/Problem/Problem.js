@@ -312,10 +312,9 @@ public class Solution {
 
         const leaderboardSection =
             <div>
-                <div className="col-sm-10 problem-description-container">
+                <div className="col-sm-12 problem-description-container">
                     <Leaderboard pathname={this.props.location.pathname}/>
                 </div>
-                {problemInformation}
             </div>;
 
         let sectionToRender = problemSection;

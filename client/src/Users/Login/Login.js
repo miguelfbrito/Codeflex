@@ -112,7 +112,7 @@ class Login extends Component {
 
             <div className="row ">
                 <div className="col-md-12 cont">
-                    <h2>Login or create your Codeflex account today!</h2>
+                    <h2 id="create-account-text">Login or create your Codeflex account today!</h2>
                     <form className="login-container">
                         <img id="img-user" src={require('../../images/login_icon.png')} alt="User flat image" />
                         <div>
