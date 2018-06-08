@@ -446,6 +446,17 @@ public class DatabaseController {
 	public void addRating() {
 	}
 
+	@GetMapping(path = "/Rating/isUserRegistedInTournament/{userId}/{tournamentId}")
+	public boolean isUserRegisteredInTournament(@PathVariable long userId, @PathVariable long tournamentId) {
+		Optional<Rating> r = ratingRepository.findById(new RatingID(tournamentId, userId));
+
+		if (r.isPresent()) {
+			return true;
+		}
+
+		return false;
+	}
+
 	/*
 	 * @PostMapping(path = "/Rating/edit") public void editRating(@RequestParam long
 	 * id) { Optional<Rating> r = ratingRepository.findById(id);
@@ -710,13 +721,7 @@ public class DatabaseController {
 		boolean registered;
 		for (Tournament t : allTournaments) {
 
-			registered = false;
-
-			Optional<Rating> r = ratingRepository.findById(new RatingID(t.getId(), user.get().getId()));
-
-			if (r.isPresent()) {
-				registered = true;
-			}
+			registered = isUserRegisteredInTournament(userId, t.getId());
 
 			TournamentIsUserRegistrated tt = new TournamentIsUserRegistrated(t, registered);
 

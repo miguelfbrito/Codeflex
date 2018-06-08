@@ -31,10 +31,10 @@ class ListTournaments extends React.Component {
         if (typeof tournaments.availableTournaments !== 'undefined') {
             console.log('teste')
             availableTournaments = tournaments.availableTournaments.map(t => (
-                <div>
-                    <p>
-                        {t.tournament.name}
-                    </p>
+                <div key={t.tournament.id} className="tournament-container">
+                    <p>{t.tournament.name}</p>
+                    <p>{t.tournament.description}</p>
+                    <input type="submit" className="btn btn-primary" style={{ float: 'right' }} value={t.registered ? 'Solve problem' : 'Register!'} />
                 </div>
             ))
         }
@@ -42,33 +42,30 @@ class ListTournaments extends React.Component {
         if (typeof tournaments.archivedTournaments !== 'undefined') {
             console.log('teste')
             archivedTournaments = tournaments.archivedTournaments.map(t => (
-                <div>
-                    <p>
-                        {t.tournament.name}
-                    </p>
+                <div key={t.tournament.id} className="tournament-container">
+                    <p>{t.tournament.name}</p>
+                    <input type="submit" className="btn btn-primary" style={{ float: 'right' }} />
                 </div>
             ))
         }
 
-
-
-
         return (
             <div className="container">
-                <div className="row">
-                    <PathLink path={this.props.location.pathname} title="Tournaments" />
-                </div>
-                <div>
-                    <div>
+                <div className="row"> <PathLink path={this.props.location.pathname} title="Tournaments" />
+                    <div className="col-sm-12 both-categories-container">
                         <h2>Available</h2>
-                        {availableTournaments}
-                    </div>
-                    <div>
-                        <h2>Archived</h2>
-                        {archivedTournaments}
+                        <hr style={{ borderWidth: '1px' }} />
+                        <div className="tournaments-container">
+                            {availableTournaments}
+                        </div>
+                        <h2>Finished</h2>
+                        <hr style={{ borderWidth: '1px' }} />
+                        <div className="tournaments-container">
+                            {archivedTournaments}
+                        </div>
                     </div>
                 </div>
-            </div>
+            </div >
         )
     }
 
