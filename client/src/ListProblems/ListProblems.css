@@ -22,7 +22,11 @@
 
 
 .problem-container:hover {
-    background-color: rgb(230, 245, 255) !important; /* darkcyan*/
+    background-color: #6a44ff;
+}
+
+.problem-container:hover > div> p {
+    color: white;
 }
 
 #problem-name {
@@ -49,8 +53,11 @@
 }
 
 .problem-button:hover{
-    background-color: rgb(113, 194, 252);
-    box-shadow: 0px 0px 15px 0px #ccc;
+    transform: scale(1.08);
+    background-color: white;
+    color: black;
+    box-shadow: none;
+    border: none;
 }
 
 .problem-info {

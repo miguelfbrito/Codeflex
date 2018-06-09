@@ -1,5 +1,6 @@
 package pt.codeflex.databasemodels;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,8 +14,10 @@ public class Language {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
+	@Column(unique = true)
 	private String name;
 
+	@Column(unique = true)
 	private String compilerName;
 
 	public Language() {

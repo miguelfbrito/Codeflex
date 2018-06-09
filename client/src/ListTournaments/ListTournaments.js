@@ -2,6 +2,7 @@ import React from 'react'
 import PathLink from '../PathLink/PathLink';
 
 import { URL } from '../commons/Constants';
+import { dateWithHoursAndDay } from '../commons/Utils';
 
 import './ListTournaments.css';
 
@@ -50,13 +51,20 @@ class ListTournaments extends React.Component {
         let archivedTournaments = '';
 
         if (typeof tournaments.availableTournaments !== 'undefined') {
-            console.log('teste')
-            availableTournaments = tournaments.availableTournaments.map(t => (
-                <div key={t.tournament.id} className="tournament-container">
-                    <p>{t.tournament.name}</p>
-                    <p>{t.tournament.description}</p>
-                    <input type="submit" className="btn btn-primary" style={{ float: 'right' }} value={t.registered ? 'Solve problem' : 'Register!'}
-                        onClick={() => this.onClickRegister(t.tournament.id)} />
+            // TODO @Review Is this sorting working
+            availableTournaments = tournaments.availableTournaments.sort((a,b) => a.tournament.endingDate - b.tournament.endingDate).map(t => (
+                <div className="tournament-container">
+                    <div key={t.tournament.id} className="col-sm-10 col-md-10 col-xs-12">
+                        <p>{t.tournament.name}</p>
+                        <p>{t.tournament.description}</p>
+                        {new Date(t.tournament.startingDate) > new Date().getTime() ? <p className="green-text">Starting at {dateWithHoursAndDay(t.tournament.startingDate)}</p> : ''}
+                    </div>
+                    <div className="col-sm-2 col-md-2 col-xs-4 button-container-tournaments" >
+                        <input type="submit" className="btn btn-primary" value={
+                            t.registered ? (new Date(t.tournament.startingDate) >= new Date().getTime() ? 'Starting soon' : 'Enter' ) : 'Sign up'
+                        }
+                            onClick={() => this.onClickRegister(t.tournament.id)} />
+                    </div>
                 </div>
             ))
         }
@@ -66,7 +74,7 @@ class ListTournaments extends React.Component {
             archivedTournaments = tournaments.archivedTournaments.map(t => (
                 <div key={t.tournament.id} className="tournament-container">
                     <p>{t.tournament.name}</p>
-                    <input type="submit" className="btn btn-primary" style={{ float: 'right' }} />
+                    <input type="submit" className="btn btn-primary" style={{ float: 'right' }} value="View Problems" />
                 </div>
             ))
         }

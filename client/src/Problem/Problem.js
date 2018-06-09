@@ -259,6 +259,12 @@ public class Solution {
                                 <p className="align-right">{this.state.problemLoaded ? dateWithDay(this.state.problem.creationDate) : ''}</p>
                             </th>
                         </tr>
+                        <tr>
+                            <th><p className="align-left">Max Score</p></th>
+                            <th>
+                                <p className="align-right">{this.state.problemLoaded ? this.state.problem.maxScore : ''}</p>
+                            </th>
+                        </tr>
                     </tbody>
                 </table>
             </div>;

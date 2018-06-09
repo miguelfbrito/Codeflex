@@ -1,6 +1,7 @@
 .tournaments-container {
     margin: 0;
     padding: 0;
+    position: relative;
 }
 
 .tournament-container {
@@ -12,7 +13,7 @@
 
 }
 
-.tournament-container > p:nth-child(odd){
+.tournament-container > p:nth-child(1){
     font-size: 15pt;
 }
 
@@ -22,7 +23,7 @@
     background: #6A44FF !important;
 }
 
-.tournament-container:hover >  p {
+.tournament-container:hover > div > p {
     color:white;
 }
 .tournament-container {
@@ -43,4 +44,27 @@
 
 .both-categories-container h2:nth-child(4){
     margin-top: 50px;
+}
+
+.tournament-container .green-text {
+    font-size: 10pt;
+}
+
+.button-container-tournaments input{
+    position: absolute;
+    text-align: center;
+    left: 25%;
+    top: 30px;
+    width: 125px;
+}
+
+@media only screen and (max-width: 850px) {
+
+    .tournament-container {
+        height: 200px;
+    }
+
+
+
+    
 }
