@@ -77,6 +77,11 @@ nav {
     padding-left: 0px;
 }
 
+#item-login i {
+    float: right;
+    transform: rotate(90deg);
+}
+
 img {
     display: inline-block;
     width: 50px;
@@ -105,3 +110,4 @@ img {
 ::-webkit-scrollbar-thumb:hover {
     background: rgb(136, 136, 136);
 }
+

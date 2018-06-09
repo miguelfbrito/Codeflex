@@ -9,13 +9,9 @@ class Navbar extends Component {
     userLoggedOut() {
         return (<ul className="nav navbar-nav navbar-right nav-menus">
             <li><Link to="/practise">Practise</Link></li>
-            {/*<li className="dropdown"><a className="dropdown-toggle" data-toggle="dropdown" href="#">Page 1 <span className="caret"></span></a>
-                <ul className="dropdown-menu">
-                    <li><a href="#">Page 1-1</a></li>
-                    <li><a href="#">Page 1-2</a></li>
-                    <li><a href="#">Page 1-3</a></li>
-                </ul>
-    </li>*/}
+            <li>
+
+            </li>
             <li><Link to="/practice">Compete</Link></li>
             <li><Link to="/practice">Leaderboard</Link></li>
             <li id="item-login" ><Link to="/login"><span className="glyphicon glyphicon-log-in"></span>Login</Link></li>
@@ -23,12 +19,30 @@ class Navbar extends Component {
     }
 
     userLoggedIn() {
-        return (<ul className="nav navbar-nav navbar-right nav-menus">
-            <li><Link to="/practise">Practise</Link></li>
-            <li><Link to="/compete">Compete</Link></li>
-            {/*  <li id="item-signup"><Link to="/signup"><span className="glyphicon glyphicon-user"></span>Sign Up</Link></li>`*/}
-            <li id="item-login" onClick={this.logoutUser}><Link to="/"><span className="glyphicon glyphicon-log-in"></span>{JSON.parse(localStorage.getItem('userData')).username}</Link></li>
-        </ul>);
+        return (
+            <ul className="nav navbar-nav navbar-right nav-menus">
+                <li><Link to="/practise">Practise</Link></li>
+                <li><Link to="/compete">Compete</Link></li>
+                {/*  <li id="item-signup"><Link to="/signup"><span className="glyphicon glyphicon-user"></span>Sign Up</Link></li>`*/}
+                <li id="item-login" >
+                    <Link to="/">
+                        {JSON.parse(localStorage.getItem('userData')).username}
+                        <i className="material-icons">keyboard_arrow_right</i>
+                    </Link>
+
+                </li>
+
+                <li className="dropdown">
+                    <a className="dropbtn">Dropdown</a>
+                    <div className="dropdown-content">
+                        <a href="#">Link 1</a>
+                        <a href="#">Link 2</a>
+                        <a href="#">Link 3</a>
+                    </div>
+                </li>
+
+
+            </ul>);
     }
 
     logoutUser() {
@@ -54,9 +68,7 @@ class Navbar extends Component {
                     <p id="codeflex">codeflex</p>
                     {/* <img id="logo-img" src={require('../images/brain.png')} alt=""/>*/}
                 </div>
-
                 {items}
-
             </nav>
         );
     }

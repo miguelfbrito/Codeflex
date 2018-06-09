@@ -21,13 +21,13 @@ class MathJax extends React.Component {
 
     handleScriptLoad() {
         this.setState({ scriptLoaded: true })
-        if(typeof MathJax.Hub !== "undefined"){
-            MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+        if (typeof MathJax.Hub !== "undefined") {
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         }
     }
 
     render() {
-        
+
         return (
             <div>
                 <Script

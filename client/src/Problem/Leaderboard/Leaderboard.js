@@ -16,14 +16,9 @@ class Leaderboard extends React.Component {
 
     componentDidMount() {
 
-        console.log("Printing props")
         let problemName = splitUrl(this.props.pathname)[2];
-        console.log(problemName);
         fetch(URL + '/api/database/Leaderboard/viewByProblemName/' + problemName).then(res => res.json())
-            .then(data => {
-                console.log(data);
-                this.setState({ problemName: problemName, leaderboard: data })
-            })
+            .then(data => { this.setState({ problemName: problemName, leaderboard: data }) })
     }
 
     render() {

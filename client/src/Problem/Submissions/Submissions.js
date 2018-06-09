@@ -17,12 +17,11 @@ class Submissions extends React.Component {
     componentDidMount() {
         let problemName = splitUrl(this.props.pathname)[2];
         let user = JSON.parse(localStorage.getItem('userData'));
-        fetch(URL + '/api/database/Submissions/viewByProblemNameByUserId/' + problemName+'/'+user.id).then(res => res.json()).then(data => {
+        fetch(URL + '/api/database/Submissions/viewByProblemNameByUserId/' + problemName + '/' + user.id).then(res => res.json()).then(data => {
             this.setState({ results: data });
             console.log('results');
             console.log(data);
         })
-
     }
 
     render() {
@@ -54,8 +53,8 @@ class Submissions extends React.Component {
                     </div>
                 </div>
                 <div className="row">
-                    {this.state.results.sort((a, b) => new Date(b.date) - new Date(a.date)).map(r => (
-                        <div className="submission-container">
+                    {this.state.results.sort((a, b) => new Date(b.date) - new Date(a.date)).map((r, index) => (
+                        <div key={index} className="submission-container">
                             <div className="col-sm-2">
                                 <p className={r.result.name === 'Correct' ? 'green-text' : 'red-text'}>{r.result.name}</p>
                             </div>
@@ -74,7 +73,7 @@ class Submissions extends React.Component {
                                 </p>
                             </div>
                             <div className="col-sm-2">
-                                <Link to={{pathname : this.props.pathname +'/view-results', state : {submissionId : r.id}}}><p>View Results</p></Link>
+                                <Link to={{ pathname: this.props.pathname + '/view-results', state: { submissionId: r.id } }}><p>View Results</p></Link>
                             </div>
                             <div className="col-sm-2">
                                 <p>View Submissions</p>

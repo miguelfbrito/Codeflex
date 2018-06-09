@@ -2,6 +2,7 @@
     margin: 0 auto;
     text-align: right;
 }
+
 .problem-info-container p {
     padding: 5px;
 }
@@ -13,9 +14,11 @@
 .problem-info-container th {
     padding: 0px 10px;
 }
+
 .align-left {
     text-align: left;
 }
+
 .align-right {
     text-align: right;
 }
@@ -33,7 +36,7 @@
     transition: all 250ms ease-in-out;
 }
 
-.problem-nav > ul > li {
+.problem-nav>ul>li {
     font-family: 'Roboto Condensed', sans-serif;
     font-size: 18pt;
     padding: 2px 20px;
@@ -118,7 +121,8 @@
 }
 
 @media only screen and (max-width: 850px) {
-    .problem-info-container table{
+
+    .problem-info-container table {
         margin-top: 15px;
     }
 
@@ -126,5 +130,8 @@
         margin-top: 35px;
     }
 
-    
+    /* TODO: rework: */
+    .problem-nav {
+        margin-bottom: 72px;
+    }
 }
