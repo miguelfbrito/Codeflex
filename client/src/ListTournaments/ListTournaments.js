@@ -1,5 +1,6 @@
 import React from 'react'
 import PathLink from '../PathLink/PathLink';
+import Popup from '../Popup/Popup';
 
 import { URL } from '../commons/Constants';
 import { dateWithHoursAndDay } from '../commons/Utils';
@@ -80,24 +81,40 @@ class ListTournaments extends React.Component {
         if (typeof tournaments.archivedTournaments !== 'undefined') {
             console.log('teste')
             archivedTournaments = tournaments.archivedTournaments.map(t => (
-                <div key={t.tournament.id} className="tournament-container">
+                <div className="tournament-container">
+                <div key={t.tournament.id} className="col-sm-10 col-md-10 col-xs-12">
                     <p>{t.tournament.name}</p>
-                    <input type="submit" className="btn btn-primary" style={{ float: 'right' }} value="View Problems" />
+                    <p>{t.tournament.description}</p>
                 </div>
+                <div className="col-sm-2 col-md-2 col-xs-4 button-container-tournaments" >
+                    <input type="submit" className="btn btn-primary" value="View Problems"/>
+                </div>
+            </div>
             ))
         }
+
+        const PopupInformation = () => (
+            <div>
+                <h2 style={{ color: 'white', margin: 'auto' }}>teste</h2>
+                <p style={{ color: 'white', margin: 'auto', textAlign: 'center' }}>fasfasfafs</p>
+            </div>
+        );
+
 
         return (
             <div className="container">
                 <div className="row"> <PathLink path={this.props.location.pathname} title="Tournaments" />
+                    <Popup timeoutClose={1250}>
+                        <PopupInformation />
+                    </Popup>
                     <div className="col-sm-12 both-categories-container">
                         <h2>Available</h2>
-                        <hr style={{ borderWidth: '1px' }} />
+                        <hr style={{ borderWidth: '2px', borderTop: 'none', borderLeft: 'none', borderRight: 'none' }} />
                         <div className="tournaments-container">
                             {availableTournaments}
                         </div>
                         <h2>Finished</h2>
-                        <hr style={{ borderWidth: '1px' }} />
+                        <hr style={{ borderWidth: '2px', borderTop: 'none', borderLeft: 'none', borderRight: 'none' }} />
                         <div className="tournaments-container">
                             {archivedTournaments}
                         </div>
