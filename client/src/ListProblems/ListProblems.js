@@ -3,6 +3,7 @@ import { URL } from '../commons/Constants';
 import { Link } from 'react-router-dom';
 import { splitUrl, textToLowerCaseNoSpaces } from '../commons/Utils';
 import PathLink from '../PathLink/PathLink';
+import ProblemFilter from './ProblemFilter/ProblemFilter';
 
 import './ListProblems.css';
 
@@ -18,9 +19,35 @@ class ListProblems extends Component {
 
         this.checkBoxFilter = React.createRef();
         this.onChangeSelectBox = this.onChangeSelectBox.bind(this);
+        this.fetchProblemsByCategory = this.fetchProblemsByCategory.bind(this);
+        this.fetchProblemsByTournament = this.fetchProblemsByTournament.bind(this);
     }
 
     componentDidMount() {
+        const url = splitUrl(this.props.location.pathname);
+
+        if (url[0] === 'practise') {
+            console.log('practise')
+            this.fetchProblemsByCategory();
+        } else if (url[1] === 'compete') {
+            console.log('compete')
+            this.fetch
+        }
+
+        fetch(URL + '/api/database/difficulty/view')
+            .then(res => res.json()).then(data => { this.setState({ difficulties: data }) })
+    }
+
+    fetchProblemsByTournament(){
+        const currentTournament = splitUrl(this.props.location.pathname)[1];
+        fetch(URL + '/api/database/tournament/getAllProblemsByName/' + currentTournament).then(res => res.json())
+        .then(data => {
+            console.log('Tournament problems')
+            console.log(data);
+        })
+    }
+
+    fetchProblemsByCategory() {
         const currentCategory = splitUrl(this.props.location.pathname)[1];
         fetch(URL + '/api/database/PractiseCategory/getAllWithoutTestCases/' + JSON.parse(localStorage.getItem('userData')).id)
             .then(res => res.json()).then(data => {
@@ -32,9 +59,6 @@ class ListProblems extends Component {
                     console.log(newData[0].problem);
                 }
             })
-
-        fetch(URL + '/api/database/difficulty/view')
-            .then(res => res.json()).then(data => { this.setState({ difficulties: data }) })
     }
 
     onChangeSelectBox(e) {
@@ -58,7 +82,7 @@ class ListProblems extends Component {
                 keepItem = true;
             }
 
-            if(!newList.includes("Solved") && !newList.includes("Unsolved")){
+            if (!newList.includes("Solved") && !newList.includes("Unsolved")) {
                 keepItem = true;
             }
 
@@ -112,7 +136,7 @@ class ListProblems extends Component {
         return (
             <div className="container">
                 <div className="row">
-                    <PathLink path={this.props.location.pathname} title={splitUrl(this.props.match.url)[1]}/>                   
+                    <PathLink path={this.props.location.pathname} title={splitUrl(this.props.match.url)[1]} />
                     <div className="col-sm-10 problems-container">
                         {this.state.filteredProblems.map((problem, index) => (
                             <div className="problem-container">

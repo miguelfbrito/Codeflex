@@ -27,6 +27,7 @@ import pt.codeflex.databasemodels.*;
 import pt.codeflex.models.CategoriesWithoutTestCases;
 import pt.codeflex.models.ListCategoriesWithStats;
 import pt.codeflex.models.AddProblem;
+import pt.codeflex.models.AddTournamentToProblem;
 import pt.codeflex.models.ProblemWithoutTestCases;
 import pt.codeflex.models.RegisterUserOnTournament;
 import pt.codeflex.models.TournamentIsUserRegistrated;
@@ -132,7 +133,8 @@ public class DatabaseController {
 
 	@PostMapping(path = "/Language/add")
 	public Language addLanguage(@RequestBody Language language) {
-		return languageRepository.save(new Language(language.getName(), language.getCompilerName(), language.getMode()));
+		return languageRepository
+				.save(new Language(language.getName(), language.getCompilerName(), language.getMode()));
 	}
 
 	@GetMapping(path = "/Language/view/{id}")
@@ -361,8 +363,13 @@ public class DatabaseController {
 	// PROBLEM
 
 	@GetMapping(path = "/Problem/view")
-	public Iterable<Problem> getAllProblem() {
+	public List<Problem> getAllProblems() {
 		return problemRepository.findAll();
+	}
+
+	@GetMapping(path = "/Problem/viewByName/{name}")
+	public Problem viewProblemByName(@PathVariable String name) {
+		return problemRepository.findByName(name);
 	}
 
 	@PostMapping(path = "/Problem/add")
@@ -404,6 +411,19 @@ public class DatabaseController {
 			problem.getTestCases().add(tc.get());
 			problemRepository.save(problem);
 		}
+	}
+
+	@PostMapping(path = "/Problem/addTournament")
+	public Problem addTournament(@RequestBody AddTournamentToProblem info) {
+
+		Tournament tournament = viewTournamentByName(info.getTournament().getName());
+		Problem problem = viewProblemByName(info.getProblem().getName());
+
+		if (tournament == null || problem == null)
+			return null;
+
+		problem.setTournament(tournament);
+		return problemRepository.save(problem);
 	}
 
 	@PostMapping(path = "/Problem/edit")
@@ -529,25 +549,25 @@ public class DatabaseController {
 		}
 	}
 
-//	@PostMapping(path = "/Scoring/edit")
-//	public void editScoring(@RequestParam long id) {
-//		Optional<Scoring> s = scoringRepository.findById(id);
-//
-//		if (s.isPresent()) {
-//			Scoring scoring = s.get();
-//			scoringRepository.save(scoring);
-//		}
-//	}
+	// @PostMapping(path = "/Scoring/edit")
+	// public void editScoring(@RequestParam long id) {
+	// Optional<Scoring> s = scoringRepository.findById(id);
+	//
+	// if (s.isPresent()) {
+	// Scoring scoring = s.get();
+	// scoringRepository.save(scoring);
+	// }
+	// }
 
-//	@PostMapping(path = "/Scoring/delete/{id}")
-//	public void deleteScoring(@PathVariable long id) {
-//		scoringRepository.deleteById(id);
-//	}
-//
-//	@GetMapping(path = "/Scoring/view/{id}")
-//	public Optional<Scoring> viewScoringById(@PathVariable long id) {
-//		return scoringRepository.findById(id);
-//	}
+	// @PostMapping(path = "/Scoring/delete/{id}")
+	// public void deleteScoring(@PathVariable long id) {
+	// scoringRepository.deleteById(id);
+	// }
+	//
+	// @GetMapping(path = "/Scoring/view/{id}")
+	// public Optional<Scoring> viewScoringById(@PathVariable long id) {
+	// return scoringRepository.findById(id);
+	// }
 
 	@GetMapping(path = "/Scoring/viewBySubmissionId/{submissionId}")
 	public List<Scoring> viewBySubmissionId(@PathVariable long submissionId) {
@@ -698,8 +718,20 @@ public class DatabaseController {
 	// TOURNAMENT
 
 	@GetMapping(path = "/Tournament/view")
-	public List<Tournament> getAllTournament() {
+	public List<Tournament> getAllTournaments() {
 		return tournamentRepository.findAll();
+	}
+
+	@GetMapping(path = "/Tournament/viewByName/{name}")
+	public Tournament viewTournamentByName(@PathVariable String name) {
+		return tournamentRepository.findByName(name);
+	}
+
+	@PostMapping(path = "/Tournament/add")
+	public Tournament addTournament(@RequestBody Tournament t) {
+		Tournament tournament = new Tournament(t.getName(), t.getDescription(), t.getStartingDate(), t.getEndingDate(),
+				t.getCode());
+		return tournamentRepository.save(tournament);
 	}
 
 	// Returns 2 separate lists of available and archived problems
@@ -717,7 +749,7 @@ public class DatabaseController {
 		List<TournamentIsUserRegistrated> availableTournaments = new ArrayList<>();
 		List<TournamentIsUserRegistrated> archivedTournaments = new ArrayList<>();
 
-		List<Tournament> allTournaments = getAllTournament();
+		List<Tournament> allTournaments = getAllTournaments();
 
 		boolean registered;
 		for (Tournament t : allTournaments) {
@@ -739,29 +771,33 @@ public class DatabaseController {
 		return tournamentsToList;
 	}
 
+	@GetMapping(path = "/Tournament/getAllProblemsByName/{name}")
+	public List<Problem> getAllProblemsByTournamentName(@PathVariable String name) {
+
+		Tournament tournament = viewTournamentByName(name);
+
+		if (tournament == null)
+			return new ArrayList<>();
+
+		return problemRepository.findAllByTournament(tournament);
+	}
+
 	// not sure if this should be here
 	@PostMapping(path = "/Tournament/registerUser")
 	public TournamentsToList registerUserOnTournament(@RequestBody RegisterUserOnTournament register) {
-	
+
 		Optional<Users> viewUsersById = viewUsersById(register.getUser().getId());
 		Optional<Tournament> viewTournamentById = viewTournamentById(register.getTournament().getId());
-		
-		if(!viewUsersById.isPresent() || !viewTournamentById.isPresent()) {
+
+		if (!viewUsersById.isPresent() || !viewTournamentById.isPresent()) {
 			return getAllTournamentsToList(viewUsersById.get().getId()); // ?!
 		}
-		
-		Rating r = new Rating(viewTournamentById.get(), viewUsersById.get(), (double)-1);
-		ratingRepository.save(r);
-		
-		return getAllTournamentsToList(viewUsersById.get().getId());
-		
-	}
 
-	@PostMapping(path = "/Tournament/add")
-	public Tournament addTournament(@RequestBody Tournament t) {
-		Tournament tournament = new Tournament(t.getName(), t.getDescription(), t.getStartingDate(), t.getEndingDate(),
-				t.getCode());
-		return tournamentRepository.save(tournament);
+		Rating r = new Rating(viewTournamentById.get(), viewUsersById.get(), (double) -1);
+		ratingRepository.save(r);
+
+		return getAllTournamentsToList(viewUsersById.get().getId());
+
 	}
 
 	@PostMapping(path = "/Tournament/delete/{id}")

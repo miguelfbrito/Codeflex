@@ -123,9 +123,9 @@ public class Solution {
         let selectedItem = [...e.target.options].filter(o => o.selected)[0].value; //
 
         if (e.target.name === 'language') {
-            selectedItem = this.state.displayLanguages.filter(l => l.compilerName === selectedItem)[0].mode;            
-        } 
-        
+            selectedItem = this.state.displayLanguages.filter(l => l.compilerName === selectedItem)[0].mode;
+        }
+
         console.log(selectedItem);
         this.setState({ [e.target.name]: selectedItem });
     }
@@ -359,6 +359,8 @@ public class Solution {
                     </div>
 
                     {sectionToRender}
+
+
 
                     {this.state.results.loaded ?
                         <Redirect to={{

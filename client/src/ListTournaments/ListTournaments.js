@@ -2,8 +2,9 @@ import React from 'react'
 import PathLink from '../PathLink/PathLink';
 import Popup from '../Popup/Popup';
 
+import { Redirect } from 'react-router-dom';
 import { URL } from '../commons/Constants';
-import { dateWithHoursAndDay } from '../commons/Utils';
+import { dateWithHoursAndDay, textToLowerCaseNoSpaces } from '../commons/Utils';
 
 import './ListTournaments.css';
 
@@ -11,18 +12,23 @@ class ListTournaments extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tournaments: []
+            tournaments: [],
+            redirect: { now: false, path: '/' }
         }
 
         this.onClickRegister = this.onClickRegister.bind(this);
+        this.onClickTournament = this.onClickTournament.bind(this);
     }
 
     componentDidMount() {
         this.fetchTournamentList();
-        setInterval(() => {
-            console.log('refreshing after 60seconds');
+        window.updateEveryMinute = setInterval(() => {
             this.fetchTournamentList();
         }, 60000);
+    }
+
+    componentWillUnmount(){
+        clearInterval(window.updateEveryMinute);
     }
 
     fetchTournamentList() {
@@ -31,6 +37,15 @@ class ListTournaments extends React.Component {
             console.log(data);
             this.setState({ tournaments: data });
         })
+    }
+
+    onClickTournament(clickType, tournamentId, tournamentName) {
+        if (clickType === 'Sign Up') {
+            this.onClickRegister(tournamentId);
+        } else if (clickType === 'Starting soon') {
+        } else if (clickType === 'Enter') {
+            this.setState({ redirect: { now: true, path: '/compete/' + textToLowerCaseNoSpaces(tournamentName) } })
+        }
     }
 
     onClickRegister(tournamentId) {
@@ -72,7 +87,7 @@ class ListTournaments extends React.Component {
                         <input type="submit" className="btn btn-primary" value={
                             t.registered ? (new Date(t.tournament.startingDate) >= new Date().getTime() ? 'Starting soon' : 'Enter') : 'Sign up'
                         }
-                            onClick={() => this.onClickRegister(t.tournament.id)} />
+                            onClick={(e) => this.onClickTournament(e.target.value, t.tournament.id, t.tournament.name)} />
                     </div>
                 </div>
             ))
@@ -82,14 +97,14 @@ class ListTournaments extends React.Component {
             console.log('teste')
             archivedTournaments = tournaments.archivedTournaments.map(t => (
                 <div className="tournament-container">
-                <div key={t.tournament.id} className="col-sm-10 col-md-10 col-xs-12">
-                    <p>{t.tournament.name}</p>
-                    <p>{t.tournament.description}</p>
+                    <div key={t.tournament.id} className="col-sm-10 col-md-10 col-xs-12">
+                        <p>{t.tournament.name}</p>
+                        <p>{t.tournament.description}</p>
+                    </div>
+                    <div className="col-sm-2 col-md-2 col-xs-4 button-container-tournaments" >
+                        <input type="submit" className="btn btn-primary" value="View Problems" />
+                    </div>
                 </div>
-                <div className="col-sm-2 col-md-2 col-xs-4 button-container-tournaments" >
-                    <input type="submit" className="btn btn-primary" value="View Problems"/>
-                </div>
-            </div>
             ))
         }
 
@@ -119,6 +134,8 @@ class ListTournaments extends React.Component {
                             {archivedTournaments}
                         </div>
                     </div>
+
+                    {this.state.redirect.now ? <Redirect to={this.state.redirect.path} /> : ''}
                 </div>
             </div >
         )

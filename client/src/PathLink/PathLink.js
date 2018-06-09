@@ -54,7 +54,7 @@ class PathLink extends React.Component {
                 </div>
                 <div className="page-title-container">
                     <h2 className="page-title">{title}</h2>
-                    <hr />
+                    <hr id="pathlink-hr"/>
                 </div>
             </div>
         )

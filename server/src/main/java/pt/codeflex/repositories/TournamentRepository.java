@@ -8,5 +8,5 @@ import pt.codeflex.databasemodels.Tournament;
 
 @Repository
 public interface TournamentRepository extends JpaRepository<Tournament, Long> {
-
+	Tournament findByName(String name);
 }
