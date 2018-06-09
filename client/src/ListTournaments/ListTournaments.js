@@ -42,8 +42,10 @@ class ListTournaments extends React.Component {
     onClickTournament(clickType, tournamentId, tournamentName) {
         if (clickType === 'Sign Up') {
             this.onClickRegister(tournamentId);
+            console.log('sign')
         } else if (clickType === 'Starting soon') {
         } else if (clickType === 'Enter') {
+            console.log(tournamentName);
             this.setState({ redirect: { now: true, path: '/compete/' + textToLowerCaseNoSpaces(tournamentName) } })
         }
     }
@@ -85,7 +87,7 @@ class ListTournaments extends React.Component {
                     </div>
                     <div className="col-sm-2 col-md-2 col-xs-4 button-container-tournaments" >
                         <input type="submit" className="btn btn-primary" value={
-                            t.registered ? (new Date(t.tournament.startingDate) >= new Date().getTime() ? 'Starting soon' : 'Enter') : 'Sign up'
+                            t.registered ? (new Date(t.tournament.startingDate) >= new Date().getTime() ? 'Starting soon' : 'Enter') : 'Sign Up'
                         }
                             onClick={(e) => this.onClickTournament(e.target.value, t.tournament.id, t.tournament.name)} />
                     </div>

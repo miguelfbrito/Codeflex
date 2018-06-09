@@ -369,7 +369,7 @@ public class DatabaseController {
 
 	@GetMapping(path = "/Problem/viewByName/{name}")
 	public Problem viewProblemByName(@PathVariable String name) {
-		return problemRepository.findByName(name);
+		return problemRepository.findByName(name.replace("-", " "));
 	}
 
 	@PostMapping(path = "/Problem/add")
@@ -724,7 +724,7 @@ public class DatabaseController {
 
 	@GetMapping(path = "/Tournament/viewByName/{name}")
 	public Tournament viewTournamentByName(@PathVariable String name) {
-		return tournamentRepository.findByName(name);
+		return tournamentRepository.findByName(name.replace("-", " "));
 	}
 
 	@PostMapping(path = "/Tournament/add")

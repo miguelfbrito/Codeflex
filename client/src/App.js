@@ -28,7 +28,8 @@ class App extends Component {
 
             <Route exact path="/compete" component={ListTournaments} />
             <Route exact path="/compete/:tournamentName" component={ListProblems} />
-
+            <Route exact path="/compete/:tournamentName/:problemName" component={Problem} />
+            <Route exact path="/compete/:categoryName/:problemName/view-results" component={ViewResults} />
 
             <Route component={PageNotFound} />
           </Switch>

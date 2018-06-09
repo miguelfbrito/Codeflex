@@ -1,6 +1,5 @@
 package pt.codeflex.models;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import pt.codeflex.databasemodels.Problem;
 import pt.codeflex.databasemodels.Tournament;
 
@@ -8,6 +7,9 @@ public class AddTournamentToProblem {
 
 	private Problem problem;
 	private Tournament tournament;
+
+	public AddTournamentToProblem() {
+	}
 
 	public AddTournamentToProblem(Problem problem, Tournament tournament) {
 		super();

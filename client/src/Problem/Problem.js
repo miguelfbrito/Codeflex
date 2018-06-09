@@ -45,7 +45,7 @@ class Problem extends Component {
                 error: ''
             },
             displayLanguages: [],
-            language: 'java',
+            language: { mode: 'java', name: 'Java' },
             theme: 'github',
             code: `import java.io.*;
 import java.util.*;
@@ -123,21 +123,21 @@ public class Solution {
         let selectedItem = [...e.target.options].filter(o => o.selected)[0].value; //
 
         if (e.target.name === 'language') {
-            selectedItem = this.state.displayLanguages.filter(l => l.compilerName === selectedItem)[0].mode;
+            selectedItem = this.state.displayLanguages.filter(l => l.compilerName === selectedItem)[0];
+            this.setState({ [e.target.name]: { mode: selectedItem.mode, name: selectedItem.name } })
+        } else {
+            this.setState({ [e.target.name]: selectedItem });
         }
-
-        console.log(selectedItem);
-        this.setState({ [e.target.name]: selectedItem });
     }
 
     submitSubmission() {
         console.log(this.state);
-        console.log(this.state.language);
+        console.log(this.state.language.mode);
         console.log(btoa(this.state.code));
         this.setState({ sentSubmission: { submitting: true }, results: { result: [], error: '' } })
         let data = {
             code: btoa(this.state.code),
-            language: { name: "Java" },
+            language: { name: this.state.language.name },
             users: { id: JSON.parse(localStorage.getItem('userData')).id },
             problem: { name: textToLowerCaseNoSpaces(this.state.problem.name) }
         }
@@ -306,8 +306,7 @@ public class Solution {
                                 <option value="terminal">terminal</option>
                             </select>
                         </div>
-
-                        <AceEditor style={aceStyle} mode={this.state.language} theme={this.state.theme} name="" onLoad={this.onLoad} onChange={this.onAceChange}
+                        <AceEditor style={aceStyle} mode={this.state.language.mode} theme={this.state.theme} name="" onLoad={this.onLoad} onChange={this.onAceChange}
                             fontSize={14} showPrintMargin={true} showGutter={true} highlightActiveLine={true} value={this.state.code}
                             setOptions={{
                                 enableBasicAutocompletion: true,
