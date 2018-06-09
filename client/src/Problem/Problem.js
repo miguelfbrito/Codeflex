@@ -44,6 +44,7 @@ class Problem extends Component {
                 result: [],
                 error: ''
             },
+            displayLanguages: [],
             language: 'java',
             theme: 'github',
             code: `import java.io.*;
@@ -97,8 +98,15 @@ public class Solution {
             console.log(data)
         });
 
-        if(localStorage.getItem('problem-page') != null){
-            this.setState({page : JSON.parse(localStorage.getItem('problem-page'))});
+        fetch(URL + '/api/database/Language/view').then(res => res.json()).then(data => {
+            console.log(data)
+            this.setState({ displayLanguages: data })
+
+        });
+
+
+        if (localStorage.getItem('problem-page') != null) {
+            this.setState({ page: JSON.parse(localStorage.getItem('problem-page')) });
             console.log('Storage exist');
         } else {
             console.log('Storage doesnt exists');
@@ -113,6 +121,12 @@ public class Solution {
 
     handleSelectBoxChange(e) {
         let selectedItem = [...e.target.options].filter(o => o.selected)[0].value; //
+
+        if (e.target.name === 'language') {
+            selectedItem = this.state.displayLanguages.filter(l => l.compilerName === selectedItem)[0].mode;            
+        } 
+        
+        console.log(selectedItem);
         this.setState({ [e.target.name]: selectedItem });
     }
 
@@ -280,9 +294,9 @@ public class Solution {
                     <div className="ace-editor">
                         <div className="ace-editor-navbar">
                             <select name="language" id="" placeholder="Language" onChange={this.handleSelectBoxChange}>
-                                <option value="JAVA">Java</option>
-                                <option value="C#">C#</option>
-                                <option value="Python">Python</option>
+                                {this.state.displayLanguages.map(l => (
+                                    <option key={l.id} value={l.compilerName}>{l.name}</option>
+                                ))}
                             </select>
 
                             <select name="theme" id="" onChange={this.handleSelectBoxChange}>
@@ -319,7 +333,7 @@ public class Solution {
         const leaderboardSection =
             <div>
                 <div className="col-sm-12 problem-description-container">
-                    <Leaderboard pathname={this.props.location.pathname}/>
+                    <Leaderboard pathname={this.props.location.pathname} />
                 </div>
             </div>;
 

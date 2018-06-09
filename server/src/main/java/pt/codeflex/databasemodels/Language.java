@@ -19,6 +19,8 @@ public class Language {
 
 	@Column(unique = true)
 	private String compilerName;
+	
+	private String mode;
 
 	public Language() {
 	}
@@ -29,6 +31,13 @@ public class Language {
 		this.compilerName = compilerName;
 	}
 
+	public Language(String name, String compilerName, String mode) {
+		super();
+		this.name = name;
+		this.compilerName = compilerName;
+		this.mode = mode;
+	}
+	
 	public long getId() {
 		return id;
 	}
@@ -56,6 +65,14 @@ public class Language {
 	@Override
 	public String toString() {
 		return "Language [id=" + id + ", name=" + name + ", compilerName=" + compilerName + "]";
+	}
+
+	public String getMode() {
+		return mode;
+	}
+
+	public void setMode(String mode) {
+		this.mode = mode;
 	}
 
 }

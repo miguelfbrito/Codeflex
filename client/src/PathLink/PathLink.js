@@ -46,7 +46,7 @@ class PathLink extends React.Component {
                                     {p}
                                 </p>
                             </Link>
-                            {index < pathname.length - 1 ? <i class="material-icons">keyboard_arrow_right</i> : ''}
+                            {index < pathname.length - 1 ? <i className="material-icons">keyboard_arrow_right</i> : ''}
                         </div>
                     ))}
                     <div>

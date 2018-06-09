@@ -17,6 +17,14 @@ class ListTournaments extends React.Component {
     }
 
     componentDidMount() {
+        this.fetchTournamentList();
+        setInterval(() => {
+            console.log('refreshing after 60seconds');
+            this.fetchTournamentList();
+        }, 60000);
+    }
+
+    fetchTournamentList() {
         const userData = JSON.parse(localStorage.getItem('userData'));
         fetch(URL + '/api/database/Tournament/viewTournamentsToList/' + userData.id).then(res => res.json()).then(data => {
             console.log(data);
@@ -52,7 +60,7 @@ class ListTournaments extends React.Component {
 
         if (typeof tournaments.availableTournaments !== 'undefined') {
             // TODO @Review Is this sorting working
-            availableTournaments = tournaments.availableTournaments.sort((a,b) => a.tournament.endingDate - b.tournament.endingDate).map(t => (
+            availableTournaments = tournaments.availableTournaments.sort((a, b) => a.tournament.endingDate - b.tournament.endingDate).map(t => (
                 <div className="tournament-container">
                     <div key={t.tournament.id} className="col-sm-10 col-md-10 col-xs-12">
                         <p>{t.tournament.name}</p>
@@ -61,7 +69,7 @@ class ListTournaments extends React.Component {
                     </div>
                     <div className="col-sm-2 col-md-2 col-xs-4 button-container-tournaments" >
                         <input type="submit" className="btn btn-primary" value={
-                            t.registered ? (new Date(t.tournament.startingDate) >= new Date().getTime() ? 'Starting soon' : 'Enter' ) : 'Sign up'
+                            t.registered ? (new Date(t.tournament.startingDate) >= new Date().getTime() ? 'Starting soon' : 'Enter') : 'Sign up'
                         }
                             onClick={() => this.onClickRegister(t.tournament.id)} />
                     </div>

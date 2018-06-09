@@ -132,7 +132,7 @@ public class DatabaseController {
 
 	@PostMapping(path = "/Language/add")
 	public Language addLanguage(@RequestBody Language language) {
-		return languageRepository.save(new Language(language.getName(), language.getCompilerName()));
+		return languageRepository.save(new Language(language.getName(), language.getCompilerName(), language.getMode()));
 	}
 
 	@GetMapping(path = "/Language/view/{id}")
