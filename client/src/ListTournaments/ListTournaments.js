@@ -11,11 +11,32 @@ class ListTournaments extends React.Component {
         this.state = {
             tournaments: []
         }
+
+        this.onClickRegister = this.onClickRegister.bind(this);
     }
 
     componentDidMount() {
-        let userData = JSON.parse(localStorage.getItem('userData'));
+        const userData = JSON.parse(localStorage.getItem('userData'));
         fetch(URL + '/api/database/Tournament/viewTournamentsToList/' + userData.id).then(res => res.json()).then(data => {
+            console.log(data);
+            this.setState({ tournaments: data });
+        })
+    }
+
+    onClickRegister(tournamentId) {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const data = {
+            user: { id: userData.id },
+            tournament: { id: tournamentId }
+        }
+        fetch(URL + '/api/database/Tournament/registerUser', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        }).then(res => res.json()).then(data => {
+            console.log("logging tournaments")
             console.log(data);
             this.setState({ tournaments: data });
         })
@@ -34,7 +55,8 @@ class ListTournaments extends React.Component {
                 <div key={t.tournament.id} className="tournament-container">
                     <p>{t.tournament.name}</p>
                     <p>{t.tournament.description}</p>
-                    <input type="submit" className="btn btn-primary" style={{ float: 'right' }} value={t.registered ? 'Solve problem' : 'Register!'} />
+                    <input type="submit" className="btn btn-primary" style={{ float: 'right' }} value={t.registered ? 'Solve problem' : 'Register!'}
+                        onClick={() => this.onClickRegister(t.tournament.id)} />
                 </div>
             ))
         }

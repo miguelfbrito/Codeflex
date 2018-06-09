@@ -28,6 +28,7 @@ import pt.codeflex.models.CategoriesWithoutTestCases;
 import pt.codeflex.models.ListCategoriesWithStats;
 import pt.codeflex.models.AddProblem;
 import pt.codeflex.models.ProblemWithoutTestCases;
+import pt.codeflex.models.RegisterUserOnTournament;
 import pt.codeflex.models.TournamentIsUserRegistrated;
 import pt.codeflex.models.TournamentsToList;
 import pt.codeflex.models.UserOnProblemLeaderboard;
@@ -528,25 +529,25 @@ public class DatabaseController {
 		}
 	}
 
-	@PostMapping(path = "/Scoring/edit")
-	public void editScoring(@RequestParam long id) {
-		Optional<Scoring> s = scoringRepository.findById(id);
+//	@PostMapping(path = "/Scoring/edit")
+//	public void editScoring(@RequestParam long id) {
+//		Optional<Scoring> s = scoringRepository.findById(id);
+//
+//		if (s.isPresent()) {
+//			Scoring scoring = s.get();
+//			scoringRepository.save(scoring);
+//		}
+//	}
 
-		if (s.isPresent()) {
-			Scoring scoring = s.get();
-			scoringRepository.save(scoring);
-		}
-	}
-
-	@PostMapping(path = "/Scoring/delete/{id}")
-	public void deleteScoring(@PathVariable long id) {
-		scoringRepository.deleteById(id);
-	}
-
-	@GetMapping(path = "/Scoring/view/{id}")
-	public Optional<Scoring> viewScoringById(@PathVariable long id) {
-		return scoringRepository.findById(id);
-	}
+//	@PostMapping(path = "/Scoring/delete/{id}")
+//	public void deleteScoring(@PathVariable long id) {
+//		scoringRepository.deleteById(id);
+//	}
+//
+//	@GetMapping(path = "/Scoring/view/{id}")
+//	public Optional<Scoring> viewScoringById(@PathVariable long id) {
+//		return scoringRepository.findById(id);
+//	}
 
 	@GetMapping(path = "/Scoring/viewBySubmissionId/{submissionId}")
 	public List<Scoring> viewBySubmissionId(@PathVariable long submissionId) {
@@ -736,6 +737,24 @@ public class DatabaseController {
 		tournamentsToList.setArchivedTournaments(archivedTournaments);
 
 		return tournamentsToList;
+	}
+
+	// not sure if this should be here
+	@PostMapping(path = "/Tournament/registerUser")
+	public TournamentsToList registerUserOnTournament(@RequestBody RegisterUserOnTournament register) {
+	
+		Optional<Users> viewUsersById = viewUsersById(register.getUser().getId());
+		Optional<Tournament> viewTournamentById = viewTournamentById(register.getTournament().getId());
+		
+		if(!viewUsersById.isPresent() || !viewTournamentById.isPresent()) {
+			return getAllTournamentsToList(viewUsersById.get().getId()); // ?!
+		}
+		
+		Rating r = new Rating(viewTournamentById.get(), viewUsersById.get(), (double)-1);
+		ratingRepository.save(r);
+		
+		return getAllTournamentsToList(viewUsersById.get().getId());
+		
 	}
 
 	@PostMapping(path = "/Tournament/add")

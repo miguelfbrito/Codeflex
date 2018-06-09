@@ -24,6 +24,8 @@ public class Rating implements Serializable {
 
 	private double elo;
 	
+	public Rating() {}
+	
 	public Rating(Tournament tournament, Users user, double elo) {
 		super();
 		this.tournament = tournament;
