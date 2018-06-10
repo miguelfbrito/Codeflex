@@ -27,9 +27,9 @@ public class CodeflexApplication {
 	public List<Host> fetchAndConnectHosts() {
 
 		List<Host> hostList = new ArrayList<>();
-
-		Host h1 = new Host("192.168.1.55", "mbrito", new SSHClient(), false);
-		Host h2 = new Host("192.168.1.65", "mbrito", new SSHClient(), false);
+		// 188.82.211.214
+		Host h1 = new Host("188.82.211.214", 4022, "mbrito", new SSHClient(), false);
+		Host h2 = new Host("188.82.211.214", 4023, "mbrito", new SSHClient(), false);
 
 		connect(h1);
 		connect(h2);
@@ -45,7 +45,7 @@ public class CodeflexApplication {
 		try {
 			// ssh.loadKnownHosts();
 			ssh.addHostKeyVerifier("33:02:cb:3b:13:b1:bd:fa:66:ff:29:96:ea:ff:dc:78");
-			ssh.connect(host.getIp());
+			ssh.connect(host.getIp(), host.getPort());
 			ssh.authPublickey(host.getUser());
 
 			Session session = ssh.startSession();

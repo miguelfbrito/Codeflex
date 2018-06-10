@@ -8,15 +8,17 @@ import net.schmizz.sshj.SSHClient;
 public class Host {
 
 	private String ip;
-
+	private int port;
 	private String user;
 	private SSHClient ssh;
 	private boolean beingUsed;
 	private Date lastDateAttributed;
 	
-	public Host(String ip, String user, SSHClient ssh) {
+	public Host(String ip, int port, String user, SSHClient ssh, boolean beingUsed) {
 		super();
 		this.ip = ip;
+		this.port = port;
+		this.beingUsed = beingUsed;
 		this.user = user;
 		this.ssh = ssh;
 		this.lastDateAttributed = Calendar.getInstance().getTime();
@@ -75,6 +77,14 @@ public class Host {
 	public String toString() {
 		return "Host [ip=" + ip + ", user=" + user + ", ssh=" + ssh + ", beingUsed=" + beingUsed
 				+ ", lastDateAttributed=" + lastDateAttributed + "]";
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 
 	
