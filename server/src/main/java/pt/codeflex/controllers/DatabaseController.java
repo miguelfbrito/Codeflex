@@ -459,8 +459,27 @@ public class DatabaseController {
 	// RATING
 
 	@GetMapping(path = "/Rating/view")
-	public Iterable<Rating> getAllRating() {
+	public List<Rating> getAllRatings() {
 		return ratingRepository.findAll();
+	}
+
+	@GetMapping(path = "/Rating/viewUsersByTournamentId/{tournamentId}")
+	public List<Users> viewUsersByTournamentId(@PathVariable long tournamentId) {
+
+		List<Users> usersInTournament = new ArrayList<Users>();
+		List<Rating> allRatings = getAllRatings();
+
+		Optional<Tournament> t = viewTournamentById(tournamentId);
+
+		if (t.isPresent()) {
+			for (Rating r : allRatings) {
+				if (r.getTournament() == t.get()) {
+					usersInTournament.add(r.getUser());
+				}
+			}
+		}
+
+		return usersInTournament;
 	}
 
 	@PostMapping(path = "/Rating/add")
@@ -798,6 +817,20 @@ public class DatabaseController {
 
 		return getAllTournamentsToList(viewUsersById.get().getId());
 
+	}
+
+	@PostMapping(path = "/Tournament/calculateRatings/{tournamentId}")
+	public void calculateTournamentRatings(@PathVariable long tournamentId) {
+		Optional<Tournament> t = viewTournamentById(tournamentId);
+
+		if (t.isPresent()) {
+			Tournament tournament = t.get();
+			List<Rating> ratings = ratingRepository.findByTournament(tournament);
+
+			for (Rating r : ratings) {
+
+			}
+		}
 	}
 
 	@PostMapping(path = "/Tournament/delete/{id}")

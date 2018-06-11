@@ -23,6 +23,7 @@ class Navbar extends Component {
             <ul className="nav navbar-nav navbar-right nav-menus">
                 <li><Link to="/practise">Practise</Link></li>
                 <li><Link to="/compete">Compete</Link></li>
+                <li><Link to="/leaderboard">Leaderboard</Link></li>
                 {/*  <li id="item-signup"><Link to="/signup"><span className="glyphicon glyphicon-user"></span>Sign Up</Link></li>`*/}
                 <li id="item-login" >
                     <Link to="/">
@@ -31,17 +32,6 @@ class Navbar extends Component {
                     </Link>
 
                 </li>
-
-                <li className="dropdown">
-                    <a className="dropbtn">Dropdown</a>
-                    <div className="dropdown-content">
-                        <a href="#">Link 1</a>
-                        <a href="#">Link 2</a>
-                        <a href="#">Link 3</a>
-                    </div>
-                </li>
-
-
             </ul>);
     }
 

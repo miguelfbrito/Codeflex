@@ -20,9 +20,9 @@ class ViewResults extends Component {
         /*if (!('submissionId' in this.props)) {
             console.log("Doesn't exist");
         }   */
-        
+
         if (typeof this.props.location.state.information !== "undefined") {
-            this.setState({results : this.props.location.state.information});
+            this.setState({ results: this.props.location.state.information });
             console.log('HI');
         } else {
             console.log('CALLING FETCH RESULTS')
@@ -40,18 +40,19 @@ class ViewResults extends Component {
                 console.log('VIEW RESULTS')
                 console.log(data);
                 console.log(data.length);
-                this.setState({results : data})
+                this.setState({ results: data })
             });
 
     }
 
     render() {
 
-        let finalRender = '';
+        let renderTestCases = '';
+        let renderCode = '';
 
         if (typeof this.state.results != 'undefined') {
             console.log('Logging scoring results on vr')
-            finalRender =
+            renderTestCases =
                 <div className="testcase-container">
                     {this.state.results.map((s, index) => (
                         <div className="col-sm-4">
@@ -66,6 +67,10 @@ class ViewResults extends Component {
                         </div>
                     ))}
                 </div>
+
+/*            renderCode = <p>
+                {atob(this.state.results[0].submissions.code)}
+            </p>*/
         }
 
 
@@ -73,8 +78,11 @@ class ViewResults extends Component {
             <div className="container">
                 <div className="row ">
                     <PathLink path={this.props.location.pathname} title="View Results" />
-                    {finalRender}
+                    {renderTestCases}
                 </div>
+                {/*<div>
+                    {renderCode}
+                </div>*/}
             </div>
         );
     }
