@@ -30,7 +30,7 @@ public class Users {
 	// TODO: add validation for fields
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@Column(unique = true)
@@ -40,19 +40,19 @@ public class Users {
 	private String email;
 
 	private String password;
-	
+
 	private Date registrationDate;
-	
-	private int globalRating;
+
+	private double globalRating;
 
 	@OneToMany
 	@JoinColumn(name = "users_id")
 	private List<Members> member = new ArrayList<>();
-	
+
 	@OneToMany
 	@JoinColumn(name = "users_id")
 	private List<UsersRoles> userRoles = new ArrayList<>();
-	
+
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -64,8 +64,12 @@ public class Users {
 		this.username = username;
 		this.email = email;
 		this.registrationDate = Calendar.getInstance().getTime();
-		this.globalRating = 1500;
-		
+		if (username.equals("mbrito")) {
+			this.globalRating = (double) 1500;
+		} else {
+			this.globalRating = (double) 2000;
+		}
+
 		MessageDigest digest = null;
 
 		try {
@@ -107,7 +111,6 @@ public class Users {
 		this.password = password;
 	}
 
-
 	public List<UsersRoles> getUserRoles() {
 		return userRoles;
 	}
@@ -138,13 +141,12 @@ public class Users {
 		this.registrationDate = registrationDate;
 	}
 
-	public int getGlobalRating() {
+	public double getGlobalRating() {
 		return globalRating;
 	}
 
-	public void setGlobalRating(int globalRating) {
+	public void setGlobalRating(double globalRating) {
 		this.globalRating = globalRating;
 	}
-
 
 }

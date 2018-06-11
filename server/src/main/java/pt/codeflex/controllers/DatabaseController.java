@@ -34,6 +34,7 @@ import pt.codeflex.models.TournamentIsUserRegistrated;
 import pt.codeflex.models.TournamentsToList;
 import pt.codeflex.models.UserOnProblemLeaderboard;
 import pt.codeflex.repositories.*;
+import pt.codeflex.utils.RatingCalculator;
 
 @RestController
 @CrossOrigin
@@ -821,15 +822,52 @@ public class DatabaseController {
 
 	@PostMapping(path = "/Tournament/calculateRatings/{tournamentId}")
 	public void calculateTournamentRatings(@PathVariable long tournamentId) {
+
+		List<Users> usersUpdated = new ArrayList<>();
 		Optional<Tournament> t = viewTournamentById(tournamentId);
 
 		if (t.isPresent()) {
 			Tournament tournament = t.get();
-			List<Rating> ratings = ratingRepository.findByTournament(tournament);
 
-			for (Rating r : ratings) {
+			List<Users> usersPerTournament = viewUsersByTournamentId(tournamentId);
 
+			for (int i = 0; i < usersPerTournament.size(); i++) {
+
+				Users currentUser = usersPerTournament.get(i);
+
+				double sumExpectedRating = 0;
+				double sumPoints = 0;
+
+				for (int j = 0; j < usersPerTournament.size(); j++) {
+
+					Users opponent = usersPerTournament.get(j);
+					if (currentUser == opponent)
+						continue;
+
+					sumExpectedRating += RatingCalculator.expectedRating(currentUser.getGlobalRating(),
+							opponent.getGlobalRating());
+
+					double scoreA = tournamentRepository.findScoreOfUserInTournament(currentUser.getId(),
+							tournament.getId());
+					double scoreB = tournamentRepository.findScoreOfUserInTournament(opponent.getId(),
+							tournament.getId());
+
+					sumPoints += RatingCalculator.pointsComparasion(scoreA, scoreB);
+
+				}
+
+				double calculatedRating = (currentUser.getGlobalRating()
+						+ RatingCalculator.K * (sumPoints - sumExpectedRating));
+				Users user = currentUser;
+				user.setGlobalRating(calculatedRating);
+				usersUpdated.add(user);
 			}
+
+			// saves all ratings after calculating.
+			// Can't be done on the for loop because updating a rating before calculating
+			// them all would result in incorrect data
+			usersRepository.saveAll(usersUpdated);
+
 		}
 	}
 

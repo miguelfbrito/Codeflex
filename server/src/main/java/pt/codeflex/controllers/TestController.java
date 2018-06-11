@@ -15,14 +15,20 @@ import pt.codeflex.models.Host;
 import pt.codeflex.models.ListCategoriesWithStats;
 import pt.codeflex.repositories.PractiseCategoryRepository;
 import pt.codeflex.repositories.RatingRepository;
+import pt.codeflex.repositories.TournamentRepository;
 
 @Controller
 public class TestController {
 
+	@Autowired
+	private TournamentRepository tournamentRepository;
+	
 	@GetMapping("/test")
 	public void teste() {
-		System.out.println("Logging hosts");
-	
+
+		double d = tournamentRepository.findScoreOfUserInTournament(1, 1);
+		
+		System.out.println("SCORE : " + d);
 		
 	}
 	
