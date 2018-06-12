@@ -125,6 +125,9 @@ public class DatabaseController {
 		return leaderboardRepository.findById(id);
 	}
 
+	
+	
+	
 	// LANGUAGE
 
 	@GetMapping(path = "/Language/view")
@@ -143,6 +146,9 @@ public class DatabaseController {
 		return languageRepository.findById(id);
 	}
 
+	
+	
+	
 	// RESULT
 
 	@GetMapping(path = "/Result/view")
@@ -159,6 +165,9 @@ public class DatabaseController {
 	public Optional<Result> viewResultById(@PathVariable long id) {
 		return resultRepository.findById(id);
 	}
+	
+	
+	
 
 	// DIFFICULTY
 
@@ -176,6 +185,9 @@ public class DatabaseController {
 	public Optional<Difficulty> viewDifficultyById(@PathVariable long id) {
 		return difficultyRepository.findById(id);
 	}
+	
+	
+	
 
 	// GROUPS
 
@@ -208,6 +220,9 @@ public class DatabaseController {
 		return groupsRepository.findById(id);
 	}
 
+	
+	
+	
 	// MEMBERS
 
 	@GetMapping(path = "/Members/view")
@@ -240,6 +255,9 @@ public class DatabaseController {
 	// return membersRepository.findById(id);
 	// }
 
+	
+	
+	
 	// PRACTISECATEGORY
 
 	@GetMapping(path = "/PractiseCategory/view")
@@ -360,6 +378,9 @@ public class DatabaseController {
 
 		return problemWithoutTestCases;
 	}
+	
+	
+	
 
 	// PROBLEM
 
@@ -456,6 +477,10 @@ public class DatabaseController {
 		}
 		return new Problem();
 	}
+	
+	
+	
+	
 
 	// RATING
 
@@ -513,6 +538,9 @@ public class DatabaseController {
 	 * }
 	 */
 
+	
+	
+	
 	// ROLE
 
 	@GetMapping(path = "/Role/view")
@@ -544,6 +572,9 @@ public class DatabaseController {
 		return roleRepository.findById(id);
 	}
 
+	
+	
+	
 	// SCORING
 
 	@GetMapping(path = "/Scoring/view")
@@ -599,6 +630,11 @@ public class DatabaseController {
 		}
 		return listScoring;
 	}
+	
+	
+	
+	
+	
 	// SUBMISSIONS
 
 	@GetMapping(path = "/Submissions/view")
@@ -702,6 +738,10 @@ public class DatabaseController {
 		return submissionsRepository.findById(id);
 	}
 
+	
+	
+	
+	
 	// TESTCASES
 
 	@GetMapping(path = "/TestCases/view")
@@ -735,6 +775,10 @@ public class DatabaseController {
 		return testCasesRepository.findById(id);
 	}
 
+	
+	
+	
+	
 	// TOURNAMENT
 
 	@GetMapping(path = "/Tournament/view")
@@ -881,6 +925,10 @@ public class DatabaseController {
 		return tournamentRepository.findById(id);
 	}
 
+	
+	
+	
+	
 	// USERS
 
 	@GetMapping(path = "/Users/view")
@@ -913,6 +961,10 @@ public class DatabaseController {
 	public Optional<Users> viewUsersById(@PathVariable long id) {
 		return usersRepository.findById(id);
 	}
+	
+	
+	
+	
 
 	// USERSROLES
 

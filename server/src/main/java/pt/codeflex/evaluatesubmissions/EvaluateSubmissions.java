@@ -1,4 +1,5 @@
 package pt.codeflex.evaluatesubmissions;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -65,7 +66,7 @@ public class EvaluateSubmissions implements Runnable {
 	private static volatile List<Host> listOfHosts = new ArrayList<>();
 
 	private static final String PATH_SPRING = System.getProperty("user.home") + File.separator + "Submissions";
-	private static final String PATH_SERVER = "/home/mbrito/Desktop/Submissions";
+	private static final String PATH_SERVER = "Submissions";// "/home/mbrito/Desktop/Submissions"
 
 	private long uniqueId;
 
@@ -74,23 +75,23 @@ public class EvaluateSubmissions implements Runnable {
 		System.out.println("Thread starting!");
 		System.out.println("Connection established!");
 
-		//distributeSubmissions();
+		// distributeSubmissions();
 		compileSubmission(submission);
 	}
-	
+
 	public List<Submissions> getSubmissions() {
 
 		List<Submissions> submissions = submissionsRepository.findSubmissionsToAvaliate();
 		List<Submissions> finalSubmissions = new ArrayList<>();
-		
+
 		for (Submissions s : submissions) {
 			Optional<Submissions> submission = submissionsRepository.findById(s.getId());
 			if (submission.isPresent()) {
 				finalSubmissions.add(submission.get());
-			//	submissionsQueue.add(submission.get());
+				// submissionsQueue.add(submission.get());
 			}
 		}
-		
+
 		return finalSubmissions;
 
 	}
@@ -99,23 +100,22 @@ public class EvaluateSubmissions implements Runnable {
 		while (!submissionsQueue.isEmpty()) {
 			Submissions submission = submissionsQueue.poll();
 			compileSubmission(submission);
-			System.out.println("Compiling submission! " + Thread.currentThread().getName() + " from host " + host.getIp() + "\n\n\n");
-			
-			
-			
-			
-			
-//			while (!testCasesQueue.isEmpty()) {
-//				TestCaseForExecution testCase = testCasesQueue.poll();
-//				runTestCase(testCase.getSubmission(), testCase.getTestCase(), testCase.getFileName());
-//				System.out.println("Running test case! " + Thread.currentThread().getName() + "\n\n");
-//			}
+			System.out.println("Compiling submission! " + Thread.currentThread().getName() + " from host "
+					+ host.getIp() + "\n\n\n");
+
+			// while (!testCasesQueue.isEmpty()) {
+			// TestCaseForExecution testCase = testCasesQueue.poll();
+			// runTestCase(testCase.getSubmission(), testCase.getTestCase(),
+			// testCase.getFileName());
+			// System.out.println("Running test case! " + Thread.currentThread().getName() +
+			// "\n\n");
+			// }
 
 		}
 	}
 
 	public void compileSubmission(Submissions submission) {
-		System.out.println(submission.toString()+"\n\n\n\n");
+		System.out.println(submission.toString() + "\n\n\n\n");
 		uniqueId = submission.getId();
 		Session session = null;
 		try {
@@ -127,7 +127,7 @@ public class EvaluateSubmissions implements Runnable {
 		String fileName = "Solution";
 		String suffix = "";
 		String compilerError = "compiler_error_" + uniqueId + ".txt";
-		String command = "cd Desktop/Submissions/" + uniqueId + "_" + submission.getLanguage().getName() + " && ";
+		String command = "cd " + PATH_SERVER + "/" + uniqueId + "_" + submission.getLanguage().getName() + " && ";
 		// TODO : add memory limit
 
 		switch (submission.getLanguage().getCompilerName()) {
@@ -152,7 +152,7 @@ public class EvaluateSubmissions implements Runnable {
 
 		Command cmd;
 		try {
-			cmd = session.exec("mkdir Desktop/Submissions/" + uniqueId + "_" + submission.getLanguage().getName());
+			cmd = session.exec("mkdir " + PATH_SERVER + "/" + uniqueId + "_" + submission.getLanguage().getName());
 			cmd.close();
 
 		} catch (ConnectionException | TransportException e1) {
@@ -166,7 +166,7 @@ public class EvaluateSubmissions implements Runnable {
 
 		try {
 			session = host.getSsh().startSession();
-			cmd = session.exec(command );
+			cmd = session.exec(command);
 			cmd.close();
 
 			// Verifica se houve erro
@@ -215,7 +215,7 @@ public class EvaluateSubmissions implements Runnable {
 				scp(PATH_SPRING + "/" + tcFileName,
 						PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName() + "/");
 
-				//testCasesQueue.add(new TestCaseForExecution(tc, submission, fileName));
+				// testCasesQueue.add(new TestCaseForExecution(tc, submission, fileName));
 				runTestCase(submission, tc, fileName);
 			}
 		} catch (ConnectionException | TransportException e) {
@@ -310,8 +310,8 @@ public class EvaluateSubmissions implements Runnable {
 				List<Leaderboard> highestSubmissionOnLeaderboard = leaderboardRepository
 						.findHighestScoreByUserByProblem(submission.getUsers(), submission.getProblem());
 
-				Leaderboard newLeaderboard = new Leaderboard(totalScore, submission.getUsers(),
-						submission.getProblem(), submission.getLanguage().getName());
+				Leaderboard newLeaderboard = new Leaderboard(totalScore, submission.getUsers(), submission.getProblem(),
+						submission.getLanguage().getName());
 
 				if (highestSubmissionOnLeaderboard.size() > 0) {
 

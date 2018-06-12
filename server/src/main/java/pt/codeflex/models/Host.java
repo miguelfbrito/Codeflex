@@ -10,11 +10,12 @@ public class Host {
 	private String ip;
 	private int port;
 	private String user;
+	private String fingerprint;
 	private SSHClient ssh;
 	private boolean beingUsed;
 	private Date lastDateAttributed;
 	
-	public Host(String ip, int port, String user, SSHClient ssh, boolean beingUsed) {
+	public Host(String ip, int port, String user, SSHClient ssh, String fingerprint, boolean beingUsed) {
 		super();
 		this.ip = ip;
 		this.port = port;
@@ -22,6 +23,7 @@ public class Host {
 		this.user = user;
 		this.ssh = ssh;
 		this.lastDateAttributed = Calendar.getInstance().getTime();
+		this.fingerprint = fingerprint;
 	}
 
 	public Host(String ip, String user, SSHClient ssh, boolean beingUsed) {
@@ -85,6 +87,14 @@ public class Host {
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	public String getFingerprint() {
+		return fingerprint;
+	}
+
+	public void setFingerprint(String fingerprint) {
+		this.fingerprint = fingerprint;
 	}
 
 	
