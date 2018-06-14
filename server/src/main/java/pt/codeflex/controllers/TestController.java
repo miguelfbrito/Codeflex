@@ -11,6 +11,7 @@ import ch.qos.logback.core.net.SyslogOutputStream;
 import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.TestCases;
 import pt.codeflex.databasemodels.Users;
+import pt.codeflex.evaluatesubmissions.EvaluateSubmissions;
 import pt.codeflex.models.Host;
 import pt.codeflex.models.ListCategoriesWithStats;
 import pt.codeflex.repositories.PractiseCategoryRepository;
@@ -19,18 +20,5 @@ import pt.codeflex.repositories.TournamentRepository;
 
 @Controller
 public class TestController {
-
-	@Autowired
-	private TournamentRepository tournamentRepository;
-	
-	@GetMapping("/test")
-	public void teste() {
-
-		double d = tournamentRepository.findScoreOfUserInTournament(1, 1);
-		
-		System.out.println("SCORE : " + d);
-		
-	}
-	
 
 }

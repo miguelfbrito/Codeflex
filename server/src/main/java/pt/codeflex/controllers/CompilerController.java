@@ -41,6 +41,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.yaml.snakeyaml.util.ArrayUtils;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+
 @RestController
 @CrossOrigin
 public class CompilerController {
@@ -72,41 +74,35 @@ public class CompilerController {
 	private EvaluateSubmissions evaluateSubmissions;
 
 	@Autowired
-	private List<Host> hostList;
+	private Host host;
 
 	@GetMapping("/compiler")
 	public String compiler() {
 		return "compiler";
 	}
 
+	@GetMapping("/test")
+	public void cpuUsage() throws IOException {
+		System.out.println(host.getCpuUsage());
+		System.out.println(host.getMemoryUsage());
+	}
+	
 	@GetMapping("/ssh")
 	public void startThreads() throws IOException, InterruptedException {
 		long inicial = System.currentTimeMillis();
 
-		evaluateSubmissions.setHost(hostList.get(0));
+		evaluateSubmissions.setHost(host);
 		List<Submissions> submissions = evaluateSubmissions.getSubmissions();
 
 		System.out.println(submissions.toString());
-		
-		int totalHosts = hostList.size();
-		int totalSubmissions = submissions.size();
 
 		for (Submissions s : submissions) {
 
-			hostList.sort((Host h1, Host h2) -> (int) (h1.getLastDateAttributed().getTime() - h2.getLastDateAttributed().getTime()));
-
-			Host lessUsedHost = hostList.get(0);
-			hostList.forEach(System.out::println);
-
-			lessUsedHost.setLastDateAttributed(Calendar.getInstance().getTime());
-			lessUsedHost.setBeingUsed(true);
-
-			
-			System.out.println("\n\n\nStarting thread  with host " + lessUsedHost.getIp() + "\n");
+			System.out.println("\n\n\nStarting thread  with host " + host.getIp() + "\n");
 
 			EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
 			evaluateSubmissions1.setSubmission(s);
-			evaluateSubmissions1.setHost(lessUsedHost);
+			evaluateSubmissions1.setHost(host);
 			taskExecutor.execute(evaluateSubmissions1);
 
 		}

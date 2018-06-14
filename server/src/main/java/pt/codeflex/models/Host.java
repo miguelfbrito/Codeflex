@@ -1,9 +1,13 @@
 package pt.codeflex.models;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
 import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.common.IOUtils;
+import net.schmizz.sshj.connection.channel.direct.Session;
+import net.schmizz.sshj.connection.channel.direct.Session.Command;
 
 public class Host {
 
@@ -95,6 +99,45 @@ public class Host {
 
 	public void setFingerprint(String fingerprint) {
 		this.fingerprint = fingerprint;
+	}
+	
+	public double getCpuUsage() {
+		Session session;
+		String output = "";
+		try {
+			session = this.ssh.startSession();
+			Command cmd;
+			String command = "mpstat -P ALL 1 1 | awk '{print $12}'";
+			cmd = session.exec(command);
+			output = IOUtils.readFully(cmd.getInputStream()).toString();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		// gets the first value of usage, representing total CPU usage
+		output = output.split("%idle")[1].split("\n")[1].replace(",", ".");
+
+		return (double) 100 - Double.valueOf(output);
+	}
+
+	public int getMemoryUsage() {
+		Session session;
+		String output = "";
+		try {
+			session = this.ssh.startSession();
+			Command cmd;
+			String command = "free -m | tail -2 | awk '{print $4}'";
+			cmd = session.exec(command);
+			session.join();
+			output = IOUtils.readFully(cmd.getInputStream()).toString();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// gets the first value out of 2. The first value represents the free memory, the second represents the free swap.
+		output = output.split("\n")[0];
+		
+		return Integer.valueOf(output);
 	}
 
 	

@@ -114,6 +114,7 @@ public class EvaluateSubmissions implements Runnable {
 		}
 	}
 
+
 	public void compileSubmission(Submissions submission) {
 		System.out.println(submission.toString() + "\n\n\n\n");
 		uniqueId = submission.getId();
