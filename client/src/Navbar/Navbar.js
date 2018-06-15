@@ -68,13 +68,20 @@ class Navbar extends Component {
                         <ul className="nav navbar-nav">
 
                         </ul>
-                        <ul className="nav navbar-nav navbar-right">  <li className="active"><a href="#">Home</a></li>
-                            <li><a href="#">Compete</a></li>
-                            <li><a href="#">Leaderboard</a></li>
-                            <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                            <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                        <ul className="nav navbar-nav navbar-right">
+                            <li><Link to="/practise"><p>Practise</p></Link></li>
+                            <li><Link to="/compete"><p>Compete</p></Link></li>
+                            <li><Link to=""><p>Leaderboard</p></Link></li>
+                            {/*<li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                            <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>*/}
                             <li className="dropdown">
-                                <a className="dropdown-toggle" data-toggle="dropdown" href="#">{JSON.parse(localStorage.getItem('userData')).username} <span class="caret"></span></a>
+                                <Link to="/" className="dropdown-toggle" data-toggle="dropdown">
+                                <p>
+                                    {JSON.parse(localStorage.getItem('userData')).username}&nbsp;  
+                                    <span class="caret"></span>
+                                </p>
+                                </Link>
+
                                 <ul className="dropdown-menu">
                                     <li><a href="#">Settings</a></li>
                                     <li><a href="#">Administration</a></li>
