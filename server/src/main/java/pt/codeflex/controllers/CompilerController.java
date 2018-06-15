@@ -65,9 +65,6 @@ public class CompilerController {
 	private UsersRepository usersRepository;
 
 	@Autowired
-	private ScoringRepository scoringRepository;
-
-	@Autowired
 	private LanguageRepository languageRepository;
 
 	@Autowired
@@ -86,7 +83,7 @@ public class CompilerController {
 		System.out.println(host.getCpuUsage());
 		System.out.println(host.getMemoryUsage());
 	}
-	
+
 	@GetMapping("/ssh")
 	public void startThreads() throws IOException, InterruptedException {
 		long inicial = System.currentTimeMillis();
@@ -96,13 +93,13 @@ public class CompilerController {
 
 		System.out.println(submissions.toString());
 
+		System.out.println("\n\n\nStarting thread  with host " + host.getIp() + "\n");
+		EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
+		evaluateSubmissions1.setHost(host);
+
 		for (Submissions s : submissions) {
 
-			System.out.println("\n\n\nStarting thread  with host " + host.getIp() + "\n");
-
-			EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
 			evaluateSubmissions1.setSubmission(s);
-			evaluateSubmissions1.setHost(host);
 			taskExecutor.execute(evaluateSubmissions1);
 
 		}

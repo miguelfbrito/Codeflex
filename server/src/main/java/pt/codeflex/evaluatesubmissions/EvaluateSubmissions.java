@@ -31,6 +31,8 @@ import pt.codeflex.databasemodels.Scoring;
 import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.TestCases;
 import pt.codeflex.models.Host;
+import pt.codeflex.models.SubmissionWithTestCase;
+import pt.codeflex.models.TasksBeingEvaluated;
 import pt.codeflex.models.TestCaseForExecution;
 import pt.codeflex.repositories.LeaderboardRepository;
 import pt.codeflex.repositories.ResultRepository;
@@ -113,7 +115,6 @@ public class EvaluateSubmissions implements Runnable {
 
 		}
 	}
-
 
 	public void compileSubmission(Submissions submission) {
 		System.out.println(submission.toString() + "\n\n\n\n");
@@ -261,11 +262,12 @@ public class EvaluateSubmissions implements Runnable {
 			break;
 		}
 
-		command += " && cat " + runOutput;
+		// command += " && cat " + runOutput;
+		command += "  && cat " + runOutput;
 
 		try {
 
-			Command cmd = session.exec(command + " &");
+			Command cmd = session.exec(command);
 			String output = IOUtils.readFully(cmd.getInputStream()).toString();
 
 			Problem problem = submission.getProblem();
