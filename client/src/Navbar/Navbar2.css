@@ -1,0 +1,27 @@
+.navbar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-radius: 0;
+
+    background-color: #6A44FF;
+    border: 0;
+}
+
+
+.navbar .container {
+    padding: 0;
+    margin: auto;
+}
+
+.navbar > div > div > ul > li > a {
+    color: white;
+}
+#myNavbar > ul.nav.navbar-nav.navbar-right > li:nth-child(3) > a {
+    color: white;
+}
+ ul.nav.navbar-nav > li > a {
+     color: white;
+     font-family: 'Roboto', sans-serif;
+     font-size: 12pt;
+ }

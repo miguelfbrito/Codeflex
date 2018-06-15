@@ -121,9 +121,9 @@ class ListTournaments extends React.Component {
         return (
             <div className="container">
                 <div className="row"> <PathLink path={this.props.location.pathname} title="Tournaments" />
-                    <Popup timeoutClose={1250}>
+                    {/*<Popup timeoutClose={1250}>
                         <PopupInformation />
-                    </Popup>
+        </Popup>*/}
                     <div className="col-sm-12 both-categories-container">
                         <h2>Available</h2>
                         <hr style={{ borderWidth: '2px', borderTop: 'none', borderLeft: 'none', borderRight: 'none' }} />
