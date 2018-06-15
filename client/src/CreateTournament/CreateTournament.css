@@ -1,0 +1,70 @@
+.react-datepicker {
+    font-size: 1em;
+}
+
+.react-datepicker__header {
+    padding-top: 0.8em;
+}
+
+.react-datepicker__month {
+    margin: 0.4em 1em;
+}
+
+.react-datepicker__day-name,
+.react-datepicker__day {
+    width: 1.9em;
+    line-height: 1.9em;
+    margin: 0.166em;
+}
+
+.react-datepicker__current-month {
+    font-size: 1em;
+}
+
+.react-datepicker__navigation {
+    top: 1em;
+    line-height: 1.7em;
+    border: 0.45em solid transparent;
+}
+
+.react-datepicker__navigation--previous {
+    border-right-color: #ccc;
+    left: 1em;
+}
+
+.react-datepicker__navigation--next {
+    border-left-color: #ccc;
+    right: 1em;
+}
+
+.react-datepicker-time__header {
+    font-size: 0.944em;
+}
+
+.react-datepicker__navigation--next--with-time {
+    right: 0px;
+}
+
+.react-datepicker__time-list-item {
+    width: 90px;
+    margin-left: -50px;
+}
+
+.date-picker input {
+    padding: 10px 10px;
+    width: 135px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.date-picker input:focus {
+    border-color: #66afe9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+}

@@ -1,3 +1,4 @@
+html { margin-left: calc(100vw - 100%); }
 .navbar {
     position: relative;
     background-color: #6A44FF;
@@ -20,6 +21,7 @@
     margin: auto;
 }
 
+
 .navbar li>a>p {
     color: white;
     font-family: 'Roboto', sans-serif;
@@ -29,6 +31,27 @@
 .navbar li > p:hover {
     border-bottom: 3px solid white;
 }
+ul.dropdown-menu > li > a > p {
+    color: blacK;
+    font-size: 10pt;
+    font-family: 'Roboto', sans-serif;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Scroll bar */
 

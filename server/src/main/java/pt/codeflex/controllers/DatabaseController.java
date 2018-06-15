@@ -307,7 +307,7 @@ public class DatabaseController {
 
 		Optional<Users> u = usersRepository.findById(id);
 
-		List<ListCategoriesWithStats> listOfCategoriesWithStats = null;
+		List<ListCategoriesWithStats> listOfCategoriesWithStats = new ArrayList<>();
 		if (u.isPresent()) {
 			listOfCategoriesWithStats = practiseCategoryRepository.listCategoriesWithStatsByUserId(u.get().getId());
 		}

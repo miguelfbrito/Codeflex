@@ -10,6 +10,8 @@ import Problem from '../src/Problem/Problem';
 import Footer from '../src/Footer/Footer';
 import ViewResults from '../src/ViewResults/ViewResults';
 import ListTournaments from './ListTournaments/ListTournaments';
+import CreateTournament from './CreateTournament/CreateTournament';
+import ManageTournaments from './ManageTournaments/ManageTournaments';
 
 class App extends Component {
   render() {
@@ -25,6 +27,9 @@ class App extends Component {
             <Route exact path="/practise/:categoryName/:problemName/view-results" component={ViewResults} />
             <Route exact path="/practise/:categoryName" component={ListProblems} />
             <Route exact path="/practise" component={ListCategories} />
+
+            <Route exact path="/compete/create-tournament" component={CreateTournament} />
+            <Route exact path="/compete/manage-tournaments" component={ManageTournaments} />
 
             <Route exact path="/compete" component={ListTournaments} />
             <Route exact path="/compete/:tournamentName" component={ListProblems} />

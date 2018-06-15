@@ -1,5 +1,6 @@
 import React from 'react'
 import PathLink from '../PathLink/PathLink';
+import {Link} from 'react-router-dom';
 import Popup from '../Popup/Popup';
 
 import { Redirect } from 'react-router-dom';
@@ -27,7 +28,7 @@ class ListTournaments extends React.Component {
         }, 60000);
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         clearInterval(window.updateEveryMinute);
     }
 
@@ -125,6 +126,10 @@ class ListTournaments extends React.Component {
                         <PopupInformation />
         </Popup>*/}
                     <div className="col-sm-12 both-categories-container">
+                    <div style={{float: 'right', textAlign:'right',marginTop:'-10px'}}>
+                        <Link to="/compete/create-tournament"> <p >Create Tournament</p></Link>
+                        <Link to="/compete/manage-tournaments"><p >Manage Tournaments</p></Link>
+                    </div>
                         <h2>Available</h2>
                         <hr style={{ borderWidth: '2px', borderTop: 'none', borderLeft: 'none', borderRight: 'none' }} />
                         <div className="tournaments-container">
