@@ -13,6 +13,7 @@ import ListTournaments from './ListTournaments/ListTournaments';
 import CreateTournament from './CreateTournament/CreateTournament';
 import ManageTournaments from './ManageTournaments/ManageTournaments';
 import ManageIndividualTournament from './ManageIndividualTournament/ManageIndividualTournament';
+import AddProblem from './Problem/AddProblem/AddProblem';
 
 class App extends Component {
   render() {
@@ -30,14 +31,15 @@ class App extends Component {
             <Route exact path="/practise" component={ListCategories} />
 
             <Route exact path="/compete/create-tournament" component={CreateTournament} />
-            <Route exact path="/compete/manage-tournaments" component={ManageTournaments} />
+            <Route exact path="/compete/manage-tournaments/:tournamentName/add-problem" component={AddProblem} />
             <Route exact path="/compete/manage-tournaments/:tournamentName" component={ManageIndividualTournament} />
+            <Route exact path="/compete/manage-tournaments" component={ManageTournaments} />
 
             <Route exact path="/compete" component={ListTournaments} />
             <Route exact path="/compete/:tournamentName" component={ListProblems} />
             <Route exact path="/compete/:tournamentName/:problemName" component={Problem} />
             <Route exact path="/compete/:categoryName/:problemName/view-results" component={ViewResults} />
-            
+
             <Route component={PageNotFound} />
           </Switch>
           <Footer />

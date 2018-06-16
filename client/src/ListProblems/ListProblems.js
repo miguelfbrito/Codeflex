@@ -24,7 +24,6 @@ class ListProblems extends Component {
     }
 
     componentDidMount() {
-        console.log('asdadsas')
         const url = splitUrl(this.props.location.pathname);
 
         if (url[0] === 'practise') {

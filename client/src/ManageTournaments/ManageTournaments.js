@@ -1,8 +1,9 @@
 import React from 'react';
 import PathLink from '../PathLink/PathLink';
-import ReactTable from "react-table";
+import ReactTable from 'react-table';
+import { Redirect } from 'react-router-dom';
 import { URL } from '../commons/Constants';
-import { dateWithHoursAndDay} from '../commons/Utils';
+import { dateWithHoursAndDay, textToLowerCaseNoSpaces } from '../commons/Utils';
 
 import './ManageTournaments.css'
 import "../../node_modules/react-table/react-table.css";
@@ -12,8 +13,13 @@ class ManageTournaments extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tournaments: []
+            tournaments: [],
+            redirect: false,
+            redirectDestination: '',
+            problemDestination : ''
         }
+
+        this.onIconClick = this.onIconClick.bind(this);
     }
 
     componentDidMount() {
@@ -23,6 +29,23 @@ class ManageTournaments extends React.Component {
                 this.setState({ tournaments: data })
                 console.log(data);
             })
+    }
+
+    onIconClick(e, problemName) {
+        console.log(e.target.id)
+        switch (e.target.id) {
+            case 'edit':
+                console.log("EDITOU")
+                this.setState({ redirectDestination: 'edit' })
+                break;
+            case 'delete':
+                this.setState({ redirectDestination: 'delete' })
+                break;
+            default:
+                break;
+        }
+
+        this.setState({ redirect: true, problemDestination : problemName});
     }
 
     render() {
@@ -40,11 +63,11 @@ class ManageTournaments extends React.Component {
                             columns={[
                                 {
                                     Header: "Status",
-                                    id:"status",
-                                    accessor : t => (
-                                        new Date(t.tournament.startingDate).getTime() > new Date().getTime() ? "Starting soon" : 
-                                       new Date(t.tournament.endingDate).getTime() >= new Date().getTime() ? "Ongoing" :
-                                        "Finished"
+                                    id: "status",
+                                    accessor: t => (
+                                        new Date(t.tournament.startingDate).getTime() > new Date().getTime() ? "Starting soon" :
+                                            new Date(t.tournament.endingDate).getTime() >= new Date().getTime() ? "Ongoing" :
+                                                "Finished"
                                     )
                                 },
                                 {
@@ -56,7 +79,6 @@ class ManageTournaments extends React.Component {
                                     Header: "Starting on",
                                     id: "startingDate",
                                     accessor: t => (
-                                        
                                         dateWithHoursAndDay(t.tournament.startingDate)
                                     )
                                 },
@@ -79,10 +101,14 @@ class ManageTournaments extends React.Component {
                                 {
                                     Header: "",
                                     id: "icons",
-                                    accessor: () => (
-                                        <div>
-                                            <i className="material-icons manage-tournament-icon">edit</i>
-                                            <i className="material-icons manage-tournament-icon">delete</i>
+                                    accessor: t => (
+                                        <div key={t.tournament.id}>
+                                            <i className="material-icons manage-tournament-icon" id="visibility" onClick={this.onIconClick}>visibility</i>
+                                            <i key={t.tournament.id} className="material-icons manage-tournament-icon" id="edit" name={t.tournament.name} onClick={(e, name) => this.onIconClick(e, textToLowerCaseNoSpaces(t.tournament.name))}>edit</i>
+                                            <i className="material-icons manage-tournament-icon" id="delete" onClick={this.onIconClick}>delete</i>
+                                            {console.log("Icon index " + t.tournament.name)}
+                                            {this.state.redirect && this.state.redirectDestination === 'edit' ?
+                                                <Redirect to={{ pathname: "/compete/manage-tournaments/" + this.state.problemDestination }} /> : ''}
                                         </div>
                                     )
                                 }
@@ -90,12 +116,11 @@ class ManageTournaments extends React.Component {
                             defaultPageSize={rows}
                             pageSize={Math.min(rows, 15)}
                             style={{
-                                height: Math.min(this.state.tournaments.length*100, 750) + "px" // This will force the table body to overflow and scroll, since there is not enough room
+                                height: Math.min(this.state.tournaments.length * 100, 750) + "px" // This will force the table body to overflow and scroll, since there is not enough room
                             }}
                             showPagination={false}
                             className="-highlight"
                         />
-                        <br />
                     </div>
                 </div>
             </div>

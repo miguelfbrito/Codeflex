@@ -1,0 +1,15 @@
+.add-problem-container {
+    text-align: center;
+}
+
+.add-problem-container i {
+    color: green;
+    font-size: 90pt;
+    transition: all 250ms ease-in-out;
+    cursor: pointer;
+}
+
+.add-problem-container i:hover {
+    transform: scale(1.05);
+
+}
