@@ -18,7 +18,7 @@ public class Tournament {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@Column(length = 50)
+	@Column(length = 50, unique = true)
 	private String name;
 
 	@Column(length = 10000)

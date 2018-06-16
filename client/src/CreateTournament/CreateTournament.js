@@ -49,7 +49,7 @@ class CreateTournament extends React.Component {
             startingDate: this.state.startDate,
             endingDate: this.state.endDate,
             code: this.state.privateCode,
-            owner : { id : JSON.parse(localStorage.getItem('userData')).id}
+            owner: { id: JSON.parse(localStorage.getItem('userData')).id }
         }
 
         fetch(URL + '/api/database/tournament/add', {
@@ -93,8 +93,9 @@ class CreateTournament extends React.Component {
                                 </div>
                             </div>
                             <div className="form-group">
+                                <p>Date in GMT+1</p>
                                 <label for="startingDate" className="col-sm-1 control-label">Starting Date</label>
-                                <div className="col-sm-5 date-picker">
+                                <div className="col-sm-2 date-picker">
                                     <DatePicker
                                         dateFormat={dateFormat}
                                         selected={this.state.startDate}

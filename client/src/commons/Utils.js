@@ -22,5 +22,13 @@ export const dateWithHoursAndDay = (date) => {
     let d = new Date(date);
 
     return d.getHours() + ":" + (d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes()) + " " +
-    d.getDate() + "/" + d.getMonth() + "/" + d.getFullYear();
+    d.getDate() + "/" + (d.getMonth()+1) + "/" + d.getFullYear();
+    
+}
+
+export const timeUntilDate = (initialDate, finalDate) => {
+    let i = new Date(initialDate);
+    let f = new Date(finalDate);
+
+    return f.getTime() - i.getTime();
 }

@@ -49,7 +49,7 @@ nav ul li:first-child { float: left; }
 }
 
 nav {
-    background-color: rgb(106, 68, 255) !important;
+    background-color: #6a44ff  !important;
     border-radius: none !important;
     border: 0px !important;
 }
@@ -91,7 +91,7 @@ img {
 /* Scroll bar */
 
 ::-webkit-scrollbar {
-    width: 15px;
+    width: 5px;
 }
 
 /* Track */

@@ -12,6 +12,7 @@ import ViewResults from '../src/ViewResults/ViewResults';
 import ListTournaments from './ListTournaments/ListTournaments';
 import CreateTournament from './CreateTournament/CreateTournament';
 import ManageTournaments from './ManageTournaments/ManageTournaments';
+import ManageIndividualTournament from './ManageIndividualTournament/ManageIndividualTournament';
 
 class App extends Component {
   render() {
@@ -30,7 +31,7 @@ class App extends Component {
 
             <Route exact path="/compete/create-tournament" component={CreateTournament} />
             <Route exact path="/compete/manage-tournaments" component={ManageTournaments} />
-            <Route exact path="/compete/manage-tournaments/:tournamentName" component={ManageTournaments} />
+            <Route exact path="/compete/manage-tournaments/:tournamentName" component={ManageIndividualTournament} />
 
             <Route exact path="/compete" component={ListTournaments} />
             <Route exact path="/compete/:tournamentName" component={ListProblems} />

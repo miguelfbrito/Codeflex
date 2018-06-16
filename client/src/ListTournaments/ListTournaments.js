@@ -84,11 +84,11 @@ class ListTournaments extends React.Component {
                     <div key={t.tournament.id} className="col-sm-10 col-md-10 col-xs-12">
                         <p>{t.tournament.name}</p>
                         <p>{t.tournament.description}</p>
-                        {new Date(t.tournament.startingDate) > new Date().getTime() ? <p className="green-text">Starting at {dateWithHoursAndDay(t.tournament.startingDate)}</p> : ''}
+                        {new Date(t.tournament.startingDate).getTime() > new Date().getTime() ? <p className="green-text">Starting at {dateWithHoursAndDay(t.tournament.startingDate)}</p> : ''}
                     </div>
                     <div className="col-sm-2 col-md-2 col-xs-4 button-container-tournaments" >
                         <input type="submit" className="btn btn-primary" value={
-                            t.registered ? (new Date(t.tournament.startingDate) >= new Date().getTime() ? 'Starting soon' : 'Enter') : 'Sign Up'
+                            t.registered ? (new Date(t.tournament.startingDate).getTime() >= new Date().getTime() ? 'Starting soon' : 'Enter') : 'Sign Up'
                         }
                             onClick={(e) => this.onClickTournament(e.target.value, t.tournament.id, t.tournament.name)} />
                     </div>

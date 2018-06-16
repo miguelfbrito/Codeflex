@@ -11,10 +11,15 @@
     padding: 25px;
     transition: all 250ms ease-in-out;
 
+    word-break: break-all;
 }
 
 .tournament-container > p:nth-child(1){
-    font-size: 15pt;
+    font-size: 16pt;
+}
+
+.tournament-container > p {
+    text-align: justify;
 }
 
 .tournament-container:hover {

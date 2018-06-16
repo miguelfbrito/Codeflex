@@ -2,10 +2,11 @@ import React from 'react';
 import PathLink from '../PathLink/PathLink';
 import ReactTable from "react-table";
 import { URL } from '../commons/Constants';
-import { dateWithHoursAndDay } from '../commons/Utils';
+import { dateWithHoursAndDay} from '../commons/Utils';
 
 import './ManageTournaments.css'
 import "../../node_modules/react-table/react-table.css";
+import "../commons/react-table.css"
 
 class ManageTournaments extends React.Component {
     constructor(props) {
@@ -25,6 +26,8 @@ class ManageTournaments extends React.Component {
     }
 
     render() {
+        const rows = this.state.tournaments.length;
+        console.log("ROWS " + rows);
         return (
             <div className="container">
                 <div className="row">
@@ -32,28 +35,47 @@ class ManageTournaments extends React.Component {
 
                     <div>
                         <ReactTable
+                            noDataText="You haven't created any tournaments"
                             data={this.state.tournaments}
                             columns={[
                                 {
+                                    Header: "Status",
+                                    id:"status",
+                                    accessor : t => (
+                                        new Date(t.tournament.startingDate).getTime() > new Date().getTime() ? "Starting soon" : 
+                                       new Date(t.tournament.endingDate).getTime() >= new Date().getTime() ? "Ongoing" :
+                                        "Finished"
+                                    )
+                                },
+                                {
                                     Header: "Name",
                                     id: "tournamentName",
-                                    accessor: l => l.tournament.name
+                                    accessor: t => t.tournament.name
                                 },
                                 {
                                     Header: "Starting on",
                                     id: "startingDate",
-                                    accessor: l => dateWithHoursAndDay(l.tournament.startingDate)
+                                    accessor: t => (
+                                        
+                                        dateWithHoursAndDay(t.tournament.startingDate)
+                                    )
                                 },
                                 {
                                     Header: "Ending on",
                                     id: "endingDate",
-                                    accessor: l => dateWithHoursAndDay(l.tournament.endingDate)
+                                    accessor: t => dateWithHoursAndDay(t.tournament.endingDate)
+                                },
+                                {
+                                    Header: "Code",
+                                    id: "code",
+                                    accessor: t => t.tournament.code
                                 },
                                 {
                                     Header: "Registered users",
                                     id: "registeredUsers",
-                                    accessor: l => l.users.length
+                                    accessor: t => t.users.length
                                 },
+
                                 {
                                     Header: "",
                                     id: "icons",
@@ -65,11 +87,13 @@ class ManageTournaments extends React.Component {
                                     )
                                 }
                             ]}
-                            defaultPageSize={10}
+                            defaultPageSize={rows}
+                            pageSize={Math.min(rows, 15)}
                             style={{
-                                height: "500px" // This will force the table body to overflow and scroll, since there is not enough room
+                                height: Math.min(this.state.tournaments.length*100, 750) + "px" // This will force the table body to overflow and scroll, since there is not enough room
                             }}
-                            className="-striped -highlight"
+                            showPagination={false}
+                            className="-highlight"
                         />
                         <br />
                     </div>
