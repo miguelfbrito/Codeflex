@@ -31,6 +31,7 @@ import pt.codeflex.models.AddTournamentToProblem;
 import pt.codeflex.models.ProblemWithoutTestCases;
 import pt.codeflex.models.RegisterUserOnTournament;
 import pt.codeflex.models.TournamentIsUserRegistrated;
+import pt.codeflex.models.TournamentWithRegisteredUsers;
 import pt.codeflex.models.TournamentsToList;
 import pt.codeflex.models.UserOnProblemLeaderboard;
 import pt.codeflex.repositories.*;
@@ -99,6 +100,7 @@ public class DatabaseController {
 
 	@GetMapping(path = "/Leaderboard/viewByProblemName/{problemName}")
 	public List<UserOnProblemLeaderboard> getAllLeaderboardsByProblemName(@PathVariable String problemName) {
+
 		Problem findProblembyName = problemRepository.findByName(problemName.replace("-", " "));
 		List<UserOnProblemLeaderboard> userOnLeaderboard = new ArrayList<>();
 
@@ -125,9 +127,6 @@ public class DatabaseController {
 		return leaderboardRepository.findById(id);
 	}
 
-	
-	
-	
 	// LANGUAGE
 
 	@GetMapping(path = "/Language/view")
@@ -146,9 +145,6 @@ public class DatabaseController {
 		return languageRepository.findById(id);
 	}
 
-	
-	
-	
 	// RESULT
 
 	@GetMapping(path = "/Result/view")
@@ -165,9 +161,6 @@ public class DatabaseController {
 	public Optional<Result> viewResultById(@PathVariable long id) {
 		return resultRepository.findById(id);
 	}
-	
-	
-	
 
 	// DIFFICULTY
 
@@ -185,9 +178,6 @@ public class DatabaseController {
 	public Optional<Difficulty> viewDifficultyById(@PathVariable long id) {
 		return difficultyRepository.findById(id);
 	}
-	
-	
-	
 
 	// GROUPS
 
@@ -220,9 +210,6 @@ public class DatabaseController {
 		return groupsRepository.findById(id);
 	}
 
-	
-	
-	
 	// MEMBERS
 
 	@GetMapping(path = "/Members/view")
@@ -255,9 +242,6 @@ public class DatabaseController {
 	// return membersRepository.findById(id);
 	// }
 
-	
-	
-	
 	// PRACTISECATEGORY
 
 	@GetMapping(path = "/PractiseCategory/view")
@@ -378,9 +362,6 @@ public class DatabaseController {
 
 		return problemWithoutTestCases;
 	}
-	
-	
-	
 
 	// PROBLEM
 
@@ -477,10 +458,6 @@ public class DatabaseController {
 		}
 		return new Problem();
 	}
-	
-	
-	
-	
 
 	// RATING
 
@@ -538,9 +515,6 @@ public class DatabaseController {
 	 * }
 	 */
 
-	
-	
-	
 	// ROLE
 
 	@GetMapping(path = "/Role/view")
@@ -572,9 +546,6 @@ public class DatabaseController {
 		return roleRepository.findById(id);
 	}
 
-	
-	
-	
 	// SCORING
 
 	@GetMapping(path = "/Scoring/view")
@@ -630,11 +601,7 @@ public class DatabaseController {
 		}
 		return listScoring;
 	}
-	
-	
-	
-	
-	
+
 	// SUBMISSIONS
 
 	@GetMapping(path = "/Submissions/view")
@@ -738,10 +705,6 @@ public class DatabaseController {
 		return submissionsRepository.findById(id);
 	}
 
-	
-	
-	
-	
 	// TESTCASES
 
 	@GetMapping(path = "/TestCases/view")
@@ -775,10 +738,6 @@ public class DatabaseController {
 		return testCasesRepository.findById(id);
 	}
 
-	
-	
-	
-	
 	// TOURNAMENT
 
 	@GetMapping(path = "/Tournament/view")
@@ -793,10 +752,40 @@ public class DatabaseController {
 
 	@PostMapping(path = "/Tournament/add")
 	public Tournament addTournament(@RequestBody Tournament t) {
-		
+
 		Tournament tournament = new Tournament(t.getName(), t.getDescription(), t.getStartingDate(), t.getEndingDate(),
 				t.getCode(), t.getOwner());
 		return tournamentRepository.save(tournament);
+	}
+
+	@GetMapping("/Tournament/viewAllByOwnerId/{ownerId}")
+	public List<Tournament> viewAllByOwnerId(@PathVariable long ownerId) {
+		Optional<Users> u = viewUsersById(ownerId);
+		List<Tournament> finalTournaments = new ArrayList<>();
+
+		if (u.isPresent()) {
+			finalTournaments = tournamentRepository.findByOwner(u.get());
+		}
+		return finalTournaments;
+	}
+
+	@GetMapping("/Tournament/viewAllWithRegisteredUsersByOwnerId/{ownerId}")
+	public List<TournamentWithRegisteredUsers> viewAllWithRegisteredUsersByOwnerId(@PathVariable long ownerId) {
+		Optional<Users> u = viewUsersById(ownerId);
+
+		List<Tournament> tournaments = new ArrayList<>();
+		List<TournamentWithRegisteredUsers> tournamentWithRegisteredUsers = new ArrayList<>();
+
+		if (u.isPresent()) {
+			tournaments = tournamentRepository.findByOwner(u.get());
+
+			for (Tournament t : tournaments) {
+				List<Users> usersByTournament = viewUsersByTournamentId(t.getId());
+				tournamentWithRegisteredUsers.add(new TournamentWithRegisteredUsers(t, usersByTournament));
+			}
+
+		}
+		return tournamentWithRegisteredUsers;
 	}
 
 	// Returns 2 separate lists of available and archived problems
@@ -926,10 +915,6 @@ public class DatabaseController {
 		return tournamentRepository.findById(id);
 	}
 
-	
-	
-	
-	
 	// USERS
 
 	@GetMapping(path = "/Users/view")
@@ -962,10 +947,6 @@ public class DatabaseController {
 	public Optional<Users> viewUsersById(@PathVariable long id) {
 		return usersRepository.findById(id);
 	}
-	
-	
-	
-	
 
 	// USERSROLES
 

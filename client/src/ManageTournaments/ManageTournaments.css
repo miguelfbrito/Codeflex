@@ -1,0 +1,31 @@
+i.manage-tournament-icon {
+    margin-left: 10px;
+    border-radius: 100%;
+    padding: 3px;
+    cursor: pointer;
+    transition: all 250ms ease-in-out;
+    -webkit-transition: all 250ms ease-in-out;
+}
+
+i.manage-tournament-icon:hover {
+    transform: scale(1.1);
+    -webkit-transform: scale(1.1);
+}
+
+.rt-td {
+    text-align: center;
+}
+
+.rt-th {
+    background-color: #6a44ff;
+    border-right: 1px solid rgb(6, 7, 121) !important;
+}
+
+div.rt-resizable-header-content {
+    font-size: 14pt !important;
+    color: white;
+    padding: 5px 0;
+    text-transform: capitalize;
+    font-family: 'Roboto Condensed', sans-serif;
+    letter-spacing: 0.5px;
+}

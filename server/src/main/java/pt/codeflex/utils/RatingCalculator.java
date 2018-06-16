@@ -2,7 +2,7 @@ package pt.codeflex.utils;
 
 public class RatingCalculator {
 
-	public static final int K = 32; // set constant used for calculating ratings
+	public static final int K = 32; // set constant used for calculating ratings. Impacts the rating variability
 
 	public static double expectedRating(double ratingA, double ratingB) {
 		return 1 / (1 + Math.pow(10, (ratingB - ratingA) / 400));
