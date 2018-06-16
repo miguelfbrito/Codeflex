@@ -793,8 +793,9 @@ public class DatabaseController {
 
 	@PostMapping(path = "/Tournament/add")
 	public Tournament addTournament(@RequestBody Tournament t) {
+		
 		Tournament tournament = new Tournament(t.getName(), t.getDescription(), t.getStartingDate(), t.getEndingDate(),
-				t.getCode());
+				t.getCode(), t.getOwner());
 		return tournamentRepository.save(tournament);
 	}
 

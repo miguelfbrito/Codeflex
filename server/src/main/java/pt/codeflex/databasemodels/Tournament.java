@@ -1,21 +1,13 @@
 package pt.codeflex.databasemodels;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.ManyToOne;
 
 import pt.codeflex.utils.Hash;
 
@@ -40,7 +32,10 @@ public class Tournament {
 
 	private String code;
 
-	public Tournament(String name, String description, Date startingDate, Date endingDate, String code) {
+	@ManyToOne
+	private Users owner;
+
+	public Tournament(String name, String description, Date startingDate, Date endingDate, String code, Users owner) {
 		this.name = name;
 		this.startingDate = startingDate;
 		this.description = description;
@@ -50,6 +45,7 @@ public class Tournament {
 			System.out.println("HASH " + hash);
 			this.link = hash;
 		}
+		this.owner = owner;
 		this.code = code;
 	}
 
@@ -110,6 +106,14 @@ public class Tournament {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public Users getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Users owner) {
+		this.owner = owner;
 	}
 
 }

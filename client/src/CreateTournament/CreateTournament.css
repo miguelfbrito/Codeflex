@@ -50,9 +50,13 @@
     margin-left: -50px;
 }
 
+.tournament-creation-container .form-group {
+    padding-top: 15px;
+}
 .date-picker input {
+    margin: -20px;
     padding: 10px 10px;
-    width: 135px;
+    width: 155px;
     border: 1px solid #ccc;
     border-radius: 4px;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
@@ -67,4 +71,37 @@
     outline: 0;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+}
+
+
+.tournament-creation-container label {
+    font-size: 12pt;
+    font-family: 'Roboto', sans-serif;
+    text-align: left !important;
+    margin-right: 25px;
+}
+
+.tournament-creation-container input, .tournament-creation-container textarea{
+    font-size: 12pt;
+    font-family: 'Roboto', sans-serif;
+    padding: 15px 10px;
+}
+
+.tournament-creation-top p {
+    font-size: 13pt;
+}
+
+.tournament-extra-info {
+    font-size: 9pt;
+    color: #aaa;
+    padding-left: 5px;
+    padding-top: 5px;
+}
+
+#privateCode{
+    max-width: 200px;
+}
+
+#btn-create {
+    margin-left: 25px;
 }

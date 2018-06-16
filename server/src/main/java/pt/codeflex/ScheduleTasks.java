@@ -22,9 +22,9 @@ public class ScheduleTasks {
 	@Autowired
 	private TasksBeingEvaluated tasksBeingEvaluated;
 
-	@Scheduled(fixedDelay = 5000)
-	public void bar() {
-		System.out.println(hostList.get(0).getCpuUsage());
-		System.out.println(hostList.get(0).getMemoryUsage());
-	}
+//	@Scheduled(fixedDelay = 5000)
+//	public void bar() {
+//		System.out.println(hostList.get(0).getCpuUsage());
+//		System.out.println(hostList.get(0).getMemoryUsage());
+//	}
 }
