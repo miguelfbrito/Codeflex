@@ -34,55 +34,56 @@ class Leaderboard extends React.Component {
 
             console.log('leaderboard')
             console.log(this.state.leaderboard);
+            toRender = <div>
+                <ReactTable
+                    noDataText="There is no one on the leaderboard"
+                    data={this.state.leaderboard}
+                    columns={[
+                        {
+                            Header: "Position",
+                            id: "position",
+                            accessor: l => this.state.leaderboard.indexOf(l) + 1
+                        },
+                        {
+                            Header: "Username",
+                            id: "username",
+                            accessor: l => l.username,
+                            getProps: (
+                                (state, rowInfo, row) => ({
+                                    style: {
+                                        backgroundColor: (rowInfo.row.username === JSON.parse(localStorage.getItem('userData')).username ? '#aaa' : '')
+                                    }
+                                })
+                            )
+
+                        },
+                        {
+                            Header: "Language",
+                            id: "language",
+                            accessor: l => l.language
+                        },
+                        {
+                            Header: "Score",
+                            id: "score",
+                            accessor: l => l.score
+                        }
+
+                    ]}
+                    defaultPageSize={25}
+                    pageSize={Math.min(this.state.leaderboard.length, 25)}
+                    style={{
+                        height: Math.min(this.state.leaderboard.length * 95, 1000) + "px" // This will force the table body to overflow and scroll, since there is not enough room
+                    }}
+                    showPagination={false}
+                    className="-highlight"
+                />
+            </div>
         }
 
         return (
             <div>
                 {toRender}
-                <div>
-                    <ReactTable
-                        noDataText="There is no one on the leaderboard"
-                        data={this.state.leaderboard}
-                        columns={[
-                            {
-                                Header: "Position",
-                                id: "position",
-                                accessor: l => this.state.leaderboard.indexOf(l)+1
-                            },
-                            {
-                                Header: "Username",
-                                id: "username",
-                                accessor: l => l.username,
-                                getProps: (
-                                    (state, rowInfo) => ({
-                                        style: {
-                                            backgroundColor: (rowInfo.row.username === JSON.parse(localStorage.getItem('userData')).username? 'red' :'')
-                                        }
-                                    })
-                                )
 
-                            },
-                            {
-                                Header: "Language",
-                                id: "language",
-                                accessor: l => l.language
-                            },
-                            {
-                                Header: "Score",
-                                id: "score",
-                                accessor: l => l.score
-                            }
-
-                        ]}
-                        defaultPageSize={25}
-                        pageSize={Math.min(this.state.leaderboard.length, 25)}
-                        style={{
-                            height: Math.min(this.state.leaderboard.length * 95, 1000) + "px" // This will force the table body to overflow and scroll, since there is not enough room
-                        }}
-                        showPagination={false}
-                        className="-highlight"
-                    />
-                </div>
             </div>
         );
     }

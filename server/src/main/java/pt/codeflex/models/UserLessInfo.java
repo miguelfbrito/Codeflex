@@ -6,7 +6,7 @@ public class UserLessInfo {
 
 	private long id;
 	private String username;
-	private String email;
+	private double rating;
 	
 	public long getId() {
 		return id;
@@ -18,11 +18,11 @@ public class UserLessInfo {
 		return username;
 	}
 	public UserLessInfo() {}
-	public UserLessInfo(long id, String username, String email) {
+	public UserLessInfo(long id, String username , double rating) {
 		super();
 		this.id = id;
 		this.username = username;
-		this.email = email;
+		this.rating = rating;
 	}
 	public void setUsername(String username) {
 		this.username = username;
@@ -31,12 +31,12 @@ public class UserLessInfo {
 	public void convert(Users user) {
 		this.id = user.getId();
 		this.username = user.getUsername();
-		this.email = user.getEmail();
 	}
-	public String getEmail() {
-		return email;
+	
+	public double getRating() {
+		return rating;
 	}
-	public void setEmail(String email) {
-		this.email = email;
+	public void setRating(double rating) {
+		this.rating = rating;
 	}
 }

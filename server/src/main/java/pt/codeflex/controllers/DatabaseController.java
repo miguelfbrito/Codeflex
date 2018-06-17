@@ -33,6 +33,7 @@ import pt.codeflex.models.RegisterUserOnTournament;
 import pt.codeflex.models.TournamentIsUserRegistrated;
 import pt.codeflex.models.TournamentWithRegisteredUsers;
 import pt.codeflex.models.TournamentsToList;
+import pt.codeflex.models.UserLessInfo;
 import pt.codeflex.models.UserOnProblemLeaderboard;
 import pt.codeflex.repositories.*;
 import pt.codeflex.utils.RatingCalculator;
@@ -920,6 +921,18 @@ public class DatabaseController {
 	@GetMapping(path = "/Users/view")
 	public List<Users> getAllUsers() {
 		return (List<Users>) usersRepository.findAll();
+	}
+	
+	@GetMapping("/Users/viewAllWithLessInfo")
+	public List<UserLessInfo> viewAllWithLessInfo(){
+		List<UserLessInfo> finalUsers = new ArrayList<>();
+		List<Users> allUsers = getAllUsers();
+		
+		for(Users u : allUsers) {
+			finalUsers.add(new UserLessInfo(u.getId(), u.getUsername(), u.getGlobalRating()));
+		}
+		
+		return finalUsers;
 	}
 
 	@PostMapping(path = "/Users/add")

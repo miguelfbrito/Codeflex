@@ -45,7 +45,7 @@ class Navbar extends Component {
                         <ul className="nav navbar-nav navbar-right">
                             <li><Link to="/practise"><p>Practise</p></Link></li>
                             <li><Link to="/compete"><p>Compete</p></Link></li>
-                            <li><Link to=""><p>Leaderboard</p></Link></li>
+                            <li><Link to="/leaderboard"><p>Leaderboard</p></Link></li>
                             {/*<li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
                             <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>*/}
                             <li className="dropdown">

@@ -14,6 +14,7 @@ import CreateTournament from './CreateTournament/CreateTournament';
 import ManageTournaments from './ManageTournaments/ManageTournaments';
 import ManageIndividualTournament from './ManageIndividualTournament/ManageIndividualTournament';
 import AddProblem from './Problem/AddProblem/AddProblem';
+import GlobalLeaderboard from './GlobalLeaderboard/GlobalLeaderboard';
 
 class App extends Component {
   render() {
@@ -39,6 +40,8 @@ class App extends Component {
             <Route exact path="/compete/:tournamentName" component={ListProblems} />
             <Route exact path="/compete/:tournamentName/:problemName" component={Problem} />
             <Route exact path="/compete/:categoryName/:problemName/view-results" component={ViewResults} />
+
+            <Route exact path="/leaderboard" component={GlobalLeaderboard} />
 
             <Route component={PageNotFound} />
           </Switch>
