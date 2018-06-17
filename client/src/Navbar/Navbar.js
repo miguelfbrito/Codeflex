@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar2.css';
-
+import '../commons/style.css';
 class Navbar extends Component {
 
     // TODO : consts para os uri
@@ -30,13 +30,14 @@ class Navbar extends Component {
     userLoggedIn() {
         return (
             <div className="container">
-                    <div className="navbar-header">
+                    <div className="navbar-header" style={{marginTop:'5px'}}>
                         <button type="button" className="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
                             <span className="icon-bar"></span>
                             <span className="icon-bar"></span>
                             <span className="icon-bar"></span>
                         </button>
-                        <a className="navbar-brand" href="#">Codeflex</a>
+                        <a className="navbar-brand" id="codeflex">codeflex</a>
+                        {/*<img id="img-user" src={require('../images/logo.png')} alt="User flat image" */}
                     </div>
                     <div className="collapse navbar-collapse" id="myNavbar">
                         <ul className="nav navbar-nav">
@@ -57,7 +58,7 @@ class Navbar extends Component {
                                 </Link>
 
                                 <ul className="dropdown-menu">
-                                    <li><Link to="/"><p>Settings</p></Link></li>
+                                   e<li><Link to="/"><p>Settings</p></Link></li>
                                     <li><Link to="/"><p>Administration</p></Link></li>
                                     <li><Link to="/" onClick={this.logoutUser}><p>Logout</p></Link></li>
                                 </ul>

@@ -127,7 +127,7 @@ class ListTournaments extends React.Component {
         </Popup>*/}
                     <div className="col-sm-12 both-categories-container">
                     <div style={{float: 'right', textAlign:'right',marginTop:'-10px'}}>
-                        <Link to="/compete/create-tournament"> <p >Create Tournament</p></Link>
+                        <Link to="/compete/create-tournament" > <p>Create Tournament</p></Link>
                         <Link to="/compete/manage-tournaments"><p >Manage Tournaments</p></Link>
                     </div>
                         <h2>Available</h2>

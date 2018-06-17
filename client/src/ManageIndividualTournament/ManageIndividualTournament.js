@@ -1,7 +1,7 @@
 import React from 'react';
 import PathLink from '../PathLink/PathLink'
 import ReactTable from 'react-table';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 
 import { URL } from '../commons/Constants';
 import { splitUrl } from '../commons/Utils';
@@ -34,7 +34,9 @@ class ManageIndividualTournament extends React.Component {
         let content =
             <div className="add-problem-container">
                 <h3>There are no problems on this tournament yet.</h3>
-                <input className="btn btn-primary" type="button" value="Add problem" />
+                <Link to={"/compete/manage-tournaments/" + splitUrl(this.props.location.pathname)[2] + "/add-problem"}>
+                    <input className="btn btn-primary" type="button" value="Add problem" />
+                </Link>
             </div>
 
         if (this.state.problems.length > 0) {

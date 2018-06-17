@@ -83,6 +83,11 @@ nav {
     transform: rotate(90deg);
 }
 
+#codeflex {
+    color: black;
+    filter: drop-shadow(0px 0px 3px #222222);
+}
+
 img {
     display: inline-block;
     width: 50px;
