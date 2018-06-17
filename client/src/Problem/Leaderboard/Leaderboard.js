@@ -1,8 +1,11 @@
 import React from 'react';
+import ReactTable from 'react-table';
 import './Leaderboard.css';
 
 import { URL } from '../../commons/Constants';
 import { splitUrl } from '../../commons/Utils';
+import '../../../node_modules/react-table/react-table.css';
+import '../../commons/react-table.css';
 
 class Leaderboard extends React.Component {
     constructor(props) {
@@ -29,32 +32,57 @@ class Leaderboard extends React.Component {
             let leaderboard = this.state.leaderboard.sort((a, b) => { return b.score - a.score });
             let currentUsername = JSON.parse(localStorage.getItem('userData')).username;
 
-            toRender =
-                <table className="table table-hover" id="table-leaderboard">
-                    <thead>
-                        <tr id="table-leaderboard-head">
-                            <th><p>Position</p></th>
-                            <th><p>Username</p></th>
-                            <th><p>Language</p></th>
-                            <th><p>Score</p></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {leaderboard.map((l, index) => (
-                            <tr key={index} className={currentUsername === l.username ? 'table-active' : ''}>
-                                <th><p>{index + 1}</p></th>
-                                <th><p>{l.username}</p></th>
-                                <th><p>{l.language}</p></th>
-                                <th><p>{l.score}</p></th>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            console.log('leaderboard')
+            console.log(this.state.leaderboard);
         }
 
         return (
             <div>
                 {toRender}
+                <div>
+                    <ReactTable
+                        noDataText="There is no one on the leaderboard"
+                        data={this.state.leaderboard}
+                        columns={[
+                            {
+                                Header: "Position",
+                                id: "position",
+                                accessor: l => this.state.leaderboard.indexOf(l)+1
+                            },
+                            {
+                                Header: "Username",
+                                id: "username",
+                                accessor: l => l.username,
+                                getProps: (
+                                    (state, rowInfo) => ({
+                                        style: {
+                                            backgroundColor: (rowInfo.row.username === JSON.parse(localStorage.getItem('userData')).username? 'red' :'')
+                                        }
+                                    })
+                                )
+
+                            },
+                            {
+                                Header: "Language",
+                                id: "language",
+                                accessor: l => l.language
+                            },
+                            {
+                                Header: "Score",
+                                id: "score",
+                                accessor: l => l.score
+                            }
+
+                        ]}
+                        defaultPageSize={25}
+                        pageSize={Math.min(this.state.leaderboard.length, 25)}
+                        style={{
+                            height: Math.min(this.state.leaderboard.length * 95, 1000) + "px" // This will force the table body to overflow and scroll, since there is not enough room
+                        }}
+                        showPagination={false}
+                        className="-highlight"
+                    />
+                </div>
             </div>
         );
     }

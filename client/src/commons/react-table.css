@@ -37,7 +37,7 @@ div.rt-tr-group:nth-child(1) {
     border: 0 !important;
 }
 
-#root>div>div>div>div:nth-child(2)>div>div.rt-table>div.rt-tbody>div>div {
+div.rt-tbody>div>div {
     max-height: 50px;
     min-height: 50px;
     margin: 5px 2px;
