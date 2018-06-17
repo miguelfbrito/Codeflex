@@ -1,2 +1,33 @@
-.add-problem-name {
+.add-problem-name {}
+
+.info-section {
+    margin-top: 35px;
+}
+
+.add-problem-desc p {
+    color: #bbb;
+    line-height: 15pt;
+}
+
+.add-problem-desc>h3:first-child {
+    margin-top: 0px;
+}
+
+#input-problem-name {
+    min-height: 50px;
+    width: 300px;
+    padding: 10pt;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0px 0px 5px #ccc;
+}
+
+.add-problem>div:last-child {
+    text-align: right
+}
+
+#save-problem {
+    margin-top: 25px;
+    width: 150px;
+    height: 45px;
 }
