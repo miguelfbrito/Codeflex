@@ -381,10 +381,21 @@ public class DatabaseController {
 
 		Problem p = addProblem.getProblem();
 
+		if (p == null) {
+			return new Problem();
+		}
+
 		if (addProblem.getDifficulty() != null) {
 			Optional<Difficulty> f = difficultyRepository.findById(addProblem.getDifficulty().getId());
 			if (f.isPresent()) {
 				p.setDifficulty(f.get());
+			}
+		}
+
+		if (addProblem.getTournament() != null) {
+			Tournament t = viewTournamentByName(addProblem.getTournament().getName());
+			if (t != null) {
+				p.setTournament(t);
 			}
 		}
 
@@ -911,6 +922,11 @@ public class DatabaseController {
 		tournamentRepository.deleteById(id);
 	}
 
+	@PostMapping(path = "/Tournament/delete/{tournamentName}")
+	public void deleteTournamentByName(@PathVariable String tournamentName) {
+		tournamentRepository.deleteByName(tournamentName.replace("-", " "));
+	}
+	
 	@GetMapping(path = "/Tournament/view/{id}")
 	public Optional<Tournament> viewTournamentById(@PathVariable long id) {
 		return tournamentRepository.findById(id);
@@ -922,16 +938,16 @@ public class DatabaseController {
 	public List<Users> getAllUsers() {
 		return (List<Users>) usersRepository.findAll();
 	}
-	
+
 	@GetMapping("/Users/viewAllWithLessInfo")
-	public List<UserLessInfo> viewAllWithLessInfo(){
+	public List<UserLessInfo> viewAllWithLessInfo() {
 		List<UserLessInfo> finalUsers = new ArrayList<>();
 		List<Users> allUsers = getAllUsers();
-		
-		for(Users u : allUsers) {
+
+		for (Users u : allUsers) {
 			finalUsers.add(new UserLessInfo(u.getId(), u.getUsername(), u.getGlobalRating()));
 		}
-		
+
 		return finalUsers;
 	}
 

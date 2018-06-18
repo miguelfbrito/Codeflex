@@ -7,9 +7,9 @@ import { URL } from '../commons/Constants';
 import { splitUrl } from '../commons/Utils';
 
 import '../../node_modules/react-table/react-table.css'
-import './ManageIndividualTournament.css';
+import './ManageProblems.css';
 
-class ManageIndividualTournament extends React.Component {
+class ManageProblems extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -51,7 +51,11 @@ class ManageIndividualTournament extends React.Component {
                     {
                         Header: "Difficulty",
                         id: "startingDate",
-                        accessor: p => p.difficulty.name
+                        accessor: p => p.difficulty.name,
+                        sortMethod: (a, b) => {
+                            console.log(a);
+                            return a >= b ? 1 : -1;
+                        }
                     },
                     {
                         Header: "Max score",
@@ -79,7 +83,7 @@ class ManageIndividualTournament extends React.Component {
                 defaultPageSize={25}
                 pageSize={Math.min(this.state.problems.length, 25)}
                 style={{
-                    height: Math.min(this.state.problems.length * 100, 1000) + "px" // This will force the table body to overflow and scroll, since there is not enough room
+                    height: Math.min(this.state.problems.length * 125, 1000) + "px" // This will force the table body to overflow and scroll, since there is not enough room
                 }}
                 showPagination={false}
                 className="-highlight"
@@ -99,4 +103,4 @@ class ManageIndividualTournament extends React.Component {
     }
 }
 
-export default ManageIndividualTournament;
+export default ManageProblems;

@@ -13,7 +13,7 @@
     margin-top: 0px;
 }
 
-#input-problem-name {
+.textbox-problem {
     min-height: 50px;
     width: 300px;
     padding: 10pt;

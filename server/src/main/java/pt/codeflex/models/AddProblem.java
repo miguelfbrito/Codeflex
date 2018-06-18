@@ -2,16 +2,14 @@ package pt.codeflex.models;
 
 import pt.codeflex.databasemodels.Difficulty;
 import pt.codeflex.databasemodels.Problem;
+import pt.codeflex.databasemodels.Tournament;
 import pt.codeflex.databasemodels.Users;
 
 public class AddProblem {
 	private Problem problem;
 	private Difficulty difficulty;
 	private Users owner;
-	
-	public Problem getProblem() {
-		return problem;
-	}
+	private Tournament tournament;
 
 	public AddProblem() {
 
@@ -28,6 +26,18 @@ public class AddProblem {
 		this.problem = problem;
 		this.owner = owner;
 		this.difficulty = difficulty;
+	}
+
+	public AddProblem(Problem problem, Difficulty difficulty, Users owner, Tournament tournament) {
+		super();
+		this.problem = problem;
+		this.owner = owner;
+		this.difficulty = difficulty;
+		this.tournament = tournament;
+	}
+
+	public Problem getProblem() {
+		return problem;
 	}
 
 	public void setProblem(Problem problem) {
@@ -48,6 +58,14 @@ public class AddProblem {
 
 	public void setOwner(Users owner) {
 		this.owner = owner;
+	}
+
+	public Tournament getTournament() {
+		return tournament;
+	}
+
+	public void setTournament(Tournament tournament) {
+		this.tournament = tournament;
 	}
 
 }

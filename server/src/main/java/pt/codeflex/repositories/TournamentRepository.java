@@ -12,5 +12,6 @@ import pt.codeflex.databasemodels.Users;
 @Repository
 public interface TournamentRepository extends JpaRepository<Tournament, Long>, CustomTournamentRepository {
 	Tournament findByName(String name);
+	Tournament deleteByName(String name);
 	List<Tournament> findByOwner(Users owner);
 }

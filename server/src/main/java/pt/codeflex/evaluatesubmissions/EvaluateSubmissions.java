@@ -11,6 +11,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.transaction.Transactional;
 
@@ -367,6 +369,7 @@ public class EvaluateSubmissions implements Runnable {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
+			Logger.getLogger("Create File").log(Level.SEVERE, "Error creating file", e);
 			e.printStackTrace();
 		}
 	}
