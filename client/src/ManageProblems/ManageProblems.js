@@ -65,7 +65,14 @@ class ManageProblems extends React.Component {
                     {
                         Header: "#TestCases",
                         id: "testCases",
-                        accessor: p => p.testCases.length
+                        accessor: p => (
+                            <div style={{ padding: '0', margin: '0' }}>
+                                <p>
+                                    {p.testCases.length}
+                                </p>
+                                <i className="material-icons manage-tournament-icon" onClick={this.onIconClick}>edit</i>
+                            </div>
+                        )
                     },
                     {
                         Header: "",

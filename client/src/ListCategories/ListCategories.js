@@ -39,7 +39,7 @@ class ListProblems extends Component {
             <div className="container">
                 <div className="row">
                     <PathLink path={this.props.location.pathname} title="Categories"/>   
-                    {this.state.categories.map((category, index) => (
+                    {this.state.categories.length > 0 && this.state.categories.map((category, index) => (
                         <div key={category.id} className="col-sm-6 category-container">
                             <h2>{category.name}</h2>
                             <div className="progress-bar">

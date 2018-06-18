@@ -12,8 +12,10 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.eclipse.jdt.internal.compiler.problem.ProblemSeverities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -304,7 +306,7 @@ public class DatabaseController {
 		}
 
 		for (PractiseCategory pc : allCategories) {
-			if (!categoriesName.contains(pc.getName()) && pc.getProblem().size() > 0) {
+			if (!categoriesName.contains(pc.getName()) && !pc.getProblem().isEmpty()) {
 				listOfCategoriesWithStats
 						.add(new ListCategoriesWithStats(pc.getId(), pc.getName(), 0, pc.getProblem().size()));
 			}
@@ -918,15 +920,38 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Tournament/delete/{id}")
-	public void deleteTournament(@PathVariable long id) {
+	public void deleteTournamentById(@PathVariable long id) {
+		Optional<Tournament> t = viewTournamentById(id);
+
+		if (t.isPresent()) {
+			List<Problem> problemsByTournament = problemRepository.findAllByTournament(t.get());
+
+			for (Problem p : problemsByTournament) {
+				p.setTournament(null);
+			}
+
+			problemRepository.saveAll(problemsByTournament);
+		}
 		tournamentRepository.deleteById(id);
 	}
 
-	@PostMapping(path = "/Tournament/delete/{tournamentName}")
-	public void deleteTournamentByName(@PathVariable String tournamentName) {
-		tournamentRepository.deleteByName(tournamentName.replace("-", " "));
+	@DeleteMapping(path = "/Tournament/deleteByName/{tournamentName}")
+	public void deleteTournament(@PathVariable String tournamentName) {
+		tournamentName = tournamentName.replaceAll("-", " ");
+		Tournament t = tournamentRepository.findByName(tournamentName);
+
+		if (t != null) {
+			List<Problem> problemsByTournament = problemRepository.findAllByTournament(t);
+
+			for (Problem p : problemsByTournament) {
+				p.setTournament(null);
+			}
+			
+			problemRepository.saveAll(problemsByTournament);
+			tournamentRepository.delete(t);
+		}
 	}
-	
+
 	@GetMapping(path = "/Tournament/view/{id}")
 	public Optional<Tournament> viewTournamentById(@PathVariable long id) {
 		return tournamentRepository.findById(id);

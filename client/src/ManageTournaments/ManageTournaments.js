@@ -16,19 +16,39 @@ class ManageTournaments extends React.Component {
             tournaments: [],
             redirect: false,
             redirectDestination: '',
-            problemDestination : ''
+            problemDestination: '',
+            teste: false
         }
 
         this.onIconClick = this.onIconClick.bind(this);
+        this.onIconDelete = this.onIconDelete.bind(this);
+        this.fetchTournaments = this.fetchTournaments.bind(this);
     }
 
     componentDidMount() {
-        console.log('Fecthing data')
+        console.log('Fetching data')
+        this.fetchTournaments();
+    }
+
+    fetchTournaments() {
         fetch(URL + '/api/database/Tournament/viewAllWithRegisteredUsersByOwnerId/' + JSON.parse(localStorage.getItem('userData')).id).then(res => res.json())
             .then(data => {
                 this.setState({ tournaments: data })
                 console.log(data);
             })
+    }
+
+    onIconDelete(tournamentName) {
+        console.log('Deleting')
+        const data = {
+            tournament: { name: tournamentName }
+        }
+        fetch(URL + '/api/database/Tournament/deleteByName/' + tournamentName, {
+            method: 'DELETE'
+        }).then(() => {
+            this.fetchTournaments();
+        });
+
     }
 
     onIconClick(e, problemName) {
@@ -45,7 +65,7 @@ class ManageTournaments extends React.Component {
                 break;
         }
 
-        this.setState({ redirect: true, problemDestination : problemName});
+        this.setState({ redirect: true, problemDestination: problemName });
     }
 
     render() {
@@ -104,8 +124,8 @@ class ManageTournaments extends React.Component {
                                     accessor: t => (
                                         <div key={t.tournament.id}>
                                             <i className="material-icons manage-tournament-icon" id="visibility" onClick={this.onIconClick}>visibility</i>
-                                            <i key={t.tournament.id} className="material-icons manage-tournament-icon" id="edit" name={t.tournament.name} onClick={(e, name) => this.onIconClick(e, textToLowerCaseNoSpaces(t.tournament.name))}>edit</i>
-                                            <i className="material-icons manage-tournament-icon" id="delete" onClick={this.onIconClick}>delete</i>
+                                            <i className="material-icons manage-tournament-icon" id="edit" name={t.tournament.name} onClick={(e, name) => this.onIconClick(e, textToLowerCaseNoSpaces(t.tournament.name))}>edit</i>
+                                            <i className="material-icons manage-tournament-icon" id="delete" onClick={(name) => this.onIconDelete(textToLowerCaseNoSpaces(t.tournament.name))}>delete</i>
                                             {console.log("Icon index " + t.tournament.name)}
                                             {this.state.redirect && this.state.redirectDestination === 'edit' ?
                                                 <Redirect to={{ pathname: "/compete/manage-tournaments/" + this.state.problemDestination }} /> : ''}
@@ -116,7 +136,7 @@ class ManageTournaments extends React.Component {
                             defaultPageSize={rows}
                             pageSize={Math.min(rows, 15)}
                             style={{
-                                height: Math.min(this.state.tournaments.length * 100, 750) + "px" // This will force the table body to overflow and scroll, since there is not enough room
+                                height: Math.min(this.state.tournaments.length * 125, 750) + "px" // This will force the table body to overflow and scroll, since there is not enough room
                             }}
                             showPagination={false}
                             className="-highlight"
