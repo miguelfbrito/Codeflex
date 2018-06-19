@@ -64,10 +64,41 @@ div.tc-popup {
     border-radius: 0;
 }
 
+textarea.modal-text-area {
+    width: 700px;
+    height: 450px;
+}
+
+textarea.modal-text-area-section {
+    width: 350px;
+    height: 250px;
+}
+
+.add-test-case i {
+    margin: 0;
+    padding: 0;
+    font-size: 100pt;
+    color: #6a44ff;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 20%;
+}
+
+
 @media only screen and (max-width: 768px) {
     div.test-case-wrapper {
         margin: 25px 0;
         max-width: 100%;
     }
-    
+
+    textarea.modal-text-area {
+        width: 250px;
+        height: 300px;
+    }
+
+    textarea.modal-text-area-section {
+        width: 275px;
+        height: 100px;
+    }
 }

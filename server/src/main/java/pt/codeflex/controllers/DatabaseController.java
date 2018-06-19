@@ -464,8 +464,8 @@ public class DatabaseController {
 			for (TestCases tc : testCases) {
 				System.out.println("INPUT " + tc.getInput());
 				System.out.println("OUTPUT " + tc.getOutput());
-				finalTestCases
-						.add(new TestCasesShown(tc.getId(), tc.getInput(), tc.getOutput(), tc.getDescription(), tc.isShown()));
+				finalTestCases.add(new TestCasesShown(tc.getId(), tc.getInput(), tc.getOutput(), tc.getDescription(),
+						tc.isShown()));
 			}
 		}
 		return finalTestCases;
@@ -744,10 +744,36 @@ public class DatabaseController {
 		return testCasesRepository.findAll();
 	}
 
-	@PostMapping(path = "/TestCases/add")
-	public void addTestCases(@RequestParam String input, @RequestParam String output) {
+	@PostMapping(path = "/TestCases/add-deprecated")
+	public void addTestCasesDeprecated(@RequestParam String input, @RequestParam String output) {
 		TestCases tc = new TestCases(input, output);
 		testCasesRepository.save(tc);
+	}
+
+	@PostMapping(path = "/TestCases/add")
+	public TestCases addTestCases(@RequestBody TestCasesShown t) {
+		TestCases tc = new TestCases(t.getInput(), t.getOutput(), t.getDescription(), t.isShown());
+		return testCasesRepository.save(tc);
+	}
+
+	@PostMapping("/TestCases/addToProblem/{problemName}")
+	public void addTestCasesToProblem(@RequestBody TestCasesShown t, @PathVariable String problemName) {
+
+		TestCases testCase = addTestCases(t);
+
+		if (testCase == null) {
+			return;
+		}
+
+		Problem problem = viewProblemByName(problemName);
+
+		if (problem == null) {
+			return;
+		}
+
+		problem.getTestCases().add(testCase);
+		problemRepository.save(problem);
+
 	}
 
 	@PostMapping(path = "/TestCases/edit")
@@ -773,20 +799,19 @@ public class DatabaseController {
 	@PostMapping("/TestCases/update")
 	public TestCases updateTestCase(@RequestBody TestCasesShown testCaseReq) {
 		Optional<TestCases> tc = viewTestCasesById(testCaseReq.getId());
-		if(tc.isPresent()) {
+		if (tc.isPresent()) {
 			TestCases testCase = tc.get();
-			
+
 			testCase.setInput(testCaseReq.getInput());
 			testCase.setOutput(testCaseReq.getOutput());
 			testCase.setDescription(testCaseReq.getDescription());
 			testCase.setShown(testCaseReq.isShown());
-			
+
 			return testCasesRepository.save(testCase);
 		}
 		return new TestCases();
 	}
-	
-	
+
 	@PostMapping(path = "/TestCases/updateList")
 	public void updateListOfTestCases(@RequestBody List<TestCasesShown> testCases) {
 		for (TestCasesShown tc : testCases) {

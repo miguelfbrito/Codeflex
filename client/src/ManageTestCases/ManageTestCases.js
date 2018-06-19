@@ -10,6 +10,15 @@ import { splitUrl } from '../commons/Utils';
 import '../../node_modules/react-table/react-table.css'
 import './ManageTestCases.css';
 
+
+
+/*
+
+Should probably change all the input/output/description edit mess to REFs for simplicity
+
+
+*/
+
 class ManageTestCases extends React.Component {
     constructor(props) {
         super(props);
@@ -19,26 +28,50 @@ class ManageTestCases extends React.Component {
             popupInfo: [],
             currentTestCase: 0,
             currentMode: '',
-            modalTitle: ''
+            modalTitle: '',
+            addingTestCase: false,
+            inputNew: '',
+            outputNew: '',
+            descriptionNew: '',
+            showNew: false
         }
-        this.child = React.createRef();
+
+        this.modalEdit = React.createRef();
+        this.modalAdd = React.createRef();
+
+        this.newInput = React.createRef();
+        this.newOutput = React.createRef();
+        this.newDescription = React.createRef();
+
         this.onChange = this.onChange.bind(this);
         this.onClick = this.onClick.bind(this);
+        this.onClickAdd = this.onClickAdd.bind(this);
         this.onModalClose = this.onModalClose.bind(this);
+        this.onNewTestCaseModalClose = this.onNewTestCaseModalClose.bind(this);
+
+        this.fetchTestCases = this.fetchTestCases.bind(this);
     }
 
     componentDidMount() {
+        this.fetchTestCases();
+    }
+
+    onClick(text, mode, title, testCase) {
+        this.setState({ currentText: text, modalTitle: title, currentTestCase: testCase, currentMode: mode });
+        this.modalEdit.current.openModal();
+    }
+
+    onClickAdd() {
+        this.modalAdd.current.openModal();
+    }
+
+    fetchTestCases() {
         const problemName = splitUrl(this.props.location.pathname)[3]
         fetch(URL + '/api/database/Problem/viewAllTestCasesByProblemName/' + problemName).then(res => res.json())
             .then(data => {
                 console.log(data);
                 this.setState({ testCases: data });
             })
-    }
-
-    onClick(text, mode, title, testCase) {
-        this.setState({ currentText: text, modalTitle: title, currentTestCase: testCase, currentMode: mode });
-        this.child.current.openModal();
     }
 
     persistChangesOnDatabase() {
@@ -93,23 +126,75 @@ class ManageTestCases extends React.Component {
         this.setState({ currentText: e.target.value });
     }
 
+
+    onChangeNew(e) {
+        this.setState([e.target.name] : e.target.value);
+
+    }
     /*
         1. Que index estou a editar
         2. O que estou a editar (input/ output / description)
         3. 
     */
 
+    onNewTestCaseModalClose() {
+        alert(this.newInput.current.value);
+        const data = {
+            input: this.newInput.current.value,
+            output: this.newOutput.current.value,
+            description: this.newDescription.current.value
+        }
+        fetch(URL + '/api/database/TestCases/addToProblem/' + splitUrl(this.props.location.pathname)[3], {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        }).then(() => {
+            this.fetchTestCases();
+        });
+    }
+
     render() {
 
         const PopupInformation = () => (
             <div className="tc-popup">
                 <h2 style={{ color: 'black', margin: 'auto' }}>{this.state.modalTitle}</h2>
-                <textarea autoFocus name="input" id="" style={{ border: '1px solid #6a44ff' }} cols="100" rows="25"
+                <textarea autoFocus name="input" id="" style={{ border: '1px solid #6a44ff' }} className="modal-text-area"
                     value={this.state.currentText}
                     placeholder={this.state.currentMode === 'description' ? 'If you select to show this test case, this description will show on the Problem page on top of the input and the output' : ''}
                     onChange={this.onChange}></textarea>
             </div>
         );
+
+        const PopupAddTestCase = () => (
+            <div className="tc-popup">
+                <h2 style={{ color: 'black', margin: 'auto' }}>Add new test case</h2>
+                <div className="row">
+                    <div className="col-sm-6">
+                        <p>Input</p>
+                        <textarea ref={this.newInput} name="inputNew" id="" style={{ border: '1px solid #6a44ff' }} className="modal-text-area-section"
+                            placeholder={this.state.currentMode === 'description' ? 'If you select to show this test case, this description will show on the Problem page on top of the input and the output' : ''}
+                        ></textarea>
+                    </div>
+                    <div className="col-sm-6">
+                        <p>Output</p>
+                        <textarea ref={this.newOutput} name="outputNew" id="" style={{ border: '1px solid #6a44ff' }} className="modal-text-area-section"
+                            placeholder={this.state.currentMode === 'description' ? 'If you select to show this test case, this description will show on the Problem page on top of the input and the output' : ''}
+                        ></textarea>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-sm-12">
+                        <p>Description</p>
+                        <textarea ref={this.newDescription} name="descriptionNew" id="" style={{ border: '1px solid #6a44ff', height: '100px', width: '100%' }} className="modal-text-area-section"
+                            placeholder={this.state.currentMode === 'description' ? 'If you select to show this test case, this description will show on the Problem page on top of the input and the output' : ''}
+                        ></textarea>
+                    </div>
+                </div>
+            </div>
+        );
+
         return (
             <div className="container" >
                 <div className="row">
@@ -117,8 +202,8 @@ class ManageTestCases extends React.Component {
                     <h3 style={{ color: '#aaa' }}>Make sure the test cases you insert cover the problem fully.</h3>
                     <p style={{ color: '#aaa' }}>Add new test cases or edit the current ones. To edit, click on the respective button, edit the data and the changes will be saved when leaving the window.</p>
 
-                    <div className="col-sm-3 col-xs-12 test-case-wrapper tc">
-                        <i className="material-icons manage-tournament-icon" id="add-test-case">add_circle_outline</i>
+                    <div className="col-sm-3 col-xs-12 test-case-wrapper tc add-test-case">
+                        <i className="material-icons manage-tournament-icon" id="add-test-case" onClick={this.onClickAdd}>add_circle_outline</i>
                     </div>
 
                     {this.state.testCases.map((t, i) => (
@@ -134,7 +219,12 @@ class ManageTestCases extends React.Component {
                             </label>
                         </div>
                     ))}
-                    <Popup ref={this.child} onModalClose={this.onModalClose}>
+
+                    <Popup ref={this.modalAdd} onModalClose={this.onNewTestCaseModalClose} >
+                        <PopupAddTestCase />
+                    </Popup>
+
+                    <Popup ref={this.modalEdit} onModalClose={this.onModalClose}>
                         <PopupInformation />
                     </Popup>
                 </div>
