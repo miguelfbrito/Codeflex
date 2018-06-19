@@ -38,6 +38,13 @@ public class TestCasesShown {
 		this.shown = shown;
 	}
 
+	public TestCasesShown(long id, String input, String output, String description, boolean shown) {
+		this.id = id;
+		this.input = input;
+		this.output = output;
+		this.description = description;
+		this.shown = shown;
+	}
 	public long getId() {
 		return id;
 	}

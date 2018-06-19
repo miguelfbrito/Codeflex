@@ -455,21 +455,22 @@ public class DatabaseController {
 	}
 
 	@GetMapping("/Problem/viewAllTestCasesByProblemName/{problemName}")
-	public List<TestCasesShown> viewAllTestCasesByProblemName(@PathVariable String problemName){
+	public List<TestCasesShown> viewAllTestCasesByProblemName(@PathVariable String problemName) {
 		List<TestCasesShown> finalTestCases = new ArrayList<>();
 		Problem p = viewProblemByName(problemName);
-		
-		if(p != null) {
+
+		if (p != null) {
 			List<TestCases> testCases = p.getTestCases();
-			for(TestCases tc : testCases) {
+			for (TestCases tc : testCases) {
 				System.out.println("INPUT " + tc.getInput());
 				System.out.println("OUTPUT " + tc.getOutput());
-				finalTestCases.add(new TestCasesShown(tc.getInput(), tc.getOutput(), tc.getDescription(), tc.isShown()));
+				finalTestCases
+						.add(new TestCasesShown(tc.getId(), tc.getInput(), tc.getOutput(), tc.getDescription(), tc.isShown()));
 			}
 		}
 		return finalTestCases;
 	}
-	
+
 	@PostMapping(path = "/Problem/delete/{id}")
 	public void deleteProblem(@PathVariable long id) {
 		problemRepository.deleteById(id);
@@ -769,6 +770,30 @@ public class DatabaseController {
 		return testCasesRepository.findById(id);
 	}
 
+	@PostMapping("/TestCases/update")
+	public TestCases updateTestCase(@RequestBody TestCasesShown testCaseReq) {
+		Optional<TestCases> tc = viewTestCasesById(testCaseReq.getId());
+		if(tc.isPresent()) {
+			TestCases testCase = tc.get();
+			
+			testCase.setInput(testCaseReq.getInput());
+			testCase.setOutput(testCaseReq.getOutput());
+			testCase.setDescription(testCaseReq.getDescription());
+			testCase.setShown(testCaseReq.isShown());
+			
+			return testCasesRepository.save(testCase);
+		}
+		return new TestCases();
+	}
+	
+	
+	@PostMapping(path = "/TestCases/updateList")
+	public void updateListOfTestCases(@RequestBody List<TestCasesShown> testCases) {
+		for (TestCasesShown tc : testCases) {
+			updateTestCase(tc);
+		}
+	}
+
 	// TOURNAMENT
 
 	@GetMapping(path = "/Tournament/view")
@@ -963,7 +988,7 @@ public class DatabaseController {
 			for (Problem p : problemsByTournament) {
 				p.setTournament(null);
 			}
-			
+
 			problemRepository.saveAll(problemsByTournament);
 			tournamentRepository.delete(t);
 		}

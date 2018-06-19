@@ -37,7 +37,6 @@ public class CodeflexApplication {
 	public void connect(Host host) {
 		SSHClient ssh = host.getSsh();
 		try {
-			ssh.setTimeout(2);
 			ssh.addHostKeyVerifier(host.getFingerprint());
 			// https://stackoverflow.com/questions/9283556/sshj-keypair-login-to-ec2-instance
 			//PKCS8KeyFile keyFile = new PKCS8KeyFile();

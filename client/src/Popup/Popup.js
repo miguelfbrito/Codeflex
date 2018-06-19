@@ -43,6 +43,7 @@ class Popup extends React.Component {
 
     closeModal() {
         this.setState({ modalIsOpen: false });
+        this.props.onModalClose();
     }
     render() {
 
