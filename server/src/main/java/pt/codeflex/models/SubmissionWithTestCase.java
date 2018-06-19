@@ -16,7 +16,6 @@ public class SubmissionWithTestCase {
 		this.submission = submission;
 	}
 
-
 	public SubmissionWithTestCase(Submissions submission, TestCases testCase) {
 		super();
 		this.submission = submission;

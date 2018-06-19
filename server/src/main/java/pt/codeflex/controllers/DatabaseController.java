@@ -32,6 +32,7 @@ import pt.codeflex.models.AddProblem;
 import pt.codeflex.models.AddTournamentToProblem;
 import pt.codeflex.models.ProblemWithoutTestCases;
 import pt.codeflex.models.RegisterUserOnTournament;
+import pt.codeflex.models.TestCasesShown;
 import pt.codeflex.models.TournamentIsUserRegistrated;
 import pt.codeflex.models.TournamentWithRegisteredUsers;
 import pt.codeflex.models.TournamentsToList;
@@ -453,6 +454,22 @@ public class DatabaseController {
 		}
 	}
 
+	@GetMapping("/Problem/viewAllTestCasesByProblemName/{problemName}")
+	public List<TestCasesShown> viewAllTestCasesByProblemName(@PathVariable String problemName){
+		List<TestCasesShown> finalTestCases = new ArrayList<>();
+		Problem p = viewProblemByName(problemName);
+		
+		if(p != null) {
+			List<TestCases> testCases = p.getTestCases();
+			for(TestCases tc : testCases) {
+				System.out.println("INPUT " + tc.getInput());
+				System.out.println("OUTPUT " + tc.getOutput());
+				finalTestCases.add(new TestCasesShown(tc.getInput(), tc.getOutput(), tc.getDescription(), tc.isShown()));
+			}
+		}
+		return finalTestCases;
+	}
+	
 	@PostMapping(path = "/Problem/delete/{id}")
 	public void deleteProblem(@PathVariable long id) {
 		problemRepository.deleteById(id);

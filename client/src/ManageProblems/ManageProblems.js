@@ -4,7 +4,7 @@ import ReactTable from 'react-table';
 import { Redirect, Link } from 'react-router-dom';
 
 import { URL } from '../commons/Constants';
-import { splitUrl } from '../commons/Utils';
+import { splitUrl, textToLowerCaseNoSpaces } from '../commons/Utils';
 
 import '../../node_modules/react-table/react-table.css'
 import './ManageProblems.css';
@@ -31,6 +31,7 @@ class ManageProblems extends React.Component {
     }
 
     render() {
+
         let content =
             <div className="add-problem-container">
                 <h3>There are no problems on this tournament yet.</h3>
@@ -46,7 +47,9 @@ class ManageProblems extends React.Component {
                     {
                         Header: "Name",
                         id: "problemName",
-                        accessor: p => p.name
+                        accessor: p => (
+                            <p>{p.name} </p>
+                        )
                     },
                     {
                         Header: "Difficulty",
@@ -66,11 +69,9 @@ class ManageProblems extends React.Component {
                         Header: "#TestCases",
                         id: "testCases",
                         accessor: p => (
-                            <div style={{ padding: '0', margin: '0' }}>
-                                <p>
-                                    {p.testCases.length}
-                                </p>
-                                <i className="material-icons manage-tournament-icon" onClick={this.onIconClick}>edit</i>
+                            <div>
+                                {p.testCases.length}
+                                <Link to={this.props.location.pathname + "/" + textToLowerCaseNoSpaces(p.name) + "/test-cases"}> <i className="material-icons manage-tournament-icon" onClick={this.onIconClick}>edit</i> </Link>
                             </div>
                         )
                     },

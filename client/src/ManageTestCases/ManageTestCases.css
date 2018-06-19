@@ -1,0 +1,73 @@
+.add-problem-container {
+    text-align: center;
+}
+
+.add-problem-container i {
+    color: green;
+    font-size: 90pt;
+    transition: all 250ms ease-in-out;
+    cursor: pointer;
+}
+
+.add-problem-container i:hover {
+    transform: scale(1.05);
+}
+
+div.test-case-wrapper {
+    margin: 15px;
+    min-height: 235px;
+    max-width: 200px;
+    min-width: 200px;
+    box-shadow: 0 0 5px #ccc;
+    transition: all 250ms ease-in-out;
+}
+
+div.test-case-wrapper:hover {
+    transform: scale(1.1);
+}
+
+.test-case-wrapper {
+    text-align: center;
+    cursor: pointer;
+}
+
+.text-case-wrapper input {
+    margin: 25px !important;
+}
+
+.tc {
+    display: inline-block;
+}
+
+.tc input {
+    margin: 5px;
+}
+
+.inline-field input,
+.inline-field label {
+    display: inline-block;
+    vertical-align: middle;
+    /* Fixes any weird issues in Firefox and IE */
+}
+
+div.tc-popup {
+    padding: 5px;
+}
+
+.tc-popup textarea {
+    margin-top: 15px;
+}
+
+.btn-tc {
+    background-color: white;
+    border: 1px solid #6a44ff;
+    border-radius: 0;
+}
+
+@media only screen and (max-width: 768px) {
+    div.test-case-wrapper {
+        margin: 25px 0;
+        max-width: 100%;
+    }
+    
+}

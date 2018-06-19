@@ -15,6 +15,7 @@ import ManageTournaments from './ManageTournaments/ManageTournaments';
 import ManageProblems from './ManageProblems/ManageProblems';
 import AddProblem from './Problem/AddProblem/AddProblem';
 import GlobalLeaderboard from './GlobalLeaderboard/GlobalLeaderboard';
+import ManageTestCases from './ManageTestCases/ManageTestCases';
 
 class App extends Component {
   render() {
@@ -32,6 +33,7 @@ class App extends Component {
             <Route exact path="/practise" component={ListCategories} />
 
             <Route exact path="/compete/create-tournament" component={CreateTournament} />
+            <Route exact path="/compete/manage-tournaments/:tournamentName/:problemName/test-cases" component={ManageTestCases} />
             <Route exact path="/compete/manage-tournaments/:tournamentName/add-problem" component={AddProblem} />
             <Route exact path="/compete/manage-tournaments/:tournamentName" component={ManageProblems} />
             <Route exact path="/compete/manage-tournaments" component={ManageTournaments} />

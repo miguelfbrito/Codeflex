@@ -11,7 +11,8 @@ const customStyles = {
         bottom: 'auto',
         marginRight: '-50%',
         transform: 'translate(-50%, -50%)',
-        backgroundColor: '#6a44ff',
+        backgroundColor: 'white',
+        boxShadow: '0 0 5px #aaa'
     }
 };
 
@@ -34,7 +35,7 @@ class Popup extends React.Component {
 
     openModal() {
         this.setState({ modalIsOpen: true });
-        setTimeout(() => (this.setState({ modalIsOpen: false })), this.props.timeoutClose);
+     //   setTimeout(() => (this.setState({ modalIsOpen: false })), this.props.timeoutClose);
     }
 
     afterOpenModal() {
@@ -49,7 +50,7 @@ class Popup extends React.Component {
 
         return (
             <div>
-                <button onClick={this.openModal}>Open Modal</button>
+                {/*<button onClick={this.openModal}>Open Modal</button>*/}
                 <Modal
                     isOpen={this.state.modalIsOpen}
                     onAfterOpen={this.afterOpenModal}
