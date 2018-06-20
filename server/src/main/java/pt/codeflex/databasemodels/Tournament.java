@@ -31,11 +31,13 @@ public class Tournament {
 	private String link;
 
 	private String code;
+	
+	private boolean showWebsite;
 
 	@ManyToOne
 	private Users owner;
 
-	public Tournament(String name, String description, Date startingDate, Date endingDate, String code, Users owner) {
+	public Tournament(String name, String description, Date startingDate, Date endingDate, String code, Users owner, boolean showWebsite) {
 		this.name = name;
 		this.startingDate = startingDate;
 		this.description = description;
@@ -45,6 +47,7 @@ public class Tournament {
 			System.out.println("HASH " + hash);
 			this.link = hash;
 		}
+		this.showWebsite = showWebsite;
 		this.owner = owner;
 		this.code = code;
 	}
@@ -114,6 +117,14 @@ public class Tournament {
 
 	public void setOwner(Users owner) {
 		this.owner = owner;
+	}
+
+	public boolean isShowWebsite() {
+		return showWebsite;
+	}
+
+	public void setShowWebsite(boolean showWebsite) {
+		this.showWebsite = showWebsite;
 	}
 
 }

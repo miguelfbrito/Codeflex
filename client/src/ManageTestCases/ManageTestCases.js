@@ -207,8 +207,8 @@ class ManageTestCases extends React.Component {
             <div className="container" >
                 <div className="row">
                     <PathLink path={this.props.location.pathname} title="Test Cases" />
-                    <h3 style={{ color: '#aaa' }}>Make sure the test cases you insert cover the problem fully.</h3>
-                    <p style={{ color: '#aaa' }}>Add new test cases or edit the current ones. To edit, click on the respective button, edit the data and the changes will be saved when leaving the window.</p>
+                    <h3 className="page-subtitle">Make sure the test cases you insert cover the problem fully.</h3>
+                    <p className="page-subtitle">Add new test cases or edit the current ones. To edit, click on the respective button, edit the data and the changes will be saved when leaving the window.</p>
 
                     <div className="col-sm-3 col-xs-12 test-case-wrapper tc add-test-case">
                         <i className="material-icons manage-tournament-icon" id="add-test-case" onClick={this.onClickAdd}>add_circle_outline</i>

@@ -419,6 +419,25 @@ public class DatabaseController {
 		return problemRepository.save(p);
 	}
 
+	@PostMapping("/Problem/update")
+	public Problem updateProblem(@RequestBody Problem p ) {
+		Optional<Problem> problem = viewProblemById(p.getId());
+		System.out.println(p.toString());
+		if(problem.isPresent()) {
+			Problem problemUpdate = problem.get();
+		
+			problemUpdate.setName(p.getName());
+			problemUpdate.setDescription(p.getDescription());
+			problemUpdate.setConstraints(p.getConstraints());
+			problemUpdate.setInputFormat(p.getInputFormat());
+			problemUpdate.setOutputFormat(p.getOutputFormat());
+			
+			return problemRepository.save(problemUpdate);
+		}
+		
+		return new Problem();
+	}
+	
 	@PostMapping(path = "/Problem/addTestCase")
 	public void addTestCasesToProblem(@RequestParam long problemId, @RequestParam long testCaseId) {
 		Optional<TestCases> tc = testCasesRepository.findById(testCaseId);
@@ -835,7 +854,7 @@ public class DatabaseController {
 	public Tournament addTournament(@RequestBody Tournament t) {
 
 		Tournament tournament = new Tournament(t.getName(), t.getDescription(), t.getStartingDate(), t.getEndingDate(),
-				t.getCode(), t.getOwner());
+				t.getCode(), t.getOwner(), t.isShowWebsite());
 		return tournamentRepository.save(tournament);
 	}
 
@@ -889,6 +908,8 @@ public class DatabaseController {
 		boolean registered;
 		for (Tournament t : allTournaments) {
 
+			if(!t.isShowWebsite()) continue;
+			
 			registered = isUserRegisteredInTournament(userId, t.getId());
 
 			TournamentIsUserRegistrated tt = new TournamentIsUserRegistrated(t, registered);

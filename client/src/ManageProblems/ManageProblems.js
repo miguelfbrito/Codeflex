@@ -35,7 +35,7 @@ class ManageProblems extends React.Component {
         let content =
             <div className="add-problem-container">
                 <h3>There are no problems on this tournament yet.</h3>
-                <Link to={"/compete/manage-tournaments/" + splitUrl(this.props.location.pathname)[2] + "/add-problem"}>
+                <Link to={"/compete/manage-tournaments/" + splitUrl(this.props.location.pathname)[2] + "/add"}>
                     <input className="btn btn-primary" type="button" value="Add problem" />
                 </Link>
             </div>
@@ -80,11 +80,13 @@ class ManageProblems extends React.Component {
                         id: "icons",
                         accessor: t => (
                             <div>
-                                <i className="material-icons manage-tournament-icon" id="edit" onClick={this.onIconClick}>edit</i>
+                                <Link to={this.props.location.pathname + '/edit/' + textToLowerCaseNoSpaces(t.name)}>
+                                    < i className="material-icons manage-tournament-icon" id="edit" onClick={this.onIconClick}>edit</i>
+                                </Link>
                                 <i className="material-icons manage-tournament-icon" id="delete" onClick={this.onIconClick}>delete</i>
                                 {/*this.state.redirect && this.state.redirectDestination === 'edit' ?
                                 <Redirect to={{ pathname: "/compete/manage-tournaments/" + textToLowerCaseNoSpaces(t.tournament.name) }} /> : ''*/}
-                            </div>
+                            </div >
                         )
                     }
                 ]}
@@ -92,7 +94,8 @@ class ManageProblems extends React.Component {
                 pageSize={Math.min(this.state.problems.length, 25)}
                 style={{
                     height: Math.min(this.state.problems.length * 125, 1000) + "px" // This will force the table body to overflow and scroll, since there is not enough room
-                }}
+                }
+                }
                 showPagination={false}
                 className="-highlight"
             />

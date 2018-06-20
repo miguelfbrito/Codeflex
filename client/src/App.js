@@ -34,7 +34,8 @@ class App extends Component {
 
             <Route exact path="/compete/create-tournament" component={CreateTournament} />
             <Route exact path="/compete/manage-tournaments/:tournamentName/:problemName/test-cases" component={ManageTestCases} />
-            <Route exact path="/compete/manage-tournaments/:tournamentName/add-problem" component={AddProblem} />
+            <Route exact path="/compete/manage-tournaments/:tournamentName/edit/:problemName" component={AddProblem} />
+            <Route exact path="/compete/manage-tournaments/:tournamentName/add" component={AddProblem} />
             <Route exact path="/compete/manage-tournaments/:tournamentName" component={ManageProblems} />
             <Route exact path="/compete/manage-tournaments" component={ManageTournaments} />
 

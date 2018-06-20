@@ -2,7 +2,9 @@ import React from 'react';
 import PathLink from '../../PathLink/PathLink'
 import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
+import { Link } from 'react-router-dom';
 import htmlToDraft from 'html-to-draftjs';
+import { stateFromHTML } from 'draft-js-import-html';
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
 
 import { URL } from '../../commons/Constants';
@@ -15,6 +17,7 @@ class AddProblem extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            problemId: '',
             problemName: '',
             difficulty: {
                 id: '', name: ''
@@ -33,12 +36,40 @@ class AddProblem extends React.Component {
         this.onOutputFormatChange = this.onOutputFormatChange.bind(this);
         this.handleSelectBoxChange = this.handleSelectBoxChange.bind(this);
         this.saveProblem = this.saveProblem.bind(this);
+        this.fetchCurrentProblem = this.fetchCurrentProblem.bind(this);
+        this.updateProblem = this.updateProblem.bind(this);
     }
 
     componentDidMount() {
         fetch(URL + '/api/database/difficulty/view')
             .then(res => res.json()).then(data => { console.log(data); this.setState({ displayDifficulties: data }) })
+
+        const path = splitUrl(this.props.location.pathname);
+        if (path[3] === 'add') {
+        } else if (path[3] === 'edit') {
+            this.fetchCurrentProblem();
+        }
     }
+
+    fetchCurrentProblem() {
+        const problemName = splitUrl(this.props.location.pathname)[4]
+        fetch(URL + '/api/database/Problem/getProblemByName/' + problemName).then(res => res.json()).then(data => {
+            console.log('getting stuff')
+            console.log(data);
+
+            console.log(htmlToDraft(data.description)),
+                this.setState({
+                    problemId: data.id,
+                    problemName: data.name,
+                    description: EditorState.createWithContent(stateFromHTML(data.description)),
+                    constraints: EditorState.createWithContent(stateFromHTML(data.constraints)),
+                    inputFormat: EditorState.createWithContent(stateFromHTML(data.inputFormat)),
+                    outputFormat: EditorState.createWithContent(stateFromHTML(data.outputFormat)),
+                    creationDate: EditorState.createWithContent(stateFromHTML(data.creationDate))
+                })
+        })
+    }
+
 
     uploadImageCallBack(file) {
         return new Promise(
@@ -76,6 +107,7 @@ class AddProblem extends React.Component {
         this.setState({ inputFormat: change });
     }
     onOutputFormatChange(change) {
+        console.log(change);
         this.setState({ outputFormat: change });
     }
 
@@ -85,7 +117,40 @@ class AddProblem extends React.Component {
         this.setState({ [e.target.name]: { id: selectedItem.value, name: selectedItem.id } });
     }
 
+    updateProblem() {
+
+        const data = {
+                id: this.state.problemId,
+                name: this.state.problemName,
+                description: draftToHtml(convertToRaw(this.state.description.getCurrentContent())),
+                constraints: draftToHtml(convertToRaw(this.state.constraints.getCurrentContent())),
+                inputFormat: draftToHtml(convertToRaw(this.state.inputFormat.getCurrentContent())),
+                outputFormat: draftToHtml(convertToRaw(this.state.outputFormat.getCurrentContent()))
+        }
+
+        console.log("DATA SENT");
+        console.log(data);
+
+
+        fetch(URL + '/api/database/Problem/update', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        }).then(res => res.json()).then(data => {
+            console.log("PROBLEM UPDATED")
+            console.log(data);
+        })
+    }
+
     saveProblem() {
+
+        if (splitUrl(this.props.location.pathname)[3] === 'edit') {
+            this.updateProblem();
+            return;
+        }
+
         const data = {
             problem: {
                 name: this.state.problemName,
@@ -101,9 +166,9 @@ class AddProblem extends React.Component {
             },
             owner: {
                 id: JSON.parse(localStorage.getItem('userData')).id
-            }, 
-            tournament : {
-                name : splitUrl(this.props.location.pathname)[2]
+            },
+            tournament: {
+                name: splitUrl(this.props.location.pathname)[2]
             }
         }
 
@@ -135,7 +200,6 @@ class AddProblem extends React.Component {
                     <div className="col-sm-10 add-problem-textarea">
                         <input name="problemName" className="textbox-problem" onChange={this.onNameChange} value={this.state.problemName} type="text" id="input-problem-name" placeholder="Problem name" />
                     </div>
-                    {this.state.description !== '' && draftToHtml(convertToRaw(this.state.description.getCurrentContent()))}
                 </div>
 
                 <div className="row info-section">
@@ -254,7 +318,9 @@ class AddProblem extends React.Component {
                 </div>
                 <div className="row">
                     <div className="col-sm-offset-2 col-sm-10 col-xs-12">
-                        <input type="button" className="btn btn-primary" onClick={this.saveProblem} name="" id="save-problem" value="Save problem" />
+                        <Link to={"/compete/manage-tournaments/" + splitUrl(this.props.location.pathname)[2]}>
+                            <input type="button" className="btn btn-primary" onClick={this.saveProblem} name="" id="save-problem" value="Save problem" />
+                        </Link>
                     </div>
                 </div>
             </div>

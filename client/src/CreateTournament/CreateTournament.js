@@ -2,8 +2,9 @@ import React from 'react';
 import PathLink from '../PathLink/PathLink';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 import { URL } from '../commons/Constants';
-
+import '../commons/style.css';
 import '../../node_modules/react-datepicker/dist/react-datepicker.css';
 import './CreateTournament.css';
 
@@ -75,8 +76,8 @@ class CreateTournament extends React.Component {
                     <PathLink path={this.props.location.pathname} title="Create tournament" />
                     <div className="tournament-creation-container">
                         <div className="tournament-creation-top">
-                            <p>Host your own tournament at Codeflex and compete with your friends. You may as well suggest a tournament to be featured on the Tournament page.</p>
-                            <p>Start by filling the data below.</p>
+                            <h3 className="page-subtitle">Host your own tournament at Codeflex and compete with your friends. You may as well suggest a tournament to be featured on the Tournament page.</h3>
+                            <p className="page-subtitle">Start by filling the data below.</p>
                             <br />
                         </div>
                         <form className="form-horizontal">
@@ -136,7 +137,7 @@ class CreateTournament extends React.Component {
                             </div>
                             <div className="form-group">
                                 <div className="col-sm-offset-1 col-sm-10">
-                                    <input type="button" id="btn-create" className="btn btn-default" onClick={this.createTournament} value="Create" />
+                                    <Link to={"/compete/manage-tournaments/" + this.state.name}><input type="button" id="btn-create" className="btn btn-codeflex" onClick={this.createTournament} value="Create" /></Link>
                                 </div>
                             </div>
                         </form>
