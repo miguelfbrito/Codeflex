@@ -137,8 +137,16 @@ class ManageTestCases extends React.Component {
         3. 
     */
 
+    deleteTestCase(index){
+
+        fetch(URL + '/api/database/TestCases/delete/' + index, {
+            method: 'DELETE'
+        }).then(() => {
+            this.fetchTestCases();
+        });
+    }
+
     onNewTestCaseModalClose() {
-        alert(this.newInput.current.value);
         const data = {
             input: this.newInput.current.value,
             output: this.newOutput.current.value,
@@ -208,7 +216,10 @@ class ManageTestCases extends React.Component {
 
                     {this.state.testCases.map((t, i) => (
                         <div className="col-sm-3 col-xs-12 test-case-wrapper tc">
-                            <h3>Test Case {i + 1}</h3>
+                            <div >
+                                <h3 style={{ display: 'inline-block' }}>Test Case {i + 1}</h3>
+                                <i style={{ position: 'absolute', top: '20px', right: '15px' }} className="material-icons" onClick={() => this.deleteTestCase(t.id)}>delete</i>
+                            </div>
                             <hr style={{ borderBottom: 'none', borderLeft: 'none', borderRight: 'none' }} />
                             <input className="btn btn-tc" type="button" value="Input" onClick={() => this.onClick(t.input, 'input', "Add input", t)} />
                             <input className="btn btn-tc" type="button" value="Output" onClick={() => this.onClick(t.output, 'output', "Add output", t)} />

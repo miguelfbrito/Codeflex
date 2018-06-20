@@ -155,7 +155,7 @@ class AddProblem extends React.Component {
                 <div className="row info-section">
                     <div className="col-sm-2 add-problem-desc">
                         <h3>Problem Statement</h3>
-                        <p>Explain your problem here. Keep it simple and clean.</p>
+                        <p>Explain your problem here. Keep it simple and clear.</p>
                     </div>
                     <div className="col-sm-10 add-problem-textarea">
                         <div className="text-editor-wrapper">

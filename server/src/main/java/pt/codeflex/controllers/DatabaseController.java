@@ -786,7 +786,7 @@ public class DatabaseController {
 		}
 	}
 
-	@PostMapping(path = "/TestCases/delete/{id}")
+	@DeleteMapping(path = "/TestCases/delete/{id}")
 	public void deleteTestCases(@PathVariable long id) {
 		testCasesRepository.deleteById(id);
 	}
