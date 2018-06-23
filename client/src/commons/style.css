@@ -20,7 +20,9 @@ p.page-subtitle {
     background-color: white;
     min-width: 75px;
     min-height: 35px;
-    box-shadow: 0px 0px 5px #aaa;
+    box-shadow: 0px 0px 4px #aaa;
+    border-radius: 0;
+    color: black;
 }
 
 .btn-codeflex:hover {

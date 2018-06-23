@@ -2,8 +2,11 @@ import React from 'react';
 import PathLink from '../PathLink/PathLink';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
+
+import { textToLowerCaseNoSpaces} from '../commons/Utils';
 import { Link } from 'react-router-dom';
 import { URL } from '../commons/Constants';
+
 import '../commons/style.css';
 import '../../node_modules/react-datepicker/dist/react-datepicker.css';
 import './CreateTournament.css';
@@ -137,7 +140,7 @@ class CreateTournament extends React.Component {
                             </div>
                             <div className="form-group">
                                 <div className="col-sm-offset-1 col-sm-10">
-                                    <Link to={"/compete/manage-tournaments/" + this.state.name}><input type="button" id="btn-create" className="btn btn-codeflex" onClick={this.createTournament} value="Create" /></Link>
+                                    <Link to={"/compete/manage-tournaments/" + textToLowerCaseNoSpaces(this.state.name)}><input type="button" id="btn-create" className="btn btn-codeflex" onClick={this.createTournament} value="Create" /></Link>
                                 </div>
                             </div>
                         </form>

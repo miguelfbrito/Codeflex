@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Script from 'react-load-script';
 import AceEditor from 'react-ace';
 import brace from 'brace';
+import Parser from 'html-react-parser';
 
 import { Redirect } from 'react-router-dom';
 import { URL } from '../commons/Constants';
@@ -206,7 +207,7 @@ public class Solution {
                     } else if (name === 'Runtime Error') {
 
                     }
-                    console.log("error message " + this.state.results.result.message);
+                    //console.log("error message " + this.state.results.result.message);
                 }
 
                 // HERE
@@ -283,11 +284,27 @@ public class Solution {
                 </table>
             </div>;
 
+        const problem = this.state.problem;
         const problemSection =
             <div>
                 <div className="col-sm-10 problem-description-container ">
-                    <MathJax text={this.state.problem.description} />
-                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloremque voluptate officia eum natus facilis ratione pariatur et iusto amet numquam reiciendis non nesciunt quaerat ipsam eveniet neque voluptatem corporis, possimus mollitia. Ratione animi mollitia asperiores dolore perferendis. Sapiente aliquid eaque nobis officiis sit aspernatur earum cupiditate atque. Hic nemo, inventore, dolorem quisquam architecto eius in nulla quia quo magni itaque accusantium. Iste excepturi maiores veritatis omnis itaque saepe hic est reprehenderit? Explicabo aliquid temporibus, atque dolore numquam excepturi sit iusto, debitis deleniti ex impedit quas voluptas quia! Molestias totam, minus labore quae aliquid explicabo accusamus nostrum magnam architecto laborum provident impedit temporibus error, nihil voluptate magni, quisquam et praesentium deserunt unde aperiam? Voluptatum, quasi quidem dignissimos alias atque fuga omnis voluptate veritatis recusandae nostrum excepturi odio optio ducimus dicta quos aliquid tempora cupiditate autem fugiat, ab aspernatur enim? Delectus illo reiciendis nemo magni, ab maiores qui sed! Nihil, quisquam explicabo! Itaque sapiente odit quae. Eum voluptates et error amet aliquid quibusdam veniam reprehenderit doloribus. Vitae earum cumque animi excepturi eveniet reiciendis rerum commodi nisi quos, repellat ipsam non veniam eos ea repellendus. Voluptate amet harum mollitia et magni quo officiis veniam, rerum odit quis magnam ducimus laborum quae, quod molestiae sequi consectetur. Labore dolore aliquam earum quidem consequatur dignissimos voluptate temporibus. Reiciendis esse fugit, debitis iusto consequuntur at nisi ducimus repellat hic cum aspernatur ab obcaecati exercitationem inventore, expedita accusamus pariatur quos beatae est in. Ipsam similique ab doloremque! Non dolore reiciendis, aut ducimus, esse inventore sunt odit dicta sed beatae eaque id? Quod at, culpa eligendi fugit, ex mollitia reprehenderit deserunt minima unde, consequuntur commodi adipisci sapiente doloribus odio enim iusto? Autem officia tempora sint ut magnam inventore cumque recusandae sapiente rem molestias sit obcaecati natus itaque, aliquid perferendis earum quaerat ducimus, modi sed facere assumenda ex. Reprehenderit, dolore!</p>
+                    <MathJax/>
+                    <h3>Problem Statement</h3>
+                    <hr style={{borderWidth : 'thin'}} />
+                    {Parser(String(problem.description))}                    
+
+                    <h3>Constraints</h3>
+                    <hr style={{borderWidth : 'thin'}} />
+                    {Parser(String(problem.constraints))}                    
+
+                    <h3>Input Format</h3>
+                    <hr style={{borderWidth : 'thin'}} />
+                    {Parser(String(problem.inputFormat))}                    
+
+                    <h3>Output Format</h3>
+                    <hr style={{borderWidth : 'thin'}} />
+                    {Parser(String(problem.outputFormat))}                    
+
                 </div>
                 {problemInformation}
                 <div className="col-sm-12 ace-editor-container">

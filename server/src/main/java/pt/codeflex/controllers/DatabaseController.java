@@ -454,8 +454,11 @@ public class DatabaseController {
 	public Problem addTournament(@RequestBody AddTournamentToProblem info) {
 
 		Tournament tournament = viewTournamentByName(info.getTournament().getName());
-		Problem problem = viewProblemByName(info.getProblem().getName());
 
+		// TODO : remove
+		tournament.setShowWebsite(true);
+		
+		Problem problem = viewProblemByName(info.getProblem().getName());
 		if (tournament == null || problem == null)
 			return null;
 
@@ -855,6 +858,8 @@ public class DatabaseController {
 
 		Tournament tournament = new Tournament(t.getName(), t.getDescription(), t.getStartingDate(), t.getEndingDate(),
 				t.getCode(), t.getOwner(), t.isShowWebsite());
+		// TODO : remove
+		tournament.setShowWebsite(true);
 		return tournamentRepository.save(tournament);
 	}
 

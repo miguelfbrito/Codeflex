@@ -319,7 +319,7 @@ class AddProblem extends React.Component {
                 <div className="row">
                     <div className="col-sm-offset-2 col-sm-10 col-xs-12">
                         <Link to={"/compete/manage-tournaments/" + splitUrl(this.props.location.pathname)[2]}>
-                            <input type="button" className="btn btn-primary" onClick={this.saveProblem} name="" id="save-problem" value="Save problem" />
+                            <input type="button" className="btn btn-codeflex" onClick={this.saveProblem} name="" id="save-problem" value="Save problem" />
                         </Link>
                     </div>
                 </div>

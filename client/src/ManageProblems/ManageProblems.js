@@ -36,7 +36,7 @@ class ManageProblems extends React.Component {
             <div className="add-problem-container">
                 <h3>There are no problems on this tournament yet.</h3>
                 <Link to={"/compete/manage-tournaments/" + splitUrl(this.props.location.pathname)[2] + "/add"}>
-                    <input className="btn btn-primary" type="button" value="Add problem" />
+                    <input className="btn btn-codeflex" type="button" value="Add problem" />
                 </Link>
             </div>
 

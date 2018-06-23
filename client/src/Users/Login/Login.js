@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Login.css'
 
-import { URL } from '../../commons/Constants';
+import {URL, URL_FRONT } from '../../commons/Constants';
 
 class Login extends Component {
 
@@ -37,7 +37,7 @@ class Login extends Component {
         }).then(res => res.json()).then(data => {
             if (data.message === 'Logged in') {
                 localStorage.setItem('userData', JSON.stringify({ id: data.object.id, username: data.object.username, email: data.object.email }));
-                window.location.href = "http://localhost:3000/";
+                window.location.href = URL_FRONT + "/";
             }
 
             // TODO : notify the user about invalid data
@@ -63,7 +63,7 @@ class Login extends Component {
         }).then(res => res.json()).then(data => {
             console.log(data);
             if (data.object != null) {
-                window.location.href = "http://localhost:3000/";
+                window.location.href =  URL_FRONT;
                 const userData = { id: data.object.id, username: data.object.username, email: data.object.email };
                 localStorage.setItem('userData', JSON.stringify(userData));
             }
