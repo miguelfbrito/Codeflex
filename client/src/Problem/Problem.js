@@ -3,15 +3,14 @@ import Script from 'react-load-script';
 import AceEditor from 'react-ace';
 import brace from 'brace';
 import Parser from 'html-react-parser';
-
 import { Redirect } from 'react-router-dom';
 import { URL } from '../commons/Constants';
 import { splitUrl, textToLowerCaseNoSpaces, dateWithDay } from '../commons/Utils';
-import MathJax from './MathJax/MathJax';
 import Submissions from './Submissions/Submissions';
 import Leaderboard from './Leaderboard/Leaderboard';
 import CompilerError from './CompilerError/CompilerError';
 import PathLink from '../PathLink/PathLink';
+import $ from 'jquery';
 
 import 'brace/mode/java';
 import 'brace/mode/javascript';
@@ -32,6 +31,7 @@ class Problem extends Component {
         super(props);
         this.state = {
             problemLoaded: false,
+            scriptLoaded: false,
             problem: [],
             sentSubmission: {
                 submitting: false,
@@ -84,11 +84,15 @@ public class Solution {
 
 }`
         }
+
+        this.mathJaxRender = React.createRef();
+
         this.handleSelectBoxChange = this.handleSelectBoxChange.bind(this);
         this.onAceChange = this.onAceChange.bind(this);
         this.submitSubmission = this.submitSubmission.bind(this);
         this.fetchForResults = this.fetchForResults.bind(this);
         this.onPageClick = this.onPageClick.bind(this);
+        this.handleScriptLoad = this.handleScriptLoad.bind(this);
     }
 
     componentDidMount() {
@@ -112,6 +116,23 @@ public class Solution {
         } else {
             console.log('Storage doesnt exists');
             localStorage.setItem('problem-page', JSON.stringify(this.state.page));
+        }
+
+
+
+    }
+
+    componentDidUpdate() {
+        let MathJax = $(window)[0].MathJax;
+        if (this.state.page.problem) {
+            try {
+                console.log("UPDATTTTTT")
+                console.log(MathJax);
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+            } catch (err) {
+            }
+        } else {
+            MathJax.Hub.Queue();
         }
     }
 
@@ -181,10 +202,10 @@ public class Solution {
                     /* TODO : corrigir este corner case
                         caso a solução seja válida e faça 
                         um update que dará uma length de 1 emitirá um erro
-
+    
                         alterar o if para garantir que apenas soluções
                         com erro o ativem
-
+    
                     */
 
                     let submissionResult = data[0].submissions.result;
@@ -228,6 +249,11 @@ public class Solution {
         this.setState({ page: newPage });
         localStorage.setItem('problem-page', JSON.stringify(newPage));
         console.log(this.state.page);
+    }
+
+    handleScriptLoad() {
+        console.log('LOADING SCRIPT');
+        this.setState({ scriptLoaded: true })
     }
 
     render() {
@@ -285,25 +311,22 @@ public class Solution {
             </div>;
 
         const problem = this.state.problem;
+
+
         const problemSection =
             <div>
-                <div className="col-sm-10 problem-description-container ">
-                    <MathJax/>
+                <div className="col-sm-10 problem-description-container" id="problem-section">
                     <h3>Problem Statement</h3>
-                    <hr style={{borderWidth : 'thin'}} />
-                    {Parser(String(problem.description))}                    
+                    {Parser(String(problem.description))}
 
                     <h3>Constraints</h3>
-                    <hr style={{borderWidth : 'thin'}} />
-                    {Parser(String(problem.constraints))}                    
+                    {Parser(String(problem.description))}
 
                     <h3>Input Format</h3>
-                    <hr style={{borderWidth : 'thin'}} />
-                    {Parser(String(problem.inputFormat))}                    
+                    {Parser(String(problem.description))}
 
                     <h3>Output Format</h3>
-                    <hr style={{borderWidth : 'thin'}} />
-                    {Parser(String(problem.outputFormat))}                    
+                    {Parser(String(problem.outputFormat))}
 
                 </div>
                 {problemInformation}
@@ -353,14 +376,19 @@ public class Solution {
                 </div>
             </div>;
 
-        let sectionToRender = problemSection;
+        let sectionToRender = "";
         console.log('STATE')
         console.log(this.state);
         if (this.state.page.submissions) {
             sectionToRender = submissionSection;
         } else if (this.state.page.leaderboard) {
             sectionToRender = leaderboardSection;
+        } else {
+            if (this.state.problemLoaded) {
+                sectionToRender = problemSection;
+            }
         }
+
 
         return (
             <div className="container" >
