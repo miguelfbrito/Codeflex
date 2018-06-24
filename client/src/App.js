@@ -16,6 +16,7 @@ import ManageProblems from './ManageProblems/ManageProblems';
 import AddProblem from './Problem/AddProblem/AddProblem';
 import GlobalLeaderboard from './GlobalLeaderboard/GlobalLeaderboard';
 import ManageTestCases from './ManageTestCases/ManageTestCases';
+import ManageContent from './ManageContent/ManageContent';
 
 class App extends Component {
   render() {
@@ -26,6 +27,8 @@ class App extends Component {
           <Switch>
             <Route exact path="/login" component={Login} />
             <Route exact path="/problem" component={Problem} />
+            <Route exact path="/manage/problems" component={ManageProblems} />
+            <Route exact path="/manage" component={ManageContent} />
 
             <Route exact path="/practise/:categoryName/:problemName" component={Problem} />
             <Route exact path="/practise/:categoryName/:problemName/view-results" component={ViewResults} />

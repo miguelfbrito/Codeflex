@@ -8,9 +8,11 @@ import org.springframework.stereotype.Repository;
 
 import pt.codeflex.databasemodels.Problem;
 import pt.codeflex.databasemodels.Tournament;
+import pt.codeflex.databasemodels.Users;
 
 @Repository
 public interface ProblemRepository extends JpaRepository<Problem, Long> {
 	Problem findByName(String name);
 	List<Problem> findAllByTournament(Tournament tournament);
+	List<Problem> findAllByOwner(Users owner);
 }

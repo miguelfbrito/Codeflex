@@ -13,17 +13,37 @@ class ManageProblems extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            origin: '',
             problems: []
         }
     }
 
     componentDidMount() {
-        const problemName = splitUrl(this.props.location.pathname)[2];
-        fetch(URL + '/api/database/Tournament/getAllProblemsByName/' + problemName).then(res => res.json())
-            .then(data => {
-                console.log(data);
-                this.setState({ problems: data });
-            })
+        const url = splitUrl(this.props.location.pathname);
+        let origin = '';
+        if (url[0] === 'manage') {
+            this.setState({ origin: 'manage' });
+            origin = 'manage';
+        } else {
+            this.setState({ origin: 'tournament' });
+            origin = 'tournament'
+        }
+
+        if (origin === 'tournament') {
+            fetch(URL + '/api/database/Tournament/getAllProblemsByName/' + url[2]).then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    this.setState({ problems: data });
+                })
+        } else if (origin === 'manage') {
+            fetch(URL + '/api/database/Problem/viewAllByOwnerId/' + JSON.parse(localStorage.getItem('userData')).id)
+                .then(res => res.json())
+                .then(data => {
+                    console.log('Getting problems from manage')
+                    console.log(data);
+                    this.setState({ problems: data });
+                })
+        }
     }
 
     onIconClick(e) {

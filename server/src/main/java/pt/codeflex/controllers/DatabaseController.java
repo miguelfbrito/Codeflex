@@ -379,6 +379,16 @@ public class DatabaseController {
 		return problemRepository.findByName(name.replace("-", " "));
 	}
 
+	@GetMapping(path = "/Problem/viewAllByOwnerId/{ownerId}")
+	public List<Problem> viewProblemByName(@PathVariable long ownerId) {
+		Optional<Users> owner = viewUsersById(ownerId);
+		if (owner.isPresent()) {
+			return problemRepository.findAllByOwner(owner.get());
+
+		}
+		return new ArrayList<>();
+	}
+
 	@PostMapping(path = "/Problem/add")
 	public Problem addProblem(@RequestBody AddProblem addProblem) {
 
@@ -420,24 +430,24 @@ public class DatabaseController {
 	}
 
 	@PostMapping("/Problem/update")
-	public Problem updateProblem(@RequestBody Problem p ) {
+	public Problem updateProblem(@RequestBody Problem p) {
 		Optional<Problem> problem = viewProblemById(p.getId());
 		System.out.println(p.toString());
-		if(problem.isPresent()) {
+		if (problem.isPresent()) {
 			Problem problemUpdate = problem.get();
-		
+
 			problemUpdate.setName(p.getName());
 			problemUpdate.setDescription(p.getDescription());
 			problemUpdate.setConstraints(p.getConstraints());
 			problemUpdate.setInputFormat(p.getInputFormat());
 			problemUpdate.setOutputFormat(p.getOutputFormat());
-			
+
 			return problemRepository.save(problemUpdate);
 		}
-		
+
 		return new Problem();
 	}
-	
+
 	@PostMapping(path = "/Problem/addTestCase")
 	public void addTestCasesToProblem(@RequestParam long problemId, @RequestParam long testCaseId) {
 		Optional<TestCases> tc = testCasesRepository.findById(testCaseId);
@@ -457,7 +467,7 @@ public class DatabaseController {
 
 		// TODO : remove
 		tournament.setShowWebsite(true);
-		
+
 		Problem problem = viewProblemByName(info.getProblem().getName());
 		if (tournament == null || problem == null)
 			return null;
@@ -864,11 +874,11 @@ public class DatabaseController {
 	}
 
 	@PostMapping("/Tournament/update")
-	public Tournament updateTournament(@RequestBody Tournament t ) {
+	public Tournament updateTournament(@RequestBody Tournament t) {
 		Optional<Tournament> tournament = viewTournamentById(t.getId());
-		if(tournament.isPresent()) {
-			Tournament tournamentUpdate= tournament.get();
-			
+		if (tournament.isPresent()) {
+			Tournament tournamentUpdate = tournament.get();
+
 			tournamentUpdate.setCode(t.getCode());
 			tournamentUpdate.setDescription(t.getDescription());
 			tournamentUpdate.setEndingDate(t.getEndingDate());
@@ -878,12 +888,13 @@ public class DatabaseController {
 			tournamentUpdate.setOwner(t.getOwner());
 			tournamentUpdate.setShowWebsite(t.isShowWebsite());
 			tournamentUpdate.setStartingDate(t.getStartingDate());
-			
+
 			return tournamentRepository.save(tournamentUpdate);
 		}
-		
+
 		return new Tournament();
 	}
+
 	@GetMapping("/Tournament/viewAllByOwnerId/{ownerId}")
 	public List<Tournament> viewAllByOwnerId(@PathVariable long ownerId) {
 		Optional<Users> u = viewUsersById(ownerId);
@@ -934,8 +945,9 @@ public class DatabaseController {
 		boolean registered;
 		for (Tournament t : allTournaments) {
 
-			if(!t.isShowWebsite()) continue;
-			
+			if (!t.isShowWebsite())
+				continue;
+
 			registered = isUserRegisteredInTournament(userId, t.getId());
 
 			TournamentIsUserRegistrated tt = new TournamentIsUserRegistrated(t, registered);

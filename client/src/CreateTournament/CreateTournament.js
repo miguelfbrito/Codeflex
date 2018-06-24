@@ -133,7 +133,7 @@ class CreateTournament extends React.Component {
                             </div>
                             <div className="form-group">
                                 <label htmlFor="tournamentName" className="col-sm-1 control-label">Private Code</label>
-                                <div className="col-sm-5" style={{ display: 'inline-block' }}>
+                                <div className="col-sm-4" style={{ display: 'inline-block' }}>
                                     <input type="code" className="form-control" id="privateCode" onChange={this.handleChange} placeholder="Private code" />
                                     <p className='tournament-extra-info'>Add a private code that you can share with your friends to register on the tournament.</p>
                                 </div>

@@ -58,8 +58,8 @@ class Navbar extends Component {
                             </Link>
 
                             <ul className="dropdown-menu">
+                                <li><Link to="/manage"><p>Manage Content</p></Link></li>
                                 <li><Link to="/"><p>Settings</p></Link></li>
-                                <li><Link to="/"><p>Administration</p></Link></li>
                                 <li><Link to="/" onClick={this.logoutUser}><p>Logout</p></Link></li>
                             </ul>
                         </li>

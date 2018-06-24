@@ -122,7 +122,8 @@ class ListTournaments extends React.Component {
 
         return (
             <div className="container">
-                <div className="row"> <PathLink path={this.props.location.pathname} title="Tournaments" />
+                <div className="row"> 
+                <PathLink path={this.props.location.pathname} title="Tournaments" />
                     {/*<Popup timeoutClose={1250}>
                         <PopupInformation />
         </Popup>*/}
