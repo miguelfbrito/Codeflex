@@ -51,7 +51,7 @@ class GlobalLeaderboard extends React.Component {
                     {
                         Header: "Rating",
                         id: "rating",
-                        accessor: u => u.rating
+                        accessor: u => Math.round(u.rating)
                     }
 
 

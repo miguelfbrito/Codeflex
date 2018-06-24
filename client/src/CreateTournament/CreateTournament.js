@@ -122,7 +122,7 @@ class CreateTournament extends React.Component {
                                         selected={this.state.endDate}
                                         selectsEnd
                                         showTimeSelect
-                                        timeIntervals={15}
+                                        timeIntervals={4}
                                         startDate={this.state.startDate}
                                         endDate={this.state.endDate}
                                         onChange={this.handleChangeEnd}

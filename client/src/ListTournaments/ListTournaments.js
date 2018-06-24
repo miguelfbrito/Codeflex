@@ -5,7 +5,7 @@ import Popup from '../Popup/Popup';
 
 import { Redirect } from 'react-router-dom';
 import { URL } from '../commons/Constants';
-import { dateWithHoursAndDay, textToLowerCaseNoSpaces } from '../commons/Utils';
+import { dateWithHoursAndDay, textToLowerCaseNoSpaces, getTimeHoursMins} from '../commons/Utils';
 
 import './ListTournaments.css';
 
@@ -84,10 +84,11 @@ class ListTournaments extends React.Component {
                     <div key={t.tournament.id} className="col-sm-10 col-md-10 col-xs-12">
                         <p>{t.tournament.name}</p>
                         <p>{t.tournament.description}</p>
-                        {new Date(t.tournament.startingDate).getTime() > new Date().getTime() ? <p className="green-text">Starting at {dateWithHoursAndDay(t.tournament.startingDate)}</p> : ''}
+                        {new Date(t.tournament.startingDate).getTime() > new Date().getTime() ? <p className="green-text">Starting at {dateWithHoursAndDay(t.tournament.startingDate)}</p> 
+                        : <p className="red-text">Finishing in {getTimeHoursMins(new Date(t.tournament.endingDate).getTime() - new Date().getTime())}</p>}
                     </div>
                     <div className="col-sm-2 col-md-2 col-xs-4 button-container-tournaments" >
-                        <input type="submit" className="btn btn-primary" value={
+                        <input type="submit" className="btn btn-codeflex" value={
                             t.registered ? (new Date(t.tournament.startingDate).getTime() >= new Date().getTime() ? 'Starting soon' : 'Enter') : 'Sign Up'
                         }
                             onClick={(e) => this.onClickTournament(e.target.value, t.tournament.id, t.tournament.name)} />
@@ -105,7 +106,7 @@ class ListTournaments extends React.Component {
                         <p>{t.tournament.description}</p>
                     </div>
                     <div className="col-sm-2 col-md-2 col-xs-4 button-container-tournaments" >
-                        <input type="submit" className="btn btn-primary" value="View Problems" />
+                        <input type="submit" className="btn btn-codeflex" value="View Problems" />
                     </div>
                 </div>
             ))

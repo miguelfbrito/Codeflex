@@ -1,5 +1,6 @@
 package pt.codeflex.databasemodels;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -33,6 +34,8 @@ public class Tournament {
 	private String code;
 	
 	private boolean showWebsite;
+	
+	private boolean open;
 
 	@ManyToOne
 	private Users owner;
@@ -44,13 +47,16 @@ public class Tournament {
 		this.endingDate = endingDate;
 		if (code != null) {
 			String hash = Hash.getHash(name + startingDate.toString() + endingDate.toString(), "MD5");
-			System.out.println("HASH " + hash);
 			this.link = hash;
 		}
 		this.showWebsite = showWebsite;
 		this.owner = owner;
 		this.code = code;
+		long currentDate = Calendar.getInstance().getTimeInMillis();
+		this.open = (startingDate.getTime() <= currentDate && endingDate.getTime() >= currentDate) ? true : false;
 	}
+	
+	
 
 	public Tournament() {
 	}
@@ -125,6 +131,14 @@ public class Tournament {
 
 	public void setShowWebsite(boolean showWebsite) {
 		this.showWebsite = showWebsite;
+	}
+
+	public boolean isOpen() {
+		return open;
+	}
+
+	public void setOpen(boolean open) {
+		this.open = open;
 	}
 
 }

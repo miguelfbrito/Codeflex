@@ -19,6 +19,7 @@ class AddProblem extends React.Component {
         this.state = {
             problemId: '',
             problemName: '',
+            problemMaxScore: '',
             difficulty: {
                 id: '', name: ''
             },
@@ -29,7 +30,7 @@ class AddProblem extends React.Component {
             outputFormat: ''
         }
 
-        this.onNameChange = this.onNameChange.bind(this);
+        this.onTextBoxChange = this.onTextBoxChange.bind(this);
         this.onDescriptionChange = this.onDescriptionChange.bind(this);
         this.onConstraintChange = this.onConstraintChange.bind(this);
         this.onInputFormatChange = this.onInputFormatChange.bind(this);
@@ -92,7 +93,7 @@ class AddProblem extends React.Component {
         );
     }
 
-    onNameChange(e) {
+    onTextBoxChange(e) {
         this.setState({ [e.target.name]: e.target.value });
     }
 
@@ -120,12 +121,13 @@ class AddProblem extends React.Component {
     updateProblem() {
 
         const data = {
-                id: this.state.problemId,
-                name: this.state.problemName,
-                description: draftToHtml(convertToRaw(this.state.description.getCurrentContent())),
-                constraints: draftToHtml(convertToRaw(this.state.constraints.getCurrentContent())),
-                inputFormat: draftToHtml(convertToRaw(this.state.inputFormat.getCurrentContent())),
-                outputFormat: draftToHtml(convertToRaw(this.state.outputFormat.getCurrentContent()))
+            id: this.state.problemId,
+            name: this.state.problemName,
+            maxScore: this.state.problemMaxScore,
+            description: draftToHtml(convertToRaw(this.state.description.getCurrentContent())),
+            constraints: draftToHtml(convertToRaw(this.state.constraints.getCurrentContent())),
+            inputFormat: draftToHtml(convertToRaw(this.state.inputFormat.getCurrentContent())),
+            outputFormat: draftToHtml(convertToRaw(this.state.outputFormat.getCurrentContent()))
         }
 
         console.log("DATA SENT");
@@ -154,6 +156,7 @@ class AddProblem extends React.Component {
         const data = {
             problem: {
                 name: this.state.problemName,
+                maxScore: this.state.problemMaxScore,
                 description: draftToHtml(convertToRaw(this.state.description.getCurrentContent())),
                 constraints: draftToHtml(convertToRaw(this.state.constraints.getCurrentContent())),
                 inputFormat: draftToHtml(convertToRaw(this.state.inputFormat.getCurrentContent())),
@@ -180,7 +183,9 @@ class AddProblem extends React.Component {
                 'Content-Type': 'application/json'
             })
         }).then(res => res.json()).then(data => {
-
+            console.log(data.error);
+            console.log(data.message);
+            console.log(data.message.split("propertyPath=")[1].split(',')[0]);
             console.log(data);
             // TODO : notify the user about invalid data
         })
@@ -198,7 +203,7 @@ class AddProblem extends React.Component {
                         <p>Add a name to your problem.</p>
                     </div>
                     <div className="col-sm-10 add-problem-textarea">
-                        <input name="problemName" className="textbox-problem" onChange={this.onNameChange} value={this.state.problemName} type="text" id="input-problem-name" placeholder="Problem name" />
+                        <input name="problemName" className="textbox-problem" onChange={this.onTextBoxChange} value={this.state.problemName} type="text" id="input-problem-name" placeholder="Problem name" />
                     </div>
                 </div>
 
@@ -315,12 +320,22 @@ class AddProblem extends React.Component {
                             />
                         </div>
                     </div>
+
+                </div>
+                <div className="row info-section">
+                    <div className="col-sm-2 add-problem-desc">
+                        <h3>Max score</h3>
+                        <p>Max score of the problem. It will be divided equally by all the test cases that aren't shown to the user.</p>
+                    </div>
+                    <div className="col-sm-10 add-problem-textarea">
+                        <input name="problemMaxScore" className="textbox-problem" onChange={this.onTextBoxChange} value={this.state.problemMaxScore} type="text" placeholder="Max score (e.g. 100)" />
+                    </div>
                 </div>
                 <div className="row">
                     <div className="col-sm-offset-2 col-sm-10 col-xs-12">
-                        <Link to={"/compete/manage-tournaments/" + splitUrl(this.props.location.pathname)[2]}>
-                            <input type="button" className="btn btn-codeflex" onClick={this.saveProblem} name="" id="save-problem" value="Save problem" />
-                        </Link>
+                        {/*  <Link to={"/compete/manage-tournaments/" + splitUrl(this.props.location.pathname)[2]}>*/}
+                        <input type="button" className="btn btn-codeflex" onClick={this.saveProblem} name="" id="save-problem" value="Save problem" />
+                        {/*</Link>*/}
                     </div>
                 </div>
             </div>

@@ -863,6 +863,27 @@ public class DatabaseController {
 		return tournamentRepository.save(tournament);
 	}
 
+	@PostMapping("/Tournament/update")
+	public Tournament updateTournament(@RequestBody Tournament t ) {
+		Optional<Tournament> tournament = viewTournamentById(t.getId());
+		if(tournament.isPresent()) {
+			Tournament tournamentUpdate= tournament.get();
+			
+			tournamentUpdate.setCode(t.getCode());
+			tournamentUpdate.setDescription(t.getDescription());
+			tournamentUpdate.setEndingDate(t.getEndingDate());
+			tournamentUpdate.setLink(t.getLink());
+			tournamentUpdate.setName(t.getName());
+			tournamentUpdate.setOpen(t.isOpen());
+			tournamentUpdate.setOwner(t.getOwner());
+			tournamentUpdate.setShowWebsite(t.isShowWebsite());
+			tournamentUpdate.setStartingDate(t.getStartingDate());
+			
+			return tournamentRepository.save(tournamentUpdate);
+		}
+		
+		return new Tournament();
+	}
 	@GetMapping("/Tournament/viewAllByOwnerId/{ownerId}")
 	public List<Tournament> viewAllByOwnerId(@PathVariable long ownerId) {
 		Optional<Users> u = viewUsersById(ownerId);
