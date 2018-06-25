@@ -79,7 +79,7 @@ class CreateTournament extends React.Component {
                     <PathLink path={this.props.location.pathname} title="Create tournament" />
                     <div className="tournament-creation-container">
                         <div className="tournament-creation-top">
-                            <h3 className="page-subtitle">Host your own tournament at Codeflex and compete with your friends. You may as well suggest a tournament to be featured on the Tournament page.</h3>
+                            <h3 className="page-subtitle">Host your own tournament at Codeflex and compete with your friends.</h3>
                             <p className="page-subtitle">Start by filling the data below.</p>
                             <br />
                         </div>

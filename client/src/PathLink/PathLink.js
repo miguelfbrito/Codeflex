@@ -16,11 +16,16 @@ class PathLink extends React.Component {
         });
     }
 
-    buildPath(pathname, index){
+    buildPath(pathname, index) {
         let finalPath = '/';
-        for(let i = 0; i<=index; i++){
+        for (let i = 0; i <= index; i++) {
             finalPath += pathname[i];
-            if(i < index){
+
+            if(this.props.removePath.includes[i]){
+                return "";
+            }
+
+            if (i < index) {
                 finalPath += '/';
             }
         }
@@ -30,9 +35,9 @@ class PathLink extends React.Component {
 
     render() {
         let pathname = splitUrl(this.props.path);
-       
+
         let title = this.props.title;
-        if(typeof title !== 'undefined'){
+        if (typeof title !== 'undefined') {
             title.replace('-', ' ');
         }
 
@@ -54,7 +59,7 @@ class PathLink extends React.Component {
                 </div>
                 <div className="page-title-container">
                     <h2 className="page-title">{title}</h2>
-                    <hr id="pathlink-hr"/>
+                    <hr id="pathlink-hr" />
                 </div>
             </div>
         )
@@ -63,7 +68,8 @@ class PathLink extends React.Component {
 }
 
 PathLink.defaultProps = {
-    removeHyphen: true
+    removeHyphen: true,
+    removePath : []
 }
 
 export default PathLink;

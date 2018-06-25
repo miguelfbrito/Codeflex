@@ -1,6 +1,7 @@
 package pt.codeflex.models;
 
 import pt.codeflex.databasemodels.Difficulty;
+import pt.codeflex.databasemodels.PractiseCategory;
 import pt.codeflex.databasemodels.Problem;
 import pt.codeflex.databasemodels.Tournament;
 import pt.codeflex.databasemodels.Users;
@@ -10,6 +11,7 @@ public class AddProblem {
 	private Difficulty difficulty;
 	private Users owner;
 	private Tournament tournament;
+	private PractiseCategory category;
 
 	public AddProblem() {
 
@@ -34,6 +36,15 @@ public class AddProblem {
 		this.owner = owner;
 		this.difficulty = difficulty;
 		this.tournament = tournament;
+	}
+	
+	public AddProblem(Problem problem, Difficulty difficulty, Users owner, Tournament tournament, PractiseCategory category) {
+		super();
+		this.problem = problem;
+		this.owner = owner;
+		this.difficulty = difficulty;
+		this.tournament = tournament;
+		this.category = category;
 	}
 
 	public Problem getProblem() {
@@ -66,6 +77,14 @@ public class AddProblem {
 
 	public void setTournament(Tournament tournament) {
 		this.tournament = tournament;
+	}
+
+	public PractiseCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(PractiseCategory category) {
+		this.category = category;
 	}
 
 }

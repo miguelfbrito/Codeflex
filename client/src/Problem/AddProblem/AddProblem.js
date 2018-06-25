@@ -23,7 +23,11 @@ class AddProblem extends React.Component {
             difficulty: {
                 id: '', name: ''
             },
+            category: {
+                id: '', name: ''
+            },
             displayDifficulties: [],
+            displayCategories: [],
             description: '',
             constraints: '',
             inputFormat: '',
@@ -45,29 +49,31 @@ class AddProblem extends React.Component {
         fetch(URL + '/api/database/difficulty/view')
             .then(res => res.json()).then(data => { console.log(data); this.setState({ displayDifficulties: data }) })
 
+        fetch(URL + '/api/database/PractiseCategory/view')
+            .then(res => res.json()).then(data => { console.log(data); this.setState({ displayCategories: data }) })
+
         const path = splitUrl(this.props.location.pathname);
-        if (path[3] === 'add') {
-        } else if (path[3] === 'edit') {
+
+        if (path[3] === 'edit' || path[2] === 'edit') {
             this.fetchCurrentProblem();
         }
     }
 
     fetchCurrentProblem() {
-        const problemName = splitUrl(this.props.location.pathname)[4]
-        fetch(URL + '/api/database/Problem/getProblemByName/' + problemName).then(res => res.json()).then(data => {
+        const problemName = this.props.match.params.problemName;
+        fetch(URL + '/api/database/Problem/viewAllDetails/' + problemName).then(res => res.json()).then(data => {
             console.log('getting stuff')
             console.log(data);
 
-            console.log(htmlToDraft(data.description)),
-                this.setState({
-                    problemId: data.id,
-                    problemName: data.name,
-                    description: EditorState.createWithContent(stateFromHTML(data.description)),
-                    constraints: EditorState.createWithContent(stateFromHTML(data.constraints)),
-                    inputFormat: EditorState.createWithContent(stateFromHTML(data.inputFormat)),
-                    outputFormat: EditorState.createWithContent(stateFromHTML(data.outputFormat)),
-                    creationDate: EditorState.createWithContent(stateFromHTML(data.creationDate))
-                })
+            this.setState({
+                problemId: data.problem.id,
+                problemName: data.problem.name,
+                description: EditorState.createWithContent(stateFromHTML(data.problem.description)),
+                constraints: EditorState.createWithContent(stateFromHTML(data.problem.constraints)),
+                inputFormat: EditorState.createWithContent(stateFromHTML(data.problem.inputFormat)),
+                outputFormat: EditorState.createWithContent(stateFromHTML(data.problem.outputFormat)),
+                creationDate: EditorState.createWithContent(stateFromHTML(data.problem.creationDate))
+            })
         })
     }
 
@@ -97,7 +103,7 @@ class AddProblem extends React.Component {
         this.setState({ [e.target.name]: e.target.value });
     }
 
-    // couldn't figure out how to get the target for the editors. This will have to do.
+    // couldn't figure out how to get the target for the editors. This will have to do. ( maybe refs)
     onDescriptionChange(change) {
         this.setState({ description: change });
     }
@@ -121,13 +127,29 @@ class AddProblem extends React.Component {
     updateProblem() {
 
         const data = {
-            id: this.state.problemId,
-            name: this.state.problemName,
-            maxScore: this.state.problemMaxScore,
-            description: draftToHtml(convertToRaw(this.state.description.getCurrentContent())),
-            constraints: draftToHtml(convertToRaw(this.state.constraints.getCurrentContent())),
-            inputFormat: draftToHtml(convertToRaw(this.state.inputFormat.getCurrentContent())),
-            outputFormat: draftToHtml(convertToRaw(this.state.outputFormat.getCurrentContent()))
+            problem: {
+                id: this.state.problemId,
+                name: this.state.problemName,
+                maxScore: this.state.problemMaxScore,
+                description: draftToHtml(convertToRaw(this.state.description.getCurrentContent())),
+                constraints: draftToHtml(convertToRaw(this.state.constraints.getCurrentContent())),
+                inputFormat: draftToHtml(convertToRaw(this.state.inputFormat.getCurrentContent())),
+                outputFormat: draftToHtml(convertToRaw(this.state.outputFormat.getCurrentContent()))
+            },
+            difficulty: {
+                id: this.state.difficulty.id,
+                name: this.state.difficulty.name
+            },
+            category: {
+                id: this.state.category.id,
+                name: this.state.category.name
+            },
+            owner: {
+                id: JSON.parse(localStorage.getItem('userData')).id
+            },
+            tournament: {
+                name: splitUrl(this.props.location.pathname)[2]
+            }
         }
 
         console.log("DATA SENT");
@@ -148,7 +170,8 @@ class AddProblem extends React.Component {
 
     saveProblem() {
 
-        if (splitUrl(this.props.location.pathname)[3] === 'edit') {
+        let url = splitUrl(this.props.location.pathname)
+        if (url[3] === 'edit' || url[2] === 'edit') {
             this.updateProblem();
             return;
         }
@@ -206,7 +229,19 @@ class AddProblem extends React.Component {
                         <input name="problemName" className="textbox-problem" onChange={this.onTextBoxChange} value={this.state.problemName} type="text" id="input-problem-name" placeholder="Problem name" />
                     </div>
                 </div>
-
+                <div className="row info-section">
+                    <div className="col-sm-2 add-problem-desc">
+                        <h3>Category</h3>
+                        <p>Select the category that best represents the problem.</p>
+                    </div>
+                    <div className="col-sm-10 add-problem-textarea">
+                        <select name="category" className="textbox-problem" placeholder="Category" onChange={this.handleSelectBoxChange}>
+                            {this.state.displayCategories.map((d, index) => (
+                                <option key={d.id} value={d.id} selected={index == 0 ? "selected" : ''} id={d.name}>{d.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
                 <div className="row info-section">
                     <div className="col-sm-2 add-problem-desc">
                         <h3>Difficulty</h3>

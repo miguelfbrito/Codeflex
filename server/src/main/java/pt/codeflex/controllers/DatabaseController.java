@@ -249,7 +249,7 @@ public class DatabaseController {
 	// PRACTISECATEGORY
 
 	@GetMapping(path = "/PractiseCategory/view")
-	public List<PractiseCategory> getAllPractiseCategory() {
+	public List<PractiseCategory> viewAllPractiseCategories() {
 		return (List<PractiseCategory>) practiseCategoryRepository.findAll();
 	}
 
@@ -257,6 +257,14 @@ public class DatabaseController {
 	public PractiseCategory addPractiseCategory(@RequestParam String name) {
 		PractiseCategory pc = new PractiseCategory(name);
 		return practiseCategoryRepository.save(pc);
+	}
+
+	@PostMapping("/PractiseCategory/update")
+	public PractiseCategory updatePractiseCategory(@RequestParam PractiseCategory pc) {
+		PractiseCategory category = viewPractiseCategoryById(pc.getId());
+		if (category != null) {
+		}
+		return null;
 	}
 
 	@PostMapping(path = "/PractiseCategory/edit")
@@ -289,9 +297,26 @@ public class DatabaseController {
 		return new PractiseCategory();
 	}
 
+	@GetMapping(path = "/PractiseCategory/viewByProblemName/{problemName}")
+	public PractiseCategory viewPractiseCategoryByProblemName(@PathVariable String problemName) {
+		List<PractiseCategory> allCategories = viewAllPractiseCategories();
+
+		Problem problem = viewProblemByName(problemName);
+		if (problem != null) {
+			for (PractiseCategory pc : allCategories) {
+				if (pc.getProblem().contains(problem)) {
+					return pc;
+				}
+			}
+
+		}
+
+		return new PractiseCategory();
+	}
+
 	@GetMapping(path = "/PractiseCategory/listWithStats/{id}")
 	public List<ListCategoriesWithStats> listCategoriesWithStats(@PathVariable long id) {
-		List<PractiseCategory> allCategories = getAllPractiseCategory();
+		List<PractiseCategory> allCategories = viewAllPractiseCategories();
 
 		Optional<Users> u = usersRepository.findById(id);
 
@@ -319,7 +344,7 @@ public class DatabaseController {
 	@GetMapping(path = "/PractiseCategory/getAllWithoutTestCases/{userId}")
 	public List<CategoriesWithoutTestCases> getAllCategoriesWithoutTestCases(@PathVariable long userId) {
 
-		List<PractiseCategory> allCategories = getAllPractiseCategory();
+		List<PractiseCategory> allCategories = viewAllPractiseCategories();
 		List<CategoriesWithoutTestCases> categoriesWithoutTestCases = new ArrayList<>();
 
 		if (allCategories != null) {
@@ -389,6 +414,23 @@ public class DatabaseController {
 		return new ArrayList<>();
 	}
 
+	@GetMapping(path = "/Problem/viewAllDetails/{problemName}")
+	public AddProblem viewAllProblemDetails(@PathVariable String problemName) {
+		Problem problem = viewProblemByName(problemName);
+
+		AddProblem p = new AddProblem();
+		if (problem != null) {
+			p.setProblem(problem);
+		}
+
+		PractiseCategory pc = viewPractiseCategoryByProblemName(problem.getName());
+		if (pc != null) {
+			p.setCategory(pc);
+		}
+
+		return p;
+	}
+
 	@PostMapping(path = "/Problem/add")
 	public Problem addProblem(@RequestBody AddProblem addProblem) {
 
@@ -412,6 +454,13 @@ public class DatabaseController {
 			}
 		}
 
+		if (addProblem.getCategory() != null) {
+			PractiseCategory category = viewPractiseCategoryById(addProblem.getCategory().getId());
+			if (category != null) {
+				category.getProblem().add(p);
+			}
+		}
+
 		if (addProblem.getOwner() != null) {
 			Optional<Users> u = usersRepository.findById(addProblem.getOwner().getId());
 			if (u.isPresent()) {
@@ -419,7 +468,7 @@ public class DatabaseController {
 				p.setOwner(u.get());
 			}
 		} else {
-			// TODO : remove. Adding a random user for now
+			// TODO : remove. Adding a static user for now
 			Optional<Users> u = usersRepository.findById((long) 2);
 			if (u.isPresent()) {
 				p.setOwner(u.get());
@@ -430,11 +479,12 @@ public class DatabaseController {
 	}
 
 	@PostMapping("/Problem/update")
-	public Problem updateProblem(@RequestBody Problem p) {
-		Optional<Problem> problem = viewProblemById(p.getId());
-		System.out.println(p.toString());
+	public AddProblem updateProblem(@RequestBody AddProblem changes) {
+
+		Optional<Problem> problem = viewProblemById(changes.getProblem().getId());
 		if (problem.isPresent()) {
 			Problem problemUpdate = problem.get();
+			Problem p = changes.getProblem();
 
 			problemUpdate.setName(p.getName());
 			problemUpdate.setDescription(p.getDescription());
@@ -442,10 +492,41 @@ public class DatabaseController {
 			problemUpdate.setInputFormat(p.getInputFormat());
 			problemUpdate.setOutputFormat(p.getOutputFormat());
 
-			return problemRepository.save(problemUpdate);
+			// updates difficulty
+			Optional<Difficulty> d = viewDifficultyById(changes.getDifficulty().getId());
+			if (d.isPresent()) {
+				problemUpdate.setDifficulty(d.get());
+			}
+
+			// updates category
+			// 1. removes the problem from current category
+			List<PractiseCategory> categories = viewAllPractiseCategories();
+			// TODO : check if this will work
+			for (PractiseCategory pc : categories) {
+				if (pc.getProblem().contains(p)) {
+					if (pc.getName().equals(changes.getCategory().getName())) {
+						break;
+					}
+					pc.getProblem().remove(p);
+				}
+			}
+			practiseCategoryRepository.saveAll(categories);
+
+			// 2. adds the problem to the category sent
+			PractiseCategory category = viewPractiseCategoryById(changes.getCategory().getId());
+			if (category != null) {
+				category.getProblem().add(p);
+				practiseCategoryRepository.save(category);
+			}
+
+			problemRepository.save(problemUpdate);
 		}
 
-		return new Problem();
+		// owner
+
+		// tournament
+
+		return new AddProblem();
 	}
 
 	@PostMapping(path = "/Problem/addTestCase")
@@ -553,7 +634,7 @@ public class DatabaseController {
 	public void addRating() {
 	}
 
-	@GetMapping(path = "/Rating/isUserRegistedInTournament/{userId}/{tournamentId}")
+	@GetMapping(path = "/Rating/isUserRegisteredInTournament/{userId}/{tournamentId}")
 	public boolean isUserRegisteredInTournament(@PathVariable long userId, @PathVariable long tournamentId) {
 		Optional<Rating> r = ratingRepository.findById(new RatingID(tournamentId, userId));
 

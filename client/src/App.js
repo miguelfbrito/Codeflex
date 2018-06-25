@@ -28,10 +28,12 @@ class App extends Component {
           <Switch>
             <Route exact path="/login" component={Login} />
             <Route exact path="/problem" component={Problem} />
+
+            <Route exact path="/manage" component={ManageContent} />
             <Route exact path="/manage/problems" component={ManageProblems} />
             <Route exact path="/manage/problems/add" component={AddProblem} />
+            <Route exact path="/manage/problems/edit/:problemName" component={AddProblem} />
             <Route exact path="/manage/problems/:problemName/test-cases" component={ManageTestCases} />
-            <Route exact path="/manage" component={ManageContent} />
 
             <Route exact path="/manage/tournaments" component={ManageTournaments} />
             <Route exact path="/manage/categories" component={ManageCategory} />
