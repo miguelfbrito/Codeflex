@@ -22,6 +22,10 @@ div.test-case-wrapper {
     transition: all 250ms ease-in-out;
 }
 
+.test-case-wrapper h3 {
+    padding: 0 20px;
+}
+
 div.test-case-wrapper:hover {
     transform: scale(1.1);
 }
@@ -85,18 +89,15 @@ textarea.modal-text-area-section {
     top: 20%;
 }
 
-
 @media only screen and (max-width: 768px) {
     div.test-case-wrapper {
         margin: 25px 0;
         max-width: 100%;
     }
-
     textarea.modal-text-area {
         width: 250px;
         height: 300px;
     }
-
     textarea.modal-text-area-section {
         width: 275px;
         height: 100px;

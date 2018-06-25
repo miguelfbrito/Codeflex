@@ -39,6 +39,7 @@ class ManageProblems extends React.Component {
             fetch(URL + '/api/database/Problem/viewAllByOwnerId/' + JSON.parse(localStorage.getItem('userData')).id)
                 .then(res => res.json())
                 .then(data => {
+                    data = data.filter(d => d.tournament === null);
                     console.log('Getting problems from manage')
                     console.log(data);
                     this.setState({ problems: data });
@@ -55,7 +56,9 @@ class ManageProblems extends React.Component {
         let content =
             <div className="add-problem-container">
                 <h3>There are no problems on this tournament yet.</h3>
-                <Link to={"/compete/manage-tournaments/" + splitUrl(this.props.location.pathname)[2] + "/add"}>
+                <Link to={
+                    this.state.origin === 'tournament' ? "/compete/manage-tournaments/" + splitUrl(this.props.location.pathname)[2] + "/add"
+                    : "/manage/problems/add"}>
                     <input className="btn btn-codeflex" type="button" value="Add problem" />
                 </Link>
             </div>
@@ -124,14 +127,17 @@ class ManageProblems extends React.Component {
         return (
             <div className="container">
                 <div className="row">
-                    <PathLink path={this.props.location.pathname} title={splitUrl(this.props.match.url)[2]} />
-                    <div>
-                        {content}
-                    </div>
+                    {this.state.origin === 'tournament' ?
+                        <PathLink path={this.props.location.pathname} title={splitUrl(this.props.match.url)[2]} />
+                        :
+                        <PathLink path={this.props.location.pathname} title="Manage Problems" />}
+                        <div>
+                            {content}
+                        </div>
                 </div>
             </div>
-        )
-    }
-}
-
+                )
+            }
+        }
+        
 export default ManageProblems;

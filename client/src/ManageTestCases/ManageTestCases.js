@@ -66,8 +66,7 @@ class ManageTestCases extends React.Component {
     }
 
     fetchTestCases() {
-        const problemName = splitUrl(this.props.location.pathname)[3]
-        fetch(URL + '/api/database/Problem/viewAllTestCasesByProblemName/' + problemName).then(res => res.json())
+        fetch(URL + '/api/database/Problem/viewAllTestCasesByProblemName/' + this.props.match.params.problemName).then(res => res.json())
             .then(data => {
                 console.log(data);
                 this.setState({ testCases: data });
@@ -128,16 +127,11 @@ class ManageTestCases extends React.Component {
 
 
     onChangeNew(e) {
-        this.setState([e.target.name] : e.target.value);
+        this.setState({[e.target.name] : e.target.value});
 
     }
-    /*
-        1. Que index estou a editar
-        2. O que estou a editar (input/ output / description)
-        3. 
-    */
 
-    deleteTestCase(index){
+    deleteTestCase(index) {
 
         fetch(URL + '/api/database/TestCases/delete/' + index, {
             method: 'DELETE'
@@ -148,11 +142,11 @@ class ManageTestCases extends React.Component {
 
     onNewTestCaseModalClose() {
         const data = {
-            input: this.newInput.current.value,
-            output: this.newOutput.current.value,
-            description: this.newDescription.current.value
+            input: this.newInput.current.value.trim(),
+            output: this.newOutput.current.value.trim(),
+            description: this.newDescription.current.value.trim()
         }
-        fetch(URL + '/api/database/TestCases/addToProblem/' + splitUrl(this.props.location.pathname)[3], {
+        fetch(URL + '/api/database/TestCases/addToProblem/' + this.props.match.params.problemName, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: new Headers({

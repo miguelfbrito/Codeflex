@@ -17,6 +17,7 @@ import AddProblem from './Problem/AddProblem/AddProblem';
 import GlobalLeaderboard from './GlobalLeaderboard/GlobalLeaderboard';
 import ManageTestCases from './ManageTestCases/ManageTestCases';
 import ManageContent from './ManageContent/ManageContent';
+import ManageCategory from './ManageCategory/ManageCategory';
 
 class App extends Component {
   render() {
@@ -28,7 +29,12 @@ class App extends Component {
             <Route exact path="/login" component={Login} />
             <Route exact path="/problem" component={Problem} />
             <Route exact path="/manage/problems" component={ManageProblems} />
+            <Route exact path="/manage/problems/add" component={AddProblem} />
+            <Route exact path="/manage/problems/:problemName/test-cases" component={ManageTestCases} />
             <Route exact path="/manage" component={ManageContent} />
+
+            <Route exact path="/manage/tournaments" component={ManageTournaments} />
+            <Route exact path="/manage/categories" component={ManageCategory} />
 
             <Route exact path="/practise/:categoryName/:problemName" component={Problem} />
             <Route exact path="/practise/:categoryName/:problemName/view-results" component={ViewResults} />

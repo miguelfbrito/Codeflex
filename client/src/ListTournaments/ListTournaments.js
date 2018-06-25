@@ -1,11 +1,11 @@
 import React from 'react'
 import PathLink from '../PathLink/PathLink';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Popup from '../Popup/Popup';
 
 import { Redirect } from 'react-router-dom';
 import { URL } from '../commons/Constants';
-import { dateWithHoursAndDay, textToLowerCaseNoSpaces, getTimeHoursMins} from '../commons/Utils';
+import { dateWithHoursAndDay, textToLowerCaseNoSpaces, getTimeHoursMins } from '../commons/Utils';
 
 import './ListTournaments.css';
 
@@ -84,8 +84,8 @@ class ListTournaments extends React.Component {
                     <div key={t.tournament.id} className="col-sm-10 col-md-10 col-xs-12">
                         <p>{t.tournament.name}</p>
                         <p>{t.tournament.description}</p>
-                        {new Date(t.tournament.startingDate).getTime() > new Date().getTime() ? <p className="green-text">Starting at {dateWithHoursAndDay(t.tournament.startingDate)}</p> 
-                        : <p className="red-text">Finishing in {getTimeHoursMins(new Date(t.tournament.endingDate).getTime() - new Date().getTime())}</p>}
+                        {new Date(t.tournament.startingDate).getTime() > new Date().getTime() ? <p className="green-text">Starting at {dateWithHoursAndDay(t.tournament.startingDate)}</p>
+                            : <p className="red-text">Finishing in {getTimeHoursMins(new Date(t.tournament.endingDate).getTime() - new Date().getTime())}</p>}
                     </div>
                     <div className="col-sm-2 col-md-2 col-xs-4 button-container-tournaments" >
                         <input type="submit" className="btn btn-codeflex" value={
@@ -122,22 +122,22 @@ class ListTournaments extends React.Component {
 
         return (
             <div className="container">
-                <div className="row"> 
-                <PathLink path={this.props.location.pathname} title="Tournaments" />
+                <div className="row">
+                    <PathLink path={this.props.location.pathname} title="Tournaments" />
                     {/*<Popup timeoutClose={1250}>
                         <PopupInformation />
         </Popup>*/}
                     <div className="col-sm-12 both-categories-container">
-                    <div style={{float: 'right', textAlign:'right',marginTop:'-10px'}}>
-                        <Link to="/compete/create-tournament" > <p>Create Tournament</p></Link>
-                        <Link to="/compete/manage-tournaments"><p >Manage Tournaments</p></Link>
-                    </div>
-                        <h2>Available</h2>
+                        <div style={{ float: 'right', textAlign: 'right', marginTop: '-10px' }}>
+                            <Link to="/compete/create-tournament" > <p>Create Tournament</p></Link>
+                            <Link to="/compete/manage-tournaments"><p >Manage Tournaments</p></Link>
+                        </div>
+                        <h2 style={{ fontFamily: 'Roboto Condensed' }}>Available</h2>
                         <hr style={{ borderWidth: '2px', borderTop: 'none', borderLeft: 'none', borderRight: 'none' }} />
                         <div className="tournaments-container">
                             {availableTournaments}
                         </div>
-                        <h2>Finished</h2>
+                        <h2 style={{ fontFamily: 'Roboto Condensed' }}>Finished</h2>
                         <hr style={{ borderWidth: '2px', borderTop: 'none', borderLeft: 'none', borderRight: 'none' }} />
                         <div className="tournaments-container">
                             {archivedTournaments}
