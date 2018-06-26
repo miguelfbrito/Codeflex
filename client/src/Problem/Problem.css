@@ -111,6 +111,24 @@
     animation: spin 850ms ease-out infinite;
 }
 
+.problem-testcase-wrapper {
+    border: 1px solid #aaa;
+}
+
+.problem-testcase-wrapper p, .problem-testcase-wrapper h4 {
+    padding: 7px;
+    text-align: justify;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+.problem-testcase-wrapper div {
+    border-top: 1px solid #aaa;
+}
+
+.problem-testcase-wrapper div:first-child {
+    border-top: none;
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);

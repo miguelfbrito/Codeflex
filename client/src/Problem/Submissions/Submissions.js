@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactTable from 'react-table';
 import { Router, Link } from 'react-router-dom';
 import { URL } from '../../commons/Constants';
 import { splitUrl, dateWithHoursAndDay } from '../../commons/Utils';
@@ -31,56 +32,59 @@ class Submissions extends React.Component {
         return (
             <div>
                 <div className="row">
-                    <div className="submission-title-container">
-                        <div className="col-sm-2">
-                            <p>Result</p>
-                        </div>
-                        <div className="col-sm-2">
-                            <p>Score</p>
-                        </div>
-                        <div className="col-sm-2">
-                            <p>Language</p>
-                        </div>
-                        <div className="col-sm-2">
-                            <p>Date</p>
-                        </div>
-                        <div className="col-sm-2">
-                            <p> &nbsp;</p>
-                        </div>
-                        <div className="col-sm-2">
-                            <p> &nbsp;</p>
-                        </div>
-                    </div>
+                    <ReactTable
+                        noDataText="You haven't submited solutions to this problem"
+                        data={this.state.results.sort((a, b) => new Date(b.date) - new Date(a.date))}
+                        columns={[
+                            {
+                                Header: "Result",
+                                id: "result",
+                                accessor: r => (
+                                    <p className={r.result.name === 'Correct' ? 'green-text' : 'red-text'}>{r.result.name} </p>
+                                )
+                            },
+                            {
+                                Header: "Score",
+                                id: "score",
+                                accessor: r => (
+                                    <p>{r.score}</p>
+                                )
+                            },
+                            {
+                                Header: "Language",
+                                id: "language",
+                                accessor: r => (
+                                    <p>{r.language.name}</p>
+                                )
+                            },
+                            {
+                                Header: "Date",
+                                id: "Date",
+                                accessor: r => (
+                                    <p>{dateWithHoursAndDay(r.date)}</p>
+                                )
+                            },
+
+                            {
+                                Header: "",
+                                id: "buttons",
+                                accessor: r => (
+                                    <Link to={{ pathname: this.props.pathname + '/view-results', state: { submissionId: r.id } }}><p>View Results</p></Link>
+                                )
+                            }
+                        ]}
+                        defaultPageSize={25}
+                        pageSize={Math.min(this.state.results.length, 25)}
+                        style={{
+                            height: Math.min(this.state.results.length * 125, 1000) + "px" // This will force the table body to overflow and scroll, since there is not enough room
+                        }}
+                        showPagination={false}
+                        className="-highlight"
+                    />
+
+
                 </div>
-                <div className="row">
-                    {this.state.results.sort((a, b) => new Date(b.date) - new Date(a.date)).map((r, index) => (
-                        <div key={index} className="submission-container">
-                            <div className="col-sm-2">
-                                <p className={r.result.name === 'Correct' ? 'green-text' : 'red-text'}>{r.result.name}</p>
-                            </div>
-                            <div className="col-sm-2">
-                                <p>
-                                    {r.score}
-                                </p>
-                            </div>
-                            <div className="col-sm-2"><p>
-                                {r.language.name}
-                            </p>
-                            </div>
-                            <div className="col-sm-2">
-                                <p>
-                                    {dateWithHoursAndDay(r.date)}
-                                </p>
-                            </div>
-                            <div className="col-sm-2">
-                                <Link to={{ pathname: this.props.pathname + '/view-results', state: { submissionId: r.id } }}><p>View Results</p></Link>
-                            </div>
-                            <div className="col-sm-2">
-                                <p>View Submissions</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+
             </div>
         );
     }

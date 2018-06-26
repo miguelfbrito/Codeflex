@@ -15,6 +15,8 @@
     "moment-timezone": "^0.5.17",
     "react": "^16.4.0",
     "react-ace": "^6.1.1",
+    "react-alert": "^4.0.4",
+    "react-alert-template-basic": "^1.0.0",
     "react-datepicker": "^1.5.0",
     "react-dom": "^16.4.0",
     "react-draft-wysiwyg": "^1.12.13",

@@ -95,6 +95,21 @@ public class DatabaseController {
 	@Autowired
 	private LanguageRepository languageRepository;
 
+	@Autowired
+	private DurationsRepository durationsRepository;
+
+	// DURATIONS
+
+	@GetMapping("/Durations/view")
+	public List<Durations> getAllDurations() {
+		return durationsRepository.findAll();
+	}
+
+	@PostMapping("/Durations/add")
+	public Durations addDurations(@RequestBody Durations duration) {
+		return durationsRepository.save(duration);
+	}
+
 	// LEADERBOARD
 
 	@GetMapping(path = "/Leaderboard/view")
@@ -464,7 +479,7 @@ public class DatabaseController {
 				}
 			}
 		}
-		
+
 		if (addProblem.getOwner() != null) {
 			Optional<Users> u = usersRepository.findById(addProblem.getOwner().getId());
 			if (u.isPresent()) {
@@ -480,7 +495,7 @@ public class DatabaseController {
 		}
 
 		Problem savedProblem = problemRepository.save(p);
-		
+
 		if (addProblem.getCategory() != null) {
 			PractiseCategory category = viewPractiseCategoryById(addProblem.getCategory().getId());
 			if (category != null) {
@@ -533,7 +548,7 @@ public class DatabaseController {
 			}
 
 			return problemRepository.save(problemUpdate);
-			
+
 		}
 
 		// owner
@@ -729,26 +744,6 @@ public class DatabaseController {
 			scoringRepository.save(sc);
 		}
 	}
-
-	// @PostMapping(path = "/Scoring/edit")
-	// public void editScoring(@RequestParam long id) {
-	// Optional<Scoring> s = scoringRepository.findById(id);
-	//
-	// if (s.isPresent()) {
-	// Scoring scoring = s.get();
-	// scoringRepository.save(scoring);
-	// }
-	// }
-
-	// @PostMapping(path = "/Scoring/delete/{id}")
-	// public void deleteScoring(@PathVariable long id) {
-	// scoringRepository.deleteById(id);
-	// }
-	//
-	// @GetMapping(path = "/Scoring/view/{id}")
-	// public Optional<Scoring> viewScoringById(@PathVariable long id) {
-	// return scoringRepository.findById(id);
-	// }
 
 	@GetMapping(path = "/Scoring/viewBySubmissionId/{submissionId}")
 	public List<Scoring> viewBySubmissionId(@PathVariable long submissionId) {

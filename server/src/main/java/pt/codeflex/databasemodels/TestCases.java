@@ -26,11 +26,9 @@ public class TestCases {
 	// for large data
 	// TODO : change 1 -> N to N -> N ?
 
-	@JsonIgnore
 	@Column(length = 5000)
 	private String input;
 
-	@JsonIgnore
 	@Column(length = 5000)
 	private String output;
 

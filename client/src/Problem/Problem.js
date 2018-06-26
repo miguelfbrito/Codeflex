@@ -328,6 +328,28 @@ public class Solution {
                     <h3>Output Format</h3>
                     {Parser(String(problem.outputFormat))}
 
+                    {typeof problem.testCases !== "undefined" ? problem.testCases.map((tc, i) => {
+                        if (tc.shown) {
+                            return <div>
+                                <h3>Test Case {i + 1}</h3>
+                                <div className="problem-testcase-wrapper">
+                                    <div>
+                                        <h4>Explanation</h4>
+                                        <p>{tc.description}</p>
+                                    </div>
+                                    <div>
+                                        <h4>Input</h4>
+                                        <p>{tc.input}</p>
+                                    </div>
+                                    <div>
+                                        <h4>Output</h4>
+                                        <p>{tc.output}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }) : ''}
+
                 </div>
                 {problemInformation}
                 <div className="col-sm-12 ace-editor-container">

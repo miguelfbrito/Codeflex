@@ -127,7 +127,7 @@ class ManageTestCases extends React.Component {
 
 
     onChangeNew(e) {
-        this.setState({[e.target.name] : e.target.value});
+        this.setState({ [e.target.name]: e.target.value });
 
     }
 
@@ -157,14 +157,14 @@ class ManageTestCases extends React.Component {
         });
     }
 
-    toggleCheckBox = (e,t) => {
+    toggleCheckBox = (e, t) => {
 
-        console.log("OUTPUT " );
+        console.log("OUTPUT ");
 
         let newTestCases = this.state.testCases.map((tc, i) => {
-            if(tc === t){
+            if (tc === t) {
                 console.log(tc.shown);
-                tc.shown = !tc.shown; 
+                tc.shown = !tc.shown;
             }
             return tc;
         });
@@ -172,7 +172,7 @@ class ManageTestCases extends React.Component {
         console.log("NEW TEST CASES")
         console.log(newTestCases);
 
-        this.setState({testCases : newTestCases});
+        this.setState({ testCases: newTestCases });
         this.persistChangesOnDatabase();
 
     }
@@ -226,7 +226,7 @@ class ManageTestCases extends React.Component {
                         <i className="material-icons manage-tournament-icon" id="add-test-case" onClick={this.onClickAdd}>add_circle_outline</i>
                     </div>
 
-                    {this.state.testCases.sort((a,b) => a.id - b.id).map((t, i) => (
+                    {this.state.testCases.sort((a, b) => a.id - b.id).map((t, i) => (
                         <div className="col-sm-3 col-xs-12 test-case-wrapper tc">
                             <div >
                                 <h3 style={{ display: 'inline-block' }}>Test Case {i + 1}</h3>
@@ -237,7 +237,7 @@ class ManageTestCases extends React.Component {
                             <input className="btn btn-tc" type="button" value="Output" onClick={() => this.onClick(t.output, 'output', "Add output", t)} />
                             <input className="btn btn-tc" type="button" value="Description" onClick={() => this.onClick(t.description, 'description', "Add description", t)} />
                             <label className="container inline-field">Show
-                                <input type="checkbox" name="shown" checked={t.shown ? "checked" : ''} onClick={(e) => this.toggleCheckBox(e,t)} />
+                                <input type="checkbox" name="shown" checked={t.shown ? "checked" : ''} onClick={(e) => this.toggleCheckBox(e, t)} />
                                 <span className="checkmark"></span>
                             </label>
                         </div>
