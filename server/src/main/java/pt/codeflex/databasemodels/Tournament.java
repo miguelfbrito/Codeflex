@@ -141,4 +141,13 @@ public class Tournament {
 		this.open = open;
 	}
 
+	@Override
+	public String toString() {
+		return "Tournament [id=" + id + ", name=" + name + ", description=" + description + ", startingDate="
+				+ startingDate + ", endingDate=" + endingDate + ", link=" + link + ", code=" + code + ", showWebsite="
+				+ showWebsite + ", open=" + open + ", owner=" + owner + "]";
+	}
+	
+	
+
 }

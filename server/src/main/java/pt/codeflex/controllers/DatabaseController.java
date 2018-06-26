@@ -447,17 +447,32 @@ public class DatabaseController {
 			}
 		}
 
-		if (addProblem.getTournament() != null) {
-			Tournament t = viewTournamentByName(addProblem.getTournament().getName());
-			if (t != null) {
-				p.setTournament(t);
+		// A problem can only belong to either a Tournament or a Category
+		if (addProblem.getTournament() != null && addProblem.getCategory() != null) {
+			System.out.println(addProblem.getTournament());
+			System.out.println(addProblem.getCategory());
+			if (addProblem.getTournament().getName() != null && addProblem.getCategory().getName() != null) {
+				return new Problem();
 			}
 		}
+
+		if (addProblem.getTournament() != null) {
+			if (addProblem.getTournament().getName() != null) {
+				Tournament t = viewTournamentByName(addProblem.getTournament().getName());
+				if (t != null) {
+					p.setTournament(t);
+				}
+			}
+		}
+		
+		// TODO : review?!
+		problemRepository.save(p);
 
 		if (addProblem.getCategory() != null) {
 			PractiseCategory category = viewPractiseCategoryById(addProblem.getCategory().getId());
 			if (category != null) {
 				category.getProblem().add(p);
+				practiseCategoryRepository.save(category);
 			}
 		}
 

@@ -65,4 +65,11 @@ public class PractiseCategory {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	@Override
+	public String toString() {
+		return "PractiseCategory [id=" + id + ", name=" + name + ", problem=" + problem + "]";
+	}
+	
+	
 }

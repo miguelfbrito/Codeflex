@@ -55,7 +55,10 @@ class ManageProblems extends React.Component {
 
         let content =
             <div className="add-problem-container">
-                <h3>There are no problems on this tournament yet.</h3>
+                <h3 style={{marginBottom:'15px'}}>{this.state.origin === 'tournament' ? 
+                'There are no problems on this tournament yet.' : "You haven't added any problems yet."
+                }</h3>
+                
                 <Link to={
                     this.state.origin === 'tournament' ? "/compete/manage-tournaments/" + splitUrl(this.props.location.pathname)[2] + "/add"
                     : "/manage/problems/add"}>

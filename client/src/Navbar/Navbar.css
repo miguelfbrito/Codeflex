@@ -40,7 +40,6 @@ li>* {
 
 nav ul li:first-child { float: left; }
 .navbar {
-    box-shadow: 0px 3px 10px 0px #bbb;
 }
 
 .navbar li:hover {

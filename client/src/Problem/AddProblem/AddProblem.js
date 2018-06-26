@@ -20,6 +20,10 @@ class AddProblem extends React.Component {
             problemId: '',
             problemName: '',
             problemMaxScore: '',
+            problemDescription: '',
+            problemConstraints: '',
+            problemInputFormat: '',
+            problemOutputFormat: '',
             difficulty: {
                 id: '', name: ''
             },
@@ -28,10 +32,6 @@ class AddProblem extends React.Component {
             },
             displayDifficulties: [],
             displayCategories: [],
-            description: '',
-            constraints: '',
-            inputFormat: '',
-            outputFormat: ''
         }
 
         this.onTextBoxChange = this.onTextBoxChange.bind(this);
@@ -68,11 +68,20 @@ class AddProblem extends React.Component {
             this.setState({
                 problemId: data.problem.id,
                 problemName: data.problem.name,
-                description: EditorState.createWithContent(stateFromHTML(data.problem.description)),
-                constraints: EditorState.createWithContent(stateFromHTML(data.problem.constraints)),
-                inputFormat: EditorState.createWithContent(stateFromHTML(data.problem.inputFormat)),
-                outputFormat: EditorState.createWithContent(stateFromHTML(data.problem.outputFormat)),
-                creationDate: EditorState.createWithContent(stateFromHTML(data.problem.creationDate))
+                problemDescription: EditorState.createWithContent(stateFromHTML(data.problem.description)),
+                problemConstraints: EditorState.createWithContent(stateFromHTML(data.problem.constraints)),
+                problemInputFormat: EditorState.createWithContent(stateFromHTML(data.problem.inputFormat)),
+                problemOutputFormat: EditorState.createWithContent(stateFromHTML(data.problem.outputFormat)),
+                problemCreationDate: EditorState.createWithContent(stateFromHTML(data.problem.creationDate)),
+                problemMaxScore: data.problem.maxScore,
+                difficulty: {
+                    id: data.problem.difficulty.id,
+                    name: data.problem.difficulty.name
+                },
+                category: {
+                    id: data.category.id,
+                    name: data.category.id
+                }
             })
         })
     }
@@ -105,17 +114,17 @@ class AddProblem extends React.Component {
 
     // couldn't figure out how to get the target for the editors. This will have to do. ( maybe refs)
     onDescriptionChange(change) {
-        this.setState({ description: change });
+        this.setState({ problemDescription: change });
     }
     onConstraintChange(change) {
-        this.setState({ constraints: change });
+        this.setState({ problemConstraints: change });
     }
     onInputFormatChange(change) {
-        this.setState({ inputFormat: change });
+        this.setState({ problemInputFormat: change });
     }
     onOutputFormatChange(change) {
         console.log(change);
-        this.setState({ outputFormat: change });
+        this.setState({ problemOutputFormat: change });
     }
 
     handleSelectBoxChange(e) {
@@ -127,15 +136,14 @@ class AddProblem extends React.Component {
     updateProblem() {
 
         const data = {
-            problem: {
-                id: this.state.problemId,
-                name: this.state.problemName,
-                maxScore: this.state.problemMaxScore,
-                description: draftToHtml(convertToRaw(this.state.description.getCurrentContent())),
-                constraints: draftToHtml(convertToRaw(this.state.constraints.getCurrentContent())),
-                inputFormat: draftToHtml(convertToRaw(this.state.inputFormat.getCurrentContent())),
-                outputFormat: draftToHtml(convertToRaw(this.state.outputFormat.getCurrentContent()))
-            },
+            id: this.state.problemId,
+            name: this.state.problemName,
+            maxScore: this.state.problemMaxScore,
+            description: draftToHtml(convertToRaw(this.state.problemDescription.getCurrentContent())),
+            constraints: draftToHtml(convertToRaw(this.state.problemConstraints.getCurrentContent())),
+            inputFormat: draftToHtml(convertToRaw(this.state.problemInputFormat.getCurrentContent())),
+            outputFormat: draftToHtml(convertToRaw(this.state.problemOutputFormat.getCurrentContent()))
+            ,
             difficulty: {
                 id: this.state.difficulty.id,
                 name: this.state.difficulty.name
@@ -148,7 +156,7 @@ class AddProblem extends React.Component {
                 id: JSON.parse(localStorage.getItem('userData')).id
             },
             tournament: {
-                name: splitUrl(this.props.location.pathname)[2]
+                name: this.props.match.params.tournamentName
             }
         }
 
@@ -180,21 +188,25 @@ class AddProblem extends React.Component {
             problem: {
                 name: this.state.problemName,
                 maxScore: this.state.problemMaxScore,
-                description: draftToHtml(convertToRaw(this.state.description.getCurrentContent())),
-                constraints: draftToHtml(convertToRaw(this.state.constraints.getCurrentContent())),
-                inputFormat: draftToHtml(convertToRaw(this.state.inputFormat.getCurrentContent())),
-                outputFormat: draftToHtml(convertToRaw(this.state.outputFormat.getCurrentContent())),
+                description: draftToHtml(convertToRaw(this.state.problemDescription.getCurrentContent())),
+                constraints: draftToHtml(convertToRaw(this.state.problemConstraints.getCurrentContent())),
+                inputFormat: draftToHtml(convertToRaw(this.state.problemInputFormat.getCurrentContent())),
+                outputFormat: draftToHtml(convertToRaw(this.state.problemOutputFormat.getCurrentContent())),
                 creationDate: new Date().getTime(),
             },
             difficulty: {
                 id: this.state.difficulty.id,
                 name: this.state.difficulty.name
             },
+            category: {
+                id: this.state.category.id,
+                name: this.state.category.name
+            },
             owner: {
                 id: JSON.parse(localStorage.getItem('userData')).id
             },
             tournament: {
-                name: splitUrl(this.props.location.pathname)[2]
+                name: this.props.match.params.tournamentName
             }
         }
 
@@ -208,7 +220,7 @@ class AddProblem extends React.Component {
         }).then(res => res.json()).then(data => {
             console.log(data.error);
             console.log(data.message);
-            console.log(data.message.split("propertyPath=")[1].split(',')[0]);
+            //  console.log(data.message.split("propertyPath=")[1].split(',')[0]);
             console.log(data);
             // TODO : notify the user about invalid data
         })
@@ -236,12 +248,16 @@ class AddProblem extends React.Component {
                     </div>
                     <div className="col-sm-10 add-problem-textarea">
                         <select name="category" className="textbox-problem" placeholder="Category" onChange={this.handleSelectBoxChange}>
+                            <option value="" disabled selected>Select category</option>
                             {this.state.displayCategories.map((d, index) => (
-                                <option key={d.id} value={d.id} selected={index == 0 ? "selected" : ''} id={d.name}>{d.name}</option>
+                                <option key={d.id} value={d.id}
+                                    selected={d.id === this.state.category.id ? 'selected' : ''}
+                                    id={d.name}>{d.name}</option>
                             ))}
                         </select>
                     </div>
                 </div>
+
                 <div className="row info-section">
                     <div className="col-sm-2 add-problem-desc">
                         <h3>Difficulty</h3>
@@ -249,8 +265,10 @@ class AddProblem extends React.Component {
                     </div>
                     <div className="col-sm-10 add-problem-textarea">
                         <select name="difficulty" className="textbox-problem" placeholder="Difficulty" onChange={this.handleSelectBoxChange}>
+                            <option value="" disabled selected>Select difficulty</option>
                             {this.state.displayDifficulties.map((d, index) => (
-                                <option key={d.id} value={d.id} selected={index == 0 ? "selected" : ''} id={d.name}>{d.name}</option>
+                                <option key={d.id} value={d.id} selected={d.id === this.state.difficulty.id ? 'selected' : ''
+                                } id={d.name}>{d.name}</option>
                             ))}
                         </select>
                     </div>
@@ -266,7 +284,7 @@ class AddProblem extends React.Component {
                             <Editor
                                 wrapperClassName="demo-wrapper "
                                 editorClassName="demo-editor"
-                                editorState={this.state.description}
+                                editorState={this.state.problemDescription}
                                 //    editorState={this.state.description}
                                 onEditorStateChange={this.onDescriptionChange}
                                 toolbar={{
@@ -292,7 +310,7 @@ class AddProblem extends React.Component {
                                 id="description"
                                 wrapperClassName="demo-wrapper "
                                 editorClassName="demo-editor"
-                                editorState={this.state.constraints}
+                                editorState={this.state.problemConstraints}
                                 //    editorState={this.state.description}
                                 onEditorStateChange={this.onConstraintChange}
                                 toolbar={{
@@ -317,7 +335,7 @@ class AddProblem extends React.Component {
                                 id="description"
                                 wrapperClassName="demo-wrapper "
                                 editorClassName="demo-editor"
-                                editorState={this.state.inputFormat}
+                                editorState={this.state.problemInputFormat}
                                 //    editorState={this.state.description}
                                 onEditorStateChange={this.onInputFormatChange}
                                 toolbar={{
@@ -342,7 +360,7 @@ class AddProblem extends React.Component {
                                 id="description"
                                 wrapperClassName="demo-wrapper "
                                 editorClassName="demo-editor"
-                                editorState={this.state.outputFormat}
+                                editorState={this.state.problemOutputFormat}
                                 //    editorState={this.state.description}
                                 onEditorStateChange={this.onOutputFormatChange}
                                 toolbar={{
