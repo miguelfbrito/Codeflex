@@ -136,17 +136,18 @@ class AddProblem extends React.Component {
     updateProblem() {
 
         const data = {
-            id: this.state.problemId,
-            name: this.state.problemName,
-            maxScore: this.state.problemMaxScore,
-            description: draftToHtml(convertToRaw(this.state.problemDescription.getCurrentContent())),
-            constraints: draftToHtml(convertToRaw(this.state.problemConstraints.getCurrentContent())),
-            inputFormat: draftToHtml(convertToRaw(this.state.problemInputFormat.getCurrentContent())),
-            outputFormat: draftToHtml(convertToRaw(this.state.problemOutputFormat.getCurrentContent()))
-            ,
-            difficulty: {
-                id: this.state.difficulty.id,
-                name: this.state.difficulty.name
+            problem: {
+                id: this.state.problemId,
+                name: this.state.problemName,
+                maxScore: this.state.problemMaxScore,
+                description: draftToHtml(convertToRaw(this.state.problemDescription.getCurrentContent())),
+                constraints: draftToHtml(convertToRaw(this.state.problemConstraints.getCurrentContent())),
+                inputFormat: draftToHtml(convertToRaw(this.state.problemInputFormat.getCurrentContent())),
+                outputFormat: draftToHtml(convertToRaw(this.state.problemOutputFormat.getCurrentContent())),
+                difficulty: {
+                    id: this.state.difficulty.id,
+                    name: this.state.difficulty.name
+                }
             },
             category: {
                 id: this.state.category.id,

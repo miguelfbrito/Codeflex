@@ -465,17 +465,6 @@ public class DatabaseController {
 			}
 		}
 		
-		// TODO : review?!
-		problemRepository.save(p);
-
-		if (addProblem.getCategory() != null) {
-			PractiseCategory category = viewPractiseCategoryById(addProblem.getCategory().getId());
-			if (category != null) {
-				category.getProblem().add(p);
-				practiseCategoryRepository.save(category);
-			}
-		}
-
 		if (addProblem.getOwner() != null) {
 			Optional<Users> u = usersRepository.findById(addProblem.getOwner().getId());
 			if (u.isPresent()) {
@@ -490,11 +479,20 @@ public class DatabaseController {
 			}
 		}
 
-		return problemRepository.save(p);
+		Problem savedProblem = problemRepository.save(p);
+		
+		if (addProblem.getCategory() != null) {
+			PractiseCategory category = viewPractiseCategoryById(addProblem.getCategory().getId());
+			if (category != null) {
+				category.getProblem().add(p);
+				practiseCategoryRepository.save(category);
+			}
+		}
+		return savedProblem;
 	}
 
 	@PostMapping("/Problem/update")
-	public AddProblem updateProblem(@RequestBody AddProblem changes) {
+	public Problem updateProblem(@RequestBody AddProblem changes) {
 
 		Optional<Problem> problem = viewProblemById(changes.getProblem().getId());
 		if (problem.isPresent()) {
@@ -508,7 +506,7 @@ public class DatabaseController {
 			problemUpdate.setOutputFormat(p.getOutputFormat());
 
 			// updates difficulty
-			Optional<Difficulty> d = viewDifficultyById(changes.getDifficulty().getId());
+			Optional<Difficulty> d = viewDifficultyById(changes.getProblem().getDifficulty().getId());
 			if (d.isPresent()) {
 				problemUpdate.setDifficulty(d.get());
 			}
@@ -534,14 +532,15 @@ public class DatabaseController {
 				practiseCategoryRepository.save(category);
 			}
 
-			problemRepository.save(problemUpdate);
+			return problemRepository.save(problemUpdate);
+			
 		}
 
 		// owner
 
 		// tournament
 
-		return new AddProblem();
+		return new Problem();
 	}
 
 	@PostMapping(path = "/Problem/addTestCase")

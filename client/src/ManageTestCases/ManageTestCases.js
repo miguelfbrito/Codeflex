@@ -157,6 +157,26 @@ class ManageTestCases extends React.Component {
         });
     }
 
+    toggleCheckBox = (e,t) => {
+
+        console.log("OUTPUT " );
+
+        let newTestCases = this.state.testCases.map((tc, i) => {
+            if(tc === t){
+                console.log(tc.shown);
+                tc.shown = !tc.shown; 
+            }
+            return tc;
+        });
+
+        console.log("NEW TEST CASES")
+        console.log(newTestCases);
+
+        this.setState({testCases : newTestCases});
+        this.persistChangesOnDatabase();
+
+    }
+
     render() {
 
         const PopupInformation = () => (
@@ -176,13 +196,11 @@ class ManageTestCases extends React.Component {
                     <div className="col-sm-6">
                         <p>Input</p>
                         <textarea ref={this.newInput} name="inputNew" id="" style={{ border: '1px solid #6a44ff' }} className="modal-text-area-section"
-                            placeholder={this.state.currentMode === 'description' ? 'If you select to show this test case, this description will show on the Problem page on top of the input and the output' : ''}
                         ></textarea>
                     </div>
                     <div className="col-sm-6">
                         <p>Output</p>
                         <textarea ref={this.newOutput} name="outputNew" id="" style={{ border: '1px solid #6a44ff' }} className="modal-text-area-section"
-                            placeholder={this.state.currentMode === 'description' ? 'If you select to show this test case, this description will show on the Problem page on top of the input and the output' : ''}
                         ></textarea>
                     </div>
                 </div>
@@ -208,7 +226,7 @@ class ManageTestCases extends React.Component {
                         <i className="material-icons manage-tournament-icon" id="add-test-case" onClick={this.onClickAdd}>add_circle_outline</i>
                     </div>
 
-                    {this.state.testCases.map((t, i) => (
+                    {this.state.testCases.sort((a,b) => a.id - b.id).map((t, i) => (
                         <div className="col-sm-3 col-xs-12 test-case-wrapper tc">
                             <div >
                                 <h3 style={{ display: 'inline-block' }}>Test Case {i + 1}</h3>
@@ -219,7 +237,7 @@ class ManageTestCases extends React.Component {
                             <input className="btn btn-tc" type="button" value="Output" onClick={() => this.onClick(t.output, 'output', "Add output", t)} />
                             <input className="btn btn-tc" type="button" value="Description" onClick={() => this.onClick(t.description, 'description', "Add description", t)} />
                             <label className="container inline-field">Show
-                                <input type="checkbox" checked={t.shown ? "checked" : ''} />
+                                <input type="checkbox" name="shown" checked={t.shown ? "checked" : ''} onClick={(e) => this.toggleCheckBox(e,t)} />
                                 <span className="checkmark"></span>
                             </label>
                         </div>

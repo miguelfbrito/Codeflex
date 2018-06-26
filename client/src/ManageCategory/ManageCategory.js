@@ -32,7 +32,7 @@ class ManageCategory extends React.Component {
             <div className="container">
                 <div className="row">
                     <PathLink path={this.props.location.pathname} title="Manage Categories" />
-                    <h3 className="page-subtitle">Categories with at least 1 problem will be shown on 'Practise' section.</h3>
+                    <h3 className="page-subtitle">Categories with at least one problem will be shown on 'Practise' section.</h3>
 
                     <div className="col-sm-3 col-xs-12 test-case-wrapper tc add-test-case" style={{ marginBottom: '25pt' }}>
                         <i className="material-icons manage-tournament-icon" id="add-test-case" onClick={this.onClickAdd}>add_circle_outline</i>
