@@ -22,8 +22,8 @@ export const dateWithHoursAndDay = (date) => {
     let d = new Date(date);
 
     return d.getHours() + ":" + (d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes()) + " " +
-    d.getDate() + "/" + (d.getMonth()+1) + "/" + d.getFullYear();
-    
+        d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
+
 }
 
 export const timeUntilDate = (initialDate, finalDate) => {
@@ -51,4 +51,18 @@ export const getTimeHoursMins = (millisec) => {
         return hours + ":" + minutes;
     }
     return "00 : " + minutes;
+}
+
+// Taken from https://stackoverflow.com/questions/19700283/how-to-convert-time-milliseconds-to-hours-min-sec-format-in-javascript
+export const msToTime = (duration) => {
+    let milliseconds = parseInt((duration % 1000) / 100),
+        seconds = parseInt((duration / 1000) % 60),
+        minutes = parseInt((duration / (1000 * 60)) % 60),
+        hours = parseInt((duration / (1000 * 60 * 60)) % 24);
+
+    hours = (hours < 10) ? "0" + hours : hours;
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+    return hours + ":" + minutes + ":" + seconds;
 }

@@ -27,13 +27,11 @@ class Submissions extends React.Component {
 
     render() {
 
-        // TODO : corrigir esta representação de dados para MOBILE
-
         return (
             <div>
                 <div className="row">
                     <ReactTable
-                        noDataText="You haven't submited solutions to this problem"
+                        noDataText="You haven't submitted solutions to this problem"
                         data={this.state.results.sort((a, b) => new Date(b.date) - new Date(a.date))}
                         columns={[
                             {

@@ -5,6 +5,7 @@ public class UserOnProblemLeaderboard {
 	private String username;
 	private double score;
 	private String language;
+	private long durationMilliseconds;
 
 	public UserOnProblemLeaderboard(String username, double score, String language) {
 		super();
@@ -13,6 +14,13 @@ public class UserOnProblemLeaderboard {
 		this.language = language;
 	}
 
+	public UserOnProblemLeaderboard(String username, double score, String language, long durationMilliseconds) {
+		super();
+		this.username = username;
+		this.score = score;
+		this.language = language;
+		this.durationMilliseconds = durationMilliseconds;
+	}
 	public String getUsername() {
 		return username;
 	}
@@ -36,6 +44,16 @@ public class UserOnProblemLeaderboard {
 	public void setLanguage(String language) {
 		this.language = language;
 	}
+
+	public long getDurationMilliseconds() {
+		return durationMilliseconds;
+	}
+
+	public void setDurationMilliseconds(long durationMilliseconds) {
+		this.durationMilliseconds = durationMilliseconds;
+	}
+
+
 	
 	
 }

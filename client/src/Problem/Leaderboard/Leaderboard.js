@@ -3,7 +3,7 @@ import ReactTable from 'react-table';
 import './Leaderboard.css';
 
 import { URL } from '../../commons/Constants';
-import { splitUrl } from '../../commons/Utils';
+import { splitUrl, msToTime} from '../../commons/Utils';
 import '../../../node_modules/react-table/react-table.css';
 import '../../commons/react-table.css';
 
@@ -66,6 +66,17 @@ class Leaderboard extends React.Component {
                             Header: "Score",
                             id: "score",
                             accessor: l => l.score
+                        },
+                        {
+                            Header: "Time",
+                            id: "time",
+                            accessor: l => {
+                              if(l.durationMilliseconds == -1){
+                                  return '--/--'
+                              } else {
+                                  return msToTime(l.durationMilliseconds);
+                              }
+                            }
                         }
 
                     ]}

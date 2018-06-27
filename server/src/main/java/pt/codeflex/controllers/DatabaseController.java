@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import pt.codeflex.databasecompositeskeys.DurationsID;
 import pt.codeflex.databasecompositeskeys.RatingID;
 import pt.codeflex.databasemodels.*;
 import pt.codeflex.models.CategoriesWithoutTestCases;
@@ -105,11 +107,90 @@ public class DatabaseController {
 		return durationsRepository.findAll();
 	}
 
-	@PostMapping("/Durations/add")
-	public Durations addDurations(@RequestBody Durations duration) {
-		return durationsRepository.save(duration);
+	@GetMapping("/Durations/viewById/{userId}/{problemId}")
+	public Durations viewDurationsById(@PathVariable long userId, @PathVariable long problemId) {
+		Optional<Durations> d = durationsRepository.findById(new DurationsID(userId, problemId));
+		if (d.isPresent()) {
+			return d.get();
+		}
+		return new Durations();
 	}
 
+	@PostMapping("/Durations/add")
+	public Durations addDurations(@RequestBody Durations duration) {
+		Optional<Users> user = viewUsersById(duration.getUsers().getId());
+		Optional<Problem> problem = viewProblemById(duration.getProblems().getId());
+
+		Durations newDuration = new Durations();
+		if (user.isPresent()) {
+			newDuration.setUsers(user.get());
+		}
+
+		if (problem.isPresent()) {
+			newDuration.setProblems(problem.get());
+		}
+
+		newDuration.setOpeningDate(duration.getOpeningDate());
+		newDuration.setCompletionDate(duration.getCompletionDate());
+
+		return durationsRepository.save(newDuration);
+	}
+
+	@PostMapping("/Durations/onProblemOpening")
+	public Durations addDurationOnProblemOpening(@RequestBody Durations duration) {
+
+		Optional<Users> user = viewUsersById(duration.getUsers().getId());
+		Optional<Problem> problem = viewProblemById(duration.getProblems().getId());
+
+		Durations newDuration = new Durations();
+
+		if (user.isPresent() && problem.isPresent()) {
+
+			newDuration.setUsers(user.get());
+			newDuration.setProblems(problem.get());
+
+			boolean openedAlready = durationsRepository
+					.existsById(new DurationsID(user.get().getId(), problem.get().getId()));
+
+			if (openedAlready) {
+				return new Durations();
+			}
+
+			newDuration.setOpeningDate(Calendar.getInstance().getTime());
+
+			return durationsRepository.save(newDuration);
+		}
+
+		return newDuration;
+
+	}
+
+	@PostMapping("/Durations/onProblemCompletion")
+	public Durations updateDurationsOnProblemCompletion(@RequestBody Durations duration) {
+
+		Optional<Users> user = viewUsersById(duration.getUsers().getId());
+		Optional<Problem> problem = viewProblemById(duration.getProblems().getId());
+
+		if (user.isPresent() && problem.isPresent()) {
+
+			Optional<Durations> d = durationsRepository
+					.findById(new DurationsID(user.get().getId(), problem.get().getId()));
+
+			if (d.isPresent()) {
+				Durations currentDuration = d.get();
+
+				System.out.println(currentDuration.getCompletionDate());
+				if (currentDuration.getCompletionDate() == null) {
+					System.out.println("NULL");
+					currentDuration.setCompletionDate(Calendar.getInstance().getTime());
+					return durationsRepository.save(currentDuration);
+				}
+			}
+		}
+
+		return new Durations();
+
+	}
 	// LEADERBOARD
 
 	@GetMapping(path = "/Leaderboard/view")
@@ -126,8 +207,15 @@ public class DatabaseController {
 		if (findProblembyName != null) {
 			List<Leaderboard> findByProblem = leaderboardRepository.findAllByProblem(findProblembyName);
 			for (Leaderboard l : findByProblem) {
+			
+				Durations currentUserDuration = viewDurationsById(l.getUser().getId(), l.getProblem().getId());
+				long durationMilliseconds = -1;
+				if(currentUserDuration != null && currentUserDuration.getOpeningDate() != null && currentUserDuration.getCompletionDate() != null) {
+					durationMilliseconds = currentUserDuration.getCompletionDate().getTime() - currentUserDuration.getOpeningDate().getTime();
+				}
+				
 				userOnLeaderboard
-						.add(new UserOnProblemLeaderboard(l.getUser().getUsername(), l.getScore(), l.getLanguage()));
+						.add(new UserOnProblemLeaderboard(l.getUser().getUsername(), l.getScore(), l.getLanguage(), durationMilliseconds));
 			}
 
 		}

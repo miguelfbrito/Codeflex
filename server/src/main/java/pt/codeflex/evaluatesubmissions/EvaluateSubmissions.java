@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
@@ -26,6 +27,8 @@ import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.direct.Session.Command;
 import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.xfer.FileSystemFile;
+import pt.codeflex.controllers.DatabaseController;
+import pt.codeflex.databasemodels.Durations;
 import pt.codeflex.databasemodels.Leaderboard;
 import pt.codeflex.databasemodels.Problem;
 import pt.codeflex.databasemodels.Result;
@@ -46,6 +49,9 @@ import pt.codeflex.repositories.UsersRepository;
 @Transactional
 @Scope("prototype")
 public class EvaluateSubmissions implements Runnable {
+
+	@Autowired
+	private DatabaseController db;
 
 	@Autowired
 	private UsersRepository usersRepository;
@@ -123,6 +129,8 @@ public class EvaluateSubmissions implements Runnable {
 		uniqueId = submission.getId();
 		Session session = null;
 		try {
+			// TODO : fix when it doesn't connect, should keep retrying for a limited amount
+			// of time.
 			session = host.getSsh().startSession();
 		} catch (ConnectionException | TransportException e2) {
 			e2.printStackTrace();
@@ -306,6 +314,11 @@ public class EvaluateSubmissions implements Runnable {
 				if (countCorrectScoring == totalTestCasesForProblem) {
 					System.out.println("Correct problem!");
 					submission.setResult(resultRepository.findByName("Correct"));
+
+					// Updates the completion date in order to calculate how much time a user took to solve the problem
+					Durations currentDuration = db.viewDurationsById(submission.getUsers().getId(),
+							submission.getProblem().getId());
+					db.updateDurationsOnProblemCompletion(currentDuration);
 				} else {
 					submission.setResult(resultRepository.findByName("Incorrect"));
 				}

@@ -30,6 +30,7 @@ class Problem extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            mathJaxLoaded: false,
             problemLoaded: false,
             scriptLoaded: false,
             problem: [],
@@ -101,6 +102,9 @@ public class Solution {
         fetch(URL + '/api/database/problem/getProblemByName/' + currentProblem).then(res => res.json()).then(data => {
             this.setState({ problem: data, problemLoaded: true });
             console.log(data)
+
+            this.setOpenedProblem(data);
+
         });
 
         fetch(URL + '/api/database/Language/view').then(res => res.json()).then(data => {
@@ -108,7 +112,6 @@ public class Solution {
             this.setState({ displayLanguages: data })
 
         });
-
 
         if (localStorage.getItem('problem-page') != null) {
             this.setState({ page: JSON.parse(localStorage.getItem('problem-page')) });
@@ -118,22 +121,40 @@ public class Solution {
             localStorage.setItem('problem-page', JSON.stringify(this.state.page));
         }
 
-
-
     }
 
     componentDidUpdate() {
         let MathJax = $(window)[0].MathJax;
-        if (this.state.page.problem) {
-            try {
-                console.log("UPDATTTTTT")
-                console.log(MathJax);
-                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-            } catch (err) {
-            }
-        } else {
-            MathJax.Hub.Queue();
+        let math = MathJax.Hub.getAllJax("MathDiv");
+
+        try {
+            console.log("UPDATTTTTT")
+            console.log(MathJax);
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+        } catch (err) {
         }
+    }
+
+    setOpenedProblem = (p) => {
+        const durationsData = {
+            users: {
+                id: JSON.parse(localStorage.getItem('userData')).id
+            },
+            problems: {
+                id: p.id
+            }
+        }
+
+        fetch(URL + '/api/database/Durations/onProblemOpening', {
+            method: 'POST',
+            body: JSON.stringify(durationsData),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        }).then(res => res.json()).then(data => {
+            console.log("OPENING PROBLEM")
+            console.log(data)
+        });
     }
 
     onAceChange(newValue) {
