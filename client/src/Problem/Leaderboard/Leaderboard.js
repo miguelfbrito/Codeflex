@@ -3,7 +3,7 @@ import ReactTable from 'react-table';
 import './Leaderboard.css';
 
 import { URL } from '../../commons/Constants';
-import { splitUrl, msToTime} from '../../commons/Utils';
+import { splitUrl, msToTime } from '../../commons/Utils';
 import '../../../node_modules/react-table/react-table.css';
 import '../../commons/react-table.css';
 
@@ -19,9 +19,18 @@ class Leaderboard extends React.Component {
 
     componentDidMount() {
 
-        let problemName = splitUrl(this.props.pathname)[2];
-        fetch(URL + '/api/database/Leaderboard/viewByProblemName/' + problemName).then(res => res.json())
-            .then(data => { this.setState({ problemName: problemName, leaderboard: data }) })
+        let url = '';
+
+        if(typeof this.props.pathname !== 'undefined'){
+            url = splitUrl(this.props.pathname);
+            const problemName = url[2];
+            fetch(URL + '/api/database/Leaderboard/viewByProblemName/' + problemName).then(res => res.json())
+                .then(data => { this.setState({ problemName: problemName, leaderboard: data }) })
+        } else {
+            console.log('On tournament')
+            console.log(this.props.match.params.tournamentName);
+        }
+
     }
 
     render() {
@@ -29,7 +38,7 @@ class Leaderboard extends React.Component {
         let toRender = '';
         if (this.state.problemName != null) {
 
-            let leaderboard = this.state.leaderboard.sort((a, b) => { return b.score - a.score });
+            let leaderboard = this.state.leaderboard.sort((a, b) => { return (b.score - a.score || a.durationMilliseconds - b.durationMilliseconds) });
             let currentUsername = JSON.parse(localStorage.getItem('userData')).username;
 
             console.log('leaderboard')
@@ -71,11 +80,11 @@ class Leaderboard extends React.Component {
                             Header: "Time",
                             id: "time",
                             accessor: l => {
-                              if(l.durationMilliseconds == -1){
-                                  return '--/--'
-                              } else {
-                                  return msToTime(l.durationMilliseconds);
-                              }
+                                if (l.durationMilliseconds == -1) {
+                                    return '--/--'
+                                } else {
+                                    return msToTime(l.durationMilliseconds);
+                                }
                             }
                         }
 

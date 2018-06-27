@@ -38,14 +38,14 @@ class ListProblems extends Component {
             .then(res => res.json()).then(data => { this.setState({ difficulties: data }) })
     }
 
-    fetchProblemsByTournament(){
+    fetchProblemsByTournament() {
         const currentTournament = splitUrl(this.props.location.pathname)[1];
         fetch(URL + '/api/database/tournament/getAllProblemsByName/' + currentTournament).then(res => res.json())
-        .then(data => {
-            console.log('Tournament problems')
-            console.log(data);
-            this.setState({problems : data, filteredProblems : data})
-        })
+            .then(data => {
+                console.log('Tournament problems')
+                console.log(data);
+                this.setState({ problems: data, filteredProblems: data })
+            })
     }
 
     fetchProblemsByCategory() {
@@ -161,6 +161,9 @@ class ListProblems extends Component {
                         ))}
                     </div>
                     <div className="col-sm-2 problem-info" ref={this.checkBoxFilter} onChange={this.onChangeSelectBox}>
+                        <Link to={this.props.location.pathname + '/leaderboard'}>
+                            <h3>Leaderboard</h3>
+                        </Link>
                         <h3>Status</h3>
                         <input name="Solved" type="checkbox" />
                         <p>Solved</p>

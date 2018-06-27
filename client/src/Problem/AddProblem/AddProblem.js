@@ -161,10 +161,6 @@ class AddProblem extends React.Component {
             }
         }
 
-        console.log("DATA SENT");
-        console.log(data);
-
-
         fetch(URL + '/api/database/Problem/update', {
             method: 'POST',
             body: JSON.stringify(data),
@@ -230,6 +226,25 @@ class AddProblem extends React.Component {
 
 
     render() {
+
+        const categorySection = 
+            <div className="row info-section">
+                <div className="col-sm-2 add-problem-desc">
+                    <h3>Category</h3>
+                    <p>Select the category that best represents the problem.</p>
+                </div>
+                <div className="col-sm-10 add-problem-textarea">
+                    <select name="category" className="textbox-problem" placeholder="Category" onChange={this.handleSelectBoxChange}>
+                        <option value="" disabled selected>Select category</option>
+                        {this.state.displayCategories.map((d, index) => (
+                            <option key={d.id} value={d.id}
+                                selected={d.id === this.state.category.id ? 'selected' : ''}
+                                id={d.name}>{d.name}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
         return (
             <div className="container add-problem">
                 <div className="row">
@@ -242,22 +257,8 @@ class AddProblem extends React.Component {
                         <input name="problemName" className="textbox-problem" onChange={this.onTextBoxChange} value={this.state.problemName} type="text" id="input-problem-name" placeholder="Problem name" />
                     </div>
                 </div>
-                <div className="row info-section">
-                    <div className="col-sm-2 add-problem-desc">
-                        <h3>Category</h3>
-                        <p>Select the category that best represents the problem.</p>
-                    </div>
-                    <div className="col-sm-10 add-problem-textarea">
-                        <select name="category" className="textbox-problem" placeholder="Category" onChange={this.handleSelectBoxChange}>
-                            <option value="" disabled selected>Select category</option>
-                            {this.state.displayCategories.map((d, index) => (
-                                <option key={d.id} value={d.id}
-                                    selected={d.id === this.state.category.id ? 'selected' : ''}
-                                    id={d.name}>{d.name}</option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
+
+                {splitUrl(this.props.location.pathname)[0] === 'manage' ? <div>{categorySection}</div> : ''}
 
                 <div className="row info-section">
                     <div className="col-sm-2 add-problem-desc">

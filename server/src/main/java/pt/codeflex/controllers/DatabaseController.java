@@ -207,15 +207,17 @@ public class DatabaseController {
 		if (findProblembyName != null) {
 			List<Leaderboard> findByProblem = leaderboardRepository.findAllByProblem(findProblembyName);
 			for (Leaderboard l : findByProblem) {
-			
+
 				Durations currentUserDuration = viewDurationsById(l.getUser().getId(), l.getProblem().getId());
 				long durationMilliseconds = -1;
-				if(currentUserDuration != null && currentUserDuration.getOpeningDate() != null && currentUserDuration.getCompletionDate() != null) {
-					durationMilliseconds = currentUserDuration.getCompletionDate().getTime() - currentUserDuration.getOpeningDate().getTime();
+				if (currentUserDuration != null && currentUserDuration.getOpeningDate() != null
+						&& currentUserDuration.getCompletionDate() != null) {
+					durationMilliseconds = currentUserDuration.getCompletionDate().getTime()
+							- currentUserDuration.getOpeningDate().getTime();
 				}
-				
-				userOnLeaderboard
-						.add(new UserOnProblemLeaderboard(l.getUser().getUsername(), l.getScore(), l.getLanguage(), durationMilliseconds));
+
+				userOnLeaderboard.add(new UserOnProblemLeaderboard(l.getUser().getUsername(), l.getScore(),
+						l.getLanguage(), durationMilliseconds));
 			}
 
 		}
@@ -397,7 +399,7 @@ public class DatabaseController {
 		if (practiseCategory.isPresent()) {
 			return practiseCategory.get();
 		}
-		return new PractiseCategory();
+		return null;
 	}
 
 	@GetMapping(path = "/PractiseCategory/viewByProblemName/{problemName}")
@@ -414,7 +416,7 @@ public class DatabaseController {
 
 		}
 
-		return new PractiseCategory();
+		return null;
 	}
 
 	@GetMapping(path = "/PractiseCategory/listWithStats/{id}")
@@ -554,7 +556,9 @@ public class DatabaseController {
 		if (addProblem.getTournament() != null && addProblem.getCategory() != null) {
 			System.out.println(addProblem.getTournament());
 			System.out.println(addProblem.getCategory());
-			if (addProblem.getTournament().getName() != null && addProblem.getCategory().getName() != null) {
+			System.out.println(addProblem.getProblem().getDifficulty());
+			if (addProblem.getTournament().getName() != null && addProblem.getCategory().getName() != null
+					&& !addProblem.getCategory().getName().equals("")) {
 				return new Problem();
 			}
 		}
@@ -1210,6 +1214,15 @@ public class DatabaseController {
 
 				double calculatedRating = (currentUser.getGlobalRating()
 						+ RatingCalculator.K * (sumPoints - sumExpectedRating));
+
+				// Updates rating for current tournament
+				Optional<Rating> currentRating = ratingRepository
+						.findById(new RatingID(tournament.getId(), currentUser.getId()));
+				if (currentRating.isPresent()) {
+					currentRating.get().setElo(calculatedRating);
+				}
+
+				// Updates rating on overall leaderboard
 				Users user = currentUser;
 				user.setGlobalRating(calculatedRating);
 				usersUpdated.add(user);

@@ -55,19 +55,20 @@ class ManageProblems extends React.Component {
 
         let content =
             <div className="add-problem-container">
-                <h3 style={{marginBottom:'15px'}}>{this.state.origin === 'tournament' ? 
-                'There are no problems on this tournament yet.' : "You haven't added any problems yet."
+                <h3 style={{ marginBottom: '15px' }}>{this.state.origin === 'tournament' ?
+                    'There are no problems on this tournament yet.' : "You haven't added any problems yet."
                 }</h3>
-                
+
                 <Link to={
                     this.state.origin === 'tournament' ? "/compete/manage-tournaments/" + splitUrl(this.props.location.pathname)[2] + "/add"
-                    : "/manage/problems/add"}>
+                        : "/manage/problems/add"}>
                     <input className="btn btn-codeflex" type="button" value="Add problem" />
                 </Link>
             </div>
 
         if (this.state.problems.length > 0) {
-            content = <ReactTable
+            content = <div>
+            <ReactTable
                 data={this.state.problems}
                 columns={[
                     {
@@ -119,12 +120,19 @@ class ManageProblems extends React.Component {
                 defaultPageSize={25}
                 pageSize={Math.min(this.state.problems.length, 25)}
                 style={{
-                    height: Math.min(this.state.problems.length * 125, 1000) + "px" // This will force the table body to overflow and scroll, since there is not enough room
+                    height: Math.min((this.state.problems.length < 3 ? 125 : 80) * this.state.problems.length, 1000) + "px" // This will force the table body to overflow and scroll, since there is not enough room
                 }
                 }
                 showPagination={false}
                 className="-highlight"
             />
+
+            <div style={{ textAlign: 'right', marginTop:'15px'}}>
+                            <Link to={this.props.location.pathname + '/add'}>
+                                <input type="button" className="btn btn-codeflex" value="Add new problem"/>
+                            </Link>
+                        </div>
+                        </div>
         }
 
         return (
@@ -134,13 +142,16 @@ class ManageProblems extends React.Component {
                         <PathLink path={this.props.location.pathname} title={splitUrl(this.props.match.url)[2]} />
                         :
                         <PathLink path={this.props.location.pathname} title="Manage Problems" />}
+                    <div>
                         <div>
                             {content}
                         </div>
+                        
+                    </div>
                 </div>
             </div>
-                )
-            }
-        }
-        
+        )
+    }
+}
+
 export default ManageProblems;
