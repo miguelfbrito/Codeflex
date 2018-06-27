@@ -125,14 +125,25 @@ public class Solution {
 
     componentDidUpdate() {
         let MathJax = $(window)[0].MathJax;
-        let math = MathJax.Hub.getAllJax("MathDiv");
 
         try {
             console.log("UPDATTTTTT")
             console.log(MathJax);
             MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+
+            <div id="anchor-remove-mathjax"></div>
+            // removes the duplicates creadted by MathJax, not the best solution.
+            if (this.state.page.problem) {
+                while (typeof $('#problem-statement').prev()[0] !== 'undefined') {
+                    $('#problem-statement').prev()[0].remove();
+                }
+            } else {
+                $('.problem-description-container').children('.MathJax_CHTML').remove();
+            }
+
         } catch (err) {
         }
+
     }
 
     setOpenedProblem = (p) => {
@@ -337,7 +348,8 @@ public class Solution {
         const problemSection =
             <div>
                 <div className="col-sm-10 problem-description-container" id="problem-section">
-                    <h3>Problem Statement</h3>
+                    <div id="anchor-remove-mathjax"></div>
+                    <h3 id="problem-statement">Problem Statement</h3>
                     {Parser(String(problem.description))}
 
                     <h3>Constraints</h3>
@@ -408,6 +420,7 @@ public class Solution {
         const submissionSection =
             <div>
                 <div className="col-sm-12 problem-description-container ">
+                    <div id="anchor-remove-mathjax"></div>
                     <Submissions pathname={this.props.location.pathname} />
                 </div>
             </div>;
@@ -415,6 +428,7 @@ public class Solution {
         const leaderboardSection =
             <div>
                 <div className="col-sm-12 problem-description-container">
+                    <div id="anchor-remove-mathjax"></div>
                     <Leaderboard pathname={this.props.location.pathname} />
                 </div>
             </div>;
