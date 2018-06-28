@@ -19,6 +19,7 @@ import ManageTestCases from './ManageTestCases/ManageTestCases';
 import ManageContent from './ManageContent/ManageContent';
 import ManageCategory from './ManageCategory/ManageCategory';
 import Leaderboard from './Problem/Leaderboard/Leaderboard';
+import TournamentLeaderboard from './TournamentLeaderboard/TournamentLeaderboard';
 
 class App extends Component {
   render() {
@@ -52,7 +53,7 @@ class App extends Component {
             <Route exact path="/compete/manage-tournaments" component={ManageTournaments} />
 
             <Route exact path="/compete" component={ListTournaments} />
-            <Route exact path="/compete/:tournamentName/leaderboard" component={Leaderboard} />
+            <Route exact path="/compete/:tournamentName/leaderboard" component={TournamentLeaderboard} />
             <Route exact path="/compete/:tournamentName/:problemName" component={Problem} />
             <Route exact path="/compete/:tournamentName" component={ListProblems} />
             <Route exact path="/compete/:categoryName/:problemName/view-results" component={ViewResults} />

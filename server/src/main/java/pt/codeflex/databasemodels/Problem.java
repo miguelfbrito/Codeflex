@@ -190,6 +190,16 @@ public class Problem {
 		this.tournament = tournament;
 	}
 
+	@Override
+	public String toString() {
+		return "Problem [id=" + id + ", name=" + name + ", description=" + description + ", inputFormat=" + inputFormat
+				+ ", outputFormat=" + outputFormat + ", constraints=" + constraints + ", creationDate=" + creationDate
+				+ ", maxScore=" + maxScore + ", tournament=" + tournament + ", owner=" + owner + ", testCases="
+				+ testCases + ", difficulty=" + difficulty + "]";
+	}
+	
+	
+
 
 
 }

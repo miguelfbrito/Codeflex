@@ -1,26 +1,34 @@
 package pt.codeflex.models;
 
-public class UserOnProblemLeaderboard {
+public class UsersLeaderboard {
 
 	private String username;
 	private double score;
 	private String language;
 	private long durationMilliseconds;
 
-	public UserOnProblemLeaderboard(String username, double score, String language) {
+	public UsersLeaderboard(String username, double score, String language) {
 		super();
 		this.username = username;
 		this.score = score;
 		this.language = language;
 	}
 
-	public UserOnProblemLeaderboard(String username, double score, String language, long durationMilliseconds) {
+	public UsersLeaderboard(String username, double score, String language, long durationMilliseconds) {
 		super();
 		this.username = username;
 		this.score = score;
 		this.language = language;
 		this.durationMilliseconds = durationMilliseconds;
 	}
+
+	public UsersLeaderboard(String username, double score, long durationMilliseconds) {
+		super();
+		this.username = username;
+		this.score = score;
+		this.durationMilliseconds = durationMilliseconds;
+	}
+
 	public String getUsername() {
 		return username;
 	}
@@ -53,7 +61,4 @@ public class UserOnProblemLeaderboard {
 		this.durationMilliseconds = durationMilliseconds;
 	}
 
-
-	
-	
 }

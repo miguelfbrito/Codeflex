@@ -1,5 +1,6 @@
 package pt.codeflex.controllers;
 
+import static org.mockito.Mockito.doAnswer;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 
 import java.text.DateFormat;
@@ -29,6 +30,7 @@ import pt.codeflex.databasecompositeskeys.DurationsID;
 import pt.codeflex.databasecompositeskeys.RatingID;
 import pt.codeflex.databasemodels.*;
 import pt.codeflex.models.CategoriesWithoutTestCases;
+import pt.codeflex.models.DateStatus;
 import pt.codeflex.models.ListCategoriesWithStats;
 import pt.codeflex.models.AddProblem;
 import pt.codeflex.models.AddTournamentToProblem;
@@ -36,11 +38,13 @@ import pt.codeflex.models.ProblemWithoutTestCases;
 import pt.codeflex.models.RegisterUserOnTournament;
 import pt.codeflex.models.TestCasesShown;
 import pt.codeflex.models.TournamentIsUserRegistrated;
+import pt.codeflex.models.TournamentLeaderboard;
 import pt.codeflex.models.TournamentWithRegisteredUsers;
 import pt.codeflex.models.TournamentsToList;
 import pt.codeflex.models.UserLessInfo;
-import pt.codeflex.models.UserOnProblemLeaderboard;
+import pt.codeflex.models.UsersLeaderboard;
 import pt.codeflex.repositories.*;
+import pt.codeflex.utils.DurationCalculation;
 import pt.codeflex.utils.RatingCalculator;
 
 @RestController
@@ -199,10 +203,10 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Leaderboard/viewByProblemName/{problemName}")
-	public List<UserOnProblemLeaderboard> getAllLeaderboardsByProblemName(@PathVariable String problemName) {
+	public List<UsersLeaderboard> getAllLeaderboardsByProblemName(@PathVariable String problemName) {
 
 		Problem findProblembyName = problemRepository.findByName(problemName.replace("-", " "));
-		List<UserOnProblemLeaderboard> userOnLeaderboard = new ArrayList<>();
+		List<UsersLeaderboard> userOnLeaderboard = new ArrayList<>();
 
 		if (findProblembyName != null) {
 			List<Leaderboard> findByProblem = leaderboardRepository.findAllByProblem(findProblembyName);
@@ -216,8 +220,8 @@ public class DatabaseController {
 							- currentUserDuration.getOpeningDate().getTime();
 				}
 
-				userOnLeaderboard.add(new UserOnProblemLeaderboard(l.getUser().getUsername(), l.getScore(),
-						l.getLanguage(), durationMilliseconds));
+				userOnLeaderboard.add(new UsersLeaderboard(l.getUser().getUsername(), l.getScore(), l.getLanguage(),
+						durationMilliseconds));
 			}
 
 		}
@@ -541,6 +545,8 @@ public class DatabaseController {
 
 		Problem p = addProblem.getProblem();
 
+		System.out.println(p.toString());
+
 		if (p == null) {
 			return new Problem();
 		}
@@ -611,6 +617,7 @@ public class DatabaseController {
 			problemUpdate.setConstraints(p.getConstraints());
 			problemUpdate.setInputFormat(p.getInputFormat());
 			problemUpdate.setOutputFormat(p.getOutputFormat());
+			problemUpdate.setMaxScore(p.getMaxScore());
 
 			// updates difficulty
 			Optional<Difficulty> d = viewDifficultyById(changes.getProblem().getDifficulty().getId());
@@ -738,13 +745,15 @@ public class DatabaseController {
 		List<Users> usersInTournament = new ArrayList<Users>();
 		List<Rating> allRatings = getAllRatings();
 
-		Optional<Tournament> t = viewTournamentById(tournamentId);
+		Tournament t = viewTournamentById(tournamentId);
 
-		if (t.isPresent()) {
-			for (Rating r : allRatings) {
-				if (r.getTournament() == t.get()) {
-					usersInTournament.add(r.getUser());
-				}
+		if (t == null) {
+			return null;
+		}
+
+		for (Rating r : allRatings) {
+			if (r.getTournament() == t) {
+				usersInTournament.add(r.getUser());
 			}
 		}
 
@@ -1045,6 +1054,76 @@ public class DatabaseController {
 		return tournamentRepository.findByName(name.replace("-", " "));
 	}
 
+	@GetMapping("/Tournament/viewCurrentLeaderboard/{tournamentName}")
+	public UsersLeaderboard viewCurrentLeaderboard(@PathVariable String tournamentName) {
+
+		Tournament tournament = viewTournamentByName(tournamentName);
+
+		if (tournament == null)
+			return null;
+
+		List<Users> usersInTournament = viewUsersByTournamentId(tournament.getId());
+
+		List<Problem> problemsInTournament = getAllProblemsByTournamentName(tournament.getName());
+
+		for (Users u : usersInTournament) {
+
+		}
+
+		return null;
+	}
+
+	@GetMapping("/Tournament/viewTournamentLeaderboard/{tournamentId}")
+	public List<TournamentLeaderboard> viewTournamentLeaderboard(@PathVariable long tournamentId) {
+
+		Tournament tournament = viewTournamentById(tournamentId);
+
+		if (tournament == null)
+			return null;
+
+		List<TournamentLeaderboard> tournamentLeaderboard = leaderboardRepository
+				.getInformationForTournamentLeaderboard(tournamentId);
+
+		if (tournamentLeaderboard.size() == 0)
+			return null;
+
+		String username = tournamentLeaderboard.get(0).getUsername();
+
+		List<DateStatus> problemDurations = new ArrayList<>();
+		for (TournamentLeaderboard t : tournamentLeaderboard) {
+			
+			if (!username.equals(t.getUsername())) {
+				long ms = DurationCalculation.calculateDuration(problemDurations);
+				t.setTotalMilliseconds(ms);
+				problemDurations = new ArrayList<>();
+				username = t.getUsername();
+			}
+			
+			problemDurations.add(new DateStatus(t.getOpeningDate().getTime(), true));
+
+			DateStatus completion;
+			if (t.getCompletionDate() == null) { // user hasn't completed the problem
+				if (tournament.getEndingDate().getTime() <= Calendar.getInstance().getTimeInMillis()) {
+					// in case the tournament has ended use the tournament's ending date as
+					// completion date
+					completion = new DateStatus(tournament.getEndingDate().getTime(), false);
+				} else {
+					completion = new DateStatus(Calendar.getInstance().getTimeInMillis(), false); // the tournament is
+																									// still
+					// active, so, use the
+					// current date
+				}
+			} else {
+				completion = new DateStatus(t.getCompletionDate().getTime(), false);
+			}
+
+			problemDurations.add(completion);
+
+		}
+
+		return tournamentLeaderboard;
+	}
+
 	@PostMapping(path = "/Tournament/add")
 	public Tournament addTournament(@RequestBody Tournament t) {
 
@@ -1057,24 +1136,21 @@ public class DatabaseController {
 
 	@PostMapping("/Tournament/update")
 	public Tournament updateTournament(@RequestBody Tournament t) {
-		Optional<Tournament> tournament = viewTournamentById(t.getId());
-		if (tournament.isPresent()) {
-			Tournament tournamentUpdate = tournament.get();
+		Tournament tournamentUpdate = viewTournamentById(t.getId());
+		if (tournamentUpdate == null)
+			return null;
 
-			tournamentUpdate.setCode(t.getCode());
-			tournamentUpdate.setDescription(t.getDescription());
-			tournamentUpdate.setEndingDate(t.getEndingDate());
-			tournamentUpdate.setLink(t.getLink());
-			tournamentUpdate.setName(t.getName());
-			tournamentUpdate.setOpen(t.isOpen());
-			tournamentUpdate.setOwner(t.getOwner());
-			tournamentUpdate.setShowWebsite(t.isShowWebsite());
-			tournamentUpdate.setStartingDate(t.getStartingDate());
+		tournamentUpdate.setCode(t.getCode());
+		tournamentUpdate.setDescription(t.getDescription());
+		tournamentUpdate.setEndingDate(t.getEndingDate());
+		tournamentUpdate.setLink(t.getLink());
+		tournamentUpdate.setName(t.getName());
+		tournamentUpdate.setOpen(t.isOpen());
+		tournamentUpdate.setOwner(t.getOwner());
+		tournamentUpdate.setShowWebsite(t.isShowWebsite());
+		tournamentUpdate.setStartingDate(t.getStartingDate());
 
-			return tournamentRepository.save(tournamentUpdate);
-		}
-
-		return new Tournament();
+		return tournamentRepository.save(tournamentUpdate);
 	}
 
 	@GetMapping("/Tournament/viewAllByOwnerId/{ownerId}")
@@ -1163,13 +1239,13 @@ public class DatabaseController {
 	public TournamentsToList registerUserOnTournament(@RequestBody RegisterUserOnTournament register) {
 
 		Optional<Users> viewUsersById = viewUsersById(register.getUser().getId());
-		Optional<Tournament> viewTournamentById = viewTournamentById(register.getTournament().getId());
+		Tournament viewTournamentById = viewTournamentById(register.getTournament().getId());
 
-		if (!viewUsersById.isPresent() || !viewTournamentById.isPresent()) {
+		if (!viewUsersById.isPresent() || viewTournamentById == null) {
 			return getAllTournamentsToList(viewUsersById.get().getId()); // ?!
 		}
 
-		Rating r = new Rating(viewTournamentById.get(), viewUsersById.get(), (double) -1);
+		Rating r = new Rating(viewTournamentById, viewUsersById.get(), (double) -1);
 		ratingRepository.save(r);
 
 		return getAllTournamentsToList(viewUsersById.get().getId());
@@ -1180,68 +1256,67 @@ public class DatabaseController {
 	public void calculateTournamentRatings(@PathVariable long tournamentId) {
 
 		List<Users> usersUpdated = new ArrayList<>();
-		Optional<Tournament> t = viewTournamentById(tournamentId);
+		Tournament tournament = viewTournamentById(tournamentId);
 
-		if (t.isPresent()) {
-			Tournament tournament = t.get();
+		if (tournament == null) {
+			return;
+		}
 
-			List<Users> usersPerTournament = viewUsersByTournamentId(tournamentId);
+		List<Users> usersPerTournament = viewUsersByTournamentId(tournamentId);
 
-			for (int i = 0; i < usersPerTournament.size(); i++) {
+		for (int i = 0; i < usersPerTournament.size(); i++) {
 
-				Users currentUser = usersPerTournament.get(i);
+			Users currentUser = usersPerTournament.get(i);
 
-				double sumExpectedRating = 0;
-				double sumPoints = 0;
+			double sumExpectedRating = 0;
+			double sumPoints = 0;
 
-				for (int j = 0; j < usersPerTournament.size(); j++) {
+			for (int j = 0; j < usersPerTournament.size(); j++) {
 
-					Users opponent = usersPerTournament.get(j);
-					if (currentUser == opponent)
-						continue;
+				Users opponent = usersPerTournament.get(j);
+				if (currentUser == opponent)
+					continue;
 
-					sumExpectedRating += RatingCalculator.expectedRating(currentUser.getGlobalRating(),
-							opponent.getGlobalRating());
+				sumExpectedRating += RatingCalculator.expectedRating(currentUser.getGlobalRating(),
+						opponent.getGlobalRating());
 
-					double scoreA = tournamentRepository.findScoreOfUserInTournament(currentUser.getId(),
-							tournament.getId());
-					double scoreB = tournamentRepository.findScoreOfUserInTournament(opponent.getId(),
-							tournament.getId());
+				double scoreA = tournamentRepository.findScoreOfUserInTournament(currentUser.getId(),
+						tournament.getId());
+				double scoreB = tournamentRepository.findScoreOfUserInTournament(opponent.getId(), tournament.getId());
 
-					sumPoints += RatingCalculator.pointsComparasion(scoreA, scoreB);
+				sumPoints += RatingCalculator.pointsComparasion(scoreA, scoreB);
 
-				}
-
-				double calculatedRating = (currentUser.getGlobalRating()
-						+ RatingCalculator.K * (sumPoints - sumExpectedRating));
-
-				// Updates rating for current tournament
-				Optional<Rating> currentRating = ratingRepository
-						.findById(new RatingID(tournament.getId(), currentUser.getId()));
-				if (currentRating.isPresent()) {
-					currentRating.get().setElo(calculatedRating);
-				}
-
-				// Updates rating on overall leaderboard
-				Users user = currentUser;
-				user.setGlobalRating(calculatedRating);
-				usersUpdated.add(user);
 			}
 
-			// saves all ratings after calculating.
-			// Can't be done on the for loop because updating a rating before calculating
-			// them all would result in incorrect data
-			usersRepository.saveAll(usersUpdated);
+			double calculatedRating = (currentUser.getGlobalRating()
+					+ RatingCalculator.K * (sumPoints - sumExpectedRating));
 
+			// Updates rating for current tournament
+			Optional<Rating> currentRating = ratingRepository
+					.findById(new RatingID(tournament.getId(), currentUser.getId()));
+			if (currentRating.isPresent()) {
+				currentRating.get().setElo(calculatedRating);
+			}
+
+			// Updates rating on overall leaderboard
+			Users user = currentUser;
+			user.setGlobalRating(calculatedRating);
+			usersUpdated.add(user);
 		}
+
+		// saves all ratings after calculating.
+		// Can't be done on the for loop because updating a rating before calculating
+		// them all would result in incorrect data
+		usersRepository.saveAll(usersUpdated);
+
 	}
 
 	@PostMapping(path = "/Tournament/delete/{id}")
 	public void deleteTournamentById(@PathVariable long id) {
-		Optional<Tournament> t = viewTournamentById(id);
+		Tournament tournament = viewTournamentById(id);
 
-		if (t.isPresent()) {
-			List<Problem> problemsByTournament = problemRepository.findAllByTournament(t.get());
+		if (tournament != null) {
+			List<Problem> problemsByTournament = problemRepository.findAllByTournament(tournament);
 
 			for (Problem p : problemsByTournament) {
 				p.setTournament(null);
@@ -1270,8 +1345,12 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Tournament/view/{id}")
-	public Optional<Tournament> viewTournamentById(@PathVariable long id) {
-		return tournamentRepository.findById(id);
+	public Tournament viewTournamentById(@PathVariable long id) {
+		Optional<Tournament> t = tournamentRepository.findById(id);
+		if (t.isPresent()) {
+			return tournamentRepository.save(t.get());
+		}
+		return null;
 	}
 
 	// USERS

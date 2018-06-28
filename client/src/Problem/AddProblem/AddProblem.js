@@ -109,6 +109,7 @@ class AddProblem extends React.Component {
     }
 
     onTextBoxChange(e) {
+        console.log(e.target.value)
         this.setState({ [e.target.name]: e.target.value });
     }
 
@@ -139,7 +140,7 @@ class AddProblem extends React.Component {
             problem: {
                 id: this.state.problemId,
                 name: this.state.problemName,
-                maxScore: this.state.problemMaxScore,
+                maxScore: parseInt(this.state.problemMaxScore),
                 description: draftToHtml(convertToRaw(this.state.problemDescription.getCurrentContent())),
                 constraints: draftToHtml(convertToRaw(this.state.problemConstraints.getCurrentContent())),
                 inputFormat: draftToHtml(convertToRaw(this.state.problemInputFormat.getCurrentContent())),
@@ -160,6 +161,8 @@ class AddProblem extends React.Component {
                 name: this.props.match.params.tournamentName
             }
         }
+
+        console.log(data)
 
         fetch(URL + '/api/database/Problem/update', {
             method: 'POST',
@@ -184,7 +187,7 @@ class AddProblem extends React.Component {
         const data = {
             problem: {
                 name: this.state.problemName,
-                maxScore: this.state.problemMaxScore,
+                maxScore: Number(this.state.problemMaxScore),
                 description: draftToHtml(convertToRaw(this.state.problemDescription.getCurrentContent())),
                 constraints: draftToHtml(convertToRaw(this.state.problemConstraints.getCurrentContent())),
                 inputFormat: draftToHtml(convertToRaw(this.state.problemInputFormat.getCurrentContent())),
