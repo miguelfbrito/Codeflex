@@ -19,18 +19,9 @@ class Leaderboard extends React.Component {
 
     componentDidMount() {
 
-        let url = '';
-
-        if(typeof this.props.pathname !== 'undefined'){
-            url = splitUrl(this.props.pathname);
-            const problemName = url[2];
+            const problemName = splitUrl(this.props.pathname)[2];
             fetch(URL + '/api/database/Leaderboard/viewByProblemName/' + problemName).then(res => res.json())
                 .then(data => { this.setState({ problemName: problemName, leaderboard: data }) })
-        } else {
-            console.log('On tournament')
-            console.log(this.props.match.params.tournamentName);
-        }
-
     }
 
     render() {

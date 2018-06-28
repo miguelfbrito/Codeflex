@@ -214,12 +214,15 @@ public class DatabaseController {
 
 				Durations currentUserDuration = viewDurationsById(l.getUser().getId(), l.getProblem().getId());
 				long durationMilliseconds = -1;
-				if (currentUserDuration != null && currentUserDuration.getOpeningDate() != null
-						&& currentUserDuration.getCompletionDate() != null) {
-					durationMilliseconds = currentUserDuration.getCompletionDate().getTime()
-							- currentUserDuration.getOpeningDate().getTime();
+				if (currentUserDuration != null && currentUserDuration.getOpeningDate() != null) {
+					long completionDate;
+					if (currentUserDuration.getCompletionDate() == null) {
+						completionDate = Calendar.getInstance().getTimeInMillis();
+					} else {
+						completionDate = currentUserDuration.getCompletionDate().getTime();
+					}
+					durationMilliseconds = completionDate - currentUserDuration.getOpeningDate().getTime();
 				}
-
 				userOnLeaderboard.add(new UsersLeaderboard(l.getUser().getUsername(), l.getScore(), l.getLanguage(),
 						durationMilliseconds));
 			}
@@ -1076,7 +1079,6 @@ public class DatabaseController {
 	@GetMapping("/Tournament/viewTournamentLeaderboard/{tournamentName}")
 	public List<TournamentLeaderboard> viewTournamentLeaderboard(@PathVariable String tournamentName) {
 
-		
 		List<TournamentLeaderboard> finalLeaderboard = new ArrayList<>();
 
 		Tournament tournament = viewTournamentByName(tournamentName);
