@@ -8,7 +8,7 @@ import java.util.List;
 import pt.codeflex.models.DateStatus;
 
 public class DurationCalculation {
-	
+
 	// Calculates time without overlapping
 	public static long calculateDuration(List<DateStatus> dates) {
 
@@ -20,25 +20,33 @@ public class DurationCalculation {
 				return Long.compare(arg0.getDate(), arg1.getDate());
 			}
 		});
+		
+		System.out.println("");
+		for(DateStatus d : dates) {
+			System.out.println(d.getDate() + " - " + d.isOpeningDate());
+		}
+		System.out.println("");
 
-		DateStatus openingDate = dates.get(0);
-		int openedDates = 0;
+		long openingDate = dates.get(0).getDate();
+		int openedProblems = 1;
 
 		for (int i = 1; i < dates.size(); i++) {
 			DateStatus d = dates.get(i);
 
-			System.out.println(d.getDate() + "  -   " + d.isOpeningDate());
 			if (!d.isOpeningDate()) {
-				if (openedDates == 0) {
-					totalMilliseconds += d.getDate() - openingDate.getDate();
+				openedProblems--;
+				if (openedProblems == 0) {
+					totalMilliseconds += d.getDate() - openingDate;
 				}
-					openedDates--;
 			} else {
-				openedDates++;
+				if (openedProblems == 0) {
+					openingDate = d.getDate();
+				}
+				openedProblems++;
 			}
 
 		}
-		
+
 		System.out.println();
 		return totalMilliseconds;
 	}

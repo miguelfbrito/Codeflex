@@ -1073,16 +1073,19 @@ public class DatabaseController {
 		return null;
 	}
 
-	@GetMapping("/Tournament/viewTournamentLeaderboard/{tournamentId}")
-	public List<TournamentLeaderboard> viewTournamentLeaderboard(@PathVariable long tournamentId) {
+	@GetMapping("/Tournament/viewTournamentLeaderboard/{tournamentName}")
+	public List<TournamentLeaderboard> viewTournamentLeaderboard(@PathVariable String tournamentName) {
 
-		Tournament tournament = viewTournamentById(tournamentId);
+		
+		List<TournamentLeaderboard> finalLeaderboard = new ArrayList<>();
+
+		Tournament tournament = viewTournamentByName(tournamentName);
 
 		if (tournament == null)
 			return null;
 
 		List<TournamentLeaderboard> tournamentLeaderboard = leaderboardRepository
-				.getInformationForTournamentLeaderboard(tournamentId);
+				.getInformationForTournamentLeaderboard(tournament.getId());
 
 		if (tournamentLeaderboard.size() == 0)
 			return null;
@@ -1090,15 +1093,11 @@ public class DatabaseController {
 		String username = tournamentLeaderboard.get(0).getUsername();
 
 		List<DateStatus> problemDurations = new ArrayList<>();
-		for (TournamentLeaderboard t : tournamentLeaderboard) {
-			
-			if (!username.equals(t.getUsername())) {
-				long ms = DurationCalculation.calculateDuration(problemDurations);
-				t.setTotalMilliseconds(ms);
-				problemDurations = new ArrayList<>();
-				username = t.getUsername();
-			}
-			
+		for (int i = 0; i < tournamentLeaderboard.size(); i++) {
+
+			TournamentLeaderboard t = tournamentLeaderboard.get(i);
+			System.out.println(t.getUsername() + " - " + t.getOpeningDate() + " -  " + t.getCompletionDate());
+
 			problemDurations.add(new DateStatus(t.getOpeningDate().getTime(), true));
 
 			DateStatus completion;
@@ -1109,9 +1108,9 @@ public class DatabaseController {
 					completion = new DateStatus(tournament.getEndingDate().getTime(), false);
 				} else {
 					completion = new DateStatus(Calendar.getInstance().getTimeInMillis(), false); // the tournament is
-																									// still
-					// active, so, use the
-					// current date
+																									// still active, so,
+																									// use the current
+																									// date
 				}
 			} else {
 				completion = new DateStatus(t.getCompletionDate().getTime(), false);
@@ -1119,9 +1118,31 @@ public class DatabaseController {
 
 			problemDurations.add(completion);
 
+			if (i + 1 < tournamentLeaderboard.size()) {
+
+				TournamentLeaderboard t1 = tournamentLeaderboard.get(i + 1);
+
+				if (!username.equals(t1.getUsername())) {
+					long ms = DurationCalculation.calculateDuration(problemDurations);
+					t.setTotalMilliseconds(ms);
+					finalLeaderboard.add(new TournamentLeaderboard(t.getUsername(), t.getScore(), null, null,
+							t.getTotalMilliseconds()));
+					problemDurations = new ArrayList<>();
+
+					username = t1.getUsername();
+				}
+			}
+
+			if (i == tournamentLeaderboard.size() - 1) {
+				long ms = DurationCalculation.calculateDuration(problemDurations);
+				t.setTotalMilliseconds(ms);
+				finalLeaderboard.add(
+						new TournamentLeaderboard(t.getUsername(), t.getScore(), null, null, t.getTotalMilliseconds()));
+			}
+
 		}
 
-		return tournamentLeaderboard;
+		return finalLeaderboard;
 	}
 
 	@PostMapping(path = "/Tournament/add")
