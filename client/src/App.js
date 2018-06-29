@@ -17,7 +17,7 @@ import AddProblem from './Problem/AddProblem/AddProblem';
 import GlobalLeaderboard from './GlobalLeaderboard/GlobalLeaderboard';
 import ManageTestCases from './ManageTestCases/ManageTestCases';
 import ManageContent from './ManageContent/ManageContent';
-import ManageCategory from './ManageCategory/ManageCategory';
+import ManageCategories from './ManageCategories/ManageCategories';
 import Leaderboard from './Problem/Leaderboard/Leaderboard';
 import TournamentLeaderboard from './TournamentLeaderboard/TournamentLeaderboard';
 import ProfilePage from './Users/ProfilePage/ProfilePage';
@@ -42,7 +42,7 @@ class App extends Component {
               <Route exact path="/manage/problems/:problemName/test-cases" component={ManageTestCases} />
 
               <Route exact path="/manage/tournaments" component={ManageTournaments} />
-              <Route exact path="/manage/categories" component={ManageCategory} />
+              <Route exact path="/manage/categories" component={ManageCategories} />
 
               <Route exact path="/practise/:categoryName/:problemName" component={Problem} />
               <Route exact path="/practise/:categoryName/:problemName/view-results" component={ViewResults} />

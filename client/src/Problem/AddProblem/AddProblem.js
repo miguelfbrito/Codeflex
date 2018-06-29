@@ -65,6 +65,7 @@ class AddProblem extends React.Component {
             console.log('getting stuff')
             console.log(data);
 
+            // TODO : check category might be null
             this.setState({
                 problemId: data.problem.id,
                 problemName: data.problem.name,

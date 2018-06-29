@@ -395,7 +395,7 @@ public class DatabaseController {
 		}
 	}
 
-	@PostMapping(path = "/PractiseCategory/delete/{id}")
+	@DeleteMapping(path = "/PractiseCategory/delete/{id}")
 	public void deletePractiseCategory(@PathVariable long id) {
 		practiseCategoryRepository.deleteById(id);
 	}
