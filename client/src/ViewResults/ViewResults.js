@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
-import './ViewResults.css'
+import AceEditor from 'react-ace';
+import PathLink from '../PathLink/PathLink';
+
 import { Router, Redirect } from 'react-router';
 import { textToLowerCaseNoSpaces, splitUrl } from '../commons/Utils';
 import { URL } from '../commons/Constants';
-import PathLink from '../PathLink/PathLink';
+
+import './ViewResults.css'
+
+
 
 class ViewResults extends Component {
 
@@ -47,10 +52,20 @@ class ViewResults extends Component {
 
     render() {
 
+        const aceStyle = {
+            minHeight: '600px',
+            marginTop: '15px',
+            paddingTop: '5px',
+            border: '1px solid #ccc',
+            width: '100%',
+            boxShadow: '0px 3px 8px 0px #ccc',
+            marginLeft: '0'
+        }
+
         let renderTestCases = '';
         let renderCode = '';
 
-        if (typeof this.state.results != 'undefined') {
+        if (typeof this.state.results !== "undefined") {
             console.log('Logging scoring results on vr')
             renderTestCases =
                 <div className="testcase-container">
@@ -68,21 +83,32 @@ class ViewResults extends Component {
                     ))}
                 </div>
 
-/*            renderCode = <p>
-                {atob(this.state.results[0].submissions.code)}
-            </p>*/
+            if (typeof this.state.results[0] !== "undefined") {
+                renderCode = <div>
+                    <h3>Code submitted</h3>
+                    <AceEditor style={aceStyle} mode={this.state.results[0].submissions.language.mode} theme={this.state.theme} name=""
+                        fontSize={14} showPrintMargin={true} showGutter={true} highlightActiveLine={true} value={atob(this.state.results[0].submissions.code)}
+                        setOptions={{
+                            enableBasicAutocompletion: true,
+                            enableLiveAutocompletion: true,
+                            enableSnippets: false,
+                            showLineNumbers: true,
+                            tabSize: 3,
+                        }} />
+                </div>
+            }
         }
 
-
+        console.log(renderCode);
         return (
             <div className="container">
                 <div className="row ">
                     <PathLink path={this.props.location.pathname} title="View Results" />
                     {renderTestCases}
                 </div>
-                {/*<div>
+                <div>
                     {renderCode}
-                </div>*/}
+                </div>
             </div>
         );
     }

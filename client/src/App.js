@@ -20,6 +20,7 @@ import ManageContent from './ManageContent/ManageContent';
 import ManageCategory from './ManageCategory/ManageCategory';
 import Leaderboard from './Problem/Leaderboard/Leaderboard';
 import TournamentLeaderboard from './TournamentLeaderboard/TournamentLeaderboard';
+import ProfilePage from './Users/ProfilePage/ProfilePage';
 
 class App extends Component {
   render() {
@@ -30,6 +31,8 @@ class App extends Component {
           <Switch>
             <Route exact path="/login" component={Login} />
             <Route exact path="/problem" component={Problem} />
+
+            <Route exact path="/user/:username" component={ProfilePage} />
 
             <Route exact path="/manage" component={ManageContent} />
             <Route exact path="/manage/problems" component={ManageProblems} />
