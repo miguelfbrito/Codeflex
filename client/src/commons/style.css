@@ -7,8 +7,17 @@ h3 {
     font-family: 'Roboto Condensed', sans-serif;
 }
 
+h2 {
+    font-size: 20pt;
+}
+
 h3.page-subtitle {
     font-size: 16pt;
+}
+
+p {
+    font-family: 'Roboto', sans-serif;
+    font-size: 12pt;
 }
 
 p.page-subtitle {
@@ -27,6 +36,14 @@ p.page-subtitle {
 
 .btn-codeflex:hover {
     background-color: #6a44ff;
-    color:white;
+    color: white;
     box-shadow: 0px 0px 10px 1px #aaa;
+}
+
+.no-margin {
+    margin: 0;
+}
+
+.no-padding {
+    padding: 0;
 }

@@ -26,45 +26,47 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <div>
+        <div style={{ margin: '0', padding: '0' }}>
           <NavBar />
-          <Switch>
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/problem" component={Problem} />
+          <div style={{minHeight:'100%'}}>
+            <Switch>
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/problem" component={Problem} />
 
-            <Route exact path="/user/:username" component={ProfilePage} />
+              <Route exact path="/user/:username" component={ProfilePage} />
 
-            <Route exact path="/manage" component={ManageContent} />
-            <Route exact path="/manage/problems" component={ManageProblems} />
-            <Route exact path="/manage/problems/add" component={AddProblem} />
-            <Route exact path="/manage/problems/edit/:problemName" component={AddProblem} />
-            <Route exact path="/manage/problems/:problemName/test-cases" component={ManageTestCases} />
+              <Route exact path="/manage" component={ManageContent} />
+              <Route exact path="/manage/problems" component={ManageProblems} />
+              <Route exact path="/manage/problems/add" component={AddProblem} />
+              <Route exact path="/manage/problems/edit/:problemName" component={AddProblem} />
+              <Route exact path="/manage/problems/:problemName/test-cases" component={ManageTestCases} />
 
-            <Route exact path="/manage/tournaments" component={ManageTournaments} />
-            <Route exact path="/manage/categories" component={ManageCategory} />
+              <Route exact path="/manage/tournaments" component={ManageTournaments} />
+              <Route exact path="/manage/categories" component={ManageCategory} />
 
-            <Route exact path="/practise/:categoryName/:problemName" component={Problem} />
-            <Route exact path="/practise/:categoryName/:problemName/view-results" component={ViewResults} />
-            <Route exact path="/practise/:categoryName" component={ListProblems} />
-            <Route exact path="/practise" component={ListCategories} />
+              <Route exact path="/practise/:categoryName/:problemName" component={Problem} />
+              <Route exact path="/practise/:categoryName/:problemName/view-results" component={ViewResults} />
+              <Route exact path="/practise/:categoryName" component={ListProblems} />
+              <Route exact path="/practise" component={ListCategories} />
 
-            <Route exact path="/compete/create-tournament" component={CreateTournament} />
-            <Route exact path="/compete/manage-tournaments/:tournamentName/:problemName/test-cases" component={ManageTestCases} />
-            <Route exact path="/compete/manage-tournaments/:tournamentName/edit/:problemName" component={AddProblem} />
-            <Route exact path="/compete/manage-tournaments/:tournamentName/add" component={AddProblem} />
-            <Route exact path="/compete/manage-tournaments/:tournamentName" component={ManageProblems} />
-            <Route exact path="/compete/manage-tournaments" component={ManageTournaments} />
+              <Route exact path="/compete/create-tournament" component={CreateTournament} />
+              <Route exact path="/compete/manage-tournaments/:tournamentName/:problemName/test-cases" component={ManageTestCases} />
+              <Route exact path="/compete/manage-tournaments/:tournamentName/edit/:problemName" component={AddProblem} />
+              <Route exact path="/compete/manage-tournaments/:tournamentName/add" component={AddProblem} />
+              <Route exact path="/compete/manage-tournaments/:tournamentName" component={ManageProblems} />
+              <Route exact path="/compete/manage-tournaments" component={ManageTournaments} />
 
-            <Route exact path="/compete" component={ListTournaments} />
-            <Route exact path="/compete/:tournamentName/leaderboard" component={TournamentLeaderboard} />
-            <Route exact path="/compete/:tournamentName/:problemName" component={Problem} />
-            <Route exact path="/compete/:tournamentName" component={ListProblems} />
-            <Route exact path="/compete/:categoryName/:problemName/view-results" component={ViewResults} />
+              <Route exact path="/compete" component={ListTournaments} />
+              <Route exact path="/compete/:tournamentName/leaderboard" component={TournamentLeaderboard} />
+              <Route exact path="/compete/:tournamentName/:problemName" component={Problem} />
+              <Route exact path="/compete/:tournamentName" component={ListProblems} />
+              <Route exact path="/compete/:categoryName/:problemName/view-results" component={ViewResults} />
 
-            <Route exact path="/leaderboard" component={GlobalLeaderboard} />
+              <Route exact path="/leaderboard" component={GlobalLeaderboard} />
 
-            <Route component={PageNotFound} />
-          </Switch>
+              <Route component={PageNotFound} />
+            </Switch>
+          </div>
           <Footer />
         </div>
       </Router>

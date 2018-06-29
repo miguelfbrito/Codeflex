@@ -30,7 +30,7 @@ class Navbar extends Component {
     userLoggedIn() {
         return (
             <div className="container">
-                <div className="navbar-header" style={{ marginTop: '5px' }}>
+                <div className="navbar-header">
                     <button type="button" className="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
                         <span className="icon-bar"></span>
                         <span className="icon-bar"></span>
@@ -58,6 +58,7 @@ class Navbar extends Component {
                             </Link>
 
                             <ul className="dropdown-menu">
+                                <li><Link to={"/user/"+ JSON.parse(localStorage.getItem('userData')).username}><p>Profile</p></Link></li>
                                 <li><Link to="/manage"><p>Manage Content</p></Link></li>
                                 <li><Link to="/"><p>Settings</p></Link></li>
                                 <li><Link to="/" onClick={this.logoutUser}><p>Logout</p></Link></li>

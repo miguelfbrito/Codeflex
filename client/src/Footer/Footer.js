@@ -6,13 +6,13 @@ class Footer extends Component {
 
     // TODO : consts para os uri
 
-       render() {
+    render() {
 
-           return (
-               <footer>
-                   <p>footer</p>
-               </footer>
-           );
+        return (
+            <footer className="footer">
+                <p>Created by Miguel Brito</p>
+            </footer>
+        );
     }
 }
 

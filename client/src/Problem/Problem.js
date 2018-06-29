@@ -3,7 +3,7 @@ import Script from 'react-load-script';
 import AceEditor from 'react-ace';
 import brace from 'brace';
 import Parser from 'html-react-parser';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { URL } from '../commons/Constants';
 import { splitUrl, textToLowerCaseNoSpaces, dateWithDay } from '../commons/Utils';
 import Submissions from './Submissions/Submissions';
@@ -323,7 +323,10 @@ public class Solution {
                         <tr>
                             <th><p className="align-left">Creator</p></th>
                             <th>
-                                <p className="align-right">{this.state.problemLoaded ? this.state.problem.owner.username : ''}</p>
+                                <p className="align-right">{this.state.problemLoaded ?
+                                    <Link to={'/user/' + this.state.problem.owner.username}>
+                                        {this.state.problem.owner.username}
+                                    </Link> : ''}</p>
                             </th>
                         </tr>
                         <tr>

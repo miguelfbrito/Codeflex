@@ -883,6 +883,22 @@ public class DatabaseController {
 		return finalSubmissions;
 	}
 
+	@GetMapping(path = "/Submissions/viewByUsername/{username}")
+	public List<Submissions> getAllSubmissionsByUserId(@PathVariable String username) {
+		Users user = usersRepository.findByUsername(username.trim());
+		List<Submissions> submissions = submissionsRepository.findAll();
+		List<Submissions> finalSubmissions = new ArrayList<>();
+		if (user != null && submissions != null) {
+			for (Submissions s : submissions) {
+				if (s.getUsers() == user) {
+					finalSubmissions.add(s);
+				}
+			}
+		}
+
+		return finalSubmissions;
+	}
+
 	@GetMapping(path = "/Submissions/viewByProblemNameByUserId/{problemName}/{userId}")
 	public List<Submissions> getAllSubmissionsByProblemName(@PathVariable String problemName,
 			@PathVariable long userId) {

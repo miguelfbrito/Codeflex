@@ -17,10 +17,12 @@
 
 .align-left {
     text-align: left;
+    margin: 5px 0;
 }
 
 .align-right {
     text-align: right;
+    margin: 5px 0;
 }
 
 .problem-description-container {

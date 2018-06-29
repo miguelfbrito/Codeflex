@@ -44,8 +44,10 @@ ul.dropdown-menu>li>a>p {
 }
 
 a#codeflex {
-    line-height: 10pt;
+    line-height: 42pt;
     font-size: 24pt;
+    margin: 0;
+    padding: 0;
 }
 
 div.navbar-header {
