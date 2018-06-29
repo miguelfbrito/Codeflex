@@ -66,3 +66,21 @@ export const msToTime = (duration) => {
 
     return hours + ":" + minutes + ":" + seconds;
 }
+
+
+export const getDatesRange = (start, end) => {
+    var
+        arr = new Array(),
+        dt = new Date(start);
+
+    while (dt <= end) {
+        arr.push(new Date(dt));
+        dt.setDate(dt.getDate() + 1);
+    }
+    return arr;
+
+}
+
+export const getRndInteger = (min, max) => {
+    return Math.floor(Math.random() * (max - min)) + min;
+}

@@ -7,10 +7,6 @@
     font-family: 'Roboto Condensed', sans-serif;
 }
 
-.color-scale-1 {
-    fill: red;
-}
-
 .react-calendar-heatmap .color-github-0 {
     fill: #eeeeee;
 }
@@ -29,4 +25,16 @@
 
 .react-calendar-heatmap .color-github-4 {
     fill: #1e6823;
+}
+
+rect {
+    fill: #1e6823;
+}
+
+g.react-calendar-heatmap-all-weeks>g>rect:hover {
+    stroke: black;
+    fill: white;
+    stroke-width: 1;
+    fill-opacity: 1;
+    stroke-opacity: 1;
 }
