@@ -33,9 +33,11 @@ public class RegisterUserOnTournament {
 	public void setTournament(Tournament tournament) {
 		this.tournament = tournament;
 	}
-	
-	
 
+	@Override
+	public String toString() {
+		return "RegisterUserOnTournament [user=" + user + ", tournament=" + tournament + "]";
+	}
 	
 	
 }

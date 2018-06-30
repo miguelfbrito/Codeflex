@@ -14,7 +14,9 @@ class ListTournaments extends React.Component {
         super(props);
         this.state = {
             tournaments: [],
-            redirect: { now: false, path: '/' }
+            redirect: { now: false, path: '/' },
+            displayInputCode: false,
+            privateCode: ''
         }
 
         this.onClickRegister = this.onClickRegister.bind(this);
@@ -40,6 +42,10 @@ class ListTournaments extends React.Component {
         })
     }
 
+    onInputChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+
     onClickTournament(clickType, tournamentId, tournamentName) {
         if (clickType === 'Sign Up') {
             this.onClickRegister(tournamentId);
@@ -57,6 +63,12 @@ class ListTournaments extends React.Component {
             user: { id: userData.id },
             tournament: { id: tournamentId }
         }
+
+        this.registerUser(data);
+    }
+
+    registerUser = (data) => {
+
         fetch(URL + '/api/database/Tournament/registerUser', {
             method: 'POST',
             body: JSON.stringify(data),
@@ -68,6 +80,22 @@ class ListTournaments extends React.Component {
             console.log(data);
             this.setState({ tournaments: data });
         })
+    }
+
+    onClickPrivateTournament = () => {
+        console.log('private')
+        this.setState({ displayInputCode: !this.state.displayInputCode });
+    }
+
+    onClickEnterPrivateTournament = () => {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const data = {
+            user: { id: userData.id },
+            tournament: { code: this.state.privateCode }
+
+        }
+
+        this.registerUser(data);
     }
 
     render() {
@@ -128,9 +156,18 @@ class ListTournaments extends React.Component {
                         <PopupInformation />
         </Popup>*/}
                     <div className="col-sm-12 both-categories-container">
-                        <div style={{ float: 'right', textAlign: 'right', marginTop: '-10px' }}>
-                            <Link to="/compete/create-tournament" > <p>Create Tournament</p></Link>
-                            <Link to="/compete/manage-tournaments"><p >Manage Tournaments</p></Link>
+                        <br />
+                        <div style={{ float: 'right', textAlign: 'right', marginTop: '-30px' }}>
+                            {this.state.displayInputCode ? <div className="private-code">
+                                <input type="text" style={{ height: '25px', marginBottom: '7px' }} placeholder="Tournament Private Code"
+                                    name="privateCode" onChange={(e) => this.onInputChange(e)} value={this.state.privateCode} />
+                                <input type="button" value="Register" onClick={this.onClickEnterPrivateTournament} />
+                            </div> :
+                                <a>
+                                    <p onClick={this.onClickPrivateTournament}>Register in private tournament</p>
+                                </a>}
+                            <Link to="/compete/create-tournament"> <p>Create tournament</p></Link>
+                            <Link to="/compete/manage-tournaments"><p >Manage tournaments</p></Link>
                         </div>
                         <h2 style={{ fontFamily: 'Roboto Condensed' }}>Available</h2>
                         <hr style={{ borderWidth: '2px', borderTop: 'none', borderLeft: 'none', borderRight: 'none' }} />

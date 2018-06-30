@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import pt.codeflex.utils.Hash;
 
 @Entity
@@ -32,9 +34,11 @@ public class Tournament {
 	private String link;
 
 	private String code;
-	
+
+	@JsonProperty
 	private boolean showWebsite;
-	
+
+	@JsonProperty
 	private boolean open;
 
 	@ManyToOne
@@ -125,7 +129,7 @@ public class Tournament {
 		this.owner = owner;
 	}
 
-	public boolean isShowWebsite() {
+	public boolean getShowWebsite() {
 		return showWebsite;
 	}
 
@@ -133,7 +137,7 @@ public class Tournament {
 		this.showWebsite = showWebsite;
 	}
 
-	public boolean isOpen() {
+	public boolean getOpen() {
 		return open;
 	}
 
@@ -141,12 +145,16 @@ public class Tournament {
 		this.open = open;
 	}
 
+
+
 	@Override
 	public String toString() {
 		return "Tournament [id=" + id + ", name=" + name + ", description=" + description + ", startingDate="
 				+ startingDate + ", endingDate=" + endingDate + ", link=" + link + ", code=" + code + ", showWebsite="
 				+ showWebsite + ", open=" + open + ", owner=" + owner + "]";
 	}
+
+	
 	
 	
 

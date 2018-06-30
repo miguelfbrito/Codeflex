@@ -47,7 +47,7 @@ class PathLink extends React.Component {
                     {pathname.map((p, index) => (
                         <div key={index}>
                             <Link key={index} to={{ pathname: this.buildPath(pathname, index) }}>
-                                <p style={{ display: 'inline-block' }}>
+                                <p style={{ display: 'inline-block', fontFamily:"'Roboto Condensed', sans-serif"}}>
                                     {p}
                                 </p>
                             </Link>

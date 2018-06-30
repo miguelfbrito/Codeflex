@@ -1,6 +1,5 @@
 package pt.codeflex.controllers;
 
-
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -646,10 +645,6 @@ public class DatabaseController {
 
 		}
 
-		// owner
-
-		// tournament
-
 		return new Problem();
 	}
 
@@ -1160,9 +1155,7 @@ public class DatabaseController {
 	public Tournament addTournament(@RequestBody Tournament t) {
 
 		Tournament tournament = new Tournament(t.getName(), t.getDescription(), t.getStartingDate(), t.getEndingDate(),
-				t.getCode(), t.getOwner(), t.isShowWebsite());
-		// TODO : remove
-		tournament.setShowWebsite(true);
+				t.getCode(), t.getOwner(), t.getShowWebsite());
 		return tournamentRepository.save(tournament);
 	}
 
@@ -1177,9 +1170,9 @@ public class DatabaseController {
 		tournamentUpdate.setEndingDate(t.getEndingDate());
 		tournamentUpdate.setLink(t.getLink());
 		tournamentUpdate.setName(t.getName());
-		tournamentUpdate.setOpen(t.isOpen());
+		tournamentUpdate.setOpen(t.getOpen());
 		tournamentUpdate.setOwner(t.getOwner());
-		tournamentUpdate.setShowWebsite(t.isShowWebsite());
+		tournamentUpdate.setShowWebsite(t.getShowWebsite());
 		tournamentUpdate.setStartingDate(t.getStartingDate());
 
 		return tournamentRepository.save(tournamentUpdate);
@@ -1235,10 +1228,10 @@ public class DatabaseController {
 		boolean registered;
 		for (Tournament t : allTournaments) {
 
-			if (!t.isShowWebsite())
-				continue;
-
 			registered = isUserRegisteredInTournament(userId, t.getId());
+
+			if (!t.getShowWebsite() && !registered)
+				continue;
 
 			TournamentIsUserRegistrated tt = new TournamentIsUserRegistrated(t, registered);
 
@@ -1271,13 +1264,22 @@ public class DatabaseController {
 	public TournamentsToList registerUserOnTournament(@RequestBody RegisterUserOnTournament register) {
 
 		Optional<Users> viewUsersById = viewUsersById(register.getUser().getId());
-		Tournament viewTournamentById = viewTournamentById(register.getTournament().getId());
 
-		if (!viewUsersById.isPresent() || viewTournamentById == null) {
+		System.out.println("TOURNAMENT ID" + register.getTournament().getId());
+		Tournament tournament = null;
+		if (register.getTournament().getId() != 0) {
+			tournament = viewTournamentById(register.getTournament().getId());
+		} else {
+			tournament = tournamentRepository.findByCode(register.getTournament().getCode());
+		}
+		System.out.println(register.toString());
+		if (!viewUsersById.isPresent() || tournament == null
+				|| (tournament.getCode() != null && register.getTournament().getCode() != null
+						&& (!tournament.getCode().equals(register.getTournament().getCode())))) {
 			return getAllTournamentsToList(viewUsersById.get().getId()); // ?!
 		}
 
-		Rating r = new Rating(viewTournamentById, viewUsersById.get(), (double) -1);
+		Rating r = new Rating(tournament, viewUsersById.get(), (double) -1);
 		ratingRepository.save(r);
 
 		return getAllTournamentsToList(viewUsersById.get().getId());

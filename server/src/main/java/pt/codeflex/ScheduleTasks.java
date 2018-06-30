@@ -38,7 +38,7 @@ public class ScheduleTasks {
 		long currentDate = Calendar.getInstance().getTimeInMillis();
 
 		for (Tournament t : tournaments) {
-			if (!t.isOpen()) {
+			if (!t.getOpen()) {
 				if (currentDate >= t.getStartingDate().getTime() && currentDate <= t.getStartingDate().getTime()) {
 					t.setOpen(true);
 					db.updateTournament(t);
