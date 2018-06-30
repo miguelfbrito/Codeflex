@@ -15,10 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 
 import static pt.codeflex.auth.security.SecurityConstants.SIGN_UP_URL;
+import static pt.codeflex.auth.security.SecurityConstants.ACESSABLE;
 
 import javax.sql.DataSource;
-
-import static pt.codeflex.auth.security.SecurityConstants.REGISTER_URL;
 
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
@@ -35,7 +34,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+		http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.POST, ACESSABLE).permitAll()
 				.anyRequest().authenticated().and().addFilter(new JWTAuthenticationFilter(authenticationManager()))
 				.addFilter(new JWTAuthorizationFilter(authenticationManager()))
 				// this disables session creation on Spring Security

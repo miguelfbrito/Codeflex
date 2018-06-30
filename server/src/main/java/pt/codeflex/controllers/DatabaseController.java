@@ -9,6 +9,8 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -97,10 +99,9 @@ public class DatabaseController {
 
 	@Autowired
 	private DurationsRepository durationsRepository;
-	
+
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
-
 
 	// DURATIONS
 
@@ -544,6 +545,8 @@ public class DatabaseController {
 	public Problem addProblem(@RequestBody AddProblem addProblem) {
 
 		Problem p = addProblem.getProblem();
+		
+		System.out.println(addProblem.toString());
 
 		System.out.println(p.toString());
 
@@ -786,36 +789,7 @@ public class DatabaseController {
 	 * }
 	 */
 
-	// ROLE
 
-	@GetMapping(path = "/Role/view")
-	public Iterable<Role> getAllRole() {
-		return roleRepository.findAll();
-	}
-
-	@PostMapping(path = "/Role/add")
-	public void addRole() {
-	}
-
-	@PostMapping(path = "/Role/edit")
-	public void editRole(@RequestParam long id) {
-		Optional<Role> r = roleRepository.findById(id);
-
-		if (r.isPresent()) {
-			Role role = r.get();
-			roleRepository.save(role);
-		}
-	}
-
-	@PostMapping(path = "/Role/delete/{id}")
-	public void deleteRole(@PathVariable long id) {
-		roleRepository.deleteById(id);
-	}
-
-	@GetMapping(path = "/Role/view/{id}")
-	public Optional<Role> viewRoleById(@PathVariable long id) {
-		return roleRepository.findById(id);
-	}
 
 	// SCORING
 
@@ -1412,8 +1386,12 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Users/add")
-	public Users addUsers(@RequestParam String username, @RequestParam String email, @RequestParam String password) {
-		Users u = new Users(username, email, bCryptPasswordEncoder.encode(password));
+	public Users addUsers(@RequestBody Users user) {
+		Users u = new Users(user.getUsername(), user.getEmail(), bCryptPasswordEncoder.encode(user.getPassword()));
+
+		usersRolesRepository.save(new UsersRoles(u, roleRepository.findById((long) 1).get()));
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println(auth.getName());
 		return usersRepository.save(u);
 	}
 
@@ -1437,35 +1415,5 @@ public class DatabaseController {
 		return usersRepository.findById(id);
 	}
 
-	// USERSROLES
-
-	@GetMapping(path = "/UsersRoles/view")
-	public Iterable<UsersRoles> getAllUsersRoles() {
-		return usersRolesRepository.findAll();
-	}
-
-	@PostMapping(path = "/UsersRoles/add")
-	public void addUsersRoles() {
-	}
-
-	@PostMapping(path = "/UsersRoles/edit")
-	public void editUsersRoles(@RequestParam long id) {
-		Optional<UsersRoles> u = usersRolesRepository.findById(id);
-
-		if (u.isPresent()) {
-			UsersRoles usersRoles = u.get();
-			usersRolesRepository.save(usersRoles);
-		}
-	}
-
-	@PostMapping(path = "/UsersRoles/delete/{id}")
-	public void deleteUsersRoles(@PathVariable long id) {
-		usersRolesRepository.deleteById(id);
-	}
-
-	@GetMapping(path = "/UsersRoles/view/{id}")
-	public Optional<UsersRoles> viewUsersRolesById(@PathVariable long id) {
-		return usersRolesRepository.findById(id);
-	}
 
 }

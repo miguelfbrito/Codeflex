@@ -49,14 +49,6 @@ public class Users {
 
 	private double globalRating;
 
-	@OneToMany
-	@JoinColumn(name = "users_id")
-	private List<Members> member = new ArrayList<>();
-
-	@OneToMany
-	@JoinColumn(name = "users_id")
-	private List<UsersRoles> userRoles = new ArrayList<>();
-
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -115,27 +107,7 @@ public class Users {
 		this.password = password;
 	}
 
-	public List<UsersRoles> getUserRoles() {
-		return userRoles;
-	}
-
-	public void setUserRoles(List<UsersRoles> userRoles) {
-		this.userRoles = userRoles;
-	}
-
-	public List<Members> getMember() {
-		return member;
-	}
-
-	public void setMember(List<Members> member) {
-		this.member = member;
-	}
-
-	@Override
-	public String toString() {
-		return "Users [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password
-				+ ", member=" + member + ", userRoles=" + userRoles;
-	}
+	
 
 	public Date getRegistrationDate() {
 		return registrationDate;
@@ -151,6 +123,12 @@ public class Users {
 
 	public void setGlobalRating(double globalRating) {
 		this.globalRating = globalRating;
+	}
+
+	@Override
+	public String toString() {
+		return "Users [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password
+				+ ", registrationDate=" + registrationDate + ", globalRating=" + globalRating + "]";
 	}
 
 }

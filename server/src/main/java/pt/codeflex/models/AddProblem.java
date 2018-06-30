@@ -87,4 +87,11 @@ public class AddProblem {
 		this.category = category;
 	}
 
+	@Override
+	public String toString() {
+		return "AddProblem [problem=" + problem + ", difficulty=" + difficulty + ", owner=" + owner + ", tournament="
+				+ tournament + ", category=" + category + "]";
+	}
+
+	
 }
