@@ -69,7 +69,8 @@ class Popup extends React.Component {
 Popup.defaultProps = {
     title: "Placeholder Title",
     message: "Placeholder Message",
-    timeoutClose: 999999
+    timeoutClose: 999999,
+    onModalClose: () => {}
 }
 
 

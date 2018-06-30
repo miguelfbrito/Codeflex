@@ -47,3 +47,10 @@ p.page-subtitle {
 .no-padding {
     padding: 0;
 }
+
+.textbox {
+    padding: 10pt;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0px 0px 5px #ccc;
+}

@@ -28,6 +28,11 @@ div.add-category {
     top: 20%;
 }
 
+
+#input-save-category {
+    min-height: 50px;
+}
+
 @media only screen and (max-width: 768px) {
     div.category-wrapper {
         margin: 20px 0;

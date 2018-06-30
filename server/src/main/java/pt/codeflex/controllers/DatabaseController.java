@@ -360,8 +360,7 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/PractiseCategory/add")
-	public PractiseCategory addPractiseCategory(@RequestParam String name) {
-		PractiseCategory pc = new PractiseCategory(name);
+	public PractiseCategory addPractiseCategory(@RequestBody PractiseCategory pc) {
 		return practiseCategoryRepository.save(pc);
 	}
 

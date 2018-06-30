@@ -12,10 +12,12 @@ class ManageCategories extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            categories: []
+            categories: [],
+            categoryName: ''
         }
 
         this.modalAdd = React.createRef();
+        this.inputCategoryName = React.createRef();
     }
 
     componentDidMount() {
@@ -40,18 +42,37 @@ class ManageCategories extends React.Component {
     }
 
     onAddCategory = () => {
+        const data = { name: this.inputCategoryName.current.value }
+        fetch(URL + '/api/database/PractiseCategory/add', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        }).then(res => res.json()).then(data => {
+            console.log("New Category")
+            console.log(data);
 
+            let newCategories = this.state.categories;
+            newCategories.push(data);
+            this.setState({ categories: newCategories });
+
+            this.modalAdd.current.closeModal();
+
+        })
     }
+
 
     render() {
 
 
         const PopupAddCategory = () => (
             <div className="">
-                <h2 style={{ color: 'black' }}>Add category</h2>
+                <h2 style={{ color: 'black', marginTop: '-5px', marginBottom: '5px' }}>Add category</h2>
                 <div className="row">
-                        <input style={{margin:'15px'}} type="text" placeholder="Category name" />
-                        <input type="button" value="Save"/>
+                    <input autofocus style={{ margin: '15px' }} name="categoryName" className="textbox" id="input-add-category"
+                        ref={this.inputCategoryName} type="text" placeholder="Category name" />
+                    <input type="button" className="btn btn-codeflex" id="input-save-category" onClick={this.onAddCategory} value="Save" />
                 </div>
             </div>
         );
@@ -83,7 +104,7 @@ class ManageCategories extends React.Component {
                         </div>
                     ))}
 
-                    <Popup ref={this.modalAdd} onModalClose={this.onAddCategory}>
+                    <Popup ref={this.modalAdd} >
                         <PopupAddCategory />
                     </Popup>
 
