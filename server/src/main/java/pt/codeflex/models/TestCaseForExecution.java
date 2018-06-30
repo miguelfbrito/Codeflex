@@ -1,6 +1,5 @@
 package pt.codeflex.models;
 
-import junit.framework.TestCase;
 import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.TestCases;
 

@@ -2,7 +2,6 @@ package pt.codeflex.controllers;
 
 import pt.codeflex.databasemodels.Language;
 import pt.codeflex.databasemodels.Problem;
-import pt.codeflex.databasemodels.Scoring;
 import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.Users;
 import pt.codeflex.evaluatesubmissions.*;
@@ -10,17 +9,11 @@ import pt.codeflex.models.Host;
 import pt.codeflex.models.SubmitSubmission;
 import pt.codeflex.repositories.LanguageRepository;
 import pt.codeflex.repositories.ProblemRepository;
-import pt.codeflex.repositories.ScoringRepository;
 import pt.codeflex.repositories.SubmissionsRepository;
 import pt.codeflex.repositories.UsersRepository;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
@@ -30,18 +23,11 @@ import javax.transaction.Transactional;
 import org.springframework.context.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.yaml.snakeyaml.util.ArrayUtils;
-
-import ch.qos.logback.core.net.SyslogOutputStream;
 
 @RestController
 @CrossOrigin
