@@ -6,13 +6,15 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.security.core.Authentication;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -24,7 +26,7 @@ import pt.codeflex.repositories.UsersRepository;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api")
+//@RequestMapping("/api")
 public class UsersController {
 
 	@Autowired
@@ -34,7 +36,11 @@ public class UsersController {
 	public GenericResponse login(@RequestBody Users user) {
 		Users currentUser = usersRepository.findByUsername(user.getUsername());
 
+		System.out.println("HItting here");
+		System.out.println(user.getUsername());
+		
 		if (currentUser != null) {
+			System.out.println(currentUser.toString());
 			MessageDigest digest = null;
 
 			try {
@@ -46,7 +52,10 @@ public class UsersController {
 			String encoded = Base64.getEncoder().encodeToString(hash);
 
 			if (currentUser.getPassword().equals(encoded)) {
-
+				
+				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+				System.out.println(auth.getAuthorities());
+				
 				UserLessInfo finalUser = new UserLessInfo();
 				finalUser.convert(currentUser);
 				

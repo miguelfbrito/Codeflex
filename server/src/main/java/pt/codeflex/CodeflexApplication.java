@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.IOUtils;
@@ -25,7 +26,12 @@ public class CodeflexApplication {
 		SpringApplication.run(CodeflexApplication.class, args);
 
 	}
-
+	
+	@Bean 
+	public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+	
 	@Bean
 	public Host fetchAndConnectHosts() {
 		Host h1 = new Host("192.168.1.65", 22, "mbrito", new SSHClient(), "33:02:cb:3b:13:b1:bd:fa:66:ff:29:96:ea:ff:dc:78", false); 
@@ -33,7 +39,9 @@ public class CodeflexApplication {
 
 		return h1;
 	}
+	
 
+	
 	public void connect(Host host) {
 		SSHClient ssh = host.getSsh();
 		try {

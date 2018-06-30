@@ -55,7 +55,7 @@ class ManageCategories extends React.Component {
 
             let newCategories = this.state.categories;
             newCategories.push(data);
-            this.setState({ categories: newCategories });
+            this.setState({ categories: newCategories});
 
             this.modalAdd.current.closeModal();
 

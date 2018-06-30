@@ -17,7 +17,7 @@ public class UsersRoles implements Serializable{
 
 	@Id
 	@ManyToOne
-	private Users user;
+	private Users users;
 
 	@Id
 	@ManyToOne
@@ -25,17 +25,17 @@ public class UsersRoles implements Serializable{
 
 
 	public UsersRoles() {}
-	public UsersRoles(Users user, Role role) {
-		this.user = user;
+	public UsersRoles(Users users, Role role) {
+		this.users= users;
 		this.role = role;
 	}
 
 	public Users getUserId() {
-		return user;
+		return users;
 	}
 
 	public void setUserId(Users userId) {
-		this.user = userId;
+		this.users = userId;
 	}
 
 	public Role getRoleId() {

@@ -96,6 +96,7 @@ class ListTournaments extends React.Component {
         }
 
         this.registerUser(data);
+        this.setState({displayInputCode : false});
     }
 
     render() {

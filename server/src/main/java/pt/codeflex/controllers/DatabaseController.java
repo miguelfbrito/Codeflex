@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -96,6 +97,10 @@ public class DatabaseController {
 
 	@Autowired
 	private DurationsRepository durationsRepository;
+	
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
 	// DURATIONS
 
@@ -1408,7 +1413,7 @@ public class DatabaseController {
 
 	@PostMapping(path = "/Users/add")
 	public Users addUsers(@RequestParam String username, @RequestParam String email, @RequestParam String password) {
-		Users u = new Users(username, email, password);
+		Users u = new Users(username, email, bCryptPasswordEncoder.encode(password));
 		return usersRepository.save(u);
 	}
 

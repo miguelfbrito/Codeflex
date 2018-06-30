@@ -10,21 +10,21 @@ import javax.persistence.ManyToOne;
 @Embeddable
 public class UsersRolesID implements Serializable {
 
-	private long user;
+	private long users;
 	private long role;
 	
 	public UsersRolesID() {}
 	
 	public UsersRolesID(long userId, long roleId) {
-		this.user = userId;
+		this.users = userId;
 		this.role = roleId;
 	}
 	
 	public long getUserId() {
-		return user;
+		return users;
 	}
 	public void setUserId(long userId) {
-		this.user = userId;
+		this.users = userId;
 	}
 	public long getRoleId() {
 		return role;

@@ -21,6 +21,10 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -80,7 +84,7 @@ public class Users {
 
 		byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
 		String encoded = Base64.getEncoder().encodeToString(hash);
-		this.password = encoded;
+		this.password = password;
 	}
 
 	public long getId() {
