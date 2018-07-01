@@ -3,6 +3,7 @@ package pt.codeflex.auth.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import pt.codeflex.databasemodels.Users;
+import pt.codeflex.models.UserLessInfo;
 import pt.codeflex.utils.Hash;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -61,9 +62,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
 			Authentication auth) throws IOException, ServletException {
 
+		System.out.println("Valid authentication");
+		
 		String token = Jwts.builder().setSubject(((User) auth.getPrincipal()).getUsername())
 				.claim("username", auth.getName()).setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
 				.signWith(SignatureAlgorithm.HS512, SECRET.getBytes()).compact();
+		res.getWriter().write("{ \"token\" : \""+token+"\" }");
+		res.addHeader("Content-Type", "application/json");
 		res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
 	}
 }

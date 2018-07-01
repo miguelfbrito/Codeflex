@@ -27,17 +27,27 @@ class Login extends Component {
     login() {
 
         const data = { username: this.state.username, password: this.state.password };
-
-        fetch(URL + '/api/account/login', {
+        fetch('http://localhost:8080/api/account/login', {
             method: 'POST',
             mode: 'cors',
             body: JSON.stringify(data),
             headers: new Headers({
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate'
+                "Cache-Control": "no-cache",
             })
-        }).then(res => console.log(res))
+        }).then(res => res.json()).then(data => {
+
+            if (data) {
+                console.log(data)
+                window.location.href = '/';
+                localStorage.setItem('token', data.token);
+                localStorage.setImte('userData', '')
+            }
+
+        }).catch((e) => {
+            console.log(e)
+        })
+
     }
 
     register() {
