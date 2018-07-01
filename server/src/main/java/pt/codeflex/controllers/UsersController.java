@@ -26,7 +26,6 @@ import pt.codeflex.repositories.UsersRepository;
 import pt.codeflex.repositories.UsersRolesRepository;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/api/account")
 public class UsersController {
 

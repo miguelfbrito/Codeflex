@@ -42,9 +42,7 @@ import pt.codeflex.models.UsersLeaderboard;
 import pt.codeflex.repositories.*;
 import pt.codeflex.utils.DurationCalculation;
 import pt.codeflex.utils.RatingCalculator;
-
 @RestController
-@CrossOrigin
 @Transactional
 @RequestMapping(path = "/api/database")
 public class DatabaseController {
@@ -102,6 +100,9 @@ public class DatabaseController {
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	@Autowired
+	private UsersController usersController;
 
 	// DURATIONS
 
@@ -1386,13 +1387,8 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Users/add")
-	public Users addUsers(@RequestBody Users user) {
-		Users u = new Users(user.getUsername(), user.getEmail(), bCryptPasswordEncoder.encode(user.getPassword()));
-
-		usersRolesRepository.save(new UsersRoles(u, roleRepository.findById((long) 1).get()));
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		System.out.println(auth.getName());
-		return usersRepository.save(u);
+	public void addUsers(@RequestBody Users user) {
+		usersController.register(user);
 	}
 
 	@PostMapping(path = "/Users/edit")

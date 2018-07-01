@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Login.css'
 
-import {URL, URL_FRONT } from '../../commons/Constants';
+import { URL, URL_FRONT } from '../../commons/Constants';
 
 class Login extends Component {
 
@@ -28,21 +28,16 @@ class Login extends Component {
 
         const data = { username: this.state.username, password: this.state.password };
 
-        fetch(URL + '/api/login', {
+        fetch(URL + '/api/account/login', {
             method: 'POST',
+            mode: 'cors',
             body: JSON.stringify(data),
             headers: new Headers({
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate'
             })
-        }).then(res => res.json()).then(data => {
-            if (data.message === 'Logged in') {
-                localStorage.setItem('userData', JSON.stringify({ id: data.object.id, username: data.object.username, email: data.object.email }));
-                window.location.href = URL_FRONT + "/";
-            }
-
-            // TODO : notify the user about invalid data
-        })
-
+        }).then(res => console.log(res))
     }
 
     register() {
@@ -54,16 +49,21 @@ class Login extends Component {
 
         const data = { username: this.state.username, email: this.state.email, password: this.state.password };
 
-        fetch(URL + '/api/register', {
+        fetch(URL + '/api/account/register', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: new Headers({
                 'Content-Type': 'application/json'
             })
-        }).then(res => res.json()).then(data => {
+        }).then(res => {
+            res.json()
+            console.log('Response')
+            console.log(res);
+
+        }).then(data => {
             console.log(data);
             if (data.object != null) {
-                window.location.href =  URL_FRONT;
+                window.location.href = URL_FRONT;
                 const userData = { id: data.object.id, username: data.object.username, email: data.object.email };
                 localStorage.setItem('userData', JSON.stringify(userData));
             }

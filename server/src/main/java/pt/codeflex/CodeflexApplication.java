@@ -3,13 +3,20 @@ package pt.codeflex;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.Ordered;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.IOUtils;
@@ -26,29 +33,28 @@ public class CodeflexApplication {
 		SpringApplication.run(CodeflexApplication.class, args);
 
 	}
-	
-	@Bean 
+
+	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-	
+		return new BCryptPasswordEncoder();
+	}
+
 	@Bean
 	public Host fetchAndConnectHosts() {
-		Host h1 = new Host("192.168.1.65", 22, "mbrito", new SSHClient(), "33:02:cb:3b:13:b1:bd:fa:66:ff:29:96:ea:ff:dc:78", false); 
-		//connect(h1);
+		Host h1 = new Host("192.168.1.65", 22, "mbrito", new SSHClient(),
+				"33:02:cb:3b:13:b1:bd:fa:66:ff:29:96:ea:ff:dc:78", false);
+		// connect(h1);
 
 		return h1;
 	}
-	
 
-	
 	public void connect(Host host) {
 		SSHClient ssh = host.getSsh();
 		try {
 			ssh.addHostKeyVerifier(host.getFingerprint());
 			// https://stackoverflow.com/questions/9283556/sshj-keypair-login-to-ec2-instance
-			//PKCS8KeyFile keyFile = new PKCS8KeyFile();
-			//keyFile.init(new File("c:\\Users\\mbrito\\.ssh\\aws.pem"));
+			// PKCS8KeyFile keyFile = new PKCS8KeyFile();
+			// keyFile.init(new File("c:\\Users\\mbrito\\.ssh\\aws.pem"));
 
 			ssh.connect(host.getIp(), host.getPort());
 			ssh.authPublickey("mbrito");

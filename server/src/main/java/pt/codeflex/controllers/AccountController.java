@@ -12,7 +12,7 @@ import pt.codeflex.databasemodels.Users;
 import pt.codeflex.repositories.UsersRepository;
 
 @Controller
-@RequestMapping(path = "/account")
+@RequestMapping(path = "/sssaccount")
 public class AccountController {
 
 	@Autowired
