@@ -1077,7 +1077,7 @@ public class DatabaseController {
 		List<TournamentLeaderboard> tournamentLeaderboard = leaderboardRepository
 				.getInformationForTournamentLeaderboard(tournament.getId());
 
-		if (tournamentLeaderboard.size() == 0)
+		if (tournamentLeaderboard.isEmpty())
 			return null;
 
 		String username = tournamentLeaderboard.get(0).getUsername();

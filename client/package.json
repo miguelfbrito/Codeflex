@@ -16,6 +16,7 @@
     "moment-timezone": "^0.5.17",
     "react": "^16.4.0",
     "react-ace": "^6.1.1",
+    "react-addons-css-transition-group": "^15.6.2",
     "react-alert": "^4.0.4",
     "react-alert-template-basic": "^1.0.0",
     "react-calendar-heatmap": "^1.6.3",
@@ -31,6 +32,7 @@
     "react-scripts": "1.1.4",
     "react-table": "^6.8.6",
     "react-tooltip": "^3.6.1",
+    "react-transition-group": "^2.4.0",
     "reactjs-calendar-heatmap": "0.0.10"
   },
   "scripts": {

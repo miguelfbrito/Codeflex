@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactTable from 'react-table';
 
-import {URL} from '../commons/Constants';
-import {msToTime, parseLocalJwt} from '../commons/Utils';
+import { URL } from '../commons/Constants';
+import { msToTime, parseLocalJwt, getAuthorization } from '../commons/Utils';
 
 import PathLink from '../PathLink/PathLink';
 
@@ -10,15 +10,24 @@ class TournamentLeaderboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            leaderboard : []
+            leaderboard: []
         }
     }
 
-    componentDidMount(){
-        fetch(URL + '/api/database/Tournament/viewTournamentLeaderboard/' + this.props.match.params.tournamentName).then(res => res.json()).then(data => this.setState({leaderboard : data}));
+    componentDidMount() {
+        fetch(URL + '/api/database/Tournament/viewTournamentLeaderboard/' + this.props.match.params.tournamentName, {
+            headers: { ...getAuthorization() }
+        }).then(res => res.json()).then(data => this.setState({ leaderboard: data }));
     }
 
     render() {
+
+        let leaderboardData = this.state.leaderboard;
+        console.log('ASDASDAD')
+        console.log(leaderboardData)
+        if (JSON.stringify(leaderboardData) != '[]') {
+            leaderboardData = leaderboardData.sort((a, b) => { return b.score - a.score || a.totalMilliseconds - b.totalMilliseconds });
+        }
         return (
             <div className="container" >
                 <div className="row">
@@ -26,7 +35,7 @@ class TournamentLeaderboard extends React.Component {
 
                     <ReactTable
                         noDataText="There is no one on the leaderboard"
-                        data={this.state.leaderboard.sort((a,b) => {return b.score - a.score || a.totalMilliseconds- b.totalMilliseconds})}
+                        data={leaderboardData}
                         columns={[
                             {
                                 Header: "Position",

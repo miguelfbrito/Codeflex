@@ -102,8 +102,9 @@ public class Solution {
 
         fetch(URL + '/api/database/problem/getProblemByName/' + currentProblem, { headers: { ...getAuthorization() } })
             .then(res => res.json()).then(data => {
-                this.setState({ problem: data, problemLoaded: true });
+                console.log('problem')
                 console.log(data)
+                this.setState({ problem: data, problemLoaded: true });
 
                 this.setOpenedProblem(data);
 

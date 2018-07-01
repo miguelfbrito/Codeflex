@@ -21,6 +21,9 @@ import ManageCategories from './ManageCategories/ManageCategories';
 import Leaderboard from './Problem/Leaderboard/Leaderboard';
 import TournamentLeaderboard from './TournamentLeaderboard/TournamentLeaderboard';
 import ProfilePage from './Users/ProfilePage/ProfilePage';
+import PageWrapper from './PageWrapper/PageWrapper';
+
+import './PageWrapper/PageWrapper.css';
 
 class App extends Component {
   render() {
@@ -30,41 +33,41 @@ class App extends Component {
           <NavBar />
           <div style={{minHeight:'100%'}}>
             <Switch>
-              <Route exact path="/login" component={Login} />
-              <Route exact path="/problem" component={Problem} />
+              <Route exact path="/login" component={PageWrapper(Login)} />
+              <Route exact path="/problem" component={PageWrapper(Problem)} />
 
-              <Route exact path="/user/:username" component={ProfilePage} />
+              <Route exact path="/user/:username" component={PageWrapper(ProfilePage)} />
 
-              <Route exact path="/manage" component={ManageContent} />
-              <Route exact path="/manage/problems" component={ManageProblems} />
-              <Route exact path="/manage/problems/add" component={AddProblem} />
-              <Route exact path="/manage/problems/edit/:problemName" component={AddProblem} />
-              <Route exact path="/manage/problems/:problemName/test-cases" component={ManageTestCases} />
+              <Route exact path="/manage" component={PageWrapper(ManageContent)} />
+              <Route exact path="/manage/problems" component={PageWrapper(ManageProblems)} />
+              <Route exact path="/manage/problems/add" component={PageWrapper(AddProblem)} />
+              <Route exact path="/manage/problems/edit/:problemName" component={PageWrapper(AddProblem)} />
+              <Route exact path="/manage/problems/:problemName/test-cases" component={PageWrapper(ManageTestCases)} />
 
-              <Route exact path="/manage/tournaments" component={ManageTournaments} />
-              <Route exact path="/manage/categories" component={ManageCategories} />
+              <Route exact path="/manage/tournaments" component={PageWrapper(ManageTournaments)} />
+              <Route exact path="/manage/categories" component={PageWrapper(ManageCategories)} />
 
-              <Route exact path="/practise/:categoryName/:problemName" component={Problem} />
-              <Route exact path="/practise/:categoryName/:problemName/view-results" component={ViewResults} />
-              <Route exact path="/practise/:categoryName" component={ListProblems} />
-              <Route exact path="/practise" component={ListCategories} />
+              <Route exact path="/practise/:categoryName/:problemName" component={PageWrapper(Problem)} />
+              <Route exact path="/practise/:categoryName/:problemName/view-results" component={PageWrapper(ViewResults)} />
+              <Route exact path="/practise/:categoryName" component={PageWrapper(ListProblems)} />
+              <Route exact path="/practise" component={PageWrapper(ListCategories)} />
 
-              <Route exact path="/compete/create-tournament" component={CreateTournament} />
-              <Route exact path="/compete/manage-tournaments/:tournamentName/:problemName/test-cases" component={ManageTestCases} />
-              <Route exact path="/compete/manage-tournaments/:tournamentName/edit/:problemName" component={AddProblem} />
-              <Route exact path="/compete/manage-tournaments/:tournamentName/add" component={AddProblem} />
-              <Route exact path="/compete/manage-tournaments/:tournamentName" component={ManageProblems} />
-              <Route exact path="/compete/manage-tournaments" component={ManageTournaments} />
+              <Route exact path="/compete/create-tournament" component={PageWrapper(CreateTournament)} />
+              <Route exact path="/compete/manage-tournaments/:tournamentName/:problemName/test-cases" component={PageWrapper(ManageTestCases)} />
+              <Route exact path="/compete/manage-tournaments/:tournamentName/edit/:problemName" component={PageWrapper(AddProblem)} />
+              <Route exact path="/compete/manage-tournaments/:tournamentName/add" component={PageWrapper(AddProblem)} />
+              <Route exact path="/compete/manage-tournaments/:tournamentName" component={PageWrapper(ManageProblems)} />
+              <Route exact path="/compete/manage-tournaments" component={PageWrapper(ManageTournaments)} />
 
-              <Route exact path="/compete" component={ListTournaments} />
-              <Route exact path="/compete/:tournamentName/leaderboard" component={TournamentLeaderboard} />
-              <Route exact path="/compete/:tournamentName/:problemName" component={Problem} />
-              <Route exact path="/compete/:tournamentName" component={ListProblems} />
-              <Route exact path="/compete/:categoryName/:problemName/view-results" component={ViewResults} />
+              <Route exact path="/compete" component={PageWrapper(ListTournaments)} />
+              <Route exact path="/compete/:tournamentName/leaderboard" component={PageWrapper(TournamentLeaderboard)} />
+              <Route exact path="/compete/:tournamentName/:problemName" component={PageWrapper(Problem)} />
+              <Route exact path="/compete/:tournamentName" component={PageWrapper(ListProblems)} />
+              <Route exact path="/compete/:categoryName/:problemName/view-results" component={PageWrapper(ViewResults)} />
 
-              <Route exact path="/leaderboard" component={GlobalLeaderboard} />
+              <Route exact path="/leaderboard" component={PageWrapper(GlobalLeaderboard)} />
 
-              <Route component={PageNotFound} />
+              <Route component={PageWrapper(PageNotFound)} />
             </Switch>
           </div>
         </div>

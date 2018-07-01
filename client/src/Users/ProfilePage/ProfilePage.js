@@ -124,13 +124,14 @@ class ProfilePage extends React.Component {
                         <br />
                         <div className="profile-page-border">
                             <h3>Recent Submissions</h3>
-                            {this.state.submissions.map(s => (
-                                <div className="profile-page-submission">
+                            {this.state.submissions.length > 0 ?
+                                this.state.submissions.map(s => (
+                                        <div className="profile-page-subtramission">
 
-                                    <p>Solution to {this.linkToProblem(s)} submitted on {dateWithHoursAndDay(s.date)} with a total score of {s.score}
-                                        &nbsp;({s.score != 0 ? s.score / s.problem.maxScore * 100 : '0'}%).</p>
-                                </div>
-                            ))}
+                                        <p>Solution to {this.linkToProblem(s)} submitted on {dateWithHoursAndDay(s.date)} with a total score of {s.score}
+                                            &nbsp;({s.score != 0 ? s.score / s.problem.maxScore * 100 : '0'}%).</p>
+                                    </div>
+                                )) : <p className="page-subtitle">No recent submissions</p>}
                         </div>
                     </div>
                 </div>

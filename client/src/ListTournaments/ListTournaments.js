@@ -171,12 +171,12 @@ class ListTournaments extends React.Component {
                             <Link to="/compete/manage-tournaments"><p >Manage tournaments</p></Link>
                         </div>
                         <h2 style={{ fontFamily: 'Roboto Condensed' }}>Available</h2>
-                        <hr style={{ borderWidth: '2px', borderTop: 'none', borderLeft: 'none', borderRight: 'none' }} />
+                        <hr style={{ border: '0 none', height: '2px', color: '#6a44f', backgroundColor:'#6a44ff'}} />
                         <div className="tournaments-container">
                             {availableTournaments}
                         </div>
                         <h2 style={{ fontFamily: 'Roboto Condensed' }}>Finished</h2>
-                        <hr style={{ borderWidth: '2px', borderTop: 'none', borderLeft: 'none', borderRight: 'none' }} />
+                        <hr style={{ border: '0 none', height: '2px', color: '#6a44f', backgroundColor:'#6a44ff'}} />
                         <div className="tournaments-container">
                             {archivedTournaments}
                         </div>
