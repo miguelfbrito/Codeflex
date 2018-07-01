@@ -2,7 +2,7 @@ import React from 'react';
 import ReactTable from 'react-table';
 
 import {URL} from '../commons/Constants';
-import {msToTime} from '../commons/Utils';
+import {msToTime, parseLocalJwt} from '../commons/Utils';
 
 import PathLink from '../PathLink/PathLink';
 
@@ -40,7 +40,7 @@ class TournamentLeaderboard extends React.Component {
                                 getProps: (
                                     (state, rowInfo, row) => ({
                                         style: {
-                                            backgroundColor: (rowInfo.row.username === JSON.parse(localStorage.getItem('userData')).username ? '#aaa' : '')
+                                            backgroundColor: (rowInfo.row.username === parseLocalJwt().username ? '#aaa' : '')
                                         }
                                     })
                                 )

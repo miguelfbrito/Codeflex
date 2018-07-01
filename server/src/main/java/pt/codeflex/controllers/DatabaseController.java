@@ -42,6 +42,7 @@ import pt.codeflex.models.UsersLeaderboard;
 import pt.codeflex.repositories.*;
 import pt.codeflex.utils.DurationCalculation;
 import pt.codeflex.utils.RatingCalculator;
+
 @RestController
 @Transactional
 @RequestMapping(path = "/api/database")
@@ -100,7 +101,7 @@ public class DatabaseController {
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
-	
+
 	@Autowired
 	private UsersController usersController;
 
@@ -122,12 +123,12 @@ public class DatabaseController {
 
 	@PostMapping("/Durations/add")
 	public Durations addDurations(@RequestBody Durations duration) {
-		Optional<Users> user = viewUsersById(duration.getUsers().getId());
+		Users user = viewUsersByUsername(duration.getUsers().getUsername());
 		Optional<Problem> problem = viewProblemById(duration.getProblems().getId());
 
 		Durations newDuration = new Durations();
-		if (user.isPresent()) {
-			newDuration.setUsers(user.get());
+		if (user != null) {
+			newDuration.setUsers(user);
 		}
 
 		if (problem.isPresent()) {
@@ -425,15 +426,15 @@ public class DatabaseController {
 		return null;
 	}
 
-	@GetMapping(path = "/PractiseCategory/listWithStats/{id}")
-	public List<ListCategoriesWithStats> listCategoriesWithStats(@PathVariable long id) {
+	@GetMapping(path = "/PractiseCategory/listWithStats/{username}")
+	public List<ListCategoriesWithStats> listCategoriesWithStats(@PathVariable String username) {
 		List<PractiseCategory> allCategories = viewAllPractiseCategories();
 
-		Optional<Users> u = usersRepository.findById(id);
+		Users u = usersRepository.findByUsername(username);
 
 		List<ListCategoriesWithStats> listOfCategoriesWithStats = new ArrayList<>();
-		if (u.isPresent()) {
-			listOfCategoriesWithStats = practiseCategoryRepository.listCategoriesWithStatsByUserId(u.get().getId());
+		if (u != null) {
+			listOfCategoriesWithStats = practiseCategoryRepository.listCategoriesWithStatsByUserId(u.getId());
 		}
 
 		List<String> categoriesName = new ArrayList<>();
@@ -452,8 +453,8 @@ public class DatabaseController {
 		return listOfCategoriesWithStats;
 	}
 
-	@GetMapping(path = "/PractiseCategory/getAllWithoutTestCases/{userId}")
-	public List<CategoriesWithoutTestCases> getAllCategoriesWithoutTestCases(@PathVariable long userId) {
+	@GetMapping(path = "/PractiseCategory/getAllWithoutTestCases/{username}")
+	public List<CategoriesWithoutTestCases> getAllCategoriesWithoutTestCases(@PathVariable String username) {
 
 		List<PractiseCategory> allCategories = viewAllPractiseCategories();
 		List<CategoriesWithoutTestCases> categoriesWithoutTestCases = new ArrayList<>();
@@ -464,7 +465,7 @@ public class DatabaseController {
 				List<ProblemWithoutTestCases> problemsWithoutTestCases = new ArrayList<>();
 				if (problems != null) {
 					for (Problem p : problems) {
-						List<Submissions> submissions = getAllSubmissionsByUserIdAndProblemId(userId, p.getId());
+						List<Submissions> submissions = getAllSubmissionsByUsernameAndProblemId(username, p.getId());
 						boolean solved = false;
 						for (Submissions s : submissions) {
 							Result result = s.getResult();
@@ -515,11 +516,11 @@ public class DatabaseController {
 		return problemRepository.findByName(name.replace("-", " "));
 	}
 
-	@GetMapping(path = "/Problem/viewAllByOwnerId/{ownerId}")
-	public List<Problem> viewProblemByName(@PathVariable long ownerId) {
-		Optional<Users> owner = viewUsersById(ownerId);
-		if (owner.isPresent()) {
-			return problemRepository.findAllByOwner(owner.get());
+	@GetMapping(path = "/Problem/viewAllByOwnerUsername/{username}")
+	public List<Problem> viewAllByOwnerUsername(@PathVariable String username) {
+		Users owner = viewUsersByUsername(username);
+		if (owner != null) {
+			return problemRepository.findAllByOwner(owner);
 
 		}
 		return new ArrayList<>();
@@ -546,7 +547,7 @@ public class DatabaseController {
 	public Problem addProblem(@RequestBody AddProblem addProblem) {
 
 		Problem p = addProblem.getProblem();
-		
+
 		System.out.println(addProblem.toString());
 
 		System.out.println(p.toString());
@@ -587,7 +588,13 @@ public class DatabaseController {
 			if (u.isPresent()) {
 				System.out.println(u.get().toString());
 				p.setOwner(u.get());
+			} else {
+				Users user = usersRepository.findByUsername(addProblem.getOwner().getUsername());
+				if (u != null) {
+					p.setOwner(user);
+				}
 			}
+
 		} else {
 			// TODO : remove. Adding a static user for now
 			Optional<Users> u = usersRepository.findById((long) 2);
@@ -790,8 +797,6 @@ public class DatabaseController {
 	 * }
 	 */
 
-
-
 	// SCORING
 
 	@GetMapping(path = "/Scoring/view")
@@ -852,7 +857,7 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Submissions/viewByUsername/{username}")
-	public List<Submissions> getAllSubmissionsByUserId(@PathVariable String username) {
+	public List<Submissions> getAllSubmissionsByUsername(@PathVariable String username) {
 		Users user = usersRepository.findByUsername(username.trim());
 		List<Submissions> submissions = submissionsRepository.findAll();
 		List<Submissions> finalSubmissions = new ArrayList<>();
@@ -867,20 +872,19 @@ public class DatabaseController {
 		return finalSubmissions;
 	}
 
-	@GetMapping(path = "/Submissions/viewByProblemNameByUserId/{problemName}/{userId}")
+	@GetMapping(path = "/Submissions/viewByProblemNameByUsername/{problemName}/{username}")
 	public List<Submissions> getAllSubmissionsByProblemName(@PathVariable String problemName,
-			@PathVariable long userId) {
+			@PathVariable String username) {
 
 		problemName = problemName.replace('-', ' ');
 
-		System.out.println("Problem name " + problemName + "  :  userId " + userId);
 		Problem currentProblem = problemRepository.findByName(problemName);
 		List<Submissions> finalSubmissions = new ArrayList<>();
 
 		if (currentProblem != null) {
 			List<Submissions> submissions = submissionsRepository.findAllByProblem(currentProblem);
 			for (Submissions s : submissions) {
-				if (s.getUsers().getId() == userId) {
+				if (s.getUsers().getUsername() == username) {
 					finalSubmissions.add(s);
 				}
 			}
@@ -888,10 +892,10 @@ public class DatabaseController {
 		return finalSubmissions;
 	}
 
-	@GetMapping(path = "/Submissions/viewByUserIdAndProblemId/{userId}/{problemId}")
-	public List<Submissions> getAllSubmissionsByUserIdAndProblemId(@PathVariable long userId,
+	@GetMapping(path = "/Submissions/viewByUserIdAndProblemId/{username}/{problemId}")
+	public List<Submissions> getAllSubmissionsByUsernameAndProblemId(@PathVariable String username,
 			@PathVariable long problemId) {
-		List<Submissions> submissions = getAllSubmissionsByUserId(userId);
+		List<Submissions> submissions = getAllSubmissionsByUsername(username);
 		Optional<Problem> problem = problemRepository.findById(problemId);
 
 		List<Submissions> finalList = new ArrayList<>();
@@ -1169,15 +1173,16 @@ public class DatabaseController {
 		return finalTournaments;
 	}
 
-	@GetMapping("/Tournament/viewAllWithRegisteredUsersByOwnerId/{ownerId}")
-	public List<TournamentWithRegisteredUsers> viewAllWithRegisteredUsersByOwnerId(@PathVariable long ownerId) {
-		Optional<Users> u = viewUsersById(ownerId);
+	@GetMapping("/Tournament/viewAllWithRegisteredUsersByOwnerUsername/{username}")
+	public List<TournamentWithRegisteredUsers> viewAllWithRegisteredUsersByOwnerUsername(
+			@PathVariable String username) {
+		Users u = viewUsersByUsername(username);
 
 		List<Tournament> tournaments = new ArrayList<>();
 		List<TournamentWithRegisteredUsers> tournamentWithRegisteredUsers = new ArrayList<>();
 
-		if (u.isPresent()) {
-			tournaments = tournamentRepository.findByOwner(u.get());
+		if (u != null) {
+			tournaments = tournamentRepository.findByOwner(u);
 
 			for (Tournament t : tournaments) {
 				List<Users> usersByTournament = viewUsersByTournamentId(t.getId());
@@ -1189,12 +1194,12 @@ public class DatabaseController {
 	}
 
 	// Returns 2 separate lists of available and archived problems
-	@GetMapping(path = "/Tournament/viewTournamentsToList/{userId}")
-	public TournamentsToList getAllTournamentsToList(@PathVariable long userId) {
+	@GetMapping(path = "/Tournament/viewTournamentsToList/{username}")
+	public TournamentsToList getAllTournamentsToList(@PathVariable String username) {
 
-		Optional<Users> user = viewUsersById(userId);
+		Users user = viewUsersByUsername(username);
 
-		if (!user.isPresent()) {
+		if (user == null) {
 			return null;
 		}
 
@@ -1208,7 +1213,7 @@ public class DatabaseController {
 		boolean registered;
 		for (Tournament t : allTournaments) {
 
-			registered = isUserRegisteredInTournament(userId, t.getId());
+			registered = isUserRegisteredInTournament(user.getId(), t.getId());
 
 			if (!t.getShowWebsite() && !registered)
 				continue;
@@ -1243,7 +1248,7 @@ public class DatabaseController {
 	@PostMapping(path = "/Tournament/registerUser")
 	public TournamentsToList registerUserOnTournament(@RequestBody RegisterUserOnTournament register) {
 
-		Optional<Users> viewUsersById = viewUsersById(register.getUser().getId());
+		Users userByUsername = viewUsersByUsername(register.getUser().getUsername());
 
 		System.out.println("TOURNAMENT ID" + register.getTournament().getId());
 		Tournament tournament = null;
@@ -1253,16 +1258,16 @@ public class DatabaseController {
 			tournament = tournamentRepository.findByCode(register.getTournament().getCode());
 		}
 		System.out.println(register.toString());
-		if (!viewUsersById.isPresent() || tournament == null
+		if (userByUsername == null || tournament == null
 				|| (tournament.getCode() != null && register.getTournament().getCode() != null
 						&& (!tournament.getCode().equals(register.getTournament().getCode())))) {
-			return getAllTournamentsToList(viewUsersById.get().getId()); // ?!
+			return getAllTournamentsToList(userByUsername.getUsername()); // ?!
 		}
 
-		Rating r = new Rating(tournament, viewUsersById.get(), (double) -1);
+		Rating r = new Rating(tournament, userByUsername, (double) -1);
 		ratingRepository.save(r);
 
-		return getAllTournamentsToList(viewUsersById.get().getId());
+		return getAllTournamentsToList(userByUsername.getUsername());
 
 	}
 
@@ -1374,6 +1379,11 @@ public class DatabaseController {
 		return (List<Users>) usersRepository.findAll();
 	}
 
+	@GetMapping(path = "/Users/viewByUsername/{username}")
+	public Users viewUsersByUsername(@PathVariable String username) {
+		return usersRepository.findByUsername(username);
+	}
+
 	@GetMapping("/Users/viewAllWithLessInfo")
 	public List<UserLessInfo> viewAllWithLessInfo() {
 		List<UserLessInfo> finalUsers = new ArrayList<>();
@@ -1410,6 +1420,5 @@ public class DatabaseController {
 	public Optional<Users> viewUsersById(@PathVariable long id) {
 		return usersRepository.findById(id);
 	}
-
 
 }

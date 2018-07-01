@@ -5,7 +5,7 @@ import Popup from '../Popup/Popup';
 
 import { Redirect } from 'react-router-dom';
 import { URL } from '../commons/Constants';
-import { dateWithHoursAndDay, textToLowerCaseNoSpaces, getTimeHoursMins } from '../commons/Utils';
+import { dateWithHoursAndDay, textToLowerCaseNoSpaces, getTimeHoursMins, parseLocalJwt, getAuthorization } from '../commons/Utils';
 
 import './ListTournaments.css';
 
@@ -35,8 +35,9 @@ class ListTournaments extends React.Component {
     }
 
     fetchTournamentList() {
-        const userData = JSON.parse(localStorage.getItem('userData'));
-        fetch(URL + '/api/database/Tournament/viewTournamentsToList/' + userData.id).then(res => res.json()).then(data => {
+        fetch(URL + '/api/database/Tournament/viewTournamentsToList/' + parseLocalJwt().username, {
+            headers: {...getAuthorization()}
+        }).then(res => res.json()).then(data => {
             console.log(data);
             this.setState({ tournaments: data });
         })
@@ -58,9 +59,8 @@ class ListTournaments extends React.Component {
     }
 
     onClickRegister(tournamentId) {
-        const userData = JSON.parse(localStorage.getItem('userData'));
         const data = {
-            user: { id: userData.id },
+            user: { username : parseLocalJwt().username},
             tournament: { id: tournamentId }
         }
 
@@ -73,6 +73,7 @@ class ListTournaments extends React.Component {
             method: 'POST',
             body: JSON.stringify(data),
             headers: new Headers({
+                ...getAuthorization(),
                 'Content-Type': 'application/json'
             })
         }).then(res => res.json()).then(data => {
@@ -88,9 +89,8 @@ class ListTournaments extends React.Component {
     }
 
     onClickEnterPrivateTournament = () => {
-        const userData = JSON.parse(localStorage.getItem('userData'));
         const data = {
-            user: { id: userData.id },
+            user: {username: parseLocalJwt().username},
             tournament: { code: this.state.privateCode }
 
         }

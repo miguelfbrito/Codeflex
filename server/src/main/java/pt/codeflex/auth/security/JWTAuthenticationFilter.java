@@ -3,8 +3,6 @@ package pt.codeflex.auth.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import pt.codeflex.databasemodels.Users;
-import pt.codeflex.models.UserLessInfo;
-import pt.codeflex.utils.Hash;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -17,7 +15,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -50,7 +47,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		System.out.println("Attempting authentication");
 		try {
 			Users creds = new ObjectMapper().readValue(req.getInputStream(), Users.class);
-
 			return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(creds.getUsername(),
 					creds.getPassword(), new ArrayList<>()));
 		} catch (IOException e) {
@@ -63,11 +59,17 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			Authentication auth) throws IOException, ServletException {
 
 		System.out.println("Valid authentication");
+		auth.getName();
+		String role = auth.getAuthorities().toString().replace("[", "").replace("]", "");
+		System.out.println(role);
 		
+		
+		// including subject is a must
 		String token = Jwts.builder().setSubject(((User) auth.getPrincipal()).getUsername())
 				.claim("username", auth.getName()).setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
 				.signWith(SignatureAlgorithm.HS512, SECRET.getBytes()).compact();
-		res.getWriter().write("{ \"token\" : \""+token+"\" }");
+		res.getWriter().write("{ \"username\" : \"" + auth.getName() + "\", \"role\" : \"" + role + "\", \"token\" : \""
+				+ token + "\" }");
 		res.addHeader("Content-Type", "application/json");
 		res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
 	}

@@ -5,7 +5,7 @@ import { Redirect, Link } from 'react-router-dom';
 import Popup from '../Popup/Popup';
 
 import { URL } from '../commons/Constants';
-import { splitUrl } from '../commons/Utils';
+import { splitUrl, getAuthorization, parseLocalJwt, getRndInteger } from '../commons/Utils';
 
 import '../../node_modules/react-table/react-table.css'
 import './ManageTestCases.css';
@@ -66,7 +66,9 @@ class ManageTestCases extends React.Component {
     }
 
     fetchTestCases() {
-        fetch(URL + '/api/database/Problem/viewAllTestCasesByProblemName/' + this.props.match.params.problemName).then(res => res.json())
+        fetch(URL + '/api/database/Problem/viewAllTestCasesByProblemName/' + this.props.match.params.problemName, {
+            headers: {...getAuthorization()}
+        }).then(res => res.json())
             .then(data => {
                 console.log(data);
                 this.setState({ testCases: data });
@@ -78,6 +80,7 @@ class ManageTestCases extends React.Component {
             method: 'POST',
             body: JSON.stringify(this.state.testCases),
             headers: new Headers({
+                ...getAuthorization(),
                 'Content-Type': 'application/json'
             })
         })
@@ -134,7 +137,8 @@ class ManageTestCases extends React.Component {
     deleteTestCase(index) {
 
         fetch(URL + '/api/database/TestCases/delete/' + index, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers : {...getAuthorization()}
         }).then(() => {
             this.fetchTestCases();
         });
@@ -150,6 +154,7 @@ class ManageTestCases extends React.Component {
             method: 'POST',
             body: JSON.stringify(data),
             headers: new Headers({
+                ...getAuthorization(),
                 'Content-Type': 'application/json'
             })
         }).then(() => {

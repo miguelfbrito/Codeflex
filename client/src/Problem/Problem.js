@@ -5,7 +5,7 @@ import brace from 'brace';
 import Parser from 'html-react-parser';
 import { Redirect, Link } from 'react-router-dom';
 import { URL } from '../commons/Constants';
-import { splitUrl, textToLowerCaseNoSpaces, dateWithDay } from '../commons/Utils';
+import { splitUrl, textToLowerCaseNoSpaces, dateWithDay, getAuthorization, parseLocalJwt } from '../commons/Utils';
 import Submissions from './Submissions/Submissions';
 import Leaderboard from './Leaderboard/Leaderboard';
 import CompilerError from './CompilerError/CompilerError';
@@ -99,15 +99,17 @@ public class Solution {
     componentDidMount() {
         let currentProblem = splitUrl(this.props.location.pathname)[2];
         console.log(currentProblem);
-        fetch(URL + '/api/database/problem/getProblemByName/' + currentProblem).then(res => res.json()).then(data => {
-            this.setState({ problem: data, problemLoaded: true });
-            console.log(data)
 
-            this.setOpenedProblem(data);
+        fetch(URL + '/api/database/problem/getProblemByName/' + currentProblem, { headers: { ...getAuthorization() } })
+            .then(res => res.json()).then(data => {
+                this.setState({ problem: data, problemLoaded: true });
+                console.log(data)
 
-        });
+                this.setOpenedProblem(data);
 
-        fetch(URL + '/api/database/Language/view').then(res => res.json()).then(data => {
+            });
+
+        fetch(URL + '/api/database/Language/view', { headers: { ...getAuthorization() } }).then(res => res.json()).then(data => {
             console.log(data)
             this.setState({ displayLanguages: data })
 
@@ -149,7 +151,7 @@ public class Solution {
     setOpenedProblem = (p) => {
         const durationsData = {
             users: {
-                id: JSON.parse(localStorage.getItem('userData')).id
+                username: parseLocalJwt().username
             },
             problems: {
                 id: p.id
@@ -160,6 +162,7 @@ public class Solution {
             method: 'POST',
             body: JSON.stringify(durationsData),
             headers: new Headers({
+                ...getAuthorization(),
                 'Content-Type': 'application/json'
             })
         }).then(res => res.json()).then(data => {
@@ -192,7 +195,7 @@ public class Solution {
         let data = {
             code: btoa(this.state.code),
             language: { name: this.state.language.name },
-            users: { id: JSON.parse(localStorage.getItem('userData')).id },
+            users: { username: parseLocalJwt().username },
             problem: { name: textToLowerCaseNoSpaces(this.state.problem.name) }
         }
 
@@ -202,6 +205,7 @@ public class Solution {
             method: 'POST',
             body: JSON.stringify(data),
             headers: new Headers({
+                ...getAuthorization(),
                 'Content-Type': 'application/json'
             })
         }).then(res => res.json()).then(data => {
@@ -215,7 +219,7 @@ public class Solution {
 
     fetchForResults() {
         console.log('Fetching results');
-        fetch(URL + '/api/database/Scoring/viewBySubmissionId/' + this.state.sentSubmission.submission.id).then(res => res.json())
+        fetch(URL + '/api/database/Scoring/viewBySubmissionId/' + this.state.sentSubmission.submission.id, { headers: { ...getAuthorization() } }).then(res => res.json())
             .then(data => {
                 console.log(data);
                 console.log(data.length);
@@ -237,7 +241,6 @@ public class Solution {
     
                         alterar o if para garantir que apenas soluções
                         com erro o ativem
-    
                     */
 
                     let submissionResult = data[0].submissions.result;

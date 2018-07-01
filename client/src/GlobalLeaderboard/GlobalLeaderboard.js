@@ -3,6 +3,7 @@ import ReactTable from 'react-table';
 import PathLink from '../PathLink/PathLink';
 
 import { URL } from '../commons/Constants';
+import { parseLocalJwt, getAuthorization } from '../commons/Utils';
 import '../../node_modules/react-table/react-table.css';
 
 class GlobalLeaderboard extends React.Component {
@@ -14,7 +15,9 @@ class GlobalLeaderboard extends React.Component {
     }
 
     componentDidMount() {
-        fetch(URL + '/api/database/Users/viewAllWithLessInfo').then(res => res.json())
+        fetch(URL + '/api/database/Users/viewAllWithLessInfo', {
+            headers : {...getAuthorization()}
+        }).then(res => res.json())
             .then(data => {
                 console.log("Dataaaa")
                 console.log(data);
@@ -42,7 +45,7 @@ class GlobalLeaderboard extends React.Component {
                         getProps: (
                             (state, rowInfo, row) => ({
                                 style: {
-                                    backgroundColor: (rowInfo.row.username === JSON.parse(localStorage.getItem('userData')).username ? '#aaa' : '')
+                                    backgroundColor: (rowInfo.row.username === parseLocalJwt().username ? '#aaa' : '')
                                 }
                             })
                         )

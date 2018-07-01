@@ -3,7 +3,7 @@ import PathLink from '../PathLink/PathLink';
 import ReactTable from 'react-table';
 import { Redirect } from 'react-router-dom';
 import { URL } from '../commons/Constants';
-import { dateWithHoursAndDay, textToLowerCaseNoSpaces } from '../commons/Utils';
+import { dateWithHoursAndDay, textToLowerCaseNoSpaces, splitUrl, getAuthorization, parseLocalJwt } from '../commons/Utils';
 
 import './ManageTournaments.css'
 import "../../node_modules/react-table/react-table.css";
@@ -31,7 +31,9 @@ class ManageTournaments extends React.Component {
     }
 
     fetchTournaments() {
-        fetch(URL + '/api/database/Tournament/viewAllWithRegisteredUsersByOwnerId/' + JSON.parse(localStorage.getItem('userData')).id).then(res => res.json())
+        fetch(URL + '/api/database/Tournament/viewAllWithRegisteredUsersByOwnerUsername/' + parseLocalJwt().username, {
+            headers : {...getAuthorization()}
+        }).then(res => res.json())
             .then(data => {
                 this.setState({ tournaments: data })
                 console.log(data);
@@ -44,7 +46,10 @@ class ManageTournaments extends React.Component {
             tournament: { name: tournamentName }
         }
         fetch(URL + '/api/database/Tournament/deleteByName/' + tournamentName, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers : {
+                ...getAuthorization()
+            }
         }).then(() => {
             this.fetchTournaments();
         });

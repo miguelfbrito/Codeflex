@@ -8,7 +8,7 @@ import { stateFromHTML } from 'draft-js-import-html';
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
 
 import { URL } from '../../commons/Constants';
-import { splitUrl } from '../../commons/Utils';
+import { splitUrl, getAuthorization, parseLocalJwt } from '../../commons/Utils';
 import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import '../../commons/draft-editor.css'
 import './AddProblem.css'
@@ -46,10 +46,14 @@ class AddProblem extends React.Component {
     }
 
     componentDidMount() {
-        fetch(URL + '/api/database/difficulty/view')
+        fetch(URL + '/api/database/difficulty/view', {
+            headers: { ...getAuthorization() }
+        })
             .then(res => res.json()).then(data => { console.log(data); this.setState({ displayDifficulties: data }) })
 
-        fetch(URL + '/api/database/PractiseCategory/view')
+        fetch(URL + '/api/database/PractiseCategory/view', {
+            headers: { ...getAuthorization() }
+        })
             .then(res => res.json()).then(data => { console.log(data); this.setState({ displayCategories: data }) })
 
         const path = splitUrl(this.props.location.pathname);
@@ -61,7 +65,9 @@ class AddProblem extends React.Component {
 
     fetchCurrentProblem() {
         const problemName = this.props.match.params.problemName;
-        fetch(URL + '/api/database/Problem/viewAllDetails/' + problemName).then(res => res.json()).then(data => {
+        fetch(URL + '/api/database/Problem/viewAllDetails/' + problemName, {
+            headers: { ...getAuthorization() }
+        }).then(res => res.json()).then(data => {
             console.log('getting stuff')
             console.log(data);
 
@@ -156,7 +162,7 @@ class AddProblem extends React.Component {
                 name: this.state.category.name
             },
             owner: {
-                id: JSON.parse(localStorage.getItem('userData')).id
+                username: parseLocalJwt().username
             },
             tournament: {
                 name: this.props.match.params.tournamentName
@@ -169,6 +175,7 @@ class AddProblem extends React.Component {
             method: 'POST',
             body: JSON.stringify(data),
             headers: new Headers({
+                ...getAuthorization(),
                 'Content-Type': 'application/json'
             })
         }).then(res => res.json()).then(data => {
@@ -204,7 +211,7 @@ class AddProblem extends React.Component {
                 name: this.state.category.name
             },
             owner: {
-                id: JSON.parse(localStorage.getItem('userData')).id
+                username: parseLocalJwt().username 
             },
             tournament: {
                 name: this.props.match.params.tournamentName
@@ -216,6 +223,7 @@ class AddProblem extends React.Component {
             method: 'POST',
             body: JSON.stringify(data),
             headers: new Headers({
+                ...getAuthorization(),
                 'Content-Type': 'application/json'
             })
         }).then(res => res.json()).then(data => {
@@ -231,7 +239,7 @@ class AddProblem extends React.Component {
 
     render() {
 
-        const categorySection = 
+        const categorySection =
             <div className="row info-section">
                 <div className="col-sm-2 add-problem-desc">
                     <h3>Category</h3>

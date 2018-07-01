@@ -2,7 +2,7 @@ import React from 'react';
 import ReactTable from 'react-table';
 import { Router, Link } from 'react-router-dom';
 import { URL } from '../../commons/Constants';
-import { splitUrl, dateWithHoursAndDay } from '../../commons/Utils';
+import { splitUrl, dateWithHoursAndDay, parseLocalJwt, getAuthorization } from '../../commons/Utils';
 import './Submissions.css';
 
 class Submissions extends React.Component {
@@ -17,8 +17,9 @@ class Submissions extends React.Component {
 
     componentDidMount() {
         let problemName = splitUrl(this.props.pathname)[2];
-        let user = JSON.parse(localStorage.getItem('userData'));
-        fetch(URL + '/api/database/Submissions/viewByProblemNameByUserId/' + problemName + '/' + user.id).then(res => res.json()).then(data => {
+        fetch(URL + '/api/database/Submissions/viewByProblemNameByUsername/' + problemName + '/' + parseLocalJwt().username, {
+            headers: { ...getAuthorization() }
+        }).then(res => res.json()).then(data => {
             this.setState({ results: data });
             console.log('results');
             console.log(data);

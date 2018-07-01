@@ -84,3 +84,26 @@ export const getDatesRange = (start, end) => {
 export const getRndInteger = (min, max) => {
     return Math.floor(Math.random() * (max - min)) + min;
 }
+
+
+export const parseJwt = (token) => {
+    try {
+        return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+        return null;
+    }
+}
+
+export const parseLocalJwt = () => {
+    return parseJwt(localStorage.getItem('token'));
+}
+
+export const getToken = () => {
+    return localStorage.getItem('token');
+}
+
+export const getAuthorization = () => {
+    return {
+        'Authorization': 'Bearer ' + getToken()
+    }
+}

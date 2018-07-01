@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar2.css';
 import '../commons/style.css';
+import { parseLocalJwt } from '../commons/Utils';
 class Navbar extends Component {
 
     // TODO : consts para os uri
@@ -52,13 +53,13 @@ class Navbar extends Component {
                         <li className="dropdown">
                             <Link to="/" className="dropdown-toggle" data-toggle="dropdown">
                                 <p>
-                                    {JSON.parse(localStorage.getItem('userData')).username}&nbsp;
+                                    {parseLocalJwt().username}&nbsp;
                                     <span class="caret"></span>
                                 </p>
                             </Link>
 
                             <ul className="dropdown-menu">
-                                <li><Link to={"/user/"+ JSON.parse(localStorage.getItem('userData')).username}><p>Profile</p></Link></li>
+                                <li><Link to={"/user/"+ parseLocalJwt().username}><p>Profile</p></Link></li>
                                 <li><Link to="/manage"><p>Manage Content</p></Link></li>
                                 <li><Link to="/"><p>Settings</p></Link></li>
                                 <li><Link to="/" onClick={this.logoutUser}><p>Logout</p></Link></li>
@@ -70,7 +71,6 @@ class Navbar extends Component {
     }
 
     logoutUser() {
-        localStorage.setItem('userData', '');
         localStorage.clear();
         console.log('Logging out')
     }
@@ -79,7 +79,7 @@ class Navbar extends Component {
 
         let items;
 
-        if (localStorage.getItem('userData') != null) {
+        if (localStorage.getItem('token') != null) {
             items = this.userLoggedIn();
         } else {
             items = this.userLoggedOut();

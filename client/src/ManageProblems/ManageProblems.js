@@ -4,7 +4,7 @@ import ReactTable from 'react-table';
 import { Redirect, Link } from 'react-router-dom';
 
 import { URL } from '../commons/Constants';
-import { splitUrl, textToLowerCaseNoSpaces } from '../commons/Utils';
+import { splitUrl, textToLowerCaseNoSpaces, getAuthorization, parseLocalJwt } from '../commons/Utils';
 
 import '../../node_modules/react-table/react-table.css'
 import './ManageProblems.css';
@@ -30,13 +30,17 @@ class ManageProblems extends React.Component {
         }
 
         if (origin === 'tournament') {
-            fetch(URL + '/api/database/Tournament/getAllProblemsByName/' + url[2]).then(res => res.json())
+            fetch(URL + '/api/database/Tournament/getAllProblemsByName/' + url[2], {
+                headers : {...getAuthorization()}
+            }).then(res => res.json())
                 .then(data => {
                     console.log(data);
                     this.setState({ problems: data });
                 })
         } else if (origin === 'manage') {
-            fetch(URL + '/api/database/Problem/viewAllByOwnerId/' + JSON.parse(localStorage.getItem('userData')).id)
+            fetch(URL + '/api/database/Problem/viewAllByOwnerUsername/' + parseLocalJwt().username, {
+                headers : {...getAuthorization()}
+            })
                 .then(res => res.json())
                 .then(data => {
                     data = data.filter(d => d.tournament === null);

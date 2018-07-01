@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { URL } from '../commons/Constants';
 import { Link } from 'react-router-dom';
-import { splitUrl, textToLowerCaseNoSpaces } from '../commons/Utils';
+import { splitUrl, textToLowerCaseNoSpaces, parseLocalJwt, getAuthorization } from '../commons/Utils';
 import PathLink from '../PathLink/PathLink';
 import ProblemFilter from './ProblemFilter/ProblemFilter';
 
@@ -34,13 +34,21 @@ class ListProblems extends Component {
             this.fetchProblemsByTournament();
         }
 
-        fetch(URL + '/api/database/difficulty/view')
+        fetch(URL + '/api/database/difficulty/view', {
+            headers: {
+                ...getAuthorization()
+            }
+        })
             .then(res => res.json()).then(data => { this.setState({ difficulties: data }) })
     }
 
     fetchProblemsByTournament() {
         const currentTournament = splitUrl(this.props.location.pathname)[1];
-        fetch(URL + '/api/database/tournament/getAllProblemsByName/' + currentTournament).then(res => res.json())
+        fetch(URL + '/api/database/tournament/getAllProblemsByName/' + currentTournament, {
+            headers: {
+                ...getAuthorization()
+            }
+        }).then(res => res.json())
             .then(data => {
                 console.log('Tournament problems')
                 console.log(data);
@@ -50,7 +58,11 @@ class ListProblems extends Component {
 
     fetchProblemsByCategory() {
         const currentCategory = splitUrl(this.props.location.pathname)[1];
-        fetch(URL + '/api/database/PractiseCategory/getAllWithoutTestCases/' + JSON.parse(localStorage.getItem('userData')).id)
+        fetch(URL + '/api/database/PractiseCategory/getAllWithoutTestCases/' + parseLocalJwt().username , {
+            headers : {
+                ...getAuthorization()
+            }
+        })
             .then(res => res.json()).then(data => {
                 let newData = data.filter(d => textToLowerCaseNoSpaces(d.name) === currentCategory)
                 if (JSON.stringify(newData) === '[]') {

@@ -4,7 +4,7 @@ import Popup from '../Popup/Popup';
 
 import { Link } from 'react-router-dom'
 import { URL } from '../commons/Constants';
-import { textToLowerCaseNoSpaces } from '../commons/Utils';
+import { textToLowerCaseNoSpaces, parseLocalJwt, getAuthorization} from '../commons/Utils';
 
 import './ManageCategories.css';
 
@@ -25,7 +25,7 @@ class ManageCategories extends React.Component {
     }
 
     fetchCategories = () => {
-        fetch(URL + '/api/database/PractiseCategory/view').then(res => res.json()).then(data => {
+        fetch(URL + '/api/database/PractiseCategory/view', {headers : {...getAuthorization()}}).then(res => res.json()).then(data => {
             console.log('Fetching categories')
             console.log(data)
             this.setState({ categories: data })
@@ -35,7 +35,8 @@ class ManageCategories extends React.Component {
     deleteCategory = (pc) => {
         console.log('Deleting category')
         fetch(URL + '/api/database/PractiseCategory/delete/' + pc.id, {
-            method: 'DELETE'
+            method: 'DELETE',
+            ...getAuthorization()
         }).then(() => {
             this.fetchCategories();
         });
@@ -47,7 +48,8 @@ class ManageCategories extends React.Component {
             method: 'POST',
             body: JSON.stringify(data),
             headers: new Headers({
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...getAuthorization()
             })
         }).then(res => res.json()).then(data => {
             console.log("New Category")
@@ -62,9 +64,7 @@ class ManageCategories extends React.Component {
         })
     }
 
-
     render() {
-
 
         const PopupAddCategory = () => (
             <div className="">

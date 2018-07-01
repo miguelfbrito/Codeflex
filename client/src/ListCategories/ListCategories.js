@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { URL } from '../commons/Constants';
 import './ListCategories.css';
 import { Link } from 'react-router-dom';
-import { textToLowerCaseNoSpaces } from '../commons/Utils';
+import { textToLowerCaseNoSpaces, parseLocalJwt, getAuthorization} from '../commons/Utils';
 import PathLink from '../PathLink/PathLink';
 
 class ListProblems extends Component {
@@ -17,12 +17,11 @@ class ListProblems extends Component {
 
 
     componentDidMount() {
-        fetch(URL + '/api/database/PractiseCategory/listwithstats/' + JSON.parse(localStorage.getItem('userData')).id //, {
-            //headers: new Headers({
-            // 'Content-Type': 'application/json',
-            //'Authorization': 'Token ' + localUser.token
-            // })
-        ).then(res => res.json()).then(data => {
+        fetch(URL + '/api/database/PractiseCategory/listwithstats/' + parseLocalJwt().username , {
+            headers: {
+                ...getAuthorization()
+            }
+        }).then(res => res.json()).then(data => {
             this.setState({ categories: data })
             console.log(this.state.categories);
         })
@@ -32,13 +31,11 @@ class ListProblems extends Component {
         console.log(newValue);
     }
 
-
-
     render() {
         return (
             <div className="container">
                 <div className="row">
-                    <PathLink path={this.props.location.pathname} title="Categories"/>   
+                    <PathLink path={this.props.location.pathname} title="Categories" />
                     {this.state.categories.length > 0 && this.state.categories.map((category, index) => (
                         <div key={category.id} className="col-sm-6 category-container">
                             <h2>{category.name}</h2>

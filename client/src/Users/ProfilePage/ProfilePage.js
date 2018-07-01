@@ -4,9 +4,9 @@ import CalendarHeatmap from 'react-calendar-heatmap';
 import $ from 'jquery';
 import ReactTooltip from 'react-tooltip'
 
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { URL } from '../../commons/Constants';
-import { dateWithHoursAndDay, getDatesRange, getRndInteger, textToLowerCaseNoSpaces } from '../../commons/Utils';
+import { dateWithHoursAndDay, getDatesRange, getRndInteger, textToLowerCaseNoSpaces, getAuthorization } from '../../commons/Utils';
 
 import '../../commons/style.css';
 import './ProfilePage.css';
@@ -21,7 +21,9 @@ class ProfilePage extends React.Component {
     }
 
     componentDidMount() {
-        fetch(URL + '/api/database/Submissions/viewByUsername/' + this.props.match.params.username).then(res => res.json())
+        fetch(URL + '/api/database/Submissions/viewByUsername/' + this.props.match.params.username, {
+            headers: { ...getAuthorization() }
+        }).then(res => res.json())
             .then(data => {
                 console.log('Submissions')
                 console.log(data);
@@ -125,8 +127,8 @@ class ProfilePage extends React.Component {
                             {this.state.submissions.map(s => (
                                 <div className="profile-page-submission">
 
-                                    <p>Solution to {this.linkToProblem(s)} submitted on {dateWithHoursAndDay(s.date)} with a total score of {s.score} 
-                                    &nbsp;({s.score != 0 ? s.score / s.problem.maxScore * 100 : '0'}%).</p>
+                                    <p>Solution to {this.linkToProblem(s)} submitted on {dateWithHoursAndDay(s.date)} with a total score of {s.score}
+                                        &nbsp;({s.score != 0 ? s.score / s.problem.maxScore * 100 : '0'}%).</p>
                                 </div>
                             ))}
                         </div>

@@ -41,7 +41,8 @@ class Login extends Component {
                 console.log(data)
                 window.location.href = '/';
                 localStorage.setItem('token', data.token);
-                localStorage.setImte('userData', '')
+                localStorage.setItem('userData', JSON.stringify({ username : data.username}));
+
             }
 
         }).catch((e) => {

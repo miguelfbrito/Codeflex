@@ -3,7 +3,7 @@ import ReactTable from 'react-table';
 import './Leaderboard.css';
 
 import { URL } from '../../commons/Constants';
-import { splitUrl, msToTime } from '../../commons/Utils';
+import { splitUrl, msToTime, getAuthorization, parseLocalJwt } from '../../commons/Utils';
 import '../../../node_modules/react-table/react-table.css';
 import '../../commons/react-table.css';
 
@@ -20,7 +20,7 @@ class Leaderboard extends React.Component {
     componentDidMount() {
 
             const problemName = splitUrl(this.props.pathname)[2];
-            fetch(URL + '/api/database/Leaderboard/viewByProblemName/' + problemName).then(res => res.json())
+            fetch(URL + '/api/database/Leaderboard/viewByProblemName/' + problemName, {headers : {...getAuthorization()}}).then(res => res.json())
                 .then(data => { this.setState({ problemName: problemName, leaderboard: data }) })
     }
 
@@ -30,7 +30,7 @@ class Leaderboard extends React.Component {
         if (this.state.problemName != null) {
 
             let leaderboard = this.state.leaderboard.sort((a, b) => { return (b.score - a.score || a.durationMilliseconds - b.durationMilliseconds) });
-            let currentUsername = JSON.parse(localStorage.getItem('userData')).username;
+            let currentUsername = parseLocalJwt().username;
 
             console.log('leaderboard')
             console.log(this.state.leaderboard);
@@ -51,7 +51,7 @@ class Leaderboard extends React.Component {
                             getProps: (
                                 (state, rowInfo, row) => ({
                                     style: {
-                                        backgroundColor: (rowInfo.row.username === JSON.parse(localStorage.getItem('userData')).username ? '#aaa' : '')
+                                        backgroundColor: (rowInfo.row.username === currentUsername ? '#aaa' : '')
                                     }
                                 })
                             )

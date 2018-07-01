@@ -15,10 +15,13 @@ import static java.util.Collections.emptyList;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
     private UsersRepository applicationUserRepository;
-
+    private String userId;
+    
     public UserDetailsServiceImpl(UsersRepository applicationUserRepository) {
         this.applicationUserRepository = applicationUserRepository;
     }
+    
+    
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

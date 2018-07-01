@@ -3,7 +3,7 @@ import PathLink from '../PathLink/PathLink';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 
-import { textToLowerCaseNoSpaces} from '../commons/Utils';
+import { textToLowerCaseNoSpaces, splitUrl, parseLocalJwt, getAuthorization } from '../commons/Utils';
 import { Link } from 'react-router-dom';
 import { URL } from '../commons/Constants';
 
@@ -53,13 +53,14 @@ class CreateTournament extends React.Component {
             startingDate: this.state.startDate,
             endingDate: this.state.endDate,
             code: this.state.privateCode,
-            owner: { id: JSON.parse(localStorage.getItem('userData')).id }
+            owner: { username: parseLocalJwt().username }
         }
 
         fetch(URL + '/api/database/tournament/add', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: new Headers({
+                ...getAuthorization(),
                 'Content-Type': 'application/json'
             })
         }).then(res => res.json()).then(data => {
