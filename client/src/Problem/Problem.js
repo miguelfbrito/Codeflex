@@ -295,6 +295,25 @@ public class Solution {
         this.setState({ scriptLoaded: true })
     }
 
+    getInformation = (draft) => {
+        let finalString = '';
+        try {
+            draft = JSON.parse(draft);
+            finalString = Parser(String(draftToHtml(draft)));
+        } catch (err) {
+            // if it isn't a JSON it's coming from the database as raw text instead of draftjs format
+            finalString = draft;
+        }
+
+        console.log("FINAL STRING")
+        console.log(finalString)
+        return (
+            <div>
+                {finalString}
+            </div>
+        );
+    }
+
     getProblemSection = () => {
         const aceStyle = {
             border: '1px solid #ccc',
@@ -313,16 +332,16 @@ public class Solution {
                 <div className="col-sm-10 problem-description-container" id="problem-section">
                     <div id="anchor-remove-mathjax"></div>
                     <h3 id="problem-statement">Problem Statement</h3>
-                    {Parser(String(draftToHtml((JSON.parse(problem.description)))))}
+                    {this.getInformation(problem.description)}
 
                     <h3>Constraints</h3>
-                    {Parser(String(draftToHtml((JSON.parse(problem.constraints)))))}
+                    {this.getInformation(problem.constraints)}
 
                     <h3>Input Format</h3>
-                    {Parser(String(draftToHtml((JSON.parse(problem.inputFormat)))))}
+                    {this.getInformation(problem.inputFormat)}
 
                     <h3>Output Format</h3>
-                    {Parser(String(draftToHtml((JSON.parse(problem.outputFormat)))))}
+                    {this.getInformation(problem.outputFormat)}
 
                     {typeof problem.testCases !== "undefined" ? problem.testCases.map((tc, i) => {
                         if (tc.shown) {

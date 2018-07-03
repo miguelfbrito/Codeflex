@@ -22,6 +22,7 @@ import Leaderboard from './Problem/Leaderboard/Leaderboard';
 import TournamentLeaderboard from './TournamentLeaderboard/TournamentLeaderboard';
 import ProfilePage from './Users/ProfilePage/ProfilePage';
 import PageWrapper from './PageWrapper/PageWrapper';
+import LandingPage from './LandingPage/LandingPage';
 
 import './PageWrapper/PageWrapper.css';
 
@@ -31,8 +32,10 @@ class App extends Component {
       <Router>
         <div style={{ margin: '0', padding: '0' }}>
           <NavBar />
-          <div style={{minHeight:'100%'}}>
+          <div style={{ minHeight: '100%' }}>
             <Switch>
+              <Route exact path="/" component={PageWrapper(LandingPage)} />
+
               <Route exact path="/login" component={PageWrapper(Login)} />
               <Route exact path="/problem" component={PageWrapper(Problem)} />
 

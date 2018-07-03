@@ -1,0 +1,21 @@
+.landing-page-text-cols  {
+    text-align: center;
+}
+
+div.lp-icon-wrapper {
+    text-align: center;
+}
+
+.lp-icon-wrapper {
+    background-color: #6a44ff;
+    width: 100px;
+    height:100px;
+    border-radius: 100%;
+    text-align: center;
+    margin: 0 auto;
+    line-height: 100px;
+}
+
+.landing-page-text-cols h3 {
+    margin-top: 5px;
+}
