@@ -3,7 +3,7 @@ import AceEditor from 'react-ace';
 import PathLink from '../PathLink/PathLink';
 
 import { Router, Redirect } from 'react-router';
-import { textToLowerCaseNoSpaces, splitUrl } from '../commons/Utils';
+import { textToLowerCaseNoSpaces, splitUrl, getAuthorization } from '../commons/Utils';
 import { URL } from '../commons/Constants';
 
 import './ViewResults.css'
@@ -40,7 +40,7 @@ class ViewResults extends Component {
 
         console.log('Fetching view-results');
         console.log(pathname);
-        fetch(URL + '/api/database/Scoring/viewBySubmissionId/' + this.props.location.state.submissionId).then(res => res.json())
+        fetch(URL + '/api/database/Scoring/viewBySubmissionId/' + this.props.location.state.submissionId, {headers : {...getAuthorization()}}).then(res => res.json())
             .then(data => {
                 console.log('VIEW RESULTS')
                 console.log(data);

@@ -11,7 +11,9 @@ public class SubmitSubmission {
 	private Users users;
 	private Problem problem;
 
-	public SubmitSubmission() {}
+	public SubmitSubmission() {
+	}
+
 	public SubmitSubmission(String code, Language language, Users users, Problem problem) {
 		super();
 		this.code = code;
@@ -43,10 +45,19 @@ public class SubmitSubmission {
 	public void setProblem(Problem problem) {
 		this.problem = problem;
 	}
+
 	public Language getLanguage() {
 		return language;
 	}
+
 	public void setLanguage(Language language) {
 		this.language = language;
 	}
+
+	@Override
+	public String toString() {
+		return "SubmitSubmission [code=" + code + ", language=" + language + ", users=" + users + ", problem=" + problem
+				+ "]";
+	}
+
 }

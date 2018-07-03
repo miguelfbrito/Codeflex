@@ -59,17 +59,6 @@ public class CompilerController {
 	@Autowired
 	private Host host;
 
-	@GetMapping("/compiler")
-	public String compiler() {
-		return "compiler";
-	}
-
-	@GetMapping("/test")
-	public void cpuUsage() throws IOException {
-		System.out.println(host.getCpuUsage());
-		System.out.println(host.getMemoryUsage());
-	}
-
 	@GetMapping("/ssh")
 	public void startThreads() throws IOException, InterruptedException {
 		long inicial = System.currentTimeMillis();
@@ -121,13 +110,15 @@ public class CompilerController {
 	@PostMapping("/submission")
 	public Submissions submit(@RequestBody SubmitSubmission submitSubmission) {
 
+		System.out.println("Received submission ");
+		System.out.println(submitSubmission.toString());
+		
 		Problem problem = problemRepository.findByName(submitSubmission.getProblem().getName().replaceAll("-", " "));
-		Optional<Users> u = usersRepository.findById(submitSubmission.getUsers().getId());
+		Users user = usersRepository.findByUsername(submitSubmission.getUsers().getUsername());
 		Language language = languageRepository.findByName(submitSubmission.getLanguage().getName());
 
 		Submissions submission = new Submissions();
-		if (problem != null && language != null && u.isPresent()) {
-			Users user = u.get();
+		if (problem != null && language != null && user != null) {
 			submission = new Submissions(problem, language, submitSubmission.getCode(), user);
 			submissionsRepository.save(submission);
 			try {
@@ -136,6 +127,8 @@ public class CompilerController {
 				e.printStackTrace();
 			}
 		}
+
+		System.out.println(submission.toString());
 		return submission;
 	}
 }

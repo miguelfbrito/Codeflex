@@ -210,9 +210,10 @@ public class Solution {
                 'Content-Type': 'application/json'
             })
         }).then(res => res.json()).then(data => {
+            console.log('RESPONSE');
             console.log(data);
             this.setState({ sentSubmission: { submitting: true, waitingForResults: true, submission: data } })
-            console.log(data.problem.testCases.length);
+            //console.log(data.problem.testCases.length);
             window.resultsListener = setInterval(this.fetchForResults, 1000);
         });
 

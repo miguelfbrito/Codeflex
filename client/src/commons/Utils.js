@@ -107,3 +107,19 @@ export const getAuthorization = () => {
         'Authorization': 'Bearer ' + getToken()
     }
 }
+
+
+export const readFile = (file) => {
+    let blob = file.slice(0, file.size);
+    return blobToString(blob);
+}
+
+export const blobToString = (b) => {
+    var u, x;
+    u = URL.createObjectURL(b);
+    x = new XMLHttpRequest();
+    x.open('GET', u, false);
+    x.send();
+    URL.revokeObjectURL(u);
+    return x.responseText;
+}

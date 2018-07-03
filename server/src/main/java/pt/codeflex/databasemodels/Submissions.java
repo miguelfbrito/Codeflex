@@ -59,6 +59,7 @@ public class Submissions {
 		this.language = language;
 		this.code = code;
 	}
+
 	public Submissions(Problem problem, Language language, String code) {
 		this.problem = problem;
 		this.language = language;
@@ -140,12 +141,6 @@ public class Submissions {
 		this.language = language;
 	}
 
-	@Override
-	public String toString() {
-		return "Submissions [id=" + id + ", date=" + date + ", score=" + score + ", result=" + result + ", problem="
-				+ problem + ", language=" + language + ", code=" + code + "]";
-	}
-
 	public Users getUsers() {
 		return users;
 	}
@@ -153,4 +148,11 @@ public class Submissions {
 	public void setUsers(Users users) {
 		this.users = users;
 	}
+
+	@Override
+	public String toString() {
+		return "Submissions [id=" + id + ", date=" + date + ", score=" + score + ", users=" + users + ", result="
+				+ result + ", problem=" + problem + ", language=" + language + ", code=" + code + "]";
+	}
+
 }

@@ -124,15 +124,15 @@ public class DatabaseController {
 	@PostMapping("/Durations/add")
 	public Durations addDurations(@RequestBody Durations duration) {
 		Users user = viewUsersByUsername(duration.getUsers().getUsername());
-		Optional<Problem> problem = viewProblemById(duration.getProblems().getId());
+		Problem problem = viewProblemById(duration.getProblems().getId());
 
 		Durations newDuration = new Durations();
 		if (user != null) {
 			newDuration.setUsers(user);
 		}
 
-		if (problem.isPresent()) {
-			newDuration.setProblems(problem.get());
+		if (problem != null) {
+			newDuration.setProblems(problem);
 		}
 
 		newDuration.setOpeningDate(duration.getOpeningDate());
@@ -144,18 +144,18 @@ public class DatabaseController {
 	@PostMapping("/Durations/onProblemOpening")
 	public Durations addDurationOnProblemOpening(@RequestBody Durations duration) {
 
-		Optional<Users> user = viewUsersById(duration.getUsers().getId());
-		Optional<Problem> problem = viewProblemById(duration.getProblems().getId());
+		Users user = viewUsersByUsername(duration.getUsers().getUsername());
+		Problem problem = viewProblemById(duration.getProblems().getId());
 
 		Durations newDuration = new Durations();
 
-		if (user.isPresent() && problem.isPresent()) {
+		if (user != null && problem != null) {
 
-			newDuration.setUsers(user.get());
-			newDuration.setProblems(problem.get());
+			newDuration.setUsers(user);
+			newDuration.setProblems(problem);
 
 			boolean openedAlready = durationsRepository
-					.existsById(new DurationsID(user.get().getId(), problem.get().getId()));
+					.existsById(new DurationsID(user.getId(), problem.getId()));
 
 			if (openedAlready) {
 				return new Durations();
@@ -173,13 +173,13 @@ public class DatabaseController {
 	@PostMapping("/Durations/onProblemCompletion")
 	public Durations updateDurationsOnProblemCompletion(@RequestBody Durations duration) {
 
-		Optional<Users> user = viewUsersById(duration.getUsers().getId());
-		Optional<Problem> problem = viewProblemById(duration.getProblems().getId());
+		Users user = viewUsersByUsername(duration.getUsers().getUsername());
+		Problem problem = viewProblemById(duration.getProblems().getId());
 
-		if (user.isPresent() && problem.isPresent()) {
+		if (user != null && problem != null) {
 
 			Optional<Durations> d = durationsRepository
-					.findById(new DurationsID(user.get().getId(), problem.get().getId()));
+					.findById(new DurationsID(user.getId(), problem.getId()));
 
 			if (d.isPresent()) {
 				Durations currentDuration = d.get();
@@ -618,9 +618,8 @@ public class DatabaseController {
 	@PostMapping("/Problem/update")
 	public Problem updateProblem(@RequestBody AddProblem changes) {
 
-		Optional<Problem> problem = viewProblemById(changes.getProblem().getId());
-		if (problem.isPresent()) {
-			Problem problemUpdate = problem.get();
+		Problem problemUpdate = viewProblemById(changes.getProblem().getId());
+		if (problemUpdate != null) {
 			Problem p = changes.getProblem();
 
 			problemUpdate.setName(p.getName());
@@ -725,8 +724,13 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Problem/view/{id}")
-	public Optional<Problem> viewProblemById(@PathVariable long id) {
-		return problemRepository.findById(id);
+	public Problem viewProblemById(@PathVariable long id) {
+		Optional<Problem> problem = problemRepository.findById(id);
+
+		if (problem.isPresent()) {
+			return problem.get();
+		}
+		return null;
 	}
 
 	@GetMapping(path = "/Problem/getProblemByName/{problemName}")
@@ -884,7 +888,7 @@ public class DatabaseController {
 		if (currentProblem != null) {
 			List<Submissions> submissions = submissionsRepository.findAllByProblem(currentProblem);
 			for (Submissions s : submissions) {
-				if (s.getUsers().getUsername() == username) {
+				if (s.getUsers().getUsername().equals(username)) {
 					finalSubmissions.add(s);
 				}
 			}

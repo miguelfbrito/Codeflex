@@ -3,9 +3,10 @@ import PathLink from '../PathLink/PathLink'
 import ReactTable from 'react-table';
 import { Redirect, Link } from 'react-router-dom';
 import Popup from '../Popup/Popup';
+import LoadFiles from '../LoadFiles/LoadFiles';
 
 import { URL } from '../commons/Constants';
-import { splitUrl, getAuthorization, parseLocalJwt, getRndInteger } from '../commons/Utils';
+import { splitUrl, getAuthorization, parseLocalJwt, getRndInteger, readFile } from '../commons/Utils';
 
 import '../../node_modules/react-table/react-table.css'
 import './ManageTestCases.css';
@@ -67,7 +68,7 @@ class ManageTestCases extends React.Component {
 
     fetchTestCases() {
         fetch(URL + '/api/database/Problem/viewAllTestCasesByProblemName/' + this.props.match.params.problemName, {
-            headers: {...getAuthorization()}
+            headers: { ...getAuthorization() }
         }).then(res => res.json())
             .then(data => {
                 console.log(data);
@@ -117,6 +118,7 @@ class ManageTestCases extends React.Component {
                 })
                 break;
             default:
+                newArray = this.state.testCases;
                 break;
         }
 
@@ -138,18 +140,30 @@ class ManageTestCases extends React.Component {
 
         fetch(URL + '/api/database/TestCases/delete/' + index, {
             method: 'DELETE',
-            headers : {...getAuthorization()}
+            headers: { ...getAuthorization() }
         }).then(() => {
             this.fetchTestCases();
         });
     }
 
     onNewTestCaseModalClose() {
-        const data = {
-            input: this.newInput.current.value.trim(),
-            output: this.newOutput.current.value.trim(),
-            description: this.newDescription.current.value.trim()
+        if (this.state.currentMode !== 'bulk') {
+
+            const data = {
+                input: this.newInput.current.value.trim(),
+                output: this.newOutput.current.value.trim(),
+                description: this.newDescription.current.value.trim()
+            }
+
+            this.addTestCase(data);
         }
+    }
+
+    changeToBulk = () => {
+        this.setState({ currentMode: 'bulk' })
+    }
+
+    addTestCase = (data) => {
         fetch(URL + '/api/database/TestCases/addToProblem/' + this.props.match.params.problemName, {
             method: 'POST',
             body: JSON.stringify(data),
@@ -182,6 +196,58 @@ class ManageTestCases extends React.Component {
 
     }
 
+    addTestCasesFromFiles = (files) => {
+        console.log('Saving files from manage test cases');
+
+        if (files.length > 0) {
+
+            console.log('SORTING')
+            files = files.sort((a, b) => { return a.name.toLowerCase().localeCompare(b.name.toLowerCase()) });
+            console.log(files);
+            for (let i = 0; i < files.length; i++) {
+                let current = files[i];
+                let next = (i + 1 >= files.length) ? files[i] : files[i + 1];
+
+                let splitCurrent = current.name.split("_");
+                let splitNext = next.name.split("_");
+
+
+                let input = '';
+                let output = '';
+
+                // if same test case
+                if (splitCurrent[0].trim() === splitNext[0].trim()) {
+                    input = readFile(current).trim();
+                    output = readFile(next).trim();
+                    i++;
+
+                } else {
+                    if (splitCurrent[1].trim() === 'input.txt') {
+                        input = readFile(current).trim();
+                    } else if (splitCurrent[1].trim() === 'output.txt') {
+                        output = readFile(current).trim();
+                    }
+                }
+
+                console.log("Input " + input);
+                console.log("Output" + output);
+                console.log('\n');
+
+                const data = {
+                    input: input,
+                    output: output,
+                    description: ''
+                }
+
+                this.addTestCase(data);
+            }
+
+            this.modalAdd.current.closeModal();
+        }
+
+
+    }
+
     render() {
 
         const PopupInformation = () => (
@@ -195,29 +261,34 @@ class ManageTestCases extends React.Component {
         );
 
         const PopupAddTestCase = () => (
-            <div className="tc-popup">
-                <h2 style={{ color: 'black', margin: 'auto' }}>Add new test case</h2>
-                <div className="row">
-                    <div className="col-sm-6">
-                        <p>Input</p>
-                        <textarea ref={this.newInput} name="inputNew" id="" style={{ border: '1px solid #6a44ff' }} className="modal-text-area-section"
-                        ></textarea>
+
+            this.state.currentMode === 'bulk' ?
+                <LoadFiles addTestCasesFromFiles={this.addTestCasesFromFiles} />
+                :
+                <div className="tc-popup">
+                    <h2 style={{ color: 'black', margin: 'auto' }}>Add new </h2>
+                    <input type="button" id="add-in-bulk" className="btn" style={{ position: 'absolute', right: '25px', top: '25px' }} value="Add in bulk" onClick={this.changeToBulk} />
+                    <div className="row">
+                        <div className="col-sm-6">
+                            <p>Input</p>
+                            <textarea ref={this.newInput} name="inputNew" id="" style={{ border: '1px solid #6a44ff' }} className="modal-text-area-section"
+                            ></textarea>
+                        </div>
+                        <div className="col-sm-6">
+                            <p>Output</p>
+                            <textarea ref={this.newOutput} name="outputNew" id="" style={{ border: '1px solid #6a44ff' }} className="modal-text-area-section"
+                            ></textarea>
+                        </div>
                     </div>
-                    <div className="col-sm-6">
-                        <p>Output</p>
-                        <textarea ref={this.newOutput} name="outputNew" id="" style={{ border: '1px solid #6a44ff' }} className="modal-text-area-section"
-                        ></textarea>
+                    <div className="row">
+                        <div className="col-sm-12">
+                            <p>Description</p>
+                            <textarea ref={this.newDescription} name="descriptionNew" id="" style={{ border: '1px solid #6a44ff', height: '100px', width: '100%' }} className="modal-text-area-section"
+                                placeholder={this.state.currentMode === 'description' ? 'If you select to show this test case, this description will show on the Problem page on top of the input and the output' : ''}
+                            ></textarea>
+                        </div>
                     </div>
                 </div>
-                <div className="row">
-                    <div className="col-sm-12">
-                        <p>Description</p>
-                        <textarea ref={this.newDescription} name="descriptionNew" id="" style={{ border: '1px solid #6a44ff', height: '100px', width: '100%' }} className="modal-text-area-section"
-                            placeholder={this.state.currentMode === 'description' ? 'If you select to show this test case, this description will show on the Problem page on top of the input and the output' : ''}
-                        ></textarea>
-                    </div>
-                </div>
-            </div>
         );
 
         return (
@@ -251,6 +322,7 @@ class ManageTestCases extends React.Component {
                     <Popup ref={this.modalAdd} onModalClose={this.onNewTestCaseModalClose} >
                         <PopupAddTestCase />
                     </Popup>
+
 
                     <Popup ref={this.modalEdit} onModalClose={this.onModalClose}>
                         <PopupInformation />
