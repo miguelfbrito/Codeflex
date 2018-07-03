@@ -79,7 +79,6 @@ class AddProblem extends React.Component {
                 problemConstraints: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.constraints))),
                 problemInputFormat: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.inputFormat))),
                 problemOutputFormat: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.outputFormat))),
-                problemCreationDate: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.creationDate))),
                 problemMaxScore: data.problem.maxScore,
                 difficulty: {
                     id: data.problem.difficulty.id,

@@ -140,7 +140,7 @@
     }
 }
 
-@media only screen and (max-width: 850px) {
+@media only screen and (max-width: 768px) {
     .problem-info-container table {
         margin-top: 15px;
     }
@@ -149,6 +149,24 @@
     }
     /* TODO: rework: */
     .problem-nav {
-        margin-bottom: 72px;
+        margin-bottom: 50px;
+    }
+
+    .problem-nav > ul > li {
+        font-size: 11pt;
+        margin: 0;
+        text-align: center;
+    }
+}
+
+@media only screen and (max-width:400px) {
+
+    .problem-nav {
+        margin-bottom: 45px;
+    }
+    .problem-nav > ul > li {
+        font-size: 9pt;
+        margin: 0;
+        text-align: center;
     }
 }

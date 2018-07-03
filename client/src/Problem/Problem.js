@@ -329,8 +329,9 @@ public class Solution {
 
         return (
             <div>
-                <div className="col-sm-10 problem-description-container" id="problem-section">
+                <div className="col-sm-10 problem-description-container"  id="problem-section">
                     <div id="anchor-remove-mathjax"></div>
+
                     <h3 id="problem-statement">Problem Statement</h3>
                     {this.getInformation(problem.description)}
 

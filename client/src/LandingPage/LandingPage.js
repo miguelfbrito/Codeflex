@@ -21,6 +21,12 @@ class LandingPage extends React.Component {
         return (
             <div className="container">
                 <div className="row">
+                    <div className="slogan">
+                        <h1>Welcome to codeflex!</h1>
+                        <h2>Challenge your skill to solve problems while coding</h2>
+                    </div>
+                </div>
+                <div className="row">
                     <div className="col-sm-4">
                         <div className="landing-page-text-cols">
                             <div className="lp-icon-wrapper">
@@ -28,9 +34,10 @@ class LandingPage extends React.Component {
                             </div>
                             <div>
 
-                            <h3>Learn!</h3>
-                            <p>
-
+                                <h3>Learn!</h3>
+                                <p >
+                                    Practise in a wide variety of problem categories such as Algorithms, Machine Learning and Data Structures. Each problem
+                                    has a difficulty associated with it so you can find a captivating challenge.
                             </p>
                             </div>
                         </div>
@@ -41,8 +48,13 @@ class LandingPage extends React.Component {
                                 <FaTrophy size="55" style={backgroundStyle} />
                             </div>
 
-                            <h3>Compete!</h3>
-                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quibusdam esse veniam expedita provident molestias assumenda reiciendis nulla ea et, maiores pariatur modi nam magnam, dolor fugiat. Est laboriosam minus nostrum.
+                            <div>
+
+                                <h3>Compete!</h3>
+                                <p>Compete against your friends, peers or strangers for the top place on the leaderboard. The time you take to solve each problem
+                                    is tracked, hurry up!
+                            </p>
+                            </div>
                         </div>
                     </div>
                     <div className="col-sm-4">
@@ -50,8 +62,14 @@ class LandingPage extends React.Component {
                             <div className="lp-icon-wrapper">
                                 <GoCalendar size="55" style={backgroundStyle} />
                             </div>
-                            <h3>Organize!</h3>
-                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quibusdam esse veniam expedita provident molestias assumenda reiciendis nulla ea et, maiores pariatur modi nam magnam, dolor fugiat. Est laboriosam minus nostrum.
+
+                            <div>
+                                <h3>Organize!</h3>
+                                <p>
+                                    If you are enthusiastic about creating your own problems you'll have fun here. Create private tournaments and
+                                    we'll help you manage everything.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>

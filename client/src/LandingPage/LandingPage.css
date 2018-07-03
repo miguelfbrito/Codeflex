@@ -1,4 +1,4 @@
-.landing-page-text-cols  {
+.landing-page-text-cols {
     text-align: center;
 }
 
@@ -9,7 +9,7 @@ div.lp-icon-wrapper {
 .lp-icon-wrapper {
     background-color: #6a44ff;
     width: 100px;
-    height:100px;
+    height: 100px;
     border-radius: 100%;
     text-align: center;
     margin: 0 auto;
@@ -17,5 +17,38 @@ div.lp-icon-wrapper {
 }
 
 .landing-page-text-cols h3 {
-    margin-top: 5px;
+    margin-top: 25px;
+    font-size: 24pt;
+    letter-spacing: 1px;
 }
+
+.landing-page-text-cols p {
+    padding: 5px 15px;
+    font-size: 12pt;
+    line-height: 26pt;
+}
+
+.landing-page-text-cols {
+    padding: 30px 10px;
+    border: 1.5px solid #6a44ff;
+    border-radius: 7px;
+    min-height: 425px;
+    margin-bottom: 25px;
+}
+
+.slogan {
+    text-align: center;
+    padding: 30px 0px 75px 0px;
+}
+
+.slogan h1 {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 46pt;
+}
+
+.slogan h2 {
+    font-size: 24pt;
+    font-family: 'Roboto Condensed', sans-serif;
+    color: #aaa;
+}
+
