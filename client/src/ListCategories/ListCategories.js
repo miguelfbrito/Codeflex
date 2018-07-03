@@ -38,10 +38,10 @@ class ListProblems extends Component {
                     <PathLink path={this.props.location.pathname} title="Categories" />
                     {this.state.categories.length > 0 && this.state.categories.map((category, index) => (
                         <div key={category.id} className="col-sm-6 category-container">
-                            <h2>{category.name}</h2>
+                            <h2 style={{fontFamily: "'Roboto Condensed', sans-serif", fontSize:'24pt'}}>{category.name}</h2>
                             <div className="progress-bar">
                                 <div className="bar" style={{ width: (category.finishedProblems / category.totalProblems * 100) + '%' }}></div>
-                                <p className="p-small-text">You have completed {category.finishedProblems} ({category.finishedProblems / category.totalProblems * 100}%) out of the {category.totalProblems} available problems.</p>
+                                <p className="p-small-text">You have completed {category.finishedProblems} ({(category.finishedProblems / category.totalProblems * 100).toFixed(2)}%) out of the {category.totalProblems} available problems.</p>
                             </div>
                             <div className="button-container">
                                 <Link to={{ pathname: "/practise/" + textToLowerCaseNoSpaces(category.name), state: { categoryId: category.id } }}><input type="submit" className="btn btn-primary" value="Explore problems" /></Link>

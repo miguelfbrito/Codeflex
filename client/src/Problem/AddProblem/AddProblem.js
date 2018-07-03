@@ -122,12 +122,15 @@ class AddProblem extends React.Component {
 
     // couldn't figure out how to get the target for the editors. This will have to do. ( maybe refs)
     onDescriptionChange(change) {
+        console.log("Problem")
         this.setState({ problemDescription: change });
     }
     onConstraintChange(change) {
+        console.log("Constraint")
         this.setState({ problemConstraints: change });
     }
     onInputFormatChange(change) {
+        console.log("Input")
         this.setState({ problemInputFormat: change });
     }
     onOutputFormatChange(change) {

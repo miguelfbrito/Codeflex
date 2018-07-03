@@ -18,7 +18,6 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-
 @Entity
 public class Problem {
 
@@ -30,22 +29,29 @@ public class Problem {
 	@Size(min = 5, max = 50)
 	@Pattern(regexp = "([A-Za-z0-9:_\\s]+)")
 	private String name;
-	
+
+	@Column(length = 5000)
 	private String description;
 
+	@Column(length = 5000)
 	private String inputFormat;
+	
+	@Column(length = 5000)
 	private String outputFormat;
+
+	@Column(length = 5000)
 	private String constraints;
+	
 	private Date creationDate;
 
 	private int maxScore;
-	
+
 	@ManyToOne
 	private Tournament tournament;
-	
+
 	@ManyToOne
 	private Users owner;
-	
+
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "problem_id")
 	private List<TestCases> testCases = new ArrayList<>();
@@ -117,7 +123,6 @@ public class Problem {
 		this.description = description;
 	}
 
-	
 	public List<TestCases> getTestCases() {
 		return testCases;
 	}
@@ -197,9 +202,5 @@ public class Problem {
 				+ ", maxScore=" + maxScore + ", tournament=" + tournament + ", owner=" + owner + ", testCases="
 				+ testCases + ", difficulty=" + difficulty + "]";
 	}
-	
-	
-
-
 
 }

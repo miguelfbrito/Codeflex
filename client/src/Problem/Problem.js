@@ -361,10 +361,10 @@ public class Solution {
                     {Parser(String(problem.description))}
 
                     <h3>Constraints</h3>
-                    {Parser(String(problem.description))}
+                    {Parser(String(problem.constraints))}
 
                     <h3>Input Format</h3>
-                    {Parser(String(problem.description))}
+                    {Parser(String(problem.inputFormat))}
 
                     <h3>Output Format</h3>
                     {Parser(String(problem.outputFormat))}

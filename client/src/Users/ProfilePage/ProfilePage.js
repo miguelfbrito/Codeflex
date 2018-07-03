@@ -1,8 +1,7 @@
 import React from 'react';
 import PathLink from '../../PathLink/PathLink';
-import CalendarHeatmap from 'react-calendar-heatmap';
 import $ from 'jquery';
-import ReactTooltip from 'react-tooltip'
+import GithubCalendar from './GithubCalendar/GithubCalendar';
 
 import { Link } from 'react-router-dom';
 import { URL } from '../../commons/Constants';
@@ -16,11 +15,18 @@ class ProfilePage extends React.Component {
         super(props)
 
         this.state = {
-            submissions: []
+            submissions: [],
+            categories: []
         }
     }
 
     componentDidMount() {
+        this.fetchSubmissionsByUsername();
+        this.fetchPractiseCategories();
+    }
+
+    fetchSubmissionsByUsername = () => {
+
         fetch(URL + '/api/database/Submissions/viewByUsername/' + this.props.match.params.username, {
             headers: { ...getAuthorization() }
         }).then(res => res.json())
@@ -31,55 +37,46 @@ class ProfilePage extends React.Component {
             })
     }
 
-
-    customOnClick = (e) => {
-        console.log(e.target);
-        console.log(e.target.className);
-        console.log('hi');
+    fetchPractiseCategories = () => {
+        fetch(URL + '/api/database/PractiseCategory/view', { headers: { ...getAuthorization() } }).then(res => res.json()).then(data => { this.setState({ categories: data }) });
     }
 
     customTitleForValue(value) {
         return value ? console.log('hi there') : null;
     }
 
-    customTooltipDataAttrs = (value) => {
-        return { 'data-tip': `${value.count} submissions on ${value.date}` };
-    }
 
+    getCategoryForProblem = (problem) => {
+        let categories = this.state.categories;
+        let category = '';
+        categories.map(c => {
+            c.problem.filter(p => {
+                if (p.name === problem.name) {
+                    category = c;
+                    return true;
+                }
+            })
+        })
+
+        console.log('Category');
+        console.log(category.name);
+        return category.name;
+    }
 
     linkToProblem = (submission) => {
         if (submission.problem.tournament != null) {
             return <Link to={'/compete/' + textToLowerCaseNoSpaces(submission.problem.tournament.name) + '/' +
                 textToLowerCaseNoSpaces(submission.problem.name)}>{submission.problem.name}</Link>
         }
+
+        this.getCategoryForProblem(submission.problem);
+
+        return <Link to={'/practise/' + textToLowerCaseNoSpaces(this.getCategoryForProblem(submission.problem)) + '/' +
+            textToLowerCaseNoSpaces(submission.problem.name)}>{submission.problem.name}</Link>
+
     }
 
     render() {
-        // const customTooltipDataAttrs = { 'data-tip': 'hi there' };
-        const data = {
-            date: new Date().getTime(),
-            total: 1000
-        }
-
-        let dates = getDatesRange(new Date() - (24 * 60 * 60 * 1000 * 365), new Date());
-        const heatmapValues = {
-        }
-
-        let totalCount = 0;
-        let obj = []
-        console.log(dates.length)
-        for (let i = 1; i < dates.length; i++) {
-            let inObj = {};
-
-            inObj['date'] = dates[i].getFullYear() + "-" + (dates[i].getMonth() + 1) + "-" + dates[i].getUTCDate();
-            let rng = getRndInteger(0, 7);
-            inObj['count'] = rng;
-
-            totalCount += rng;
-            obj.push(inObj);
-        }
-
-        console.log(obj)
 
         return (
             <div className="container" >
@@ -99,26 +96,9 @@ class ProfilePage extends React.Component {
                     <div className="col-sm-1"></div>
                     <div className="col-sm-8 no-padding profile-user-stats">
                         <div className="profile-page-border">
-                            <ReactTooltip place="top" type="dark" effect="float" />
                             <h3>Activity</h3>
-                            <p className="page-subtitle">{totalCount} submissions in the last year</p>
-                            <CalendarHeatmap
-                                values={
-                                    [...obj]
-                                }
-                                onMouseOver={(e) => this.customOnClick(e)}
-                                titleForValue={this.customTitleForValue}
-                                gutterSize={2}
-                                startDate={new Date() - (24 * 60 * 60 * 1000 * 365)}
-                                endDate={new Date()}
-                                tooltipDataAttrs={this.customTooltipDataAttrs}
-                                classForValue={(value) => {
-                                    if (!value) {
-                                        return `color-gitlab-0`;
-                                    }
-                                    return `color-gitlab-${value.count} date-${value.date} count-${value.count}`;
-                                }}
-                            />
+                            <GithubCalendar />
+
                         </div>
                         <br />
                         <br />
@@ -126,7 +106,7 @@ class ProfilePage extends React.Component {
                             <h3>Recent Submissions</h3>
                             {this.state.submissions.length > 0 ?
                                 this.state.submissions.map(s => (
-                                        <div className="profile-page-subtramission">
+                                    <div className="profile-page-subtramission">
 
                                         <p>Solution to {this.linkToProblem(s)} submitted on {dateWithHoursAndDay(s.date)} with a total score of {s.score}
                                             &nbsp;({s.score != 0 ? s.score / s.problem.maxScore * 100 : '0'}%).</p>
