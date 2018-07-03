@@ -5,7 +5,7 @@ import draftToHtml from 'draftjs-to-html';
 import { Link } from 'react-router-dom';
 import htmlToDraft from 'html-to-draftjs';
 import { stateFromHTML } from 'draft-js-import-html';
-import { EditorState, convertToRaw, ContentState } from 'draft-js';
+import { EditorState, convertToRaw, convertFromRaw, ContentState } from 'draft-js';
 
 import { URL } from '../../commons/Constants';
 import { splitUrl, getAuthorization, parseLocalJwt } from '../../commons/Utils';
@@ -75,11 +75,11 @@ class AddProblem extends React.Component {
             this.setState({
                 problemId: data.problem.id,
                 problemName: data.problem.name,
-                problemDescription: EditorState.createWithContent(stateFromHTML(data.problem.description)),
-                problemConstraints: EditorState.createWithContent(stateFromHTML(data.problem.constraints)),
-                problemInputFormat: EditorState.createWithContent(stateFromHTML(data.problem.inputFormat)),
-                problemOutputFormat: EditorState.createWithContent(stateFromHTML(data.problem.outputFormat)),
-                problemCreationDate: EditorState.createWithContent(stateFromHTML(data.problem.creationDate)),
+                problemDescription: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.description))),
+                problemConstraints: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.constraints))),
+                problemInputFormat: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.inputFormat))),
+                problemOutputFormat: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.outputFormat))),
+                problemCreationDate: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.creationDate))),
                 problemMaxScore: data.problem.maxScore,
                 difficulty: {
                     id: data.problem.difficulty.id,
@@ -151,10 +151,10 @@ class AddProblem extends React.Component {
                 id: this.state.problemId,
                 name: this.state.problemName,
                 maxScore: parseInt(this.state.problemMaxScore),
-                description: draftToHtml(convertToRaw(this.state.problemDescription.getCurrentContent())),
-                constraints: draftToHtml(convertToRaw(this.state.problemConstraints.getCurrentContent())),
-                inputFormat: draftToHtml(convertToRaw(this.state.problemInputFormat.getCurrentContent())),
-                outputFormat: draftToHtml(convertToRaw(this.state.problemOutputFormat.getCurrentContent())),
+                description: JSON.stringify(convertToRaw(this.state.problemDescription.getCurrentContent())),
+                constraints: JSON.stringify(convertToRaw(this.state.problemConstraints.getCurrentContent())),
+                inputFormat: JSON.stringify(convertToRaw(this.state.problemInputFormat.getCurrentContent())),
+                outputFormat: JSON.stringify(convertToRaw(this.state.problemOutputFormat.getCurrentContent())),
                 difficulty: {
                     id: this.state.difficulty.id,
                     name: this.state.difficulty.name
@@ -199,10 +199,10 @@ class AddProblem extends React.Component {
             problem: {
                 name: this.state.problemName,
                 maxScore: Number(this.state.problemMaxScore),
-                description: draftToHtml(convertToRaw(this.state.problemDescription.getCurrentContent())),
-                constraints: draftToHtml(convertToRaw(this.state.problemConstraints.getCurrentContent())),
-                inputFormat: draftToHtml(convertToRaw(this.state.problemInputFormat.getCurrentContent())),
-                outputFormat: draftToHtml(convertToRaw(this.state.problemOutputFormat.getCurrentContent())),
+                description: JSON.stringify(convertToRaw(this.state.problemDescription.getCurrentContent())),
+                constraints: JSON.stringify(convertToRaw(this.state.problemConstraints.getCurrentContent())),
+                inputFormat: JSON.stringify(convertToRaw(this.state.problemInputFormat.getCurrentContent())),
+                outputFormat: JSON.stringify(convertToRaw(this.state.problemOutputFormat.getCurrentContent())),
                 creationDate: new Date().getTime(),
             },
             difficulty: {

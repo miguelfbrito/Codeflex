@@ -11,6 +11,8 @@ import Leaderboard from './Leaderboard/Leaderboard';
 import CompilerError from './CompilerError/CompilerError';
 import PathLink from '../PathLink/PathLink';
 import $ from 'jquery';
+import draftToHtml from 'draftjs-to-html';
+import { EditorState, convertToRaw, convertFromRaw, ContentState } from 'draft-js';
 
 import 'brace/mode/java';
 import 'brace/mode/javascript';
@@ -293,8 +295,7 @@ public class Solution {
         this.setState({ scriptLoaded: true })
     }
 
-    render() {
-
+    getProblemSection = () => {
         const aceStyle = {
             border: '1px solid #ccc',
             width: '100%',
@@ -302,72 +303,26 @@ public class Solution {
             marginLeft: '0'
         }
 
-        let showLoading = "";
-        if (this.state.sentSubmission.submitting) {
-            showLoading =
-                <div className="loader-container">
-                    <h3>Evaluating your submission...</h3>
-                    <div className="loader"></div>
-                </div>
-        } else {
-            showLoading = <div className="button-container" style={{ marginTop: '-15px' }}>
-                <input type="submit" className="btn btn-primary" value="Submit your code!" onClick={this.submitSubmission} />
-            </div>
-        }
-
-        const problemInformation =
-            <div className="col-sm-2 problem-info-container ">
-                <table>
-                    <tbody>
-                        <tr>
-                            <th><p className="align-left">Difficulty</p></th>
-                            <th>
-                                <p className="align-right">{this.state.problemLoaded ? this.state.problem.difficulty.name : ''}</p>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th><p className="align-left">Creator</p></th>
-                            <th>
-                                <p className="align-right">{this.state.problemLoaded ?
-                                    <Link to={'/user/' + this.state.problem.owner.username}>
-                                        {this.state.problem.owner.username}
-                                    </Link> : ''}</p>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th><p className="align-left">Date</p></th>
-                            <th>
-                                <p className="align-right">{this.state.problemLoaded ? dateWithDay(this.state.problem.creationDate) : ''}</p>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th><p className="align-left">Max Score</p></th>
-                            <th>
-                                <p className="align-right">{this.state.problemLoaded ? this.state.problem.maxScore : ''}</p>
-                            </th>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>;
-
         const problem = this.state.problem;
+        const showLoading = this.getLoading();
+        const problemInformation = this.getProblemInformation();
 
 
-        const problemSection =
+        return (
             <div>
                 <div className="col-sm-10 problem-description-container" id="problem-section">
                     <div id="anchor-remove-mathjax"></div>
                     <h3 id="problem-statement">Problem Statement</h3>
-                    {Parser(String(problem.description))}
+                    {Parser(String(draftToHtml((JSON.parse(problem.description)))))}
 
                     <h3>Constraints</h3>
-                    {Parser(String(problem.constraints))}
+                    {Parser(String(draftToHtml((JSON.parse(problem.constraints)))))}
 
                     <h3>Input Format</h3>
-                    {Parser(String(problem.inputFormat))}
+                    {Parser(String(draftToHtml((JSON.parse(problem.inputFormat)))))}
 
                     <h3>Output Format</h3>
-                    {Parser(String(problem.outputFormat))}
+                    {Parser(String(draftToHtml((JSON.parse(problem.outputFormat)))))}
 
                     {typeof problem.testCases !== "undefined" ? problem.testCases.map((tc, i) => {
                         if (tc.shown) {
@@ -376,15 +331,21 @@ public class Solution {
                                 <div className="problem-testcase-wrapper">
                                     <div>
                                         <h4>Explanation</h4>
-                                        <p>{tc.description}</p>
+                                        <div className="testcase-wrapper">
+                                            <p>{tc.description}</p>
+                                        </div>
                                     </div>
                                     <div>
                                         <h4>Input</h4>
-                                        <p>{tc.input}</p>
+                                        <div className="testcase-wrapper">
+                                            <p>{tc.input}</p>
+                                        </div>
                                     </div>
                                     <div>
                                         <h4>Output</h4>
-                                        <p>{tc.output}</p>
+                                        <div className="testcase-wrapper">
+                                            <p>{tc.output}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -423,8 +384,66 @@ public class Solution {
                     {showLoading}
 
                 </div>
-            </div>;
+            </div>
+        )
 
+    }
+
+    getLoading = () => {
+        let showLoading = "";
+        if (this.state.sentSubmission.submitting) {
+            showLoading =
+                <div className="loader-container">
+                    <h3>Evaluating your submission...</h3>
+                    <div className="loader"></div>
+                </div>
+        } else {
+            showLoading = <div className="button-container" style={{ marginTop: '-15px' }}>
+                <input type="submit" className="btn btn-primary" value="Submit your code!" onClick={this.submitSubmission} />
+            </div>
+        }
+
+        return showLoading;
+    }
+
+    getProblemInformation = () => {
+        return (<div className="col-sm-2 problem-info-container ">
+            <table>
+                <tbody>
+                    <tr>
+                        <th><p className="align-left">Difficulty</p></th>
+                        <th>
+                            <p className="align-right">{this.state.problemLoaded ? this.state.problem.difficulty.name : ''}</p>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th><p className="align-left">Creator</p></th>
+                        <th>
+                            <p className="align-right">{this.state.problemLoaded ?
+                                <Link to={'/user/' + this.state.problem.owner.username}>
+                                    {this.state.problem.owner.username}
+                                </Link> : ''}</p>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th><p className="align-left">Date</p></th>
+                        <th>
+                            <p className="align-right">{this.state.problemLoaded ? dateWithDay(this.state.problem.creationDate) : ''}</p>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th><p className="align-left">Max Score</p></th>
+                        <th>
+                            <p className="align-right">{this.state.problemLoaded ? this.state.problem.maxScore : ''}</p>
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>)
+    }
+
+    render() {
+        const problem = this.state.problem;
         const submissionSection =
             <div>
                 <div className="col-sm-12 problem-description-container ">
@@ -450,7 +469,7 @@ public class Solution {
             sectionToRender = leaderboardSection;
         } else {
             if (this.state.problemLoaded) {
-                sectionToRender = problemSection;
+                sectionToRender = this.getProblemSection();
             }
         }
 
@@ -468,8 +487,6 @@ public class Solution {
                     </div>
 
                     {sectionToRender}
-
-
 
                     {this.state.results.loaded ?
                         <Redirect to={{

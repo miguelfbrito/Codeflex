@@ -113,18 +113,18 @@
     animation: spin 850ms ease-out infinite;
 }
 
-.problem-testcase-wrapper {
-    border: 1px solid #aaa;
-}
-
-.problem-testcase-wrapper p, .problem-testcase-wrapper h4 {
+.problem-testcase-wrapper p,
+.problem-testcase-wrapper h4 {
     padding: 7px;
     text-align: justify;
     font-family: 'Roboto Condensed', sans-serif;
 }
 
-.problem-testcase-wrapper div {
-    border-top: 1px solid #aaa;
+.testcase-wrapper {
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 2px;
 }
 
 .problem-testcase-wrapper div:first-child {
@@ -141,15 +141,12 @@
 }
 
 @media only screen and (max-width: 850px) {
-
     .problem-info-container table {
         margin-top: 15px;
     }
-
     .problem-info-container p {
         margin-top: 35px;
     }
-
     /* TODO: rework: */
     .problem-nav {
         margin-bottom: 72px;
