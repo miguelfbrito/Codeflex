@@ -13,7 +13,7 @@ import pt.codeflex.databasecompositeskeys.UsersRolesID;
 
 @IdClass(UsersRolesID.class)
 @Entity
-public class UsersRoles implements Serializable{
+public class UsersRoles implements Serializable {
 
 	@Id
 	@ManyToOne
@@ -23,10 +23,11 @@ public class UsersRoles implements Serializable{
 	@ManyToOne
 	private Role role;
 
+	public UsersRoles() {
+	}
 
-	public UsersRoles() {}
 	public UsersRoles(Users users, Role role) {
-		this.users= users;
+		this.users = users;
 		this.role = role;
 	}
 

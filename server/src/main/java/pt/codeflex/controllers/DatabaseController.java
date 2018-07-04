@@ -44,7 +44,6 @@ import pt.codeflex.utils.DurationCalculation;
 import pt.codeflex.utils.RatingCalculator;
 
 @RestController
-@Transactional
 @RequestMapping(path = "/api/database")
 public class DatabaseController {
 
@@ -154,8 +153,7 @@ public class DatabaseController {
 			newDuration.setUsers(user);
 			newDuration.setProblems(problem);
 
-			boolean openedAlready = durationsRepository
-					.existsById(new DurationsID(user.getId(), problem.getId()));
+			boolean openedAlready = durationsRepository.existsById(new DurationsID(user.getId(), problem.getId()));
 
 			if (openedAlready) {
 				return new Durations();
@@ -178,8 +176,7 @@ public class DatabaseController {
 
 		if (user != null && problem != null) {
 
-			Optional<Durations> d = durationsRepository
-					.findById(new DurationsID(user.getId(), problem.getId()));
+			Optional<Durations> d = durationsRepository.findById(new DurationsID(user.getId(), problem.getId()));
 
 			if (d.isPresent()) {
 				Durations currentDuration = d.get();
@@ -681,7 +678,7 @@ public class DatabaseController {
 		Tournament tournament = viewTournamentByName(info.getTournament().getName());
 
 		// TODO : remove
-		tournament.setShowWebsite(true);
+		// tournament.setShowWebsite(true);
 
 		Problem problem = viewProblemByName(info.getProblem().getName());
 		if (tournament == null || problem == null)
@@ -1142,8 +1139,18 @@ public class DatabaseController {
 	@PostMapping(path = "/Tournament/add")
 	public Tournament addTournament(@RequestBody Tournament t) {
 
-		Tournament tournament = new Tournament(t.getName(), t.getDescription(), t.getStartingDate(), t.getEndingDate(),
-				t.getCode(), t.getOwner(), t.getShowWebsite());
+		System.out.println(t.toString());
+
+		Users u = viewUsersByUsername(t.getOwner().getUsername());
+
+		Tournament tournament = null;
+
+		if (u != null) {
+			tournament = new Tournament(t.getName(), t.getDescription(), t.getStartingDate(), t.getEndingDate(),
+					t.getCode(), u, t.getShowWebsite());
+
+		}
+
 		return tournamentRepository.save(tournament);
 	}
 

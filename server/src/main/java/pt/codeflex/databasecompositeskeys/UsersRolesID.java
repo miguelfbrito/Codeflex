@@ -32,21 +32,31 @@ public class UsersRolesID implements Serializable {
 	public void setRoleId(long roleId) {
 		this.role = roleId;
 	}
-	
-//	@Override
-//	public boolean equals(Object o) {
-//		if (this == o)
-//			return true;
-//		if (!(o instanceof Users_Roles_ID))
-//			return false;
-//		Users_Roles_ID that = (Users_Roles_ID) o;
-//		return Objects.equals(getUsers_id(), that.getUsers_id())
-//				&& Objects.equals(getRoles_id(), that.getRoles_id());
-//	}
-//
-//	@Override
-//	public int hashCode() {
-//		return Objects.hash(getUsers_id(), getRoles_id());
-//	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (role ^ (role >>> 32));
+		result = prime * result + (int) (users ^ (users >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UsersRolesID other = (UsersRolesID) obj;
+		if (role != other.role)
+			return false;
+		if (users != other.users)
+			return false;
+		return true;
+	}
+
 	
 }

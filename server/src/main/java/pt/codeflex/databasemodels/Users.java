@@ -3,30 +3,16 @@ package pt.codeflex.databasemodels;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Transient;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Users {
@@ -54,6 +40,10 @@ public class Users {
 	}
 
 	public Users() {
+	}
+	
+	public Users(String username) {
+		this.username = username;
 	}
 
 	public Users(String username, String email, String password) {
@@ -106,7 +96,6 @@ public class Users {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
 	
 
 	public Date getRegistrationDate() {

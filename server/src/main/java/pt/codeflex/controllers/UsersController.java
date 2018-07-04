@@ -3,6 +3,8 @@ package pt.codeflex.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -88,14 +90,16 @@ public class UsersController {
 		if (genericResponse == null) {
 			Users newUser = new Users(user.getUsername(), user.getEmail(),
 					bCryptPasswordEncoder.encode(user.getPassword()));
-			usersRepository.save(newUser);
+			
+			
+			Users savedUser = usersRepository.save(newUser);
 
-			addUsersRoles(new UsersRoles(newUser, viewRoleById((long) 1)));
+			addUsersRoles(new UsersRoles(savedUser, viewRoleById((long) 1)));
 
-			UserLessInfo finalUser = new UserLessInfo();
-			finalUser.convert(newUser);
+//			UserLessInfo finalUser = new UserLessInfo();
+//			finalUser.convert(newUser);
 
-			genericResponse = new GenericResponse(3, finalUser, "Account created");
+			genericResponse = new GenericResponse(3, newUser, "Account created");
 		}
 
 		return genericResponse;

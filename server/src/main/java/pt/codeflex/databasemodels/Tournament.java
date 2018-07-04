@@ -3,12 +3,16 @@ package pt.codeflex.databasemodels;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -20,6 +24,9 @@ public class Tournament {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+
+	@ManyToOne
+	private Users owner;
 
 	@Column(length = 50, unique = true)
 	private String name;
@@ -41,10 +48,11 @@ public class Tournament {
 	@JsonProperty
 	private boolean open;
 
-	@ManyToOne
-	private Users owner;
+	public Tournament() {
+	}
 
-	public Tournament(String name, String description, Date startingDate, Date endingDate, String code, Users owner, boolean showWebsite) {
+	public Tournament(String name, String description, Date startingDate, Date endingDate, String code, Users owner,
+			boolean showWebsite) {
 		this.name = name;
 		this.startingDate = startingDate;
 		this.description = description;
@@ -58,11 +66,6 @@ public class Tournament {
 		this.code = code;
 		long currentDate = Calendar.getInstance().getTimeInMillis();
 		this.open = (startingDate.getTime() <= currentDate && endingDate.getTime() >= currentDate) ? true : false;
-	}
-	
-	
-
-	public Tournament() {
 	}
 
 	public long getId() {
@@ -121,14 +124,6 @@ public class Tournament {
 		this.code = code;
 	}
 
-	public Users getOwner() {
-		return owner;
-	}
-
-	public void setOwner(Users owner) {
-		this.owner = owner;
-	}
-
 	public boolean getShowWebsite() {
 		return showWebsite;
 	}
@@ -145,8 +140,6 @@ public class Tournament {
 		this.open = open;
 	}
 
-
-
 	@Override
 	public String toString() {
 		return "Tournament [id=" + id + ", name=" + name + ", description=" + description + ", startingDate="
@@ -154,8 +147,12 @@ public class Tournament {
 				+ showWebsite + ", open=" + open + ", owner=" + owner + "]";
 	}
 
-	
-	
-	
+	public Users getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Users owner) {
+		this.owner = owner;
+	}
 
 }
