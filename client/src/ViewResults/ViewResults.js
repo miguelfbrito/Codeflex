@@ -40,7 +40,7 @@ class ViewResults extends Component {
 
         console.log('Fetching view-results');
         console.log(pathname);
-        fetch(URL + '/api/database/Scoring/viewBySubmissionId/' + this.props.location.state.submissionId, {headers : {...getAuthorization()}}).then(res => res.json())
+        fetch(URL + '/api/database/Scoring/viewBySubmissionId/' + this.props.location.state.submissionId, { headers: { ...getAuthorization() } }).then(res => res.json())
             .then(data => {
                 console.log('VIEW RESULTS')
                 console.log(data);
@@ -66,9 +66,21 @@ class ViewResults extends Component {
         let renderCode = '';
 
         if (typeof this.state.results !== "undefined") {
-            console.log('Logging scoring results on vr')
+            console.log("RESULTS");
+            console.log(this.state.results);
+            let totalScore = 0.0;
+            this.state.results.map(s => {
+                if(s.isRight === 1 && !s.testcases.shown){
+                    totalScore += s.value;
+                }
+            })
+
+
             renderTestCases =
                 <div className="testcase-container">
+                    <div>
+                        <h2>Total Score : {totalScore.toFixed(2)}</h2>
+                    </div>
                     {this.state.results.map((s, index) => (
                         <div className="col-sm-4">
                             <div className="col-sm-11 testcase">

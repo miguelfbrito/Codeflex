@@ -19,7 +19,7 @@ class CreateTournament extends React.Component {
         super(props);
         this.state = {
             startDate: moment(),
-            endDate: moment().add('hours', 1),
+            endDate: moment(),
             name: '',
             description: '',
             privateCode: ''
@@ -51,22 +51,26 @@ class CreateTournament extends React.Component {
 
         if (isStringEmpty(data.name) || isStringEmpty(data.description)) {
             toast.error("Fill in all the fields", { autoClose: 2500 })
-            return;
+            return false;
         } else {
             if (!validateLength(data.name, 5, 50)) {
                 toast.error("Tournament name must be between 5 and 50 characters")
+                return false;
             } else {
                 if (!validateStringChars(data.name)) {
                     toast.error("Name can only contain letters, numbers and _")
+                    return false;
                 }
             }
 
             if(validateLength(data.description, 50, 1000)){
                 toast.error("Description must be between 50 and 1000 characters")
+                return false;
             }
 
             if (new Date(data.endingDate).getTime() - new Date(data.startingDate).getTime() < 60 * 5 * 1000) {
                 toast.error("Tournament has to last for at least 5 minutes")
+                return false;
             }
         }
 
@@ -75,7 +79,6 @@ class CreateTournament extends React.Component {
 
     createTournament() {
         console.log('Creating tournament');
-        console.log(this.state);
         const data = {
             name: this.state.name,
             description: this.state.description,
@@ -84,6 +87,8 @@ class CreateTournament extends React.Component {
             code: this.state.privateCode,
             owner: { username: parseLocalJwt().username }
         }
+
+        console.log(data);
 
 
         if (!this.validateTournament(data)) {
@@ -100,15 +105,19 @@ class CreateTournament extends React.Component {
         }).then(res => {
             if (res.status === 409) {
                 toast.error("Tournament name already in use", { autoClose: 2500 })
+                throw new Error("Name in use");
             } else if (res.status === 226) {
                 toast.error("Private code already in use", { autoClose: 2500 })
-            } else {
+                throw new Error("Code in use");
+            } else if(res.status === 200){
                 return res.json();
             }
         }).then(data => {
             console.log(data);
             window.location.href = "/compete/manage-tournaments/" + textToLowerCaseNoSpaces(this.state.name);
-        });
+        }).catch((e) => {
+            console.log('errro' + e)
+        })
 
     }
 

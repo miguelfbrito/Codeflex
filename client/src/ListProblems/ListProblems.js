@@ -21,11 +21,12 @@ class ListProblems extends Component {
         this.onChangeSelectBox = this.onChangeSelectBox.bind(this);
         this.fetchProblemsByCategory = this.fetchProblemsByCategory.bind(this);
         this.fetchProblemsByTournament = this.fetchProblemsByTournament.bind(this);
+
     }
 
     componentDidMount() {
-        const url = splitUrl(this.props.location.pathname);
 
+        const url = splitUrl(this.props.location.pathname);
         if (url[0] === 'practise') {
             console.log('practise')
             this.fetchProblemsByCategory();
@@ -58,8 +59,8 @@ class ListProblems extends Component {
 
     fetchProblemsByCategory() {
         const currentCategory = splitUrl(this.props.location.pathname)[1];
-        fetch(URL + '/api/database/PractiseCategory/getAllWithoutTestCases/' + parseLocalJwt().username , {
-            headers : {
+        fetch(URL + '/api/database/PractiseCategory/getAllWithoutTestCases/' + parseLocalJwt().username, {
+            headers: {
                 ...getAuthorization()
             }
         })
@@ -173,9 +174,9 @@ class ListProblems extends Component {
                         ))}
                     </div>
                     <div className="col-sm-2 problem-info" ref={this.checkBoxFilter} onChange={this.onChangeSelectBox}>
-                        <Link to={this.props.location.pathname + '/leaderboard'}>
+                        {splitUrl(this.props.location.pathname)[0] !== 'practise' ? <Link to={this.props.location.pathname + '/leaderboard'}>
                             <h3>Leaderboard</h3>
-                        </Link>
+                        </Link> : ''}
                         <h3>Status</h3>
                         <input name="Solved" type="checkbox" />
                         <p>Solved</p>

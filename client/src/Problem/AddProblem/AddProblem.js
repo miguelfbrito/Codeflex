@@ -70,23 +70,39 @@ class AddProblem extends React.Component {
             console.log('getting stuff')
             console.log(data);
 
-            // TODO : check category might be null
-            this.setState({
-                problemId: data.problem.id,
+
+            let saveData = {
                 problemName: data.problem.name,
                 problemDescription: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.description))),
                 problemConstraints: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.constraints))),
                 problemInputFormat: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.inputFormat))),
                 problemOutputFormat: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.outputFormat))),
                 problemMaxScore: data.problem.maxScore,
-                difficulty: {
-                    id: data.problem.difficulty.id,
-                    name: data.problem.difficulty.name
-                },
-                category: {
-                    id: data.category.id,
-                    name: data.category.id
+            }
+
+            if (data.category) {
+                saveData = {
+                    ...saveData,
+                    category: {
+                        id: data.category.id,
+                        name: data.category.id
+                    }
                 }
+            }
+
+            if (data.difficulty) {
+                saveData = {
+                    ...saveData,
+                    difficulty: {
+                        id: data.problem.difficulty.id,
+                        name: data.problem.difficulty.name
+                    }
+                }
+            }
+
+            // TODO : check category might be null
+            this.setState({
+                ...saveData
             })
         })
     }
@@ -195,7 +211,7 @@ class AddProblem extends React.Component {
             return;
         }
 
-        if(!validateSaveProblem(this.state)){
+        if (!validateSaveProblem(this.state)) {
             return;
         }
 
@@ -235,8 +251,8 @@ class AddProblem extends React.Component {
                 'Content-Type': 'application/json'
             })
         }).then(res => {
-            if(res.status === 500){
-                toast.error("There is already a problem named " + data.problem.name, {autoClose:2500})
+            if (res.status === 500) {
+                toast.error("There is already a problem named " + data.problem.name, { autoClose: 2500 })
             } else {
                 return res.json();
             }

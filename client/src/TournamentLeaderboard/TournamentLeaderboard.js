@@ -17,7 +17,9 @@ class TournamentLeaderboard extends React.Component {
     componentDidMount() {
         fetch(URL + '/api/database/Tournament/viewTournamentLeaderboard/' + this.props.match.params.tournamentName, {
             headers: { ...getAuthorization() }
-        }).then(res => res.json()).then(data => this.setState({ leaderboard: data }));
+        }).then(res => res.json()).then(data => this.setState({ leaderboard: data })).catch((e) => {
+            console.log("error " + e);
+        });
     }
 
     render() {

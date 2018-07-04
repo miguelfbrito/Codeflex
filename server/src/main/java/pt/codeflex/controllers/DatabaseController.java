@@ -1152,11 +1152,12 @@ public class DatabaseController {
 		if (current != null) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
-	
-		if(t.getCode() != null && !t.getCode().equals("")) {
+
+		if (t.getCode() != null && !t.getCode().equals("")) {
+
 			current = tournamentRepository.findByCode(t.getCode());
-			
-			if(current == null) {
+
+			if (current != null && t.getCode().equals(current.getCode())) {
 				return new ResponseEntity<>(HttpStatus.IM_USED);
 			}
 		}

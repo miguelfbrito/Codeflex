@@ -292,9 +292,10 @@ public class EvaluateSubmissions implements Runnable {
 			}
 
 			double score = isRight == 1
-					? (submission.getProblem().getMaxScore() / (totalTestCasesForProblem - givenTestCases))
+					? ((double) submission.getProblem().getMaxScore() / ( (double) totalTestCasesForProblem - (double) givenTestCases))
 					: 0;
 
+			System.out.println("Score " + score);
 			Scoring sc = new Scoring(submission, testCase, score, isRight);
 			scoringRepository.save(sc);
 

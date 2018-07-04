@@ -39,14 +39,14 @@ class Submissions extends React.Component {
                                 Header: "Result",
                                 id: "result",
                                 accessor: r => (
-                                    <p className={r.result.name === 'Correct' ? 'green-text' : 'red-text'}>{r.result.name} </p>
+                                   r.result != null ? <p className={r.result.name === 'Correct' ? 'green-text' : 'red-text'}>{r.result.name} </p> : '----'
                                 )
                             },
                             {
                                 Header: "Score",
                                 id: "score",
                                 accessor: r => (
-                                    <p>{r.score}</p>
+                                    <p>{r.score.toFixed(2)}</p>
                                 )
                             },
                             {
