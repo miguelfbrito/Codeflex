@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import './Login.css'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { URL, URL_FRONT } from '../../commons/Constants';
+import { areStringEqual, validateEmail, validateLength, validateStringChars, isStringEmpty } from '../../commons/Validation';
 
 class Login extends Component {
 
@@ -13,12 +16,16 @@ class Login extends Component {
             email: '',
             passwordConfirmation: '',
             isLoggingIn: true,
-            isSigninUp: false
+            isSigninUp: false,
+            showErrors: false
         }
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
+
+
+
 
     handleChange(e) {
         this.setState({ [e.target.className]: e.target.value });
@@ -35,13 +42,19 @@ class Login extends Component {
                 'Content-Type': 'application/json',
                 "Cache-Control": "no-cache",
             })
-        }).then(res => res.json()).then(data => {
+        }).then(res => { 
+            if(res.status === 403){
+                toast.error("Invalid credentials")
+            } else {
+                return res.json();
+            }
+        }).then(data => {
 
             if (data) {
                 console.log(data)
                 window.location.href = '/';
                 localStorage.setItem('token', data.token);
-                localStorage.setItem('userData', JSON.stringify({ username : data.username}));
+                localStorage.setItem('userData', JSON.stringify({ username: data.username }));
 
             }
 
@@ -51,33 +64,61 @@ class Login extends Component {
 
     }
 
+    validateRegistration = (data) => {
+        console.log(data);
+        this.setState({ showErrors: true });
+
+        if (isStringEmpty(data.username) || isStringEmpty(data.email) || isStringEmpty(data.password) || isStringEmpty(data.passwordConfirmation)) {
+            toast.error("Please fill all the fields")
+        } else {
+
+            if (!validateLength(data.username, 3, 25)) {
+                toast.error("Your username must be between 3 and 25 characters");
+
+
+            } else if (!validateStringChars(data.username)) {
+                toast.error("Your username can only contain letters, numbers and _");
+            }
+
+
+            if (!validateEmail(data.email)) {
+                toast.error("Wrong email format");
+            }
+
+            if (!areStringEqual(data.password, data.passwordConfirmation)) {
+                toast.error("Passwords do not match");
+            }
+
+            if (!validateLength(data.password, 5, 64)) {
+                toast.error("Your password must be between 5 and 64 characters");
+            }
+
+        }
+    }
+
     register() {
 
-        if (this.state.passwordConfirmation !== this.state.password) {
-            console.log('Passwords do not match'); // TODO : add notification 
-            return;
-        }
-
-        const data = { username: this.state.username, email: this.state.email, password: this.state.password };
+        const sentData = { username: this.state.username, email: this.state.email, password: this.state.password };
+        const validateData = { ...sentData, passwordConfirmation: this.state.passwordConfirmation }
+        console.log(this.validateRegistration(validateData));
 
         fetch(URL + '/api/account/register', {
             method: 'POST',
-            body: JSON.stringify(data),
+            body: JSON.stringify(sentData),
             headers: new Headers({
                 'Content-Type': 'application/json'
             })
         }).then(res => {
             res.json()
-            console.log('Response')
-            console.log(res);
-
         }).then(data => {
+            console.log("Info register")
             console.log(data);
-            if (data.object != null) {
+
+      /*      if (data.object != null) {
                 window.location.href = URL_FRONT;
                 const userData = { id: data.object.id, username: data.object.username, email: data.object.email };
                 localStorage.setItem('userData', JSON.stringify(userData));
-            }
+            }*/
         })
 
     }
@@ -132,6 +173,19 @@ class Login extends Component {
                         </div>
 
                         {loginOrSignup}
+
+
+                        <ToastContainer
+                            position="top-right"
+                            autoClose={5500}
+                            hideProgressBar={false}
+                            closeOnClick
+                            rtl={false}
+                            pauseOnVisibilityChange
+                            draggable
+                            pauseOnHover
+                            style={{ fontFamily: "'Roboto', sans-serif", fontSize: '12pt', letterSpacing: '1px' }}
+                        />
 
                         <div className="buttons-container">
                             <input type="button" className="btn btn-success" value="Login" onClick={this.handleSubmit} />

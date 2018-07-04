@@ -54,3 +54,10 @@ p.page-subtitle {
     border-radius: 6px;
     box-shadow: 0px 0px 5px #ccc;
 }
+
+p.span-data-validation {
+    font-size: 10pt !important;
+    margin-top: 5px !important;
+    margin-bottom: 10px !important;
+    color: rgb(255, 27, 27);
+}
