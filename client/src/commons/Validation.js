@@ -1,20 +1,18 @@
 export const validateLength = (string, min, max) => {
     if (string) {
         let length = string.trim().length;
-
+        console.log("LENGTH" + length);
         if (length >= min && length <= max) {
-            return 1;
+            return true;
         }
     }
-    return 0;
+    return false;
 }
 
 export const validateNumberRange = (number, min, max) => {
 
-    if (isFinite(number)) {
-        if (number >= min && number <= max) {
-            return true;
-        }
+    if (number >= min && number <= max) {
+        return true;
     }
     return false;
 }
@@ -53,9 +51,15 @@ export const areStringEqual = (string1, string2) => {
 }
 
 export const isStringEmpty = (string) => {
-    if(string == ""){
+    if (string == "") {
         return true;
     }
     return false;
 }
 
+export const isEditorStateEmpty = (string) => {
+    if (string && string.trim().localeCompare("<p></p>") === 0) {
+        return true;
+    }
+    return false;
+}

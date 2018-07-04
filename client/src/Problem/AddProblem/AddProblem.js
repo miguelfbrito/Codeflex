@@ -1,14 +1,13 @@
 import React from 'react';
 import PathLink from '../../PathLink/PathLink'
 import { Editor } from 'react-draft-wysiwyg';
-import draftToHtml from 'draftjs-to-html';
-import { Link } from 'react-router-dom';
-import htmlToDraft from 'html-to-draftjs';
-import { stateFromHTML } from 'draft-js-import-html';
-import { EditorState, convertToRaw, convertFromRaw, ContentState } from 'draft-js';
-
+import { EditorState, convertToRaw, convertFromRaw } from 'draft-js';
+import { ToastContainer, toast } from 'react-toastify';
 import { URL } from '../../commons/Constants';
 import { splitUrl, getAuthorization, parseLocalJwt } from '../../commons/Utils';
+import { validateSaveProblem } from './DataValidation';
+
+import 'react-toastify/dist/ReactToastify.css';
 import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import '../../commons/draft-editor.css'
 import './AddProblem.css'
@@ -19,11 +18,11 @@ class AddProblem extends React.Component {
         this.state = {
             problemId: '',
             problemName: '',
-            problemMaxScore: '',
-            problemDescription: '',
-            problemConstraints: '',
-            problemInputFormat: '',
-            problemOutputFormat: '',
+            problemMaxScore: 100,
+            problemDescription: EditorState.createEmpty(),
+            problemConstraints: EditorState.createEmpty(),
+            problemInputFormat: EditorState.createEmpty(),
+            problemOutputFormat: EditorState.createEmpty(),
             difficulty: {
                 id: '', name: ''
             },
@@ -186,11 +185,17 @@ class AddProblem extends React.Component {
         })
     }
 
+
+
     saveProblem() {
 
         let url = splitUrl(this.props.location.pathname)
         if (url[3] === 'edit' || url[2] === 'edit') {
             this.updateProblem();
+            return;
+        }
+
+        if(!validateSaveProblem(this.state)){
             return;
         }
 
@@ -213,12 +218,13 @@ class AddProblem extends React.Component {
                 name: this.state.category.name
             },
             owner: {
-                username: parseLocalJwt().username 
+                username: parseLocalJwt().username
             },
             tournament: {
                 name: this.props.match.params.tournamentName
             }
         }
+
 
         console.log(data);
         fetch(URL + '/api/database/Problem/add', {
@@ -228,9 +234,13 @@ class AddProblem extends React.Component {
                 ...getAuthorization(),
                 'Content-Type': 'application/json'
             })
-        }).then(res => res.json()).then(data => {
-            console.log(data.error);
-            console.log(data.message);
+        }).then(res => {
+            if(res.status === 500){
+                toast.error("There is already a problem named " + data.problem.name, {autoClose:2500})
+            } else {
+                return res.json();
+            }
+        }).then(data => {
             //  console.log(data.message.split("propertyPath=")[1].split(',')[0]);
             console.log(data);
             // TODO : notify the user about invalid data
@@ -269,6 +279,7 @@ class AddProblem extends React.Component {
                     </div>
                     <div className="col-sm-10 add-problem-textarea">
                         <input name="problemName" className="textbox-problem" onChange={this.onTextBoxChange} value={this.state.problemName} type="text" id="input-problem-name" placeholder="Problem name" />
+                        <small className="fill-info"> &nbsp; Length between 5 and 50 characters</small>
                     </div>
                 </div>
 
@@ -398,6 +409,7 @@ class AddProblem extends React.Component {
                     </div>
                     <div className="col-sm-10 add-problem-textarea">
                         <input name="problemMaxScore" className="textbox-problem" onChange={this.onTextBoxChange} value={this.state.problemMaxScore} type="text" placeholder="Max score (e.g. 100)" />
+                        <small className="fill-info"> &nbsp; Value between 10 and 250</small>
                     </div>
                 </div>
                 <div className="row">
@@ -407,6 +419,20 @@ class AddProblem extends React.Component {
                         {/*</Link>*/}
                     </div>
                 </div>
+
+
+                <ToastContainer
+                    position="top-right"
+                    autoClose={5500}
+                    hideProgressBar={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnVisibilityChange
+                    draggable
+                    pauseOnHover
+                    style={{ fontFamily: "'Roboto', sans-serif", fontSize: '12pt', letterSpacing: '1px', textAlign: 'center' }}
+                />
+
             </div>
         )
     }
