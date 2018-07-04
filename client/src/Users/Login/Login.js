@@ -34,6 +34,12 @@ class Login extends Component {
     login() {
 
         const data = { username: this.state.username, password: this.state.password };
+
+        if (isStringEmpty(data.username) || isStringEmpty(data.password)) {
+            toast.error("Fill in all the fields", { autoClose: 2500 })
+            return;
+        }
+
         fetch('http://localhost:8080/api/account/login', {
             method: 'POST',
             mode: 'cors',
@@ -42,9 +48,9 @@ class Login extends Component {
                 'Content-Type': 'application/json',
                 "Cache-Control": "no-cache",
             })
-        }).then(res => { 
-            if(res.status === 403){
-                toast.error("Invalid credentials")
+        }).then(res => {
+            if (res.status === 403) {
+                toast.error("Invalid credentials", { autoClose: 2500 })
             } else {
                 return res.json();
             }
@@ -69,11 +75,11 @@ class Login extends Component {
         this.setState({ showErrors: true });
 
         if (isStringEmpty(data.username) || isStringEmpty(data.email) || isStringEmpty(data.password) || isStringEmpty(data.passwordConfirmation)) {
-            toast.error("Please fill all the fields")
+            toast.error("Fill in all the fields", { autoClose: 2500 })
         } else {
 
             if (!validateLength(data.username, 3, 25)) {
-                toast.error("Your username must be between 3 and 25 characters");
+                toast.error("Username must be between 3 and 25 characters");
 
 
             } else if (!validateStringChars(data.username)) {
@@ -87,11 +93,12 @@ class Login extends Component {
 
             if (!areStringEqual(data.password, data.passwordConfirmation)) {
                 toast.error("Passwords do not match");
+            } else {
+                if (!validateLength(data.password, 5, 64)) {
+                    toast.error("Your password must be between 5 and 64 characters");
+                }
             }
 
-            if (!validateLength(data.password, 5, 64)) {
-                toast.error("Your password must be between 5 and 64 characters");
-            }
 
         }
     }
@@ -114,11 +121,11 @@ class Login extends Component {
             console.log("Info register")
             console.log(data);
 
-      /*      if (data.object != null) {
-                window.location.href = URL_FRONT;
-                const userData = { id: data.object.id, username: data.object.username, email: data.object.email };
-                localStorage.setItem('userData', JSON.stringify(userData));
-            }*/
+            /*      if (data.object != null) {
+                      window.location.href = URL_FRONT;
+                      const userData = { id: data.object.id, username: data.object.username, email: data.object.email };
+                      localStorage.setItem('userData', JSON.stringify(userData));
+                  }*/
         })
 
     }

@@ -61,3 +61,7 @@ p.span-data-validation {
     margin-bottom: 10px !important;
     color: rgb(255, 27, 27);
 }
+
+.fill-info {
+    color: #aaa;
+}

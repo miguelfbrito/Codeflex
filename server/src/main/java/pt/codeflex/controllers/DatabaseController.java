@@ -9,6 +9,9 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import pt.codeflex.databasecompositeskeys.DurationsID;
 import pt.codeflex.databasecompositeskeys.RatingID;
@@ -1137,21 +1142,34 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Tournament/add")
-	public Tournament addTournament(@RequestBody Tournament t) {
+	public ResponseEntity<?> addTournament(@RequestBody Tournament t) {
 
 		System.out.println(t.toString());
 
 		Users u = viewUsersByUsername(t.getOwner().getUsername());
+		Tournament current = viewTournamentByName(t.getName());
+
+		if (current != null) {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+	
+		if(t.getCode() != null && !t.getCode().equals("")) {
+			current = tournamentRepository.findByCode(t.getCode());
+			
+			if(current == null) {
+				return new ResponseEntity<>(HttpStatus.IM_USED);
+			}
+		}
 
 		Tournament tournament = null;
 
 		if (u != null) {
 			tournament = new Tournament(t.getName(), t.getDescription(), t.getStartingDate(), t.getEndingDate(),
 					t.getCode(), u, t.getShowWebsite());
-
 		}
 
-		return tournamentRepository.save(tournament);
+		tournament = tournamentRepository.save(tournament);
+		return new ResponseEntity<>(tournament, HttpStatus.OK);
 	}
 
 	@PostMapping("/Tournament/update")

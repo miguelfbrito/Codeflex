@@ -75,6 +75,17 @@ public class UsersController {
 		Users findByUsername = usersRepository.findByUsername(user.getUsername());
 		Users findByEmail = usersRepository.findByEmail(user.getEmail());
 
+		System.out.println("Fetching for possible existent accounts");
+		if (findByUsername != null) {
+
+			System.out.println(findByUsername.toString());
+		}
+
+		if (findByEmail != null) {
+
+			System.out.println(findByEmail.toString());
+		}
+
 		if (findByUsername != null) {
 			genericResponse = new GenericResponse(0, "Username already in use");
 
@@ -90,14 +101,13 @@ public class UsersController {
 		if (genericResponse == null) {
 			Users newUser = new Users(user.getUsername(), user.getEmail(),
 					bCryptPasswordEncoder.encode(user.getPassword()));
-			
-			
+
 			Users savedUser = usersRepository.save(newUser);
 
 			addUsersRoles(new UsersRoles(savedUser, viewRoleById((long) 1)));
 
-//			UserLessInfo finalUser = new UserLessInfo();
-//			finalUser.convert(newUser);
+			// UserLessInfo finalUser = new UserLessInfo();
+			// finalUser.convert(newUser);
 
 			genericResponse = new GenericResponse(3, newUser, "Account created");
 		}

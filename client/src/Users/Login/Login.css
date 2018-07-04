@@ -12,9 +12,10 @@
 .login-container {
     text-align: center;
     background-color: rgb(243, 243, 255); /*antiquewhite*/
-    width: 325px;
+    width: 305px;
     padding: 25px 0;
-    box-shadow: 3px 3px 10px 3px #aaa;
+    box-shadow: 2px 2px 7px 2px #aaa;
+    margin: 40px auto auto auto;
 }
 
 .login-container p {
@@ -64,8 +65,4 @@
 .buttons-container input:hover {
     transform: scale(1.05);
     box-shadow: 0px 10px 10px -5px #333;
-}
-
-.login-container {
-    margin: 40px auto auto auto;
 }
