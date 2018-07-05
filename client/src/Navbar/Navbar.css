@@ -2,7 +2,6 @@ html {
     margin-left: calc(100vw - 100%);
 }
 
-
 .navbar {
     position: relative;
     background-color: #6A44FF;
@@ -11,7 +10,7 @@ html {
     left: 50%;
     max-width: 100vw;
     border-radius: 0;
-/*    filter: drop-shadow(0px 0px 2px #222222); */
+    /*    filter: drop-shadow(0px 0px 2px #222222); */
 }
 
 .navbar-brand {
@@ -28,7 +27,8 @@ html {
 
 .navbar li>a>p {
     color: white;
-    line-height: 18pt;
+    line-height: 14pt;
+    margin: 5px;
     font-family: 'Roboto Condensed', sans-serif;
     font-size: 14pt;
 }
@@ -45,7 +45,7 @@ ul.dropdown-menu>li>a>p {
 }
 
 a#codeflex {
-    line-height: 42pt;
+    line-height: 44pt;
     font-size: 24pt;
     margin: 0;
     padding: 0;
@@ -53,6 +53,15 @@ a#codeflex {
 
 div.navbar-header {
     margin: 0 !important;
+}
+
+ul.nav.navbar-nav.navbar-right>li.active-page {
+    border-bottom: 5px solid #121A4E;
+    padding-bottom: -5px !important;
+}
+
+.active-page p {
+    color: black;
 }
 
 /* Scroll bar */

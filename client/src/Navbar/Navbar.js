@@ -2,19 +2,31 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 import '../commons/style.css';
-import { parseLocalJwt } from '../commons/Utils';
+import { parseLocalJwt, splitUrl } from '../commons/Utils';
 class Navbar extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            page: '',
+            count: 0
+        }
+        this.url = splitUrl(window.location.pathname)[0];
+    }
 
     // TODO : consts para os uri
+    componentWillUpdate() {
+        this.url = splitUrl(window.location.pathname)[0];
+        console.log("URL " + this.url);
+    }
+
+    componentDidMount() {
+    }
 
     userLoggedOut() {
-        return (<div className="container">
+        return (
+        <div className="container">
             <div className="navbar-header">
-                <button type="button" className="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                    <span className="icon-bar"></span>
-                    <span className="icon-bar"></span>
-                    <span className="icon-bar"></span>
-                </button>
                 <a className="navbar-brand" href="#">Codeflex</a>
             </div>
             <div className="collapse navbar-collapse" id="myNavbar">
@@ -29,14 +41,10 @@ class Navbar extends Component {
     }
 
     userLoggedIn() {
+
         return (
             <div className="container">
                 <div className="navbar-header">
-                    <button type="button" className="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                        <span className="icon-bar"></span>
-                        <span className="icon-bar"></span>
-                        <span className="icon-bar"></span>
-                    </button>
                     <a className="navbar-brand" id="codeflex">codeflex</a>
                     {/*<img id="img-user" src={require('../images/logo.png')} alt="User flat image" */}
                 </div>
@@ -45,9 +53,9 @@ class Navbar extends Component {
 
                     </ul>
                     <ul className="nav navbar-nav navbar-right">
-                        <li><Link to="/practise"><p>Practise</p></Link></li>
-                        <li><Link to="/compete"><p>Compete</p></Link></li>
-                        <li><Link to="/leaderboard"><p>Leaderboard</p></Link></li>
+                        <li className={this.url === 'practise' ? 'active-page' : ''}><Link to="/practise"><p>Practise</p></Link></li>
+                        <li className={this.url === 'compete' ? 'active-page' : ''}><Link to="/compete"><p>Compete</p></Link></li>
+                        <li className={this.url === 'leaderboard' ? 'active-page' : ''}><Link to="/leaderboard"><p>Leaderboard</p></Link></li>
                         {/*<li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
                             <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>*/}
                         <li className="dropdown">

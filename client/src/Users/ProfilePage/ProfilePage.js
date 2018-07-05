@@ -78,52 +78,45 @@ class ProfilePage extends React.Component {
 
     render() {
 
-        if (this.state.categories != "undefined" && this.state.submissions != "undefined") {
+        return (
+            <div className="container" >
+                <div className="row">
+                    <PathLink path={this.props.location.pathname} title="Profile" />
 
-            return (
-                <div className="container" >
-                    <div className="row">
-                        <PathLink path={this.props.location.pathname} title="Profile" />
-
-                    </div>
-                    <div className="row">
-                        <div className="col-sm-3 profile-user-info no-padding no-margin">
-                            <div className="profile-page-border">
-                                <img id="img-profile-placeholder" src={require('../../images/user_placeholder.png')} alt="User flat image" />
-                                <h3 style={{ textAlign: 'center' }}>{this.props.match.params.username}</h3>
-                            </div>
-                            <br />
-                            <br />
+                </div>
+                <div className="row">
+                    <div className="col-sm-3 profile-user-info no-padding no-margin">
+                        <div className="profile-page-border">
+                            <img id="img-profile-placeholder" src={require('../../images/user_placeholder.png')} alt="User flat image" />
+                            <h3 style={{ textAlign: 'center' }}>{this.props.match.params.username}</h3>
                         </div>
-                        <div className="col-sm-1"></div>
-                        <div className="col-sm-8 no-padding profile-user-stats">
-                            <div className="profile-page-border">
-                                <h3>Activity</h3>
-                                <GithubCalendar />
+                        <br />
+                        <br />
+                    </div>
+                    <div className="col-sm-1"></div>
+                    <div className="col-sm-8 no-padding profile-user-stats">
+                        <div className="profile-page-border">
+                            <h3>Activity</h3>
+                            <GithubCalendar />
 
-                            </div>
-                            <br />
-                            <br />
-                            <div className="profile-page-border">
-                                <h3>Recent Submissions</h3>
-                                {this.state.submissions.length > 0 ?
-                                    this.state.submissions.map(s => (
-                                        <div className="profile-page-subtramission">
+                        </div>
+                        <br />
+                        <br />
+                        <div className="profile-page-border">
+                            <h3>Recent Submissions</h3>
+                            {this.state.submissions.length > 0 && this.state.categories.length > 0 ?
+                                this.state.submissions.map(s => (
+                                    <div className="profile-page-subtramission">
 
-                                            <p>Solution to {this.linkToProblem(s)} submitted on {dateWithHoursAndDay(s.date)} with a total score of {s.score.toFixed(2)}
-                                                &nbsp;({s.score != 0 ? (s.score / s.problem.maxScore * 100).toFixed(2) : '0'}%).</p>
+                                        <p>Solution to {this.linkToProblem(s)} submitted on {dateWithHoursAndDay(s.date)} with a total score of {s.score.toFixed(2)}
+                                            &nbsp;({s.score != 0 ? (s.score / s.problem.maxScore * 100).toFixed(2) : '0'}%).</p>
                                     </div>
-                                    )) : <p className="page-subtitle">No recent submissions</p>}
-                            </div>
+                                )) : <p className="page-subtitle">No recent submissions</p>}
                         </div>
                     </div>
                 </div>
-            )
-        } else {
-            return (
-                <div></div>
-            );
-        }
+            </div>
+        )
     }
 }
 

@@ -165,7 +165,7 @@ class ListTournaments extends React.Component {
                                 <input type="button" value="Register" onClick={this.onClickEnterPrivateTournament} />
                             </div> :
                                 <a>
-                                    <p onClick={this.onClickPrivateTournament}>Register in private tournament</p>
+                                    <p onClick={this.onClickPrivateTournament} style={{cursor:'pointer'}}>Register in private tournament</p>
                                 </a>}
                             <Link to="/compete/create-tournament"> <p>Create tournament</p></Link>
                             <Link to="/compete/manage-tournaments"><p >Manage tournaments</p></Link>
