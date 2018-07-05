@@ -78,7 +78,6 @@ class TournamentLeaderboard extends React.Component {
                         defaultPageSize={25}
                         pageSize={Math.min(this.state.leaderboard.length, 25)}
                         style={{
-                            height: Math.min(this.state.leaderboard.length * 125, 1000) + "px" // This will force the table body to overflow and scroll, since there is not enough room
                         }}
                         showPagination={false}
                         className="-highlight"

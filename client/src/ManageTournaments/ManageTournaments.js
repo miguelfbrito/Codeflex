@@ -141,7 +141,6 @@ class ManageTournaments extends React.Component {
                             defaultPageSize={rows}
                             pageSize={Math.min(rows, 15)}
                             style={{
-                                height: Math.min(this.state.tournaments.length * 125, 750) + "px" // This will force the table body to overflow and scroll, since there is not enough room
                             }}
                             showPagination={false}
                             className="-highlight"

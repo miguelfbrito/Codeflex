@@ -31,7 +31,7 @@ class ManageProblems extends React.Component {
 
         if (origin === 'tournament') {
             fetch(URL + '/api/database/Tournament/getAllProblemsByName/' + url[2], {
-                headers : {...getAuthorization()}
+                headers: { ...getAuthorization() }
             }).then(res => res.json())
                 .then(data => {
                     console.log(data);
@@ -39,7 +39,7 @@ class ManageProblems extends React.Component {
                 })
         } else if (origin === 'manage') {
             fetch(URL + '/api/database/Problem/viewAllByOwnerUsername/' + parseLocalJwt().username, {
-                headers : {...getAuthorization()}
+                headers: { ...getAuthorization() }
             })
                 .then(res => res.json())
                 .then(data => {
@@ -72,71 +72,70 @@ class ManageProblems extends React.Component {
 
         if (this.state.problems.length > 0) {
             content = <div>
-            <ReactTable
-                data={this.state.problems}
-                columns={[
-                    {
-                        Header: "Name",
-                        id: "problemName",
-                        accessor: p => (
-                            <p>{p.name} </p>
-                        )
-                    },
-                    {
-                        Header: "Difficulty",
-                        id: "startingDate",
-                        accessor: p => p.difficulty.name,
-                        sortMethod: (a, b) => {
-                            console.log(a);
-                            return a >= b ? 1 : -1;
-                        }
-                    },
-                    {
-                        Header: "Max score",
-                        id: "maxScore",
-                        accessor: t => t.maxScore
-                    },
-                    {
-                        Header: "#TestCases",
-                        id: "testCases",
-                        accessor: p => (
-                            <div>
-                                {p.testCases.length}
-                                <Link to={this.props.location.pathname + "/" + textToLowerCaseNoSpaces(p.name) + "/test-cases"}> <i className="material-icons manage-tournament-icon" onClick={this.onIconClick}>edit</i> </Link>
-                            </div>
-                        )
-                    },
-                    {
-                        Header: "",
-                        id: "icons",
-                        accessor: t => (
-                            <div>
-                                <Link to={this.props.location.pathname + '/edit/' + textToLowerCaseNoSpaces(t.name)}>
-                                    < i className="material-icons manage-tournament-icon" id="edit" onClick={this.onIconClick}>edit</i>
-                                </Link>
-                                <i className="material-icons manage-tournament-icon" id="delete" onClick={this.onIconClick}>delete</i>
-                                {/*this.state.redirect && this.state.redirectDestination === 'edit' ?
+                <ReactTable
+                    data={this.state.problems}
+                    columns={[
+                        {
+                            Header: "Name",
+                            id: "problemName",
+                            accessor: p => (
+                                <p>{p.name} </p>
+                            )
+                        },
+                        {
+                            Header: "Difficulty",
+                            id: "startingDate",
+                            accessor: p => p.difficulty.name,
+                            sortMethod: (a, b) => {
+                                console.log(a);
+                                return a >= b ? 1 : -1;
+                            }
+                        },
+                        {
+                            Header: "Max score",
+                            id: "maxScore",
+                            accessor: t => t.maxScore
+                        },
+                        {
+                            Header: "#TestCases",
+                            id: "testCases",
+                            accessor: p => (
+                                <div>
+                                    {p.testCases.length}
+                                    <Link to={this.props.location.pathname + "/" + textToLowerCaseNoSpaces(p.name) + "/test-cases"}> <i className="material-icons manage-tournament-icon" onClick={this.onIconClick}>edit</i> </Link>
+                                </div>
+                            )
+                        },
+                        {
+                            Header: "",
+                            id: "icons",
+                            accessor: t => (
+                                <div>
+                                    <Link to={this.props.location.pathname + '/edit/' + textToLowerCaseNoSpaces(t.name)}>
+                                        < i className="material-icons manage-tournament-icon" id="edit" onClick={this.onIconClick}>edit</i>
+                                    </Link>
+                                    <i className="material-icons manage-tournament-icon" id="delete" onClick={this.onIconClick}>delete</i>
+                                    {/*this.state.redirect && this.state.redirectDestination === 'edit' ?
                                 <Redirect to={{ pathname: "/compete/manage-tournaments/" + textToLowerCaseNoSpaces(t.tournament.name) }} /> : ''*/}
-                            </div >
-                        )
+                                </div >
+                            )
+                        }
+                    ]}
+                    defaultPageSize={25}
+                    pageSize={Math.min(this.state.problems.length, 25)}
+                    style={{
                     }
-                ]}
-                defaultPageSize={25}
-                pageSize={Math.min(this.state.problems.length, 25)}
-                style={{
-                    height: Math.min((this.state.problems.length < 3 ? 125 : 80) * this.state.problems.length, 1000) + "px" // This will force the table body to overflow and scroll, since there is not enough room
-                }
-                }
-                showPagination={false}
-                className="-highlight"
-            />
+                    }
+                    showPagination={false}
+                    className="-highlight"
+                />
 
-            <div style={{ textAlign: 'right', marginTop:'15px'}}>
-                            <Link to={this.props.location.pathname + '/add'}>
-                                <input type="button" className="btn btn-codeflex" value="Add new problem"/>
-                            </Link>
-                        </div>
-                        </div>
+                <div style={{ textAlign: 'right', marginTop: '15px' }}>
+                    <Link to={this.props.location.pathname + '/add'}>
+                        <input type="button" className="btn btn-codeflex" value="Add new problem" />
+                    </Link>
+                </div>
+            </div>
         }
 
         return (
@@ -150,7 +149,7 @@ class ManageProblems extends React.Component {
                         <div>
                             {content}
                         </div>
-                        
+
                     </div>
                 </div>
             </div>

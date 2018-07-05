@@ -1,7 +1,5 @@
 import React from 'react';
 import PathLink from '../PathLink/PathLink'
-import ReactTable from 'react-table';
-import { Redirect, Link } from 'react-router-dom';
 import Popup from '../Popup/Popup';
 import LoadFiles from '../LoadFiles/LoadFiles';
 

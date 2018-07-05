@@ -62,7 +62,6 @@ class GlobalLeaderboard extends React.Component {
                 defaultPageSize={25}
                 pageSize={Math.min(this.state.users.length, 25)}
                 style={{
-                    height: Math.min(this.state.users.length * 95, 1000) + "px" // This will force the table body to overflow and scroll, since there is not enough room
                 }}
                 showPagination={false}
                 className="-highlight"
