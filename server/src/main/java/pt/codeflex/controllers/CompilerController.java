@@ -14,6 +14,7 @@ import pt.codeflex.repositories.UsersRepository;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
@@ -59,22 +60,45 @@ public class CompilerController {
 	@Autowired
 	private Host host;
 
+	private Queue<Submissions> submissionsQueue = new ArrayDeque<>();
+
+	public List<Submissions> getSubmissions() {
+
+		List<Submissions> submissions = submissionsRepository.findSubmissionsToAvaliate();
+		List<Submissions> finalSubmissions = new ArrayList<>();
+
+		for (Submissions s : submissions) {
+			Optional<Submissions> submission = submissionsRepository.findById(s.getId());
+			if (submission.isPresent()) {
+				finalSubmissions.add(submission.get());
+				// submissionsQueue.add(submission.get());
+			}
+		}
+
+		return finalSubmissions;
+
+	}
+
 	@GetMapping("/ssh")
 	public void startThreads() throws IOException, InterruptedException {
 		long inicial = System.currentTimeMillis();
 
-		evaluateSubmissions.setHost(host);
-		List<Submissions> submissions = evaluateSubmissions.getSubmissions();
+		List<Submissions> submissions = getSubmissions();
 
-		System.out.println(submissions.toString());
-
-		System.out.println("\n\n\nStarting thread  with host " + host.getIp() + "\n");
-		EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
-		evaluateSubmissions1.setHost(host);
-
+		System.out.println("\n\n\n\n");
 		for (Submissions s : submissions) {
+			if (!submissionsQueue.contains(s)) {
+				submissionsQueue.add(s);
+				System.out.println(s.toString());
+			}
+		}
+			
+		System.out.println("\n\n\n\n");
 
-			evaluateSubmissions1.setSubmission(s);
+		while (!submissionsQueue.isEmpty()) {
+			EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
+			evaluateSubmissions1.setHost(host);
+			evaluateSubmissions1.setSubmission(submissionsQueue.poll());
 			taskExecutor.execute(evaluateSubmissions1);
 
 		}
@@ -112,7 +136,7 @@ public class CompilerController {
 
 		System.out.println("Received submission ");
 		System.out.println(submitSubmission.toString());
-		
+
 		Problem problem = problemRepository.findByName(submitSubmission.getProblem().getName().replaceAll("-", " "));
 		Users user = usersRepository.findByUsername(submitSubmission.getUsers().getUsername());
 		Language language = languageRepository.findByName(submitSubmission.getLanguage().getName());

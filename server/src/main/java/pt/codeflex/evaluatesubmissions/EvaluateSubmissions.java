@@ -86,24 +86,7 @@ public class EvaluateSubmissions implements Runnable {
 		System.out.println("Connection established!");
 
 		// distributeSubmissions();
-		compileSubmission(submission);
-	}
-
-	public List<Submissions> getSubmissions() {
-
-		List<Submissions> submissions = submissionsRepository.findSubmissionsToAvaliate();
-		List<Submissions> finalSubmissions = new ArrayList<>();
-
-		for (Submissions s : submissions) {
-			Optional<Submissions> submission = submissionsRepository.findById(s.getId());
-			if (submission.isPresent()) {
-				finalSubmissions.add(submission.get());
-				// submissionsQueue.add(submission.get());
-			}
-		}
-
-		return finalSubmissions;
-
+		compileSubmission(this.submission);
 	}
 
 	public void distributeSubmissions() {
@@ -292,7 +275,8 @@ public class EvaluateSubmissions implements Runnable {
 			}
 
 			double score = isRight == 1
-					? ((double) submission.getProblem().getMaxScore() / ( (double) totalTestCasesForProblem - (double) givenTestCases))
+					? ((double) submission.getProblem().getMaxScore()
+							/ ((double) totalTestCasesForProblem - (double) givenTestCases))
 					: 0;
 
 			System.out.println("Score " + score);
@@ -316,7 +300,8 @@ public class EvaluateSubmissions implements Runnable {
 					System.out.println("Correct problem!");
 					submission.setResult(resultRepository.findByName("Correct"));
 
-					// Updates the completion date in order to calculate how much time a user took to solve the problem
+					// Updates the completion date in order to calculate how much time a user took
+					// to solve the problem
 					Durations currentDuration = db.viewDurationsById(submission.getUsers().getId(),
 							submission.getProblem().getId());
 					db.updateDurationsOnProblemCompletion(currentDuration);
