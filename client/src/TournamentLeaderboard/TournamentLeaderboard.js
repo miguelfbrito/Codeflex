@@ -60,7 +60,7 @@ class TournamentLeaderboard extends React.Component {
                             {
                                 Header: "Score",
                                 id: "score",
-                                accessor: l => l.score
+                                accessor: l => l.score.toFixed(2)
                             },
                             {
                                 Header: "Time",

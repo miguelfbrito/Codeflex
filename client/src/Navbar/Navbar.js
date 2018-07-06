@@ -25,29 +25,23 @@ class Navbar extends Component {
 
     userLoggedOut() {
         return (
-        <div className="container">
-            <div className="navbar-header">
-                <a className="navbar-brand" href="#">Codeflex</a>
-            </div>
-            <div className="collapse navbar-collapse" id="myNavbar">
-                <ul className="nav navbar-nav">
+            <div>
 
-                </ul>
-                <ul className="nav navbar-nav navbar-right">
-                    <li><Link to="/login"><p>Login</p></Link></li>
-                </ul>
-            </div>
-        </div>);
+                <div className="collapse navbar-collapse" id="myNavbar">
+                    <ul className="nav navbar-nav">
+
+                    </ul>
+                    <ul className="nav navbar-nav navbar-right">
+                        <li><Link to="/login"><p>Login</p></Link></li>
+                    </ul>
+                </div>
+            </div >);
     }
 
     userLoggedIn() {
 
         return (
-            <div className="container">
-                <div className="navbar-header">
-                    <a className="navbar-brand" id="codeflex">codeflex</a>
-                    {/*<img id="img-user" src={require('../images/logo.png')} alt="User flat image" */}
-                </div>
+            <div>
                 <div className="collapse navbar-collapse" id="myNavbar">
                     <ul className="nav navbar-nav">
 
@@ -95,7 +89,12 @@ class Navbar extends Component {
 
         return (
             <nav className="navbar navbar-inverse">
-                {items}
+                <div className="container">
+                    <div className="navbar-header">
+                        <a className="navbar-brand" href="/" style={{fontFamily:'Roboto Condensed, sans-serif'}}>codeflex</a>
+                    </div>
+                    {items}
+                </div>
             </nav>
         );
     }

@@ -73,6 +73,7 @@ class App extends Component {
               <Route component={PageWrapper(PageNotFound)} />
             </Switch>
           </div>
+          <div style={{marginBottom:'75px'}}></div>
         </div>
       </Router>
     );

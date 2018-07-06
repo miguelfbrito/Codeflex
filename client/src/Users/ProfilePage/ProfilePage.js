@@ -105,7 +105,7 @@ class ProfilePage extends React.Component {
                         <div className="profile-page-border">
                             <h3>Recent Submissions</h3>
                             {this.state.submissions.length > 0 && this.state.categories.length > 0 ?
-                                this.state.submissions.map(s => (
+                                this.state.submissions.slice(0, Math.min(20, this.state.submissions.length)).map(s => (
                                     <div className="profile-page-subtramission">
 
                                         <p>Solution to {this.linkToProblem(s)} submitted on {dateWithHoursAndDay(s.date)} with a total score of {s.score.toFixed(2)}
