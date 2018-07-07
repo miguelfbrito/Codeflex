@@ -70,8 +70,8 @@ class AddProblem extends React.Component {
             console.log('getting stuff')
             console.log(data);
 
-
             let saveData = {
+                problemId : data.problem.id,
                 problemName: data.problem.name,
                 problemDescription: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.description))),
                 problemConstraints: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.constraints))),
@@ -90,7 +90,7 @@ class AddProblem extends React.Component {
                 }
             }
 
-            if (data.difficulty) {
+            if (data.problem.difficulty) {
                 saveData = {
                     ...saveData,
                     difficulty: {

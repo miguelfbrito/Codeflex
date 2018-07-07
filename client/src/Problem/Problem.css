@@ -31,6 +31,13 @@
     border-top: 2px solid #6A44FF;
 }
 
+.problem-section-h3 {
+    font-size: 20pt;
+    font-weight: 600;
+    padding-top: 25px;
+    padding-bottom: 10px;
+}
+
 .problem-nav {
     text-decoration: none;
     position: relative;
@@ -125,6 +132,10 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     padding: 2px;
+}
+
+#problem-statement {
+    margin-top: -25px;
 }
 
 .problem-testcase-wrapper div:first-child {

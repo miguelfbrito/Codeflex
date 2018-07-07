@@ -329,32 +329,32 @@ public class Solution {
 
         return (
             <div>
-                <div className="col-sm-10 problem-description-container"  id="problem-section">
+                <div className="col-sm-10 problem-description-container" id="problem-section">
                     <div id="anchor-remove-mathjax"></div>
 
-                    <h3 id="problem-statement">Problem Statement</h3>
+                    <h3 id="problem-statement" className="problem-section-h3">Problem Statement</h3>
                     {this.getInformation(problem.description)}
 
-                    <h3>Constraints</h3>
+                    <h3 className="problem-section-h3">Constraints</h3>
                     {this.getInformation(problem.constraints)}
 
-                    <h3>Input Format</h3>
+                    <h3 className="problem-section-h3">Input Format</h3>
                     {this.getInformation(problem.inputFormat)}
 
-                    <h3>Output Format</h3>
+                    <h3 className="problem-section-h3">Output Format</h3>
                     {this.getInformation(problem.outputFormat)}
 
                     {typeof problem.testCases !== "undefined" ? problem.testCases.map((tc, i) => {
                         if (tc.shown) {
                             return <div>
-                                <h3>Test Case {i + 1}</h3>
+                                <h3 className="problem-section-h3">Test Case {i + 1}</h3>
                                 <div className="problem-testcase-wrapper">
-                                    <div>
+                                    {tc.description !== "" ? <div>
                                         <h4>Explanation</h4>
                                         <div className="testcase-wrapper">
                                             <p>{tc.description}</p>
                                         </div>
-                                    </div>
+                                    </div> : ''}
                                     <div>
                                         <h4>Input</h4>
                                         <div className="testcase-wrapper">
@@ -419,7 +419,7 @@ public class Solution {
                 </div>
         } else {
             showLoading = <div className="button-container" style={{ marginTop: '-15px' }}>
-                <input type="submit" className="btn btn-primary" value="Submit your code!" onClick={this.submitSubmission} />
+                <input type="submit" className="btn btn-codeflex" value="Submit your code!" onClick={this.submitSubmission} />
             </div>
         }
 
