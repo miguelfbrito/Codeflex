@@ -195,7 +195,7 @@ class CreateTournament extends React.Component {
                             </div>
                             <div className="form-group">
                                 <div className="col-sm-offset-1 col-sm-10">
-                                    <input type="button" id="btn-create" className="btn btn-codeflex" onClick={this.createTournament} value="Create" />
+                                    <input type="button" id="btn btn-primary" className="btn btn-codeflex" onClick={this.createTournament} value="Create" />
                                 </div>
                             </div>
                         </form>

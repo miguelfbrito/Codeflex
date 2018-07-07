@@ -20,6 +20,12 @@
     border-bottom: none;
 }
 
+.problem-container:hover input {
+    background-color: #6a44ff;
+    border: 1.5px solid white;
+    color: white;
+}
+
 
 .problem-container:hover {
     background-color: #6a44ff;

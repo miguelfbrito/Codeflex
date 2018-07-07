@@ -25,21 +25,42 @@ p.page-subtitle {
 }
 
 .btn-codeflex {
-    border: 1px solid #6a44ff;
+    padding: 5px 10px;
+    font-family: 'Roboto';
+    letter-spacing: 1px;
+    font-size: 10pt;
+    line-height: 18pt;
+    border: 1.5px solid #6a44ff;
     background-color: white;
-    min-width: 75px;
-    min-height: 35px;
-    box-shadow: 0px 0px 4px #aaa;
     border-radius: 0;
     color: black;
+    transition: all 200ms ease-in-out;
 }
 
 .btn-codeflex:hover {
+    border-radius: 0 none;
+    border: 1.5px solid black !important;
     background-color: #6a44ff;
-    color: white;
-    box-shadow: 0px 0px 10px 1px #aaa;
+    color: black !important;
 }
 
+.btn-codeflex-inverse {
+    padding: 5px 10px;
+    font-family: 'Roboto Condensed';
+    font-size: 12pt;
+    letter-spacing: 1px;
+    line-height: 18pt;
+    border: 1px solid white;
+    background-color: #6a44ff;
+    border-radius: 0;
+    color:white;
+    transition: all 250ms ease-in-out;
+}
+
+.btn-codeflex-inverse:hover {
+    background-color: white;
+    color: black;
+}
 .no-margin {
     margin: 0;
 }

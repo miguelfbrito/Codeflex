@@ -152,7 +152,8 @@ class ListProblems extends Component {
                 <div className="row">
                     <PathLink path={this.props.location.pathname} title={splitUrl(this.props.match.url)[1]} />
                     <div className="col-sm-10 problems-container">
-                        {this.state.filteredProblems.map((problem, index) => (
+
+                        {this.state.filteredProblems.sort((a, b) => a.difficulty.id - b.difficulty.id).map((problem, index) => (
                             <div className="problem-container">
                                 <div>
                                     <p id="problem-name">
@@ -168,7 +169,7 @@ class ListProblems extends Component {
                                             problemId: problem.id,
                                             problemName: problem.name
                                         }
-                                    }}><input type="submit" className="btn btn-primary problem-button" value={problem.solved ? 'Solve again' : 'Solve problem'} /></Link>
+                                    }}><input type="submit" className="btn btn-codeflex " value={problem.solved ? 'Solve again' : 'Solve problem'} /></Link>
                                 </div>
                             </div>
                         ))}

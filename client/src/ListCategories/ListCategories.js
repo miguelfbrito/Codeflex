@@ -44,7 +44,7 @@ class ListProblems extends Component {
                                 <p className="p-small-text">You have completed {category.finishedProblems} ({(category.finishedProblems / category.totalProblems * 100).toFixed(2)}%) out of the {category.totalProblems} available problems.</p>
                             </div>
                             <div className="button-container">
-                                <Link to={{ pathname: "/practise/" + textToLowerCaseNoSpaces(category.name), state: { categoryId: category.id } }}><input type="submit" className="btn btn-primary" value="Explore problems" /></Link>
+                                <Link to={{ pathname: "/practise/" + textToLowerCaseNoSpaces(category.name), state: { categoryId: category.id } }}><input type="submit" className="btn btn-codeflex" value="Explore problems" /></Link>
                             </div>
                         </div>
                     ))}

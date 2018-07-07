@@ -4,7 +4,7 @@
     width: 47%;
     min-width: 250px;
     margin-bottom: 4%;
-    background-color: rgb(243, 247, 255);
+    background-color: rgb(255, 255, 255);
     box-shadow: 0px 4px 10px 0px #aaa;
     transition: all 250ms ease-in-out;
 }
@@ -19,6 +19,18 @@
 
 .category-container:hover {
     box-shadow: 0px 0px 2px 0px #aaa;
+    background-color: #6a44ff;
+}
+
+.category-container:hover p, .category-container:hover h2 {
+    color: white;
+}
+
+
+.category-container:hover input {
+    background-color: #6a44ff;
+    border: 1.5px solid white;
+    color: white;
 }
 
 .category-container h2 {
@@ -28,26 +40,9 @@
 .button-container input {
     margin-top: 50px;
     margin-right: 25px;
-    border-radius: 0;
-    color: black;
-    background-color: rgb(201, 208, 253);
-    transition: all 250ms ease-in-out;
+ 
 }
 
-.button-container input:hover {
-    background-color: white;
-    color: black;
-}
-
-.button-container input:focus {
-    background-color: white;
-    color: black;
-}
-
-.button-container input:active {
-    background-color: white;
-    color: black;
-}
 
 .progress-bar {
     width: 95%;

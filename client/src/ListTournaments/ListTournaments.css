@@ -31,6 +31,12 @@
 .tournament-container:hover > div > p {
     color:white;
 }
+
+.tournament-container:hover input {
+    background-color: #6A44FF;
+    border: 1.5px solid white;
+    color: white;
+}
 .tournament-container {
     border-bottom: 1px solid #ccc;
 }
