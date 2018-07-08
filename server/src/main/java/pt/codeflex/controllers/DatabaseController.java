@@ -1051,24 +1051,24 @@ public class DatabaseController {
 		return tournamentRepository.findByName(name.replace("-", " "));
 	}
 
-	@GetMapping("/Tournament/viewCurrentLeaderboard/{tournamentName}")
-	public UsersLeaderboard viewCurrentLeaderboard(@PathVariable String tournamentName) {
-
-		Tournament tournament = viewTournamentByName(tournamentName);
-
-		if (tournament == null)
-			return null;
-
-		List<Users> usersInTournament = viewUsersByTournamentId(tournament.getId());
-
-		List<Problem> problemsInTournament = getAllProblemsByTournamentName(tournament.getName());
-
-		for (Users u : usersInTournament) {
-
-		}
-
-		return null;
-	}
+//	@GetMapping("/Tournament/viewCurrentLeaderboard/{tournamentName}")
+//	public UsersLeaderboard viewCurrentLeaderboard(@PathVariable String tournamentName) {
+//
+//		Tournament tournament = viewTournamentByName(tournamentName);
+//
+//		if (tournament == null)
+//			return null;
+//
+//		List<Users> usersInTournament = viewUsersByTournamentId(tournament.getId());
+//
+//		List<Problem> problemsInTournament = getAllProblemsByTournamentName(tournament.getName());
+//
+//		for (Users u : usersInTournament) {
+//
+//		}
+//
+//		return null;
+//	}
 
 	@GetMapping("/Tournament/viewTournamentLeaderboard/{tournamentName}")
 	public List<TournamentLeaderboard> viewTournamentLeaderboard(@PathVariable String tournamentName) {
