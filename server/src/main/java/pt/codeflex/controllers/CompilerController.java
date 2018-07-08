@@ -73,9 +73,6 @@ public class CompilerController {
 		evaluateSubmissions1.setHost(host);
 		evaluateSubmissions1.getSubmissions();
 		taskExecutor.execute(evaluateSubmissions1);
-		taskExecutor.execute(evaluateSubmissions1);
-		taskExecutor.execute(evaluateSubmissions1);
-		taskExecutor.execute(evaluateSubmissions1);
 
 		System.out.println("QUANTIDADE " + count);
 

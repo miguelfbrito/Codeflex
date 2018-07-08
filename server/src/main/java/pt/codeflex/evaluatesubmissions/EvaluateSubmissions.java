@@ -74,8 +74,10 @@ public class EvaluateSubmissions implements Runnable {
 
 	private static Queue<Submissions> submissionsQueue = new ArrayDeque();
 
+	private static final String SERVER_USER = "mbrito";
 	private static final String PATH_SPRING = System.getProperty("user.home") + File.separator + "Submissions";
 	private static final String PATH_SERVER = "Submissions";// "/home/mbrito/Desktop/Submissions"
+	private static final String PATH_FIREJAIL = "/home/" + SERVER_USER + "/" + PATH_SERVER;// "/home/mbrito/Desktop/Submissions"
 
 	private long uniqueId;
 
@@ -83,8 +85,8 @@ public class EvaluateSubmissions implements Runnable {
 	public void run() {
 		System.out.println("Thread starting!");
 		System.out.println("Connection established!");
-		//getSubmissions();
-		 distributeSubmissions();
+		// getSubmissions();
+		distributeSubmissions();
 	}
 
 	public List<Submissions> getSubmissions() {
@@ -95,7 +97,7 @@ public class EvaluateSubmissions implements Runnable {
 		for (Submissions s : submissions) {
 			Optional<Submissions> submission = submissionsRepository.findById(s.getId());
 			if (submission.isPresent() && !submissionsQueue.contains(submission.get())) {
-//				finalSubmissions.add(submission.get());
+				// finalSubmissions.add(submission.get());
 				submissionsQueue.add(submission.get());
 			}
 		}
@@ -243,8 +245,10 @@ public class EvaluateSubmissions implements Runnable {
 
 		}
 
-		String command = "cd " + PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName()
-				+ " && ";
+		String dirName = submission.getId() + "_" + submission.getLanguage().getName();
+		String command = "cd " + PATH_SERVER + "/" + dirName + " && firejail --private=" + PATH_FIREJAIL + "/" + dirName
+				+ " --quiet --net=none ";
+
 		String runError = "runtime_error_" + submission.getId() + ".txt";
 		String runOutput = "output_" + submission.getId() + "_" + testCase.getId() + ".txt";
 
@@ -317,9 +321,10 @@ public class EvaluateSubmissions implements Runnable {
 
 					// Updates the completion date in order to calculate how much time a user took
 					// to solve the problem
-//					Durations currentDuration = db.viewDurationsById(submission.getUsers().getId(),
-//							submission.getProblem().getId());
-//					db.updateDurationsOnProblemCompletion(currentDuration);
+					// Durations currentDuration =
+					// db.viewDurationsById(submission.getUsers().getId(),
+					// submission.getProblem().getId());
+					// db.updateDurationsOnProblemCompletion(currentDuration);
 				} else {
 					submission.setResult(resultRepository.findByName("Incorrect"));
 				}
