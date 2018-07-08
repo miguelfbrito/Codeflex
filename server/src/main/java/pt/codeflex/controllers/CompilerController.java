@@ -62,46 +62,22 @@ public class CompilerController {
 
 	private Queue<Submissions> submissionsQueue = new ArrayDeque<>();
 
-	public List<Submissions> getSubmissions() {
-
-		List<Submissions> submissions = submissionsRepository.findSubmissionsToAvaliate();
-		List<Submissions> finalSubmissions = new ArrayList<>();
-
-		for (Submissions s : submissions) {
-			Optional<Submissions> submission = submissionsRepository.findById(s.getId());
-			if (submission.isPresent()) {
-				finalSubmissions.add(submission.get());
-				// submissionsQueue.add(submission.get());
-			}
-		}
-
-		return finalSubmissions;
-
-	}
-
 	@GetMapping("/ssh")
 	public void startThreads() throws IOException, InterruptedException {
 		long inicial = System.currentTimeMillis();
 
-		List<Submissions> submissions = getSubmissions();
-
 		System.out.println("\n\n\n\n");
-		for (Submissions s : submissions) {
-			if (!submissionsQueue.contains(s)) {
-				submissionsQueue.add(s);
-				System.out.println(s.toString());
-			}
-		}
-			
-		System.out.println("\n\n\n\n");
+		long count = 0;
 
-		while (!submissionsQueue.isEmpty()) {
-			EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
-			evaluateSubmissions1.setHost(host);
-			evaluateSubmissions1.setSubmission(submissionsQueue.poll());
-			taskExecutor.execute(evaluateSubmissions1);
+		EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
+		evaluateSubmissions1.setHost(host);
+		evaluateSubmissions1.getSubmissions();
+		taskExecutor.execute(evaluateSubmissions1);
+		taskExecutor.execute(evaluateSubmissions1);
+		taskExecutor.execute(evaluateSubmissions1);
+		taskExecutor.execute(evaluateSubmissions1);
 
-		}
+		System.out.println("QUANTIDADE " + count);
 
 		// for (Host h : hostList) {
 		// // System.out.println("Starting thread with host " + h.getIp() + "\n");

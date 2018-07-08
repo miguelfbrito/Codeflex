@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.concurrent.SynchronousQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -71,9 +72,7 @@ public class EvaluateSubmissions implements Runnable {
 	private Host host;
 	private Submissions submission;
 
-	private static volatile Queue<Submissions> submissionsQueue = new ArrayDeque<>();
-	private static volatile Queue<TestCaseForExecution> testCasesQueue = new ArrayDeque<>();
-	private static volatile List<Host> listOfHosts = new ArrayList<>();
+	private static Queue<Submissions> submissionsQueue = new ArrayDeque();
 
 	private static final String PATH_SPRING = System.getProperty("user.home") + File.separator + "Submissions";
 	private static final String PATH_SERVER = "Submissions";// "/home/mbrito/Desktop/Submissions"
@@ -84,12 +83,28 @@ public class EvaluateSubmissions implements Runnable {
 	public void run() {
 		System.out.println("Thread starting!");
 		System.out.println("Connection established!");
-
-		// distributeSubmissions();
-		compileSubmission(this.submission);
+		//getSubmissions();
+		 distributeSubmissions();
 	}
 
-	public void distributeSubmissions() {
+	public List<Submissions> getSubmissions() {
+
+		List<Submissions> submissions = submissionsRepository.findSubmissionsToAvaliate();
+		List<Submissions> finalSubmissions = new ArrayList<>();
+
+		for (Submissions s : submissions) {
+			Optional<Submissions> submission = submissionsRepository.findById(s.getId());
+			if (submission.isPresent() && !submissionsQueue.contains(submission.get())) {
+//				finalSubmissions.add(submission.get());
+				submissionsQueue.add(submission.get());
+			}
+		}
+
+		return finalSubmissions;
+
+	}
+
+	public synchronized void distributeSubmissions() {
 		while (!submissionsQueue.isEmpty()) {
 			Submissions submission = submissionsQueue.poll();
 			compileSubmission(submission);
@@ -302,9 +317,9 @@ public class EvaluateSubmissions implements Runnable {
 
 					// Updates the completion date in order to calculate how much time a user took
 					// to solve the problem
-					Durations currentDuration = db.viewDurationsById(submission.getUsers().getId(),
-							submission.getProblem().getId());
-					db.updateDurationsOnProblemCompletion(currentDuration);
+//					Durations currentDuration = db.viewDurationsById(submission.getUsers().getId(),
+//							submission.getProblem().getId());
+//					db.updateDurationsOnProblemCompletion(currentDuration);
 				} else {
 					submission.setResult(resultRepository.findByName("Incorrect"));
 				}
