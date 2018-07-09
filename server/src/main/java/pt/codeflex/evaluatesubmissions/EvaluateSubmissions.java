@@ -110,17 +110,6 @@ public class EvaluateSubmissions implements Runnable {
 		while (!submissionsQueue.isEmpty()) {
 			Submissions submission = submissionsQueue.poll();
 			compileSubmission(submission);
-			System.out.println("Compiling submission! " + Thread.currentThread().getName() + " from host "
-					+ host.getIp() + "\n\n\n");
-
-			// while (!testCasesQueue.isEmpty()) {
-			// TestCaseForExecution testCase = testCasesQueue.poll();
-			// runTestCase(testCase.getSubmission(), testCase.getTestCase(),
-			// testCase.getFileName());
-			// System.out.println("Running test case! " + Thread.currentThread().getName() +
-			// "\n\n");
-			// }
-
 		}
 	}
 
@@ -274,7 +263,6 @@ public class EvaluateSubmissions implements Runnable {
 			break;
 		}
 
-		// command += " && cat " + runOutput;
 		command += "  && cat " + runOutput;
 
 		try {
@@ -321,10 +309,9 @@ public class EvaluateSubmissions implements Runnable {
 
 					// Updates the completion date in order to calculate how much time a user took
 					// to solve the problem
-					// Durations currentDuration =
-					// db.viewDurationsById(submission.getUsers().getId(),
-					// submission.getProblem().getId());
-					// db.updateDurationsOnProblemCompletion(currentDuration);
+					Durations currentDuration = db.viewDurationsById(submission.getUsers().getId(),
+							submission.getProblem().getId());
+					db.updateDurationsOnProblemCompletion(currentDuration);
 				} else {
 					submission.setResult(resultRepository.findByName("Incorrect"));
 				}
@@ -337,7 +324,7 @@ public class EvaluateSubmissions implements Runnable {
 				Leaderboard newLeaderboard = new Leaderboard(totalScore, submission.getUsers(), submission.getProblem(),
 						submission.getLanguage().getName());
 
-				if (highestSubmissionOnLeaderboard.size() > 0) {
+				if (!highestSubmissionOnLeaderboard.isEmpty()) {
 
 					Leaderboard maxScoreSubmission = highestSubmissionOnLeaderboard.get(0);
 
