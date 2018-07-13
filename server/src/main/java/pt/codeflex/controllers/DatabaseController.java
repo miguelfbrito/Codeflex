@@ -739,7 +739,15 @@ public class DatabaseController {
 	public Problem getProblemByName(@PathVariable String problemName) {
 		problemName = problemName.replace("-", " ");
 		Problem p = problemRepository.findByName(problemName);
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
 		if (p != null) {
+
+			if (p.getTournament() != null && !isUserRegisterdInTournament(auth.getName(), p.getTournament().getName())) {
+				return new Problem();
+			}
+
 			return p;
 		}
 		return new Problem();
@@ -788,6 +796,23 @@ public class DatabaseController {
 		return false;
 	}
 
+	@GetMapping(path = "/Rating/isUserRegisteredInTournamentByName/{username}/{tournamentName}")
+	public boolean isUserRegisterdInTournament(@PathVariable String username,
+			@PathVariable String tournamentName) {
+		Users user = viewUsersByUsername(username);
+		Tournament tournament = viewTournamentByName(tournamentName);
+
+		if (user != null && tournament != null) {
+
+			Optional<Rating> r = ratingRepository.findById(new RatingID(tournament.getId(), user.getId()));
+
+			if (r.isPresent()) {
+				return true;
+			}
+
+		}
+		return false;
+	}
 	/*
 	 * @PostMapping(path = "/Rating/edit") public void editRating(@RequestParam long
 	 * id) { Optional<Rating> r = ratingRepository.findById(id);
@@ -1051,24 +1076,26 @@ public class DatabaseController {
 		return tournamentRepository.findByName(name.replace("-", " "));
 	}
 
-//	@GetMapping("/Tournament/viewCurrentLeaderboard/{tournamentName}")
-//	public UsersLeaderboard viewCurrentLeaderboard(@PathVariable String tournamentName) {
-//
-//		Tournament tournament = viewTournamentByName(tournamentName);
-//
-//		if (tournament == null)
-//			return null;
-//
-//		List<Users> usersInTournament = viewUsersByTournamentId(tournament.getId());
-//
-//		List<Problem> problemsInTournament = getAllProblemsByTournamentName(tournament.getName());
-//
-//		for (Users u : usersInTournament) {
-//
-//		}
-//
-//		return null;
-//	}
+	// @GetMapping("/Tournament/viewCurrentLeaderboard/{tournamentName}")
+	// public UsersLeaderboard viewCurrentLeaderboard(@PathVariable String
+	// tournamentName) {
+	//
+	// Tournament tournament = viewTournamentByName(tournamentName);
+	//
+	// if (tournament == null)
+	// return null;
+	//
+	// List<Users> usersInTournament = viewUsersByTournamentId(tournament.getId());
+	//
+	// List<Problem> problemsInTournament =
+	// getAllProblemsByTournamentName(tournament.getName());
+	//
+	// for (Users u : usersInTournament) {
+	//
+	// }
+	//
+	// return null;
+	// }
 
 	@GetMapping("/Tournament/viewTournamentLeaderboard/{tournamentName}")
 	public List<TournamentLeaderboard> viewTournamentLeaderboard(@PathVariable String tournamentName) {
@@ -1408,7 +1435,7 @@ public class DatabaseController {
 	public List<Users> getAllUsers() {
 		return (List<Users>) usersRepository.findAll();
 	}
-
+	
 	@GetMapping(path = "/Users/viewByUsername/{username}")
 	public Users viewUsersByUsername(@PathVariable String username) {
 		return usersRepository.findByUsername(username);

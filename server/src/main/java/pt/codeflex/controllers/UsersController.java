@@ -114,6 +114,15 @@ public class UsersController {
 
 		return genericResponse;
 	}
+	
+	@GetMapping("/Users/isRegistered/{username}")
+	public boolean isUserRegistered(@PathVariable String username) {
+		Users user = usersRepository.findByUsername(username);
+		if(user != null) {
+			return true;
+		}
+		return false;
+	}
 
 	// ROLE
 

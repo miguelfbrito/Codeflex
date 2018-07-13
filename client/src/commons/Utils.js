@@ -99,7 +99,11 @@ export const parseLocalJwt = () => {
 }
 
 export const getToken = () => {
-    return localStorage.getItem('token');
+    if (localStorage.getItem('token')) {
+        return localStorage.getItem('token');
+    } 
+    // returns random invalid token
+    return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"; 
 }
 
 export const getAuthorization = () => {
@@ -122,4 +126,16 @@ export const blobToString = (b) => {
     x.send();
     URL.revokeObjectURL(u);
     return x.responseText;
+}
+
+export const dateSameDay = (date1, date2) => {
+
+    if (typeof date1 != "undefined" && typeof date2 != "undefined") {
+        date1 = new Date(date1);
+        date2 = new Date(date2);
+        if (date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getUTCDate() === date2.getUTCDate()) {
+            return true;
+        }
+    }
+    return false;
 }

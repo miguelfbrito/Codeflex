@@ -102,6 +102,8 @@ public class Solution {
         let currentProblem = splitUrl(this.props.location.pathname)[2];
         console.log(currentProblem);
 
+
+
         fetch(URL + '/api/database/problem/getProblemByName/' + currentProblem, { headers: { ...getAuthorization() } })
             .then(res => res.json()).then(data => {
                 console.log('problem')
@@ -110,12 +112,11 @@ public class Solution {
 
                 this.setOpenedProblem(data);
 
-            });
+            })
 
         fetch(URL + '/api/database/Language/view', { headers: { ...getAuthorization() } }).then(res => res.json()).then(data => {
             console.log(data)
             this.setState({ displayLanguages: data })
-
         });
 
         if (localStorage.getItem('problem-page') != null) {
@@ -147,6 +148,7 @@ public class Solution {
             }
 
         } catch (err) {
+
         }
 
     }
@@ -463,65 +465,80 @@ public class Solution {
     }
 
     render() {
-        const problem = this.state.problem;
-        const submissionSection =
-            <div>
-                <div className="col-sm-12 problem-description-container ">
-                    <div id="anchor-remove-mathjax"></div>
-                    <Submissions pathname={this.props.location.pathname} />
-                </div>
-            </div>;
 
-        const leaderboardSection =
-            <div>
-                <div className="col-sm-12 problem-description-container">
-                    <div id="anchor-remove-mathjax"></div>
-                    <Leaderboard pathname={this.props.location.pathname} />
-                </div>
-            </div>;
+        if (this.state.problemLoaded) {
+            console.log("PROBLEMMMM")
+            console.log(this.state.problem);
+            if (this.state.problem.name != null) {
 
-        let sectionToRender = "";
-        console.log('STATE')
-        console.log(this.state);
-        if (this.state.page.submissions) {
-            sectionToRender = submissionSection;
-        } else if (this.state.page.leaderboard) {
-            sectionToRender = leaderboardSection;
-        } else {
-            if (this.state.problemLoaded) {
-                sectionToRender = this.getProblemSection();
-            }
-        }
+                const submissionSection =
+                    <div>
+                        <div className="col-sm-12 problem-description-container ">
+                            <div id="anchor-remove-mathjax"></div>
+                            <Submissions pathname={this.props.location.pathname} />
+                        </div>
+                    </div>;
 
+                const leaderboardSection =
+                    <div>
+                        <div className="col-sm-12 problem-description-container">
+                            <div id="anchor-remove-mathjax"></div>
+                            <Leaderboard pathname={this.props.location.pathname} />
+                        </div>
+                    </div>;
 
-        return (
-            <div className="container" >
-                <div className="row">
-                    <PathLink path={this.props.location.pathname} title={this.state.problem.name} />
-                    <div className="problem-nav">
-                        <ul onClick={this.onPageClick}>
-                            <li className={this.state.page.problem ? 'active' : ''}>Problem</li>
-                            <li className={this.state.page.submissions ? 'active' : ''}>Submissions</li>
-                            <li className={this.state.page.leaderboard ? 'active' : ''}>Leaderboard</li>
-                        </ul>
-                    </div>
-
-                    {sectionToRender}
-
-                    {this.state.results.loaded ?
-                        <Redirect to={{
-                            pathname: this.props.location.pathname + "/view-results", state: {
-                                information: this.state.sentSubmission.scoringResults
-                            }
-                        }} /> : ''
+                let sectionToRender = "";
+                console.log('STATE')
+                console.log(this.state);
+                if (this.state.page.submissions) {
+                    sectionToRender = submissionSection;
+                } else if (this.state.page.leaderboard) {
+                    sectionToRender = leaderboardSection;
+                } else {
+                    if (this.state.problemLoaded) {
+                        sectionToRender = this.getProblemSection();
                     }
+                }
 
-                </div>
-                <div className="row">
-                    {this.state.results.error === 'Compiler Error' && this.state.page.problem ? <CompilerError errorMessage={this.state.results.result.message} /> : ''}
-                </div>
-            </div >
-        );
+                return (
+                    <div className="container" >
+                        <div className="row">
+                            <PathLink path={this.props.location.pathname} title={this.state.problem.name} />
+                            <div className="problem-nav">
+                                <ul onClick={this.onPageClick}>
+                                    <li className={this.state.page.problem ? 'active' : ''}>Problem</li>
+                                    <li className={this.state.page.submissions ? 'active' : ''}>Submissions</li>
+                                    <li className={this.state.page.leaderboard ? 'active' : ''}>Leaderboard</li>
+                                </ul>
+                            </div>
+
+                            {sectionToRender}
+
+                            {this.state.results.loaded ?
+                                <Redirect to={{
+                                    pathname: this.props.location.pathname + "/view-results", state: {
+                                        information: this.state.sentSubmission.scoringResults
+                                    }
+                                }} /> : ''
+                            }
+
+                        </div>
+                        <div className="row">
+                            {this.state.results.error === 'Compiler Error' && this.state.page.problem ? <CompilerError errorMessage={this.state.results.result.message} /> : ''}
+                        </div>
+                    </div >
+                );
+            } else {
+                return (
+                    <Redirect to="/" />
+                )
+            }
+        } else {
+
+            return (
+                <div></div>
+            )
+        }
     }
 }
 
