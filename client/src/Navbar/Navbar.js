@@ -93,6 +93,11 @@ class Navbar extends Component {
             <nav className="navbar navbar-inverse">
                 <div className="container">
                     <div className="navbar-header">
+                        <button type="button" className="navbar-toggle" data-toggle="collapse" data-target="#myNavbar" style={{border:'2px solid white'}}>
+                            <span className="icon-bar"></span>
+                            <span className="icon-bar"></span>
+                            <span className="icon-bar"></span>
+                        </button>
                         <a className="navbar-brand" href="/" style={{ fontFamily: 'Roboto Condensed, sans-serif' }}>codeflex</a>
                     </div>
                     {items}

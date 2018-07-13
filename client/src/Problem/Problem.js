@@ -102,16 +102,12 @@ public class Solution {
         let currentProblem = splitUrl(this.props.location.pathname)[2];
         console.log(currentProblem);
 
-
-
         fetch(URL + '/api/database/problem/getProblemByName/' + currentProblem, { headers: { ...getAuthorization() } })
             .then(res => res.json()).then(data => {
                 console.log('problem')
                 console.log(data)
                 this.setState({ problem: data, problemLoaded: true });
-
                 this.setOpenedProblem(data);
-
             })
 
         fetch(URL + '/api/database/Language/view', { headers: { ...getAuthorization() } }).then(res => res.json()).then(data => {

@@ -38,13 +38,17 @@ class App extends Component {
     return false;
   }
 
-
+  isUserTournamentOwner = () => {
+    console.log("PROPSSS")
+    console.log(this);
+  }
 
   userLoggedIn = () => {
     return localStorage.getItem('token') != null ? true : false;
   }
 
   render() {
+
 
     if (this.userLoggedIn()) {
       return (
@@ -53,6 +57,8 @@ class App extends Component {
             <NavBar />
             <div style={{ minHeight: '100%' }}>
               <Switch>
+                {
+                  console.log(this.props)}
                 <Route exact path="/" component={PageWrapper(LandingPage)} />
 
                 <Route exact path="/login" component={PageWrapper(Login)} />
@@ -61,32 +67,41 @@ class App extends Component {
                 <Route exact path="/user/:username" component={PageWrapper(ProfilePage)} />
 
                 <Route exact path="/practise/:categoryName/:problemName/view-results" component={PageWrapper(ViewResults)} />
+                <Route exact path="/practise/:categoryName/:problemName" component={PageWrapper(Problem)} />
                 <Route exact path="/practise/:categoryName" component={PageWrapper(ListProblems)} />
                 <Route exact path="/practise" component={PageWrapper(ListCategories)} />
 
                 <Route exact path="/compete/create-tournament" component={PageWrapper(CreateTournament)} />
+                {/*verify if user is the owner */}
+
                 <Route exact path="/compete/manage-tournaments/:tournamentName/:problemName/test-cases" component={PageWrapper(ManageTestCases)} />
                 <Route exact path="/compete/manage-tournaments/:tournamentName/edit/:problemName" component={PageWrapper(AddProblem)} />
                 <Route exact path="/compete/manage-tournaments/:tournamentName/add" component={PageWrapper(AddProblem)} />
                 <Route exact path="/compete/manage-tournaments/:tournamentName" component={PageWrapper(ManageProblems)} />
+
                 <Route exact path="/compete/manage-tournaments" component={PageWrapper(ManageTournaments)} />
 
                 <Route exact path="/compete" component={PageWrapper(ListTournaments)} />
+
+                {/*verify if user is registered in the tournament */}
                 <Route exact path="/compete/:tournamentName/leaderboard" component={PageWrapper(TournamentLeaderboard)} />
                 <Route exact path="/compete/:tournamentName/:problemName" component={PageWrapper(Problem)} />
                 <Route exact path="/compete/:tournamentName" component={PageWrapper(ListProblems)} />
-                <Route exact path="/compete/:categoryName/:problemName/view-results" component={PageWrapper(ViewResults)} />
+                <Route exact path="/compete/:tournamentName/:problemName/view-results" component={PageWrapper(ViewResults)} />
 
                 <Route exact path="/leaderboard" component={PageWrapper(GlobalLeaderboard)} />
 
-                {/* uugghhhh, grouping with JSX breaks the Switch, TODO: figure this out later */}
-                {this.manageSectionControl() ? <Route exact path="/manage" component={PageWrapper(ManageContent)} /> : ''}
-                {this.manageSectionControl() ? <Route exact path="/manage/problems" component={PageWrapper(ManageProblems)} /> : ''}
-                {this.manageSectionControl() ? <Route exact path="/manage/problems/add" component={PageWrapper(AddProblem)} /> : ''}
-                {this.manageSectionControl() ? <Route exact path="/manage/problems/edit/:problemName" component={PageWrapper(AddProblem)} /> : ''}
-                {this.manageSectionControl() ? <Route exact path="/manage/problems/:problemName/test-cases" component={PageWrapper(ManageTestCases)} /> : ''}
-                {this.manageSectionControl() ? <Route exact path="/manage/tournaments" component={PageWrapper(ManageTournaments)} /> : ''}
-                {this.manageSectionControl() ? <Route exact path="/manage/categories" component={PageWrapper(ManageCategories)} /> : ''}
+                {this.manageSectionControl() ?
+                  <React.Fragment>
+                    <Route exact path="/manage" component={PageWrapper(ManageContent)} />
+                    <Route exact path="/manage/problems" component={PageWrapper(ManageProblems)} />
+                    <Route exact path="/manage/problems/add" component={PageWrapper(AddProblem)} />
+                    <Route exact path="/manage/problems/edit/:problemName" component={PageWrapper(AddProblem)} />
+                    <Route exact path="/manage/problems/:problemName/test-cases" component={PageWrapper(ManageTestCases)} />
+                    <Route exact path="/manage/tournaments" component={PageWrapper(ManageTournaments)} />
+                    <Route exact path="/manage/categories" component={PageWrapper(ManageCategories)} />
+                  </React.Fragment> : ''
+                }
 
                 <Route component={PageWrapper(PageNotFound)} />
               </Switch>
