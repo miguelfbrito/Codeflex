@@ -135,7 +135,7 @@ class ListTournaments extends React.Component {
                         <p>{t.tournament.description}</p>
                     </div>
                     <div className="col-sm-2 col-md-2 col-xs-4 button-container-tournaments" >
-                        <input type="submit" className="btn btn-codeflex" value="View Problems" />
+                        <Link to={"/compete/" + textToLowerCaseNoSpaces(t.tournament.name)}> <input type="submit" className="btn btn-codeflex" value="View Problems" /></Link>
                     </div>
                 </div>
             ))

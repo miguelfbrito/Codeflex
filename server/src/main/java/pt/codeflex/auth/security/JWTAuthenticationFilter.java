@@ -66,7 +66,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		
 		// including subject is a must
 		String token = Jwts.builder().setSubject(((User) auth.getPrincipal()).getUsername())
-				.claim("username", auth.getName()).setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+				.claim("username", auth.getName()).claim("role", role).setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
 				.signWith(SignatureAlgorithm.HS512, SECRET.getBytes()).compact();
 		res.getWriter().write("{ \"username\" : \"" + auth.getName() + "\", \"role\" : \"" + role + "\", \"token\" : \""
 				+ token + "\" }");

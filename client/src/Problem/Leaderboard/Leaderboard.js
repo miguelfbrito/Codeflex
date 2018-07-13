@@ -18,7 +18,6 @@ class Leaderboard extends React.Component {
     }
 
     componentDidMount() {
-
             const problemName = splitUrl(this.props.pathname)[2];
             fetch(URL + '/api/database/Leaderboard/viewByProblemName/' + problemName, {headers : {...getAuthorization()}}).then(res => res.json())
                 .then(data => { this.setState({ problemName: problemName, leaderboard: data }) })

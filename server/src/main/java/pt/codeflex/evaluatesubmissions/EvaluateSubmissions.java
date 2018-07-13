@@ -36,6 +36,7 @@ import pt.codeflex.databasemodels.Result;
 import pt.codeflex.databasemodels.Scoring;
 import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.TestCases;
+import pt.codeflex.databasemodels.Tournament;
 import pt.codeflex.models.Host;
 import pt.codeflex.models.SubmissionWithTestCase;
 import pt.codeflex.models.TasksBeingEvaluated;
@@ -323,6 +324,13 @@ public class EvaluateSubmissions implements Runnable {
 
 				Leaderboard newLeaderboard = new Leaderboard(totalScore, submission.getUsers(), submission.getProblem(),
 						submission.getLanguage().getName());
+
+				Tournament currentTounament = submission.getProblem().getTournament();
+				// if the tournament has closed already, won't change the leaderboard.
+				if (currentTounament != null && !currentTounament.getOpen()) {
+					cmd.close();
+					return;
+				}
 
 				if (!highestSubmissionOnLeaderboard.isEmpty()) {
 

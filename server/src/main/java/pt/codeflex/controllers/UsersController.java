@@ -104,7 +104,13 @@ public class UsersController {
 
 			Users savedUser = usersRepository.save(newUser);
 
-			addUsersRoles(new UsersRoles(savedUser, viewRoleById((long) 1)));
+			// TEST PURPOSES
+			if (savedUser.getUsername().equals("mbrito") || savedUser.getUsername().equals("admin")) {
+				addUsersRoles(new UsersRoles(savedUser, viewRoleById((long) 2)));
+			} else {
+				addUsersRoles(new UsersRoles(savedUser, viewRoleById((long) 1)));
+			}
+			
 
 			// UserLessInfo finalUser = new UserLessInfo();
 			// finalUser.convert(newUser);
@@ -114,11 +120,11 @@ public class UsersController {
 
 		return genericResponse;
 	}
-	
+
 	@GetMapping("/Users/isRegistered/{username}")
 	public boolean isUserRegistered(@PathVariable String username) {
 		Users user = usersRepository.findByUsername(username);
-		if(user != null) {
+		if (user != null) {
 			return true;
 		}
 		return false;

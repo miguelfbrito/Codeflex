@@ -62,7 +62,9 @@ class Navbar extends Component {
 
                             <ul className="dropdown-menu">
                                 <li><Link to={"/user/" + parseLocalJwt().username}><p>Profile</p></Link></li>
-                                <li><Link to="/manage"><p>Manage Content</p></Link></li>
+                                {parseLocalJwt().role === "CONTENT_MANAGER" ?
+                                    <li><Link to="/manage"><p>Manage Content</p></Link></li> : ''
+                                }
                                 <li><Link to="/"><p>Settings</p></Link></li>
                                 <li><Link to="/" onClick={this.logoutUser}><p>Logout</p></Link></li>
                             </ul>
@@ -91,7 +93,7 @@ class Navbar extends Component {
             <nav className="navbar navbar-inverse">
                 <div className="container">
                     <div className="navbar-header">
-                        <a className="navbar-brand" href="/" style={{fontFamily:'Roboto Condensed, sans-serif'}}>codeflex</a>
+                        <a className="navbar-brand" href="/" style={{ fontFamily: 'Roboto Condensed, sans-serif' }}>codeflex</a>
                     </div>
                     {items}
                 </div>
