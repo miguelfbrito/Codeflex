@@ -115,6 +115,7 @@ public class EvaluateSubmissions implements Runnable {
 	}
 
 	public void compileSubmission(Submissions submission) {
+		Problem problem = submission.getProblem();
 		System.out.println(submission.toString() + "\n\n\n\n");
 		uniqueId = submission.getId();
 		Session session = null;
@@ -212,12 +213,15 @@ public class EvaluateSubmissions implements Runnable {
 			List<TestCases> testCases = submission.getProblem().getTestCases();
 			String commandsToExecute = "";
 			String dirName = submission.getId() + "_" + submission.getLanguage().getName() + "/";
+			String obtainOutput = "(";
+
 			for (TestCases tc : testCases) {
 
 				createFileInFolder(tc.getInput(), dirName, String.valueOf(tc.getId()));
 
 				commandsToExecute += getRunCommand(submission, tc) + "\n";
-				// runTestCase(submission, tc, fileName);
+				obtainOutput += " echo '%%%output_" + tc.getId() + "' && cat output_" + submission.getId() + "_"
+						+ tc.getId() + ".txt && echo 'end%%%' &&";
 			}
 			scp(PATH_SPRING + "/" + dirName,
 					PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName() + "/");
@@ -227,8 +231,118 @@ public class EvaluateSubmissions implements Runnable {
 			scp(PATH_SPRING + "/" + "jobs.txt",
 					PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName() + "/");
 
+			// removes the last unecessary &&
+			obtainOutput = obtainOutput.substring(0, obtainOutput.length() - 2);
+			obtainOutput += " ) 2> err";
+
 			// executes submissions in parallelism
-			runTestCasesForSubmission(submission);
+
+			String output = runTestCasesForSubmission(submission, obtainOutput);
+
+			
+			//
+			// Evaluation
+			//
+
+			int totalTestCasesForProblem = problem.getTestCases().size();
+			int givenTestCases = 0;
+
+			// checks all testcases
+			for (TestCases tc : testCases) {
+				String tcName = "%%%output_" + tc.getId();
+				String s = output;
+				if (!s.equals("")) {
+					s = s.substring(s.indexOf(tcName));
+					s = s.substring(0, s.indexOf("end%%%"));
+					s = s.replace(tcName, "").trim();
+				}
+
+				System.out.println("TESTCASE " + tc.getId());
+				System.out.println(s.trim());
+
+				// Evaluates test case
+				int isRight = validateResult(tc.getOutput(), s);
+
+				if (tc.isShown()) {
+					givenTestCases++;
+				}
+
+				double score = isRight == 1
+						? ((double) submission.getProblem().getMaxScore()
+								/ ((double) totalTestCasesForProblem - (double) givenTestCases))
+						: 0;
+				System.out.println("Score " + score);
+				Scoring sc = new Scoring(submission, tc, score, isRight);
+				scoringRepository.save(sc);
+
+			}
+
+			List<Scoring> scoringBySubmission = scoringRepository.findAllBySubmissions(submission);
+			int totalScoring = scoringBySubmission.size();
+
+			int countCorrectScoring = 0;
+			if (totalScoring == totalTestCasesForProblem) {
+				double totalScore = 0;
+				for (Scoring s : scoringBySubmission) {
+					if (s.getIsRight() == 1) {
+						countCorrectScoring++;
+					}
+					totalScore += s.getValue();
+				}
+
+				if (countCorrectScoring == totalTestCasesForProblem) {
+					System.out.println("Correct problem!");
+					submission.setResult(resultRepository.findByName("Correct"));
+
+					// Updates the completion date in order to calculate how much time a user
+					// took
+					// // to solve the problem
+					Durations currentDuration = db.viewDurationsById(submission.getUsers().getId(),
+							submission.getProblem().getId());
+					db.updateDurationsOnProblemCompletion(currentDuration);
+				} else {
+					submission.setResult(resultRepository.findByName("Incorrect"));
+				}
+				submission.setScore(totalScore);
+				submissionsRepository.save(submission);
+
+				List<Leaderboard> highestSubmissionOnLeaderboard = leaderboardRepository
+						.findHighestScoreByUserByProblem(submission.getUsers(), submission.getProblem());
+
+				Leaderboard newLeaderboard = new Leaderboard(totalScore, submission.getUsers(), submission.getProblem(),
+						submission.getLanguage().getName());
+
+				Tournament currentTounament = submission.getProblem().getTournament();
+				// if the tournament has closed already, won't change the leaderboard.
+				if (currentTounament != null && !currentTounament.getOpen()) {
+					cmd.close();
+					return;
+				}
+
+				if (!highestSubmissionOnLeaderboard.isEmpty()) {
+
+					Leaderboard maxScoreSubmission = highestSubmissionOnLeaderboard.get(0);
+
+					// ugly, can't figure out how to load an object using only the id from the
+					// previous query
+					Optional<Leaderboard> currentLeaderboard = leaderboardRepository
+							.findById(maxScoreSubmission.getId());
+
+					if (totalScore > maxScoreSubmission.getScore()) {
+						if (maxScoreSubmission.getScore() == -1) {
+							maxScoreSubmission = newLeaderboard;
+						} else {
+							if (currentLeaderboard.isPresent()) {
+								maxScoreSubmission = currentLeaderboard.get();
+								maxScoreSubmission.setScore(totalScore);
+							}
+						}
+						leaderboardRepository.save(maxScoreSubmission);
+					}
+				} else {
+					leaderboardRepository.save(newLeaderboard);
+				}
+			}
 
 		} catch (ConnectionException | TransportException e) {
 			e.printStackTrace();
@@ -236,7 +350,7 @@ public class EvaluateSubmissions implements Runnable {
 
 	}
 
-	public void runTestCasesForSubmission(Submissions submission) {
+	public String runTestCasesForSubmission(Submissions submission, String obtainOutput) {
 
 		count++;
 		System.out.println("\nCOUNT " + count + "\n");
@@ -249,7 +363,8 @@ public class EvaluateSubmissions implements Runnable {
 		}
 
 		String dirName = submission.getId() + "_" + submission.getLanguage().getName();
-		String command = " cd " + PATH_SERVER + "/" + dirName + " && parallel -j `nproc` < jobs.txt";
+		String command = " cd " + PATH_SERVER + "/" + dirName + " && parallel -j `nproc` < jobs.txt && ";
+		command = command.concat(obtainOutput);
 
 		try {
 
@@ -257,7 +372,6 @@ public class EvaluateSubmissions implements Runnable {
 			String output = IOUtils.readFully(cmd.getInputStream()).toString();
 
 			System.out.println("OUTPUT " + output);
-
 			// count++;
 			// System.out.println("\nCOUNT " + count + "\n");
 			//
@@ -404,9 +518,12 @@ public class EvaluateSubmissions implements Runnable {
 			// }
 			//
 			cmd.close();
+			return output;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		return null;
 
 		// Problem problem = submission.getProblem();
 		// int isRight = validateResult(testCase.getOutput(), output);
@@ -536,149 +653,6 @@ public class EvaluateSubmissions implements Runnable {
 		}
 
 		return command;
-
-	}
-
-	public void runTestCase(Submissions submission, TestCases testCase, String fileName) {
-
-		count++;
-		System.out.println("\nCOUNT " + count + "\n");
-
-		Session session = null;
-		try {
-			session = host.getSsh().startSession();
-		} catch (ConnectionException | TransportException e) {
-
-		}
-
-		String dirName = submission.getId() + "_" + submission.getLanguage().getName();
-		String command = " cd " + PATH_SERVER + "/" + dirName + " && ( firejail --private=" + PATH_FIREJAIL + "/"
-				+ dirName + " --quiet --net=none ";
-
-		String runError = "runtime_error_" + submission.getId() + ".txt";
-		String runOutput = "output_" + submission.getId() + "_" + testCase.getId() + ".txt";
-		String outputPath = PATH_FIREJAIL + "/" + dirName + "/" + runOutput;
-
-		switch (submission.getLanguage().getCompilerName()) {
-		case "Java 8":
-			command += " cat " + testCase.getId() + " | timeout 3s java " + fileName + " 2> " + runError + " > "
-					+ runOutput + "";
-			break;
-		case "C++11 (gcc 5.4.0)":
-			command += "cat " + testCase.getId() + " | timeout 2 ./" + fileName + "_exec_" + uniqueId + " 2> "
-					+ runError + " > " + runOutput + "";
-			break;
-		case "Python 2.7":
-			command += "cat " + testCase.getId() + " | timeout 10 python " + fileName + ".py 2> " + runError + " > "
-					+ runOutput + "";
-			break;
-		case "C# (mono 4.2.1)":
-			command += "cat " + testCase.getId() + " | timeout 3 ./" + fileName + "_exec_" + uniqueId + " 2> "
-					+ runError + " > " + runOutput + "";
-			break;
-		default:
-			break;
-		}
-
-		command += "  ) & proc1=$! & wait $proc1 && cat " + outputPath;
-
-		try {
-
-			Command cmd = session.exec(command);
-			String output = IOUtils.readFully(cmd.getInputStream()).toString();
-
-			Problem problem = submission.getProblem();
-			int isRight = validateResult(testCase.getOutput(), output);
-			int totalTestCasesForProblem = problem.getTestCases().size();
-
-			int givenTestCases = 0;
-			for (TestCases tc : problem.getTestCases()) {
-				if (tc.isShown()) {
-					givenTestCases++;
-				}
-			}
-
-			double score = isRight == 1
-					? ((double) submission.getProblem().getMaxScore()
-							/ ((double) totalTestCasesForProblem - (double) givenTestCases))
-					: 0;
-
-			System.out.println("Score " + score);
-			Scoring sc = new Scoring(submission, testCase, score, isRight);
-			scoringRepository.save(sc);
-
-			List<Scoring> scoringBySubmission = scoringRepository.findAllBySubmissions(submission);
-			int totalScoring = scoringBySubmission.size();
-
-			int countCorrectScoring = 0;
-			if (totalScoring == totalTestCasesForProblem) {
-				double totalScore = 0;
-				for (Scoring s : scoringBySubmission) {
-					if (s.getIsRight() == 1) {
-						countCorrectScoring++;
-					}
-					totalScore += s.getValue();
-				}
-
-				if (countCorrectScoring == totalTestCasesForProblem) {
-					System.out.println("Correct problem!");
-					submission.setResult(resultRepository.findByName("Correct"));
-
-					// Updates the completion date in order to calculate how much time a user took
-					// to solve the problem
-					// Durations currentDuration =
-					// db.viewDurationsById(submission.getUsers().getId(),
-					// submission.getProblem().getId());
-					// db.updateDurationsOnProblemCompletion(currentDuration);
-				} else {
-					submission.setResult(resultRepository.findByName("Incorrect"));
-				}
-				submission.setScore(totalScore);
-				submissionsRepository.save(submission);
-
-				List<Leaderboard> highestSubmissionOnLeaderboard = leaderboardRepository
-						.findHighestScoreByUserByProblem(submission.getUsers(), submission.getProblem());
-
-				Leaderboard newLeaderboard = new Leaderboard(totalScore, submission.getUsers(), submission.getProblem(),
-						submission.getLanguage().getName());
-
-				Tournament currentTounament = submission.getProblem().getTournament();
-				// if the tournament has closed already, won't change the leaderboard.
-				if (currentTounament != null && !currentTounament.getOpen()) {
-					cmd.close();
-					return;
-				}
-
-				if (!highestSubmissionOnLeaderboard.isEmpty()) {
-
-					Leaderboard maxScoreSubmission = highestSubmissionOnLeaderboard.get(0);
-
-					// ugly, can't figure out how to load an object using only the id from the
-					// previous query
-					Optional<Leaderboard> currentLeaderboard = leaderboardRepository
-							.findById(maxScoreSubmission.getId());
-
-					if (totalScore > maxScoreSubmission.getScore()) {
-						if (maxScoreSubmission.getScore() == -1) {
-							maxScoreSubmission = newLeaderboard;
-						} else {
-							if (currentLeaderboard.isPresent()) {
-								maxScoreSubmission = currentLeaderboard.get();
-								maxScoreSubmission.setScore(totalScore);
-							}
-						}
-						leaderboardRepository.save(maxScoreSubmission);
-					}
-				} else {
-					leaderboardRepository.save(newLeaderboard);
-				}
-
-			}
-
-			cmd.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 	}
 
