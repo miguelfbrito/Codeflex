@@ -64,9 +64,9 @@
 .button-container-tournaments input{
     position: absolute;
     text-align: center;
-    left: 25%;
-    top: 30px;
     width: 125px;
+    left: 20%;
+    top:30px;
 }
 
 
@@ -75,6 +75,13 @@
 
     .tournament-container {
         height: 200px;
+    }
+
+    .button-container-tournaments input {
+        position: relative;
+        left:0;
+        top:0;
+        margin: 5px 0;
     }
 
 

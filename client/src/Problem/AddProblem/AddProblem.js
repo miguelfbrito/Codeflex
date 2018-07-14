@@ -70,14 +70,20 @@ class AddProblem extends React.Component {
             console.log('getting stuff')
             console.log(data);
 
-            let saveData = {
-                problemId : data.problem.id,
-                problemName: data.problem.name,
-                problemDescription: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.description))),
-                problemConstraints: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.constraints))),
-                problemInputFormat: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.inputFormat))),
-                problemOutputFormat: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.outputFormat))),
-                problemMaxScore: data.problem.maxScore,
+            let saveData = '';
+
+            try {
+
+                saveData = {
+                    problemId: data.problem.id,
+                    problemName: data.problem.name,
+                    problemDescription: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.description))),
+                    problemConstraints: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.constraints))),
+                    problemInputFormat: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.inputFormat))),
+                    problemOutputFormat: EditorState.createWithContent(convertFromRaw(JSON.parse(data.problem.outputFormat))),
+                    problemMaxScore: data.problem.maxScore,
+                }
+            } catch (err) {
             }
 
             if (data.category) {

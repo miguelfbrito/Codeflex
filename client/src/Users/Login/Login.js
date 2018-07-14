@@ -40,7 +40,7 @@ class Login extends Component {
             return;
         }
 
-        fetch('http://localhost:8080/api/account/login', {
+        fetch(URL + '/api/account/login', {
             method: 'POST',
             mode: 'cors',
             body: JSON.stringify(data),

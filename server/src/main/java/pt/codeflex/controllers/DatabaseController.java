@@ -1239,6 +1239,24 @@ public class DatabaseController {
 		return finalTournaments;
 	}
 
+	@GetMapping("/Tournament/viewAllPublicTournaments")
+	public List<TournamentWithRegisteredUsers> viewAllPublicTournaments() {
+		List<TournamentWithRegisteredUsers> tournamentWithRegisteredUsers = new ArrayList<>();
+		List<Tournament> tournaments = tournamentRepository.findAll();
+
+		for (Tournament t : tournaments) {
+			if (t.getShowWebsite()) {
+
+				List<Users> usersByTournament = viewUsersByTournamentId(t.getId());
+				tournamentWithRegisteredUsers.add(new TournamentWithRegisteredUsers(t, usersByTournament));
+
+			}
+		}
+
+		return tournamentWithRegisteredUsers;
+
+	}
+
 	@GetMapping("/Tournament/viewAllWithRegisteredUsersByOwnerUsername/{username}")
 	public List<TournamentWithRegisteredUsers> viewAllWithRegisteredUsersByOwnerUsername(
 			@PathVariable String username) {
@@ -1251,8 +1269,10 @@ public class DatabaseController {
 			tournaments = tournamentRepository.findByOwner(u);
 
 			for (Tournament t : tournaments) {
-				List<Users> usersByTournament = viewUsersByTournamentId(t.getId());
-				tournamentWithRegisteredUsers.add(new TournamentWithRegisteredUsers(t, usersByTournament));
+				if (!t.getShowWebsite()) {
+					List<Users> usersByTournament = viewUsersByTournamentId(t.getId());
+					tournamentWithRegisteredUsers.add(new TournamentWithRegisteredUsers(t, usersByTournament));
+				}
 			}
 
 		}

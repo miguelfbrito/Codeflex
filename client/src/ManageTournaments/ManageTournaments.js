@@ -18,7 +18,7 @@ class ManageTournaments extends React.Component {
             redirectDestination: '',
             problemDestination: '',
             teste: false,
-            location : 'compete'
+            location: ''
         }
 
         this.onIconClick = this.onIconClick.bind(this);
@@ -27,25 +27,36 @@ class ManageTournaments extends React.Component {
     }
 
     componentDidMount() {
-        console.log('Fetching data')
         this.fetchTournaments();
-
-        this.setState({location : splitUrl(this.props.location.pathname)[0]});
-
+        this.setState({ location: splitUrl(this.props.location.pathname)[0] });
     }
 
     fetchTournaments() {
-        fetch(URL + '/api/database/Tournament/viewAllWithRegisteredUsersByOwnerUsername/' + parseLocalJwt().username, {
-            headers: { ...getAuthorization() }
-        }).then(res => res.json())
-            .then(data => {
-                this.setState({ tournaments: data })
-                console.log(data);
-            })
+        console.log(this.state.location)
+        let location = splitUrl(this.props.location.pathname)[0];
+        if (location === 'compete') {
+            fetch(URL + '/api/database/Tournament/viewAllWithRegisteredUsersByOwnerUsername/' + parseLocalJwt().username, {
+                headers: { ...getAuthorization() }
+            }).then(res => res.json())
+                .then(data => {
+                    this.setState({ tournaments: data })
+                    console.log(data);
+                })
+        } else if (location === 'manage') {
+            fetch(URL + '/api/database/Tournament/viewAllPublicTournaments', {
+                headers: { ...getAuthorization() }
+            }).then(res => res.json())
+                .then(data => {
+                    this.setState({ tournaments: data })
+                    console.log(data);
+                })
+        }
+
     }
 
     onIconDelete(tournamentName) {
         console.log('Deleting')
+        tournamentName = textToLowerCaseNoSpaces(tournamentName);
         const data = {
             tournament: { name: tournamentName }
         }
@@ -63,18 +74,20 @@ class ManageTournaments extends React.Component {
     onIconClick(e, problemName) {
         console.log(e.target.id)
         switch (e.target.id) {
-            case 'edit':
-                console.log("EDITOU")
-                this.setState({ redirectDestination: 'edit' })
+            case 'visibility':
+                this.setState({ redirectDestination: 'visibility' })
                 break;
             case 'delete':
                 this.setState({ redirectDestination: 'delete' })
+                break;
+            case 'edit':
+                this.setState({ redirectDestination: 'edit' })
                 break;
             default:
                 break;
         }
 
-        this.setState({ redirect: true, problemDestination: problemName });
+        this.setState({ redirect: true, problemDestination: textToLowerCaseNoSpaces(problemName) });
     }
 
     render() {
@@ -84,7 +97,6 @@ class ManageTournaments extends React.Component {
             <div className="container">
                 <div className="row">
                     <PathLink path={this.props.location.pathname} title="Manage tournaments" />
-
                     <div>
                         <ReactTable
                             noDataText="You haven't created any tournaments"
@@ -132,12 +144,18 @@ class ManageTournaments extends React.Component {
                                     id: "icons",
                                     accessor: t => (
                                         <div key={t.tournament.id}>
-                                            <i className="material-icons manage-tournament-icon" id="visibility" onClick={this.onIconClick}>visibility</i>
-                                            <i className="material-icons manage-tournament-icon" id="edit" name={t.tournament.name} onClick={(e, name) => this.onIconClick(e, textToLowerCaseNoSpaces(t.tournament.name))}>edit</i>
-                                            <i className="material-icons manage-tournament-icon" id="delete" onClick={(name) => this.onIconDelete(textToLowerCaseNoSpaces(t.tournament.name))}>delete</i>
+                                            <i className="material-icons manage-tournament-icon" id="visibility" onClick={(e, name) => this.onIconClick(e, t.tournament.name)} >visibility</i>
+                                            <i className="material-icons manage-tournament-icon" id="edit" onClick={(e, name) => this.onIconClick(e, t.tournament.name)}>edit</i>
+                                            <i className="material-icons manage-tournament-icon" id="delete" onClick={(name) => this.onIconDelete(t.tournament.name)}>delete</i>
                                             {console.log("Icon index " + t.tournament.name)}
+                                            {this.state.redirect && this.state.redirectDestination === 'visibility' ?
+                                                <Redirect to={this.state.location === 'compete' ?
+                                                    { pathname: "/compete/manage-tournaments/" + this.state.problemDestination } :
+                                                    { pathname: "/manage/tournaments/" + this.state.problemDestination }} /> : ''}
+
                                             {this.state.redirect && this.state.redirectDestination === 'edit' ?
-                                                <Redirect to={{ pathname: "/compete/manage-tournaments/" + this.state.problemDestination }} /> : ''}
+                                                <Redirect to={this.state.location === 'compete' ? { pathname: "/compete/manage-tournaments/" + textToLowerCaseNoSpaces(t.tournament.name) + "/edit" }
+                                                    : { pathname: "/manage/tournaments/" + textToLowerCaseNoSpaces(t.tournament.name) + "/edit" }} /> : ''}
                                         </div>
                                     )
                                 }
