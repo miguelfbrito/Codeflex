@@ -80,6 +80,8 @@ public class EvaluateSubmissions implements Runnable {
 	private static final String PATH_SERVER = "Submissions";// "/home/mbrito/Desktop/Submissions"
 	private static final String PATH_FIREJAIL = "/home/" + SERVER_USER + "/" + PATH_SERVER;// "/home/mbrito/Desktop/Submissions"
 
+	
+	private volatile static long count = 0;
 	private long uniqueId;
 
 	@Override
@@ -228,6 +230,9 @@ public class EvaluateSubmissions implements Runnable {
 
 	public void runTestCase(Submissions submission, TestCases testCase, String fileName) {
 
+		count++;
+		System.out.println("\nCOUNT " + count + "\n");
+		
 		Session session = null;
 		try {
 			session = host.getSsh().startSession();
@@ -236,16 +241,17 @@ public class EvaluateSubmissions implements Runnable {
 		}
 
 		String dirName = submission.getId() + "_" + submission.getLanguage().getName();
-		String command = "cd " + PATH_SERVER + "/" + dirName + " && firejail --private=" + PATH_FIREJAIL + "/" + dirName
+		String command = " cd " + PATH_SERVER + "/" + dirName + " && ( firejail --private=" + PATH_FIREJAIL + "/" + dirName
 				+ " --quiet --net=none ";
 
 		String runError = "runtime_error_" + submission.getId() + ".txt";
 		String runOutput = "output_" + submission.getId() + "_" + testCase.getId() + ".txt";
+		String outputPath = PATH_FIREJAIL + "/" + dirName + "/" + runOutput;
 
 		// TODO : add memory limit
 		switch (submission.getLanguage().getCompilerName()) {
 		case "Java 8":
-			command += "cat " + testCase.getId() + " | timeout 3s java " + fileName + " 2> " + runError + " > "
+			command += " cat " + testCase.getId() + " | timeout 3s java " + fileName + " 2> " + runError + " > "
 					+ runOutput + "";
 			break;
 		case "C++11 (gcc 5.4.0)":
@@ -264,7 +270,7 @@ public class EvaluateSubmissions implements Runnable {
 			break;
 		}
 
-		command += "  && cat " + runOutput;
+		command += "  ) & proc1=$! & wait $proc1 && cat " + outputPath;
 
 		try {
 
@@ -310,9 +316,9 @@ public class EvaluateSubmissions implements Runnable {
 
 					// Updates the completion date in order to calculate how much time a user took
 					// to solve the problem
-					Durations currentDuration = db.viewDurationsById(submission.getUsers().getId(),
-							submission.getProblem().getId());
-					db.updateDurationsOnProblemCompletion(currentDuration);
+//					Durations currentDuration = db.viewDurationsById(submission.getUsers().getId(),
+//							submission.getProblem().getId());
+//					db.updateDurationsOnProblemCompletion(currentDuration);
 				} else {
 					submission.setResult(resultRepository.findByName("Incorrect"));
 				}
@@ -366,6 +372,9 @@ public class EvaluateSubmissions implements Runnable {
 	}
 
 	private int validateResult(String tcOutput, String output) {
+		System.out.println("\n\nComparing results");
+		System.out.println(tcOutput + " - " + output + "\n\n\n");
+		
 		if (tcOutput.trim().equals(output.trim())) {
 			return 1;
 		} else if (output.trim().equals("")) {
