@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import '../commons/style.css';
 import '../../node_modules/react-datepicker/dist/react-datepicker.css';
 import './CreateTournament.css';
-import { areStringEqual, validateEmail, validateLength, validateStringChars, isStringEmpty } from '../commons/Validation';
+import { areStringEqual, validateEmail, validateLength, validateStringChars, isStringEmpty, validateStringCharsNoSpaces } from '../commons/Validation';
 
 class CreateTournament extends React.Component {
     constructor(props) {
@@ -22,13 +22,18 @@ class CreateTournament extends React.Component {
             endDate: moment(),
             name: '',
             description: '',
-            privateCode: ''
+            privateCode: '',
+            location: ''
         }
 
         this.handleChangeStart = this.handleChangeStart.bind(this);
         this.handleChangeEnd = this.handleChangeEnd.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.createTournament = this.createTournament.bind(this);
+    }
+
+    componentDidMount() {
+        this.setState({ location: splitUrl(this.props.location.pathname)[0] });
     }
 
     handleChangeStart(date) {
@@ -63,13 +68,18 @@ class CreateTournament extends React.Component {
                 }
             }
 
-            if(validateLength(data.description, 50, 1000)){
+            if (validateLength(data.description, 50, 1000)) {
                 toast.error("Description must be between 50 and 1000 characters")
                 return false;
             }
 
             if (new Date(data.endingDate).getTime() - new Date(data.startingDate).getTime() < 60 * 5 * 1000) {
                 toast.error("Tournament has to last for at least 5 minutes")
+                return false;
+            }
+
+            if(this.state.location === 'compete' && !validateLength(data.code, 5, 50) && !validateStringCharsNoSpaces(data.code)){
+                toast.error("Invalid code, it must be between 5 and 50 in length and no special characters.")
                 return false;
             }
         }
@@ -79,7 +89,7 @@ class CreateTournament extends React.Component {
 
     createTournament() {
         console.log('Creating tournament');
-        const data = {
+        let data = {
             name: this.state.name,
             description: this.state.description,
             startingDate: this.state.startDate,
@@ -87,6 +97,14 @@ class CreateTournament extends React.Component {
             code: this.state.privateCode,
             owner: { username: parseLocalJwt().username }
         }
+
+        if(this.state.location === 'manage'){
+            data = {
+                ...data,
+                showWebsite : true
+            }
+        }
+        
 
         console.log(data);
 
@@ -109,12 +127,12 @@ class CreateTournament extends React.Component {
             } else if (res.status === 226) {
                 toast.error("Private code already in use", { autoClose: 2500 })
                 throw new Error("Code in use");
-            } else if(res.status === 200){
+            } else if (res.status === 200) {
                 return res.json();
             }
         }).then(data => {
             console.log(data);
-            window.location.href = "/compete/manage-tournaments/" + textToLowerCaseNoSpaces(this.state.name);
+         //   window.location.href = "/compete/manage-tournaments/" + textToLowerCaseNoSpaces(this.state.name);
         }).catch((e) => {
             console.log('errro' + e)
         })
@@ -186,15 +204,16 @@ class CreateTournament extends React.Component {
                                     />
                                 </div>
                             </div>
+                            {this.state.location === 'compete' ?
+                                <div className="form-group">
+                                    <label htmlFor="tournamentName" className="col-sm-1 control-label">Private Code</label>
+                                    <div className="col-sm-4" style={{ display: 'inline-block' }}>
+                                        <input type="code" className="form-control" id="privateCode" onChange={this.handleChange} placeholder="Private code" />
+                                        <small className="fill-info"> Add a private code that you can share with your friends to register on the tournament</small>
+                                    </div>
+                                </div> : ''}
                             <div className="form-group">
-                                <label htmlFor="tournamentName" className="col-sm-1 control-label">Private Code</label>
-                                <div className="col-sm-4" style={{ display: 'inline-block' }}>
-                                    <input type="code" className="form-control" id="privateCode" onChange={this.handleChange} placeholder="Private code" />
-                                    <small className="fill-info"> Add a private code that you can share with your friends to register on the tournament</small>
-                                </div>
-                            </div>
-                            <div className="form-group">
-                                <div className="col-sm-offset-1 col-sm-10">
+                                <div className="col-sm-offset-1 col-sm-11 col-xs-12 col-md-12" style={{ textAlign: 'left'}}>
                                     <input type="button" id="btn btn-primary" className="btn btn-codeflex" onClick={this.createTournament} value="Create" />
                                 </div>
                             </div>

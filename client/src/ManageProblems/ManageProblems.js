@@ -19,6 +19,10 @@ class ManageProblems extends React.Component {
     }
 
     componentDidMount() {
+        this.fetchProblems();
+    }
+
+    fetchProblems = () => {
         const url = splitUrl(this.props.location.pathname);
         let origin = '';
         if (url[0] === 'manage') {
@@ -51,8 +55,21 @@ class ManageProblems extends React.Component {
         }
     }
 
-    onIconClick(e) {
+    deleteProblem = (p) => {
+        fetch(URL + '/api/database/Problem/deleteByName/' + textToLowerCaseNoSpaces(p.name), {
+            method: 'POST',
+            headers: { ...getAuthorization() }
+        })
+            .then(() => {
+                this.fetchProblems();
 
+                let currentProblems = this.state.problems;
+                let index = currentProblems.indexOf(p);
+                currentProblems.splice(index, 1);
+
+                this.setState({problems: currentProblems});
+
+            }).catch((error) => console.log(error));
     }
 
     render() {
@@ -109,12 +126,12 @@ class ManageProblems extends React.Component {
                         {
                             Header: "",
                             id: "icons",
-                            accessor: t => (
+                            accessor: p => (
                                 <div>
-                                    <Link to={this.props.location.pathname + '/edit/' + textToLowerCaseNoSpaces(t.name)}>
-                                        < i className="material-icons manage-tournament-icon" id="edit" onClick={this.onIconClick}>edit</i>
+                                    <Link to={this.props.location.pathname + '/edit/' + textToLowerCaseNoSpaces(p.name)}>
+                                        <i name="edit" className="material-icons manage-tournament-icon" id="edit">edit</i>
                                     </Link>
-                                    <i className="material-icons manage-tournament-icon" id="delete" onClick={this.onIconClick}>delete</i>
+                                    <i name="delete" className="material-icons manage-tournament-icon icon-ligth-blue" id="delete" onClick={() => this.deleteProblem(p)}>delete</i>
                                     {/*this.state.redirect && this.state.redirectDestination === 'edit' ?
                                 <Redirect to={{ pathname: "/compete/manage-tournaments/" + textToLowerCaseNoSpaces(t.tournament.name) }} /> : ''*/}
                                 </div >

@@ -137,7 +137,7 @@ class ManageTestCases extends React.Component {
     deleteTestCase(index) {
 
         fetch(URL + '/api/database/TestCases/delete/' + index, {
-            method: 'DELETE',
+            method: 'POST',
             headers: { ...getAuthorization() }
         }).then(() => {
             this.fetchTestCases();

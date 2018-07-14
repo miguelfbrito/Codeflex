@@ -35,7 +35,7 @@ class ManageCategories extends React.Component {
     deleteCategory = (pc) => {
         console.log('Deleting category')
         fetch(URL + '/api/database/PractiseCategory/delete/' + pc.id, {
-            method: 'DELETE',
+            method: 'POST',
             ...getAuthorization()
         }).then(() => {
             this.fetchCategories();

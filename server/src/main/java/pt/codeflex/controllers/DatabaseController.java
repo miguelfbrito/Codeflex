@@ -397,7 +397,7 @@ public class DatabaseController {
 		}
 	}
 
-	@DeleteMapping(path = "/PractiseCategory/delete/{id}")
+	@PostMapping(path = "/PractiseCategory/delete/{id}")
 	public void deletePractiseCategory(@PathVariable long id) {
 		practiseCategoryRepository.deleteById(id);
 	}
@@ -725,6 +725,15 @@ public class DatabaseController {
 		problemRepository.deleteById(id);
 	}
 
+	@PostMapping(path = "/Problem/deleteByName/{name}")
+	public String deleteProblemByName(@PathVariable String name) {
+		Problem p = viewProblemByName(name);
+		if (p != null) {
+			problemRepository.deleteById(p.getId());
+		}
+		return "";
+	}
+
 	@GetMapping(path = "/Problem/view/{id}")
 	public Problem viewProblemById(@PathVariable long id) {
 		Optional<Problem> problem = problemRepository.findById(id);
@@ -744,7 +753,8 @@ public class DatabaseController {
 
 		if (p != null) {
 
-			if (p.getTournament() != null && !isUserRegisterdInTournament(auth.getName(), p.getTournament().getName())) {
+			if (p.getTournament() != null
+					&& !isUserRegisterdInTournament(auth.getName(), p.getTournament().getName())) {
 				return new Problem();
 			}
 
@@ -797,8 +807,7 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Rating/isUserRegisteredInTournamentByName/{username}/{tournamentName}")
-	public boolean isUserRegisterdInTournament(@PathVariable String username,
-			@PathVariable String tournamentName) {
+	public boolean isUserRegisterdInTournament(@PathVariable String username, @PathVariable String tournamentName) {
 		Users user = viewUsersByUsername(username);
 		Tournament tournament = viewTournamentByName(tournamentName);
 
@@ -1031,7 +1040,7 @@ public class DatabaseController {
 		}
 	}
 
-	@DeleteMapping(path = "/TestCases/delete/{id}")
+	@PostMapping(path = "/TestCases/delete/{id}")
 	public void deleteTestCases(@PathVariable long id) {
 		testCasesRepository.deleteById(id);
 	}
@@ -1403,7 +1412,7 @@ public class DatabaseController {
 		tournamentRepository.deleteById(id);
 	}
 
-	@DeleteMapping(path = "/Tournament/deleteByName/{tournamentName}")
+	@PostMapping(path = "/Tournament/deleteByName/{tournamentName}")
 	public void deleteTournament(@PathVariable String tournamentName) {
 		tournamentName = tournamentName.replaceAll("-", " ");
 		Tournament t = tournamentRepository.findByName(tournamentName);
@@ -1435,7 +1444,7 @@ public class DatabaseController {
 	public List<Users> getAllUsers() {
 		return (List<Users>) usersRepository.findAll();
 	}
-	
+
 	@GetMapping(path = "/Users/viewByUsername/{username}")
 	public Users viewUsersByUsername(@PathVariable String username) {
 		return usersRepository.findByUsername(username);

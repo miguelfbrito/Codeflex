@@ -113,8 +113,8 @@ class ListTournaments extends React.Component {
                     <div key={t.tournament.id} className="col-sm-10 col-md-10 col-xs-12">
                         <p>{t.tournament.name}</p>
                         <p>{t.tournament.description}</p>
-                        {new Date(t.tournament.startingDate).getTime() > new Date().getTime() ? <p className="green-text">Starting at {dateWithHoursAndDay(t.tournament.startingDate)}</p>
-                            : <p className="red-text">Finishing in {getTimeHoursMins(new Date(t.tournament.endingDate).getTime() - new Date().getTime())}</p>}
+                        {new Date(t.tournament.startingDate).getTime() > new Date().getTime() ? <p style={{fontSize:'11pt'}} className="green-text">Starting at {dateWithHoursAndDay(t.tournament.startingDate)}</p>
+                            : <p style={{fontSize:'11pt'}} className="red-text">Finishing in {getTimeHoursMins(new Date(t.tournament.endingDate).getTime() - new Date().getTime())}</p>}
                     </div>
                     <div className="col-sm-2 col-md-2 col-xs-4 button-container-tournaments" >
                         <input type="submit" className="btn btn-codeflex" value={

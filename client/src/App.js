@@ -72,8 +72,8 @@ class App extends Component {
                 <Route exact path="/practise" component={PageWrapper(ListCategories)} />
 
                 <Route exact path="/compete/create-tournament" component={PageWrapper(CreateTournament)} />
-                {/*verify if user is the owner */}
 
+                {/*verify if user is the owner */}
                 <Route exact path="/compete/manage-tournaments/:tournamentName/:problemName/test-cases" component={PageWrapper(ManageTestCases)} />
                 <Route exact path="/compete/manage-tournaments/:tournamentName/edit/:problemName" component={PageWrapper(AddProblem)} />
                 <Route exact path="/compete/manage-tournaments/:tournamentName/add" component={PageWrapper(AddProblem)} />
@@ -99,6 +99,7 @@ class App extends Component {
                     <Route exact path="/manage/problems/edit/:problemName" component={PageWrapper(AddProblem)} />
                     <Route exact path="/manage/problems/:problemName/test-cases" component={PageWrapper(ManageTestCases)} />
                     <Route exact path="/manage/tournaments" component={PageWrapper(ManageTournaments)} />
+                    <Route exact path="/manage/tournaments/add" component={PageWrapper(CreateTournament)} />
                     <Route exact path="/manage/categories" component={PageWrapper(ManageCategories)} />
                   </React.Fragment> : ''
                 }

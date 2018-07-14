@@ -1,7 +1,7 @@
 import React from 'react';
 import PathLink from '../PathLink/PathLink';
 import ReactTable from 'react-table';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { URL } from '../commons/Constants';
 import { dateWithHoursAndDay, textToLowerCaseNoSpaces, splitUrl, getAuthorization, parseLocalJwt } from '../commons/Utils';
 
@@ -17,7 +17,8 @@ class ManageTournaments extends React.Component {
             redirect: false,
             redirectDestination: '',
             problemDestination: '',
-            teste: false
+            teste: false,
+            location : 'compete'
         }
 
         this.onIconClick = this.onIconClick.bind(this);
@@ -28,11 +29,14 @@ class ManageTournaments extends React.Component {
     componentDidMount() {
         console.log('Fetching data')
         this.fetchTournaments();
+
+        this.setState({location : splitUrl(this.props.location.pathname)[0]});
+
     }
 
     fetchTournaments() {
         fetch(URL + '/api/database/Tournament/viewAllWithRegisteredUsersByOwnerUsername/' + parseLocalJwt().username, {
-            headers : {...getAuthorization()}
+            headers: { ...getAuthorization() }
         }).then(res => res.json())
             .then(data => {
                 this.setState({ tournaments: data })
@@ -46,8 +50,8 @@ class ManageTournaments extends React.Component {
             tournament: { name: tournamentName }
         }
         fetch(URL + '/api/database/Tournament/deleteByName/' + tournamentName, {
-            method: 'DELETE',
-            headers : {
+            method: 'POST',
+            headers: {
                 ...getAuthorization()
             }
         }).then(() => {
@@ -147,6 +151,7 @@ class ManageTournaments extends React.Component {
                         />
                     </div>
                 </div>
+                <Link to={this.state.location === 'compete' ? "/compete/create-tournament" : "/manage/tournaments/add"}> <input type="button" style={{ float: 'right', marginTop: '25px', marginRight: '0' }} className="btn btn-codeflex" value="Create tournament" /></Link>
             </div>
         )
     }
