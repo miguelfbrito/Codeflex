@@ -71,7 +71,6 @@ public class EvaluateSubmissions implements Runnable {
 	private LeaderboardRepository leaderboardRepository;
 
 	private Host host;
-	private Submissions submission;
 
 	private static Queue<Submissions> submissionsQueue = new ArrayDeque();
 
@@ -80,7 +79,6 @@ public class EvaluateSubmissions implements Runnable {
 	private static final String PATH_SERVER = "Submissions";// "/home/mbrito/Desktop/Submissions"
 	private static final String PATH_FIREJAIL = "/home/" + SERVER_USER + "/" + PATH_SERVER;// "/home/mbrito/Desktop/Submissions"
 
-	
 	private volatile static long count = 0;
 	private long uniqueId;
 
@@ -212,27 +210,37 @@ public class EvaluateSubmissions implements Runnable {
 			}
 
 			List<TestCases> testCases = submission.getProblem().getTestCases();
+			String commandsToExecute = "";
+			String dirName = submission.getId() + "_" + submission.getLanguage().getName() + "/";
 			for (TestCases tc : testCases) {
 
-				String tcFileName = String.valueOf(tc.getId());
-				createFile(tc.getInput(), tcFileName);
-				scp(PATH_SPRING + "/" + tcFileName,
-						PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName() + "/");
+				createFileInFolder(tc.getInput(), dirName, String.valueOf(tc.getId()));
 
-				// testCasesQueue.add(new TestCaseForExecution(tc, submission, fileName));
-				runTestCase(submission, tc, fileName);
+				commandsToExecute += getRunCommand(submission, tc) + "\n";
+				// runTestCase(submission, tc, fileName);
 			}
+			scp(PATH_SPRING + "/" + dirName,
+					PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName() + "/");
+
+			// creates jobs to be executed by parallel
+			createFile(commandsToExecute, "jobs.txt");
+			scp(PATH_SPRING + "/" + "jobs.txt",
+					PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName() + "/");
+
+			// executes submissions in parallelism
+			runTestCasesForSubmission(submission);
+
 		} catch (ConnectionException | TransportException e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	public void runTestCase(Submissions submission, TestCases testCase, String fileName) {
+	public void runTestCasesForSubmission(Submissions submission) {
 
 		count++;
 		System.out.println("\nCOUNT " + count + "\n");
-		
+
 		Session session = null;
 		try {
 			session = host.getSsh().startSession();
@@ -241,14 +249,316 @@ public class EvaluateSubmissions implements Runnable {
 		}
 
 		String dirName = submission.getId() + "_" + submission.getLanguage().getName();
-		String command = " cd " + PATH_SERVER + "/" + dirName + " && ( firejail --private=" + PATH_FIREJAIL + "/" + dirName
-				+ " --quiet --net=none ";
+		String command = " cd " + PATH_SERVER + "/" + dirName + " && parallel -j `nproc` < jobs.txt";
+
+		try {
+
+			Command cmd = session.exec(command);
+			String output = IOUtils.readFully(cmd.getInputStream()).toString();
+
+			System.out.println("OUTPUT " + output);
+
+			// count++;
+			// System.out.println("\nCOUNT " + count + "\n");
+			//
+			// Session session = null;
+			// try {
+			// session = host.getSsh().startSession();
+			// } catch (ConnectionException | TransportException e) {
+			//
+			// }
+
+			// String dirName = submission.getId() + "_" +
+			// submission.getLanguage().getName();
+			// String command = " cd " + PATH_SERVER + "/" + dirName + " && ( firejail
+			// --private=" + PATH_FIREJAIL + "/"
+			// + dirName + " --quiet --net=none ";
+			//
+			// String runError = "runtime_error_" + submission.getId() + ".txt";
+			// String runOutput = "output_" + submission.getId() + "_" + testCase.getId() +
+			// ".txt";
+			// String outputPath = PATH_FIREJAIL + "/" + dirName + "/" + runOutput;
+			//
+			// switch (submission.getLanguage().getCompilerName()) {
+			// case "Java 8":
+			// command += " cat " + testCase.getId() + " | timeout 3s java " + fileName + "
+			// 2> " + runError + " > "
+			// + runOutput + "";
+			// break;
+			// case "C++11 (gcc 5.4.0)":
+			// command += "cat " + testCase.getId() + " | timeout 2 ./" + fileName +
+			// "_exec_" + uniqueId + " 2> "
+			// + runError + " > " + runOutput + "";
+			// break;
+			// case "Python 2.7":
+			// command += "cat " + testCase.getId() + " | timeout 10 python " + fileName +
+			// ".py 2> " + runError + " > "
+			// + runOutput + "";
+			// break;
+			// case "C# (mono 4.2.1)":
+			// command += "cat " + testCase.getId() + " | timeout 3 ./" + fileName +
+			// "_exec_" + uniqueId + " 2> "
+			// + runError + " > " + runOutput + "";
+			// break;
+			// default:
+			// break;
+			// }
+			//
+			// command += " ) & proc1=$! & wait $proc1 && cat " + outputPath;
+			//
+			// try {
+			//
+			// Command cmd = session.exec(command);
+			// String output = IOUtils.readFully(cmd.getInputStream()).toString();
+			//
+			// Problem problem = submission.getProblem();
+			// int isRight = validateResult(testCase.getOutput(), output);
+			// int totalTestCasesForProblem = problem.getTestCases().size();
+			//
+			// int givenTestCases = 0;
+			// for (TestCases tc : problem.getTestCases()) {
+			// if (tc.isShown()) {
+			// givenTestCases++;
+			// }
+			// }
+			//
+			// double score = isRight == 1
+			// ? ((double) submission.getProblem().getMaxScore()
+			// / ((double) totalTestCasesForProblem - (double) givenTestCases))
+			// : 0;
+			//
+			// System.out.println("Score " + score);
+			// Scoring sc = new Scoring(submission, testCase, score, isRight);
+			// scoringRepository.save(sc);
+			//
+			// List<Scoring> scoringBySubmission =
+			// scoringRepository.findAllBySubmissions(submission);
+			// int totalScoring = scoringBySubmission.size();
+			//
+			// int countCorrectScoring = 0;
+			// if (totalScoring == totalTestCasesForProblem) {
+			// double totalScore = 0;
+			// for (Scoring s : scoringBySubmission) {
+			// if (s.getIsRight() == 1) {
+			// countCorrectScoring++;
+			// }
+			// totalScore += s.getValue();
+			// }
+			//
+			// if (countCorrectScoring == totalTestCasesForProblem) {
+			// System.out.println("Correct problem!");
+			// submission.setResult(resultRepository.findByName("Correct"));
+			//
+			// // Updates the completion date in order to calculate how much time a user
+			// took
+			// // to solve the problem
+			// // Durations currentDuration =
+			// // db.viewDurationsById(submission.getUsers().getId(),
+			// // submission.getProblem().getId());
+			// // db.updateDurationsOnProblemCompletion(currentDuration);
+			// } else {
+			// submission.setResult(resultRepository.findByName("Incorrect"));
+			// }
+			// submission.setScore(totalScore);
+			// submissionsRepository.save(submission);
+			//
+			// List<Leaderboard> highestSubmissionOnLeaderboard = leaderboardRepository
+			// .findHighestScoreByUserByProblem(submission.getUsers(),
+			// submission.getProblem());
+			//
+			// Leaderboard newLeaderboard = new Leaderboard(totalScore,
+			// submission.getUsers(), submission.getProblem(),
+			// submission.getLanguage().getName());
+			//
+			// Tournament currentTounament = submission.getProblem().getTournament();
+			// // if the tournament has closed already, won't change the leaderboard.
+			// if (currentTounament != null && !currentTounament.getOpen()) {
+			// cmd.close();
+			// return;
+			// }
+			//
+			// if (!highestSubmissionOnLeaderboard.isEmpty()) {
+			//
+			// Leaderboard maxScoreSubmission = highestSubmissionOnLeaderboard.get(0);
+			//
+			// // ugly, can't figure out how to load an object using only the id from the
+			// // previous query
+			// Optional<Leaderboard> currentLeaderboard = leaderboardRepository
+			// .findById(maxScoreSubmission.getId());
+			//
+			// if (totalScore > maxScoreSubmission.getScore()) {
+			// if (maxScoreSubmission.getScore() == -1) {
+			// maxScoreSubmission = newLeaderboard;
+			// } else {
+			// if (currentLeaderboard.isPresent()) {
+			// maxScoreSubmission = currentLeaderboard.get();
+			// maxScoreSubmission.setScore(totalScore);
+			// }
+			// }
+			// leaderboardRepository.save(maxScoreSubmission);
+			// }
+			// } else {
+			// leaderboardRepository.save(newLeaderboard);
+			// }
+			//
+			// }
+			//
+			cmd.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// Problem problem = submission.getProblem();
+		// int isRight = validateResult(testCase.getOutput(), output);
+		// int totalTestCasesForProblem = problem.getTestCases().size();
+		//
+		// int givenTestCases = 0;
+		// for (TestCases tc : problem.getTestCases()) {
+		// if (tc.isShown()) {
+		// givenTestCases++;
+		// }
+		// }
+		//
+		// double score = isRight == 1
+		// ? ((double) submission.getProblem().getMaxScore()
+		// / ((double) totalTestCasesForProblem - (double) givenTestCases))
+		// : 0;
+		//
+		// System.out.println("Score " + score);
+		// Scoring sc = new Scoring(submission, testCase, score, isRight);
+		// scoringRepository.save(sc);
+		//
+		// List<Scoring> scoringBySubmission =
+		// scoringRepository.findAllBySubmissions(submission);
+		// int totalScoring = scoringBySubmission.size();
+		//
+		// int countCorrectScoring = 0;
+		// if (totalScoring == totalTestCasesForProblem) {
+		// double totalScore = 0;
+		// for (Scoring s : scoringBySubmission) {
+		// if (s.getIsRight() == 1) {
+		// countCorrectScoring++;
+		// }
+		// totalScore += s.getValue();
+		// }
+		//
+		// if (countCorrectScoring == totalTestCasesForProblem) {
+		// System.out.println("Correct problem!");
+		// submission.setResult(resultRepository.findByName("Correct"));
+		//
+		// // Updates the completion date in order to calculate how much time a user
+		// took
+		// // to solve the problem
+		// // Durations currentDuration =
+		// // db.viewDurationsById(submission.getUsers().getId(),
+		// // submission.getProblem().getId());
+		// // db.updateDurationsOnProblemCompletion(currentDuration);
+		// } else {
+		// submission.setResult(resultRepository.findByName("Incorrect"));
+		// }
+		// submission.setScore(totalScore);
+		// submissionsRepository.save(submission);
+		//
+		// List<Leaderboard> highestSubmissionOnLeaderboard = leaderboardRepository
+		// .findHighestScoreByUserByProblem(submission.getUsers(),
+		// submission.getProblem());
+		//
+		// Leaderboard newLeaderboard = new Leaderboard(totalScore,
+		// submission.getUsers(), submission.getProblem(),
+		// submission.getLanguage().getName());
+		//
+		// Tournament currentTounament = submission.getProblem().getTournament();
+		// // if the tournament has closed already, won't change the leaderboard.
+		// if (currentTounament != null && !currentTounament.getOpen()) {
+		// cmd.close();
+		// return;
+		// }
+		//
+		// if (!highestSubmissionOnLeaderboard.isEmpty()) {
+		//
+		// Leaderboard maxScoreSubmission = highestSubmissionOnLeaderboard.get(0);
+		//
+		// // ugly, can't figure out how to load an object using only the id from the
+		// // previous query
+		// Optional<Leaderboard> currentLeaderboard = leaderboardRepository
+		// .findById(maxScoreSubmission.getId());
+		//
+		// if (totalScore > maxScoreSubmission.getScore()) {
+		// if (maxScoreSubmission.getScore() == -1) {
+		// maxScoreSubmission = newLeaderboard;
+		// } else {
+		// if (currentLeaderboard.isPresent()) {
+		// maxScoreSubmission = currentLeaderboard.get();
+		// maxScoreSubmission.setScore(totalScore);
+		// }
+		// }
+		// leaderboardRepository.save(maxScoreSubmission);
+		// }
+		// } else {
+		// leaderboardRepository.save(newLeaderboard);
+		// }
+
+		// }
+		//
+		// cmd.close();
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+
+	}
+
+	public String getRunCommand(Submissions submission, TestCases testCase) {
+
+		String dirName = submission.getId() + "_" + submission.getLanguage().getName();
+		String command = "firejail --private=" + PATH_FIREJAIL + "/" + dirName + " --quiet --net=none cat " + dirName
+				+ "/" + testCase.getId() + " | ";
+
+		String fileName = "Solution";
+		String runError = "runtime_error_" + submission.getId() + ".txt";
+		String runOutput = "output_" + submission.getId() + "_" + testCase.getId() + ".txt";
+		String outputPath = PATH_FIREJAIL + "/" + dirName + "/" + runOutput;
+
+		switch (submission.getLanguage().getCompilerName()) {
+		case "Java 8":
+			command += "timeout 3s java " + fileName + " 2> " + runError + " > " + runOutput + "";
+			break;
+		case "C++11 (gcc 5.4.0)":
+			command += " timeout 2 ./" + fileName + "_exec_" + uniqueId + " 2> " + runError + " > " + runOutput + "";
+			break;
+		case "Python 2.7":
+			command += "timeout 10 python " + fileName + ".py 2> " + runError + " > " + runOutput + "";
+			break;
+		case "C# (mono 4.2.1)":
+			command += "timeout 3 ./" + fileName + "_exec_" + uniqueId + " 2> " + runError + " > " + runOutput + "";
+			break;
+		default:
+			break;
+		}
+
+		return command;
+
+	}
+
+	public void runTestCase(Submissions submission, TestCases testCase, String fileName) {
+
+		count++;
+		System.out.println("\nCOUNT " + count + "\n");
+
+		Session session = null;
+		try {
+			session = host.getSsh().startSession();
+		} catch (ConnectionException | TransportException e) {
+
+		}
+
+		String dirName = submission.getId() + "_" + submission.getLanguage().getName();
+		String command = " cd " + PATH_SERVER + "/" + dirName + " && ( firejail --private=" + PATH_FIREJAIL + "/"
+				+ dirName + " --quiet --net=none ";
 
 		String runError = "runtime_error_" + submission.getId() + ".txt";
 		String runOutput = "output_" + submission.getId() + "_" + testCase.getId() + ".txt";
 		String outputPath = PATH_FIREJAIL + "/" + dirName + "/" + runOutput;
 
-		// TODO : add memory limit
 		switch (submission.getLanguage().getCompilerName()) {
 		case "Java 8":
 			command += " cat " + testCase.getId() + " | timeout 3s java " + fileName + " 2> " + runError + " > "
@@ -316,9 +626,10 @@ public class EvaluateSubmissions implements Runnable {
 
 					// Updates the completion date in order to calculate how much time a user took
 					// to solve the problem
-//					Durations currentDuration = db.viewDurationsById(submission.getUsers().getId(),
-//							submission.getProblem().getId());
-//					db.updateDurationsOnProblemCompletion(currentDuration);
+					// Durations currentDuration =
+					// db.viewDurationsById(submission.getUsers().getId(),
+					// submission.getProblem().getId());
+					// db.updateDurationsOnProblemCompletion(currentDuration);
 				} else {
 					submission.setResult(resultRepository.findByName("Incorrect"));
 				}
@@ -374,7 +685,7 @@ public class EvaluateSubmissions implements Runnable {
 	private int validateResult(String tcOutput, String output) {
 		System.out.println("\n\nComparing results");
 		System.out.println(tcOutput + " - " + output + "\n\n\n");
-		
+
 		if (tcOutput.trim().equals(output.trim())) {
 			return 1;
 		} else if (output.trim().equals("")) {
@@ -387,6 +698,21 @@ public class EvaluateSubmissions implements Runnable {
 		PrintWriter writer = null;
 		try {
 			writer = new PrintWriter(PATH_SPRING + "/" + fileName, "UTF-8");
+			writer.print(text);
+			writer.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			Logger.getLogger("Create File").log(Level.SEVERE, "Error creating file", e);
+			e.printStackTrace();
+		}
+	}
+
+	public void createFileInFolder(String text, String folder, String fileName) {
+		PrintWriter writer = null;
+		try {
+			new File(PATH_SPRING + "/" + folder).mkdirs();
+			writer = new PrintWriter(PATH_SPRING + "/" + folder + "/" + fileName, "UTF-8");
 			writer.print(text);
 			writer.close();
 		} catch (FileNotFoundException e) {
@@ -420,14 +746,6 @@ public class EvaluateSubmissions implements Runnable {
 
 	public void setHost(Host host) {
 		this.host = host;
-	}
-
-	public Submissions getSubmission() {
-		return submission;
-	}
-
-	public void setSubmission(Submissions submission) {
-		this.submission = submission;
 	}
 
 }

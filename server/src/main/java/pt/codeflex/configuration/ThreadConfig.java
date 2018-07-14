@@ -16,8 +16,8 @@ public class ThreadConfig {
 		//https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ThreadPoolExecutor.html#setCorePoolSize-int
 		
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-		executor.setCorePoolSize(25);
-		executor.setMaxPoolSize(25);
+		executor.setCorePoolSize(1);
+		executor.setMaxPoolSize(1);
 		executor.setThreadNamePrefix("default_task_executor_thread");
 		executor.initialize();
 		return executor;
