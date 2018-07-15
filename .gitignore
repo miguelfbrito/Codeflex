@@ -3,7 +3,7 @@
 .recommenders
 # Log file
 *.log
-application.properties
+#application.properties
 # BlueJ files
 *.ctxt
 

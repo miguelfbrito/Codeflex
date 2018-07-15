@@ -1,3 +1,5 @@
+import { URL } from './Constants';
+
 export const sum = (a, b) => {
     console.log(a + b);
 }
@@ -141,22 +143,24 @@ export const dateSameDay = (date1, date2) => {
 }
 
 export const isRegistered = () => {
-        console.log(" A VERIFICAR REGISTO DO UTILIZADOR ")
-        let url = splitUrl(window.location.pathname);
-        if (typeof url[1] != "undefined") {
-            fetch(URL + '/api/database/rating/isUserRegisteredInTournamentByNameRE/' + parseLocalJwt().username + "/" + url[1], {
-                headers: new Headers({
-                    ...getAuthorization(),
-                    'Content-Type': 'application/json'
-                })
-            }).then(res => {
-                if (res.status === 200) {
-                    console.log("REGISTADO")
-                    return true;
-                }
+    console.log("123123 A VERIFICAR REGISTO DO UTILIZADOR ")
+    let url = splitUrl(window.location.pathname);
+    console.log(url);
+    let registered = false;
+    if (typeof url[1] != "undefined") {
+        fetch(URL + '/api/database/rating/isUserRegisteredInTournamentByNameRE/' + parseLocalJwt().username + "/" + url[1], {
+            headers: new Headers({
+                ...getAuthorization(),
+                'Content-Type': 'application/json'
+            })
+        }).then(res => {
+            if (res.status === 200) {
+                console.log("REGISTADO")
+                return true;
+            } else {
                 console.log("NAO ESTA REGISTADo")
                 return false;
-            })
-        }
-        return false;
+            }
+        })
     }
+}
