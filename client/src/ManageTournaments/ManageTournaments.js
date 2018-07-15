@@ -101,7 +101,7 @@ class ManageTournaments extends React.Component {
                 if (this.state.location === 'compete') {
                     window.location.href = "/compete/manage-tournaments/" + textToLowerCaseNoSpaces(name) + "/edit";
                 } else {
-                    window.location.href = textToLowerCaseNoSpaces(name) + "/edit"
+                    window.location.href = "/manage/tournaments/" +textToLowerCaseNoSpaces(name) + "/edit"
                 }
                 break;
             default:

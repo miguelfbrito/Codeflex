@@ -35,7 +35,7 @@ class CreateTournament extends React.Component {
     componentDidMount() {
         this.setState({ location: splitUrl(this.props.location.pathname)[0] });
         let url = splitUrl(this.props.location.pathname);
-        if (url[0] === 'compete' && url[3] === 'edit') {
+        if (url[3] === 'edit') {
             this.fetchTournament();
         }
     }
@@ -112,7 +112,7 @@ class CreateTournament extends React.Component {
         return true;
     }
 
-    editTournament = () => {
+    updateTournament = () => {
         let data = {
             name: this.state.name,
             description: this.state.description,
@@ -123,21 +123,18 @@ class CreateTournament extends React.Component {
         }
 
         fetch(URL + '/api/database/tournament/update', {
+            method: 'POST',
+            body: JSON.stringify(data),
             headers: new Headers({
-                method: 'POST',
-                body: JSON.stringify(data),
                 ...getAuthorization(),
                 'Content-Type': 'application/json'
             })
-        }).then(res => res.json()
-        ).then(data => {
-
+        }).then(() => {
             if (this.onCompete()) {
                 window.location.href = "/compete/manage-tournaments"
             } else {
                 window.location.href = "/manage/tournaments"
             }
-
         })
 
     }
@@ -205,12 +202,20 @@ class CreateTournament extends React.Component {
 
     pathLinkTitle = () => {
         let url = splitUrl(this.props.location.pathname);
-        if (url[0] === 'compete') {
-            if (url[3] === 'edit') {
-                return "Edit"
-            }
+        if (url[3] === 'edit') {
+            return "Edit"
         }
         return "Create Tournament"
+    }
+
+    onSubmit = () => {
+        let url = splitUrl(this.props.location.pathname);
+        if (typeof url[3] != "undefined" && url[3] === 'edit') {
+            this.updateTournament();
+        } else {
+            this.createTournament();
+        }
+
     }
 
     render() {
@@ -287,7 +292,7 @@ class CreateTournament extends React.Component {
                                 </div> : ''}
                             <div className="form-group">
                                 <div className="col-sm-offset-1 col-sm-11 col-xs-12 col-md-12" style={{ textAlign: 'left' }}>
-                                    <input type="button" id="btn btn-primary" className="btn btn-codeflex" onClick={this.createTournament} value="Save" />
+                                    <input type="button" id="btn btn-primary" className="btn btn-codeflex" onClick={this.onSubmit} value="Save" />
                                 </div>
                             </div>
                         </form>

@@ -232,7 +232,9 @@ public class EvaluateSubmissions implements Runnable {
 					PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName() + "/");
 
 			// removes the last unecessary &&
-			obtainOutput = obtainOutput.substring(0, obtainOutput.length() - 2);
+			if (obtainOutput.length() > 2) {
+				obtainOutput = obtainOutput.substring(0, obtainOutput.length() - 2);
+			}
 			obtainOutput += " ) 2> err";
 
 			// executes submissions in parallelism
@@ -240,7 +242,6 @@ public class EvaluateSubmissions implements Runnable {
 			String output = runTestCasesForSubmission(submission, obtainOutput);
 			System.out.println("\n\n\n" + output + "\n\n\n");
 
-			
 			//
 			// Evaluation
 			//
@@ -373,7 +374,7 @@ public class EvaluateSubmissions implements Runnable {
 			String output = IOUtils.readFully(cmd.getInputStream()).toString();
 
 			System.out.println("OUTPUT " + output);
-			
+
 			cmd.close();
 			return output;
 		} catch (IOException e) {
@@ -381,7 +382,6 @@ public class EvaluateSubmissions implements Runnable {
 		}
 
 		return null;
-
 
 	}
 

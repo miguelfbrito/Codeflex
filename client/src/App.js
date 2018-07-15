@@ -92,22 +92,18 @@ class App extends Component {
 
                 <Route exact path="/leaderboard" component={PageWrapper(GlobalLeaderboard)} />
 
-                {this.manageSectionControl() ?
-                  <React.Fragment>
-                    <Route exact path="/manage" component={PageWrapper(ManageContent)} />
-                    <Route exact path="/manage/problems" component={PageWrapper(ManageProblems)} />
-                    <Route exact path="/manage/problems/add" component={PageWrapper(AddProblem)} />
-                    <Route exact path="/manage/problems/edit/:problemName" component={PageWrapper(AddProblem)} />
-                    <Route exact path="/manage/problems/:problemName/test-cases" component={PageWrapper(ManageTestCases)} />
-                    <Route exact path="/manage/tournaments" component={PageWrapper(ManageTournaments)} />
-                    <Route exact path="/manage/tournaments/:tournamentName" component={PageWrapper(ManageProblems)} />
-                    <Route exact path="/manage/tournaments/:tournamentName/edit" component={PageWrapper(CreateTournament)} />
-                    <Route exact path="/manage/tournaments/:tournamentName/:problemName" component={PageWrapper(ManageProblems)} />
-                    <Route exact path="/manage/tournaments/:tournamentName/:problemName/test-cases" component={PageWrapper(ManageTestCases)} />
-                    <Route exact path="/manage/tournaments/add" component={PageWrapper(CreateTournament)} />
-                    <Route exact path="/manage/categories" component={PageWrapper(ManageCategories)} />
-                  </React.Fragment> : ''
-                }
+                {this.manageSectionControl() ? <Route exact path="/manage" component={PageWrapper(ManageContent)} /> : ''}
+                {this.manageSectionControl() ? <Route exact path="/manage/problems" component={PageWrapper(ManageProblems)} /> : ''}
+                {this.manageSectionControl() ? <Route exact path="/manage/problems/add" component={PageWrapper(AddProblem)} /> : ''}
+                {this.manageSectionControl() ? <Route exact path="/manage/problems/edit/:problemName" component={PageWrapper(AddProblem)} /> : ''}
+                {this.manageSectionControl() ? <Route exact path="/manage/problems/:problemName/test-cases" component={PageWrapper(ManageTestCases)} /> : ''}
+                {this.manageSectionControl() ? <Route exact path="/manage/tournaments" component={PageWrapper(ManageTournaments)} /> : ''}
+                {this.manageSectionControl() ? <Route exact path="/manage/tournaments/add" component={PageWrapper(CreateTournament)} /> : ''}
+                {this.manageSectionControl() ? <Route exact path="/manage/tournaments/:tournamentName/edit" component={PageWrapper(CreateTournament)} /> : ''}
+                {this.manageSectionControl() ? <Route exact path="/manage/tournaments/:tournamentName" component={PageWrapper(ManageProblems)} /> : ''}
+                {this.manageSectionControl() ? <Route exact path="/manage/tournaments/:tournamentName/:problemName" component={PageWrapper(ManageProblems)} /> : ''}
+                {this.manageSectionControl() ? <Route exact path="/manage/tournaments/:tournamentName/:problemName/test-cases" component={PageWrapper(ManageTestCases)} /> : ''}
+                {this.manageSectionControl() ? <Route exact path="/manage/categories" component={PageWrapper(ManageCategories)} /> : ''}
 
                 <Route component={PageWrapper(PageNotFound)} />
               </Switch>

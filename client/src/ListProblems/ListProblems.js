@@ -154,6 +154,7 @@ class ListProblems extends Component {
                     <div className="col-sm-10 problems-container">
 
                         {this.state.filteredProblems.sort((a, b) => a.difficulty.id - b.difficulty.id).map((problem, index) => (
+                            
                             <div className="problem-container">
                                 <div>
                                     <p id="problem-name">

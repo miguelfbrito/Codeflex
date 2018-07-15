@@ -34,25 +34,34 @@ class ManageProblems extends React.Component {
         }
 
         if (origin === 'tournament') {
-            fetch(URL + '/api/database/Tournament/getAllProblemsByName/' + url[2], {
-                headers: { ...getAuthorization() }
-            }).then(res => res.json())
-                .then(data => {
-                    console.log(data);
-                    this.setState({ problems: data });
-                })
+            this.fetchAllProblemsByTournamentName(url[2]);
         } else if (origin === 'manage') {
-            fetch(URL + '/api/database/Problem/viewAllByOwnerUsername/' + parseLocalJwt().username, {
-                headers: { ...getAuthorization() }
-            })
-                .then(res => res.json())
-                .then(data => {
-                    data = data.filter(d => d.tournament === null);
-                    console.log('Getting problems from manage')
-                    console.log(data);
-                    this.setState({ problems: data });
+            if (url[1] === 'problems') {
+
+                fetch(URL + '/api/database/Problem/viewAllByOwnerUsername/' + parseLocalJwt().username, {
+                    headers: { ...getAuthorization() }
                 })
+                    .then(res => res.json())
+                    .then(data => {
+                        data = data.filter(d => d.tournament === null);
+                        console.log('Getting problems from manage')
+                        console.log(data);
+                        this.setState({ problems: data });
+                    })
+            } else if (url[1] === 'tournaments') {
+                this.fetchAllProblemsByTournamentName(url[2]);
+            }
         }
+    }
+
+    fetchAllProblemsByTournamentName = (tournamentName) => {
+        fetch(URL + '/api/database/Tournament/getAllProblemsByName/' + tournamentName, {
+            headers: { ...getAuthorization() }
+        }).then(res => res.json())
+            .then(data => {
+                console.log(data);
+                this.setState({ problems: data });
+            })
     }
 
     deleteProblem = (p) => {
@@ -67,7 +76,7 @@ class ManageProblems extends React.Component {
                 let index = currentProblems.indexOf(p);
                 currentProblems.splice(index, 1);
 
-                this.setState({problems: currentProblems});
+                this.setState({ problems: currentProblems });
 
             }).catch((error) => console.log(error));
     }
