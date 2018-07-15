@@ -19,6 +19,7 @@ public class Host {
 	private boolean beingUsed;
 	private Date lastDateAttributed;
 	
+	
 	public Host(String ip, int port, String user, SSHClient ssh, String fingerprint, boolean beingUsed) {
 		super();
 		this.ip = ip;

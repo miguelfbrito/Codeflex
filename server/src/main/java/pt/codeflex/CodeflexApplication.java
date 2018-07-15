@@ -41,8 +41,8 @@ public class CodeflexApplication {
 
 	@Bean
 	public Host fetchAndConnectHosts() {
-		Host h1 = new Host("192.168.1.65", 22, "mbrito", new SSHClient(),
-				"33:02:cb:3b:13:b1:bd:fa:66:ff:29:96:ea:ff:dc:78", false);
+		Host h1 = new Host("172.31.45.122", 22, "ubuntu", new SSHClient(),
+				"20:0c:b2:25:49:45:59:58:75:c5:2b:c5:84:02:a7:a9", false);
 		connect(h1);
 
 		return h1;
@@ -52,12 +52,14 @@ public class CodeflexApplication {
 		SSHClient ssh = host.getSsh();
 		try {
 			ssh.addHostKeyVerifier(host.getFingerprint());
-			// https://stackoverflow.com/questions/9283556/sshj-keypair-login-to-ec2-instance
-			// PKCS8KeyFile keyFile = new PKCS8KeyFile();
-			// keyFile.init(new File("c:\\Users\\mbrito\\.ssh\\aws.pem"));
-
 			ssh.connect(host.getIp(), host.getPort());
-			ssh.authPublickey("mbrito");
+
+			// https://stackoverflow.com/questions/9283556/sshj-keypair-login-to-ec2-instance
+			PKCS8KeyFile keyFile = new PKCS8KeyFile();
+			keyFile.init(new File("~/aws.pem"));
+			ssh.auth("ubuntu", new AuthPublickey(keyFile));
+
+			// ssh.authPublickey("mbrito");
 
 			Session session = ssh.startSession();
 			Command cmd = session.exec("rm -rf Submissions/*");
