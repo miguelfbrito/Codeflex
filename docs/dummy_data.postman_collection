@@ -197,7 +197,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"username\" : \"mbrito4124\",\n\t\"email\" : \"mbrito12414@gmail.com\",\n\t\"password\" : \"gomas\"\n}"
+							"raw": "{\n\t\"username\" : \"mbrito\",\n\t\"email\" : \"mbritogmail.com\",\n\t\"password\" : \"gomas\"\n}"
 						},
 						"url": {
 							"raw": "http://{{host}}:{{port}}/api/database/Users/add",
@@ -425,6 +425,29 @@
 						}
 					},
 					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2fcaf6ae-aebd-453f-bb0c-63952e2c91f9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "f914edce-3b55-480b-954a-f2aefe66ed23",
+						"type": "text/javascript",
+						"exec": [
+							"let reqBody = JSON.parse(request.data);",
+							"console.log(reqBody);"
+						]
+					}
 				}
 			]
 		},
@@ -996,6 +1019,24 @@
 			"item": [
 				{
 					"name": "add problem",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3b8e857b-4a3b-4ce1-87fa-2784d9a104ef",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"status code 200\", () => {",
+									"    ",
+									"})",
+									"",
+									"pm.test(\"correct data inserted\", () => {",
+									"    pm.response.to.have.jsonBody(JSON.parse(request.data));",
+									"})"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -2877,7 +2918,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"Tournament Number 1\",\n\t\"description\" : \"This is the description of the tournament number 1\",\n\t\"startingDate\" : \"2018-06-01\",\n\t\"endingDate\" : \"2018-08-31\",\n\t\"owner\" : {\n\t\t\"id\" : 1\n\t},\n\t\"showWebsite\" : true\n\t\n}"
+							"raw": "{\n\t\"name\" : \"Tournament Number 1\",\n\t\"description\" : \"This is the description of the tournament number 1\",\n\t\"startingDate\" : \"2018-06-01\",\n\t\"endingDate\" : \"2018-08-31\",\n\t\"owner\" : {\n\t\t\"username\" : \"mbrito\"\n\t},\n\t\"showWebsite\" : true\n\t\n}"
 						},
 						"url": {
 							"raw": "http://{{host}}:{{port}}/api/database/Tournament/add",
@@ -2912,7 +2953,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"Tournament Number 2\",\n\t\"description\" : \"Teste This is the description of the tournament number 2\",\n\t\"startingDate\" : \"2018-06-06\",\n\t\"endingDate\" : \"2018-06-31\",\n\t\"code\" : \"CODEFLEX\",\n\t\"owner\" : {\n\t\t\"id\" : 1\n\t},\n\t\"showWebsite\" : false\n\t\n}"
+							"raw": "{\n\t\"name\" : \"Tournament Number 2\",\n\t\"description\" : \"Teste This is the description of the tournament number 2\",\n\t\"startingDate\" : \"2018-06-06\",\n\t\"endingDate\" : \"2018-06-31\",\n\t\"code\" : \"CODEFLEX\",\n\t\"owner\" : {\n\t\t\"username\" : \"mbrito\"\n\t},\n\t\"showWebsite\" : false\n\t\n}"
 						},
 						"url": {
 							"raw": "http://{{host}}:{{port}}/api/database/Tournament/add",
@@ -2947,7 +2988,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\" : \"Tournament Number 3\",\n  \"description\" : \"This is the description of the tournament number 3\",\n  \"startingDate\" : \"2018-06-01T22:30:30\",\n  \"endingDate\" : \"2018-06-05T12:45:55\",\n  \"owner\" : {\n    \"id\" : 1\n  },\n  \"showWebsite\" : false\n}"
+							"raw": "{\n  \"name\" : \"Tournament Number 3\",\n  \"description\" : \"This is the description of the tournament number 3\",\n  \"startingDate\" : \"2018-06-01T22:30:30\",\n  \"endingDate\" : \"2018-06-05T12:45:55\",\n  \"owner\" : {\n    \"username\" : \"mbrito\"\n  },\n  \"showWebsite\" : false\n}"
 						},
 						"url": {
 							"raw": "http://{{host}}:{{port}}/api/database/Tournament/add",
@@ -2982,7 +3023,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"Tournament Number 4\",\n\t\"description\" : \"This is the description of the tournament number 4\",\n\t\"startingDate\" : \"2018-06-09T13:07:00\",\n\t\"endingDate\" : \"2018-06-09T13:09:00\",\n\t\"showWebsite\" : true\n}"
+							"raw": "{\n\t\"name\" : \"Tournament Number 4\",\n\t\"description\" : \"This is the description of the tournament number 4\",\n\t\"startingDate\" : \"2018-06-09T13:07:00\",\n\t\"endingDate\" : \"2018-06-09T13:09:00\",\n\t  \"owner\" : {\n    \"username\" : \"mbrito\"\n  },\n\t\"showWebsite\" : true\n}"
 						},
 						"url": {
 							"raw": "http://{{host}}:{{port}}/api/database/Tournament/add",
@@ -3017,7 +3058,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\" : \"Tournament Number 5\",\n  \"description\" : \"This is the description of the tournament number 5\",\n  \"startingDate\" : \"2018-06-09T13:09:00\",\n  \"endingDate\" : \"2018-06-09T13:11:00\",\n  \"showWebsite\" : true\n}"
+							"raw": "{\n  \"name\" : \"Tournament Number 5\",\n  \"description\" : \"This is the description of the tournament number 5\",\n  \"startingDate\" : \"2018-06-09T13:09:00\",\n  \"endingDate\" : \"2018-06-09T13:11:00\",\n    \"owner\" : {\n    \"username\" : \"mbrito\"\n  },\n  \"showWebsite\" : true\n}"
 						},
 						"url": {
 							"raw": "http://{{host}}:{{port}}/api/database/Tournament/add",

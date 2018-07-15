@@ -43,7 +43,7 @@ public class CodeflexApplication {
 	public Host fetchAndConnectHosts() {
 		Host h1 = new Host("172.31.45.122", 22, "ubuntu", new SSHClient(),
 				"20:0c:b2:25:49:45:59:58:75:c5:2b:c5:84:02:a7:a9", false);
-		connect(h1);
+		//connect(h1);
 
 		return h1;
 	}
@@ -55,11 +55,11 @@ public class CodeflexApplication {
 			ssh.connect(host.getIp(), host.getPort());
 
 			// https://stackoverflow.com/questions/9283556/sshj-keypair-login-to-ec2-instance
-			PKCS8KeyFile keyFile = new PKCS8KeyFile();
-			keyFile.init(new File("~/aws.pem"));
-			ssh.auth("ubuntu", new AuthPublickey(keyFile));
+//			PKCS8KeyFile keyFile = new PKCS8KeyFile();
+//			keyFile.init(new File("~/aws.pem"));
+//			ssh.auth("ubuntu", new AuthPublickey(keyFile));
 
-			// ssh.authPublickey("mbrito");
+			 ssh.authPublickey("mbrito");
 
 			Session session = ssh.startSession();
 			Command cmd = session.exec("rm -rf Submissions/*");
