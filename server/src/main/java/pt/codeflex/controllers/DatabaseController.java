@@ -822,6 +822,28 @@ public class DatabaseController {
 		}
 		return false;
 	}
+
+	@GetMapping(path = "/Rating/isUserRegisteredInTournamentByNameRE/{username}/{tournamentName}")
+	public ResponseEntity<?> isUserRegisterdInTournamentRE(@PathVariable String username,
+			@PathVariable String tournamentName) {
+		Users user = viewUsersByUsername(username);
+		Tournament tournament = viewTournamentByName(tournamentName);
+
+		if (user != null && tournament != null) {
+
+			Optional<Rating> r = ratingRepository.findById(new RatingID(tournament.getId(), user.getId()));
+
+			if (r.isPresent()) {
+				System.out.println("O utilizador encontra-se registado");
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
+
+		}
+		
+		System.out.println("O utilizador não está registado");
+		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+	}
+
 	/*
 	 * @PostMapping(path = "/Rating/edit") public void editRating(@RequestParam long
 	 * id) { Optional<Rating> r = ratingRepository.findById(id);
@@ -1175,6 +1197,28 @@ public class DatabaseController {
 		}
 
 		return finalLeaderboard;
+	}
+
+	@GetMapping("/Tournament/isUserTournamentOwner/{tournamentName}/{username}")
+	public ResponseEntity<?> isUserTournamentOwner(@PathVariable String tournamentName, @PathVariable String username) {
+
+		Users user = viewUsersByUsername(username);
+
+		if (user == null) {
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+
+		Tournament tournament = viewTournamentByName(tournamentName);
+
+		if (tournament == null) {
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+
+		if (tournament.getOwner() == user) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+
+		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 	}
 
 	@PostMapping(path = "/Tournament/add")

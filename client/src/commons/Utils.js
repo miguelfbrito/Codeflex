@@ -101,9 +101,9 @@ export const parseLocalJwt = () => {
 export const getToken = () => {
     if (localStorage.getItem('token')) {
         return localStorage.getItem('token');
-    } 
+    }
     // returns random invalid token
-    return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"; 
+    return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 }
 
 export const getAuthorization = () => {
@@ -139,3 +139,24 @@ export const dateSameDay = (date1, date2) => {
     }
     return false;
 }
+
+export const isRegistered = () => {
+        console.log(" A VERIFICAR REGISTO DO UTILIZADOR ")
+        let url = splitUrl(window.location.pathname);
+        if (typeof url[1] != "undefined") {
+            fetch(URL + '/api/database/rating/isUserRegisteredInTournamentByNameRE/' + parseLocalJwt().username + "/" + url[1], {
+                headers: new Headers({
+                    ...getAuthorization(),
+                    'Content-Type': 'application/json'
+                })
+            }).then(res => {
+                if (res.status === 200) {
+                    console.log("REGISTADO")
+                    return true;
+                }
+                console.log("NAO ESTA REGISTADo")
+                return false;
+            })
+        }
+        return false;
+    }
