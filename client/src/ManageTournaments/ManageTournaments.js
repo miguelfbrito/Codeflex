@@ -71,28 +71,47 @@ class ManageTournaments extends React.Component {
 
     }
 
-    onIconClick(e, problemName) {
+    onIconClick(e, name) {
+
+
+        console.log("LOOOGG")
         console.log(e.target.id)
+        console.log(name);
+
+        let destination = textToLowerCaseNoSpaces(name);
+
         switch (e.target.id) {
             case 'visibility':
                 this.setState({ redirectDestination: 'visibility' })
+
+                if (this.state.location === 'compete') {
+                    window.location.href = "/compete/manage-tournaments/" + destination;
+                } else {
+                    window.location.href = "/manage/tournaments/" + destination;
+                }
+
                 break;
             case 'delete':
                 this.setState({ redirectDestination: 'delete' })
                 break;
             case 'edit':
+
                 this.setState({ redirectDestination: 'edit' })
+
+                if (this.state.location === 'compete') {
+                    window.location.href = "/compete/manage-tournaments/" + textToLowerCaseNoSpaces(name) + "/edit";
+                } else {
+                    window.location.href = textToLowerCaseNoSpaces(name) + "/edit"
+                }
                 break;
             default:
                 break;
         }
 
-        this.setState({ redirect: true, problemDestination: textToLowerCaseNoSpaces(problemName) });
     }
 
     render() {
         const rows = this.state.tournaments.length;
-        console.log("ROWS " + rows);
         return (
             <div className="container">
                 <div className="row">
@@ -147,15 +166,8 @@ class ManageTournaments extends React.Component {
                                             <i className="material-icons manage-tournament-icon" id="visibility" onClick={(e, name) => this.onIconClick(e, t.tournament.name)} >visibility</i>
                                             <i className="material-icons manage-tournament-icon" id="edit" onClick={(e, name) => this.onIconClick(e, t.tournament.name)}>edit</i>
                                             <i className="material-icons manage-tournament-icon" id="delete" onClick={(name) => this.onIconDelete(t.tournament.name)}>delete</i>
-                                            {console.log("Icon index " + t.tournament.name)}
-                                            {this.state.redirect && this.state.redirectDestination === 'visibility' ?
-                                                <Redirect to={this.state.location === 'compete' ?
-                                                    { pathname: "/compete/manage-tournaments/" + this.state.problemDestination } :
-                                                    { pathname: "/manage/tournaments/" + this.state.problemDestination }} /> : ''}
 
-                                            {this.state.redirect && this.state.redirectDestination === 'edit' ?
-                                                <Redirect to={this.state.location === 'compete' ? { pathname: "/compete/manage-tournaments/" + textToLowerCaseNoSpaces(t.tournament.name) + "/edit" }
-                                                    : { pathname: "/manage/tournaments/" + textToLowerCaseNoSpaces(t.tournament.name) + "/edit" }} /> : ''}
+
                                         </div>
                                     )
                                 }

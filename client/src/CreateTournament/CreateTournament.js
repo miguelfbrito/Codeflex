@@ -34,6 +34,31 @@ class CreateTournament extends React.Component {
 
     componentDidMount() {
         this.setState({ location: splitUrl(this.props.location.pathname)[0] });
+        let url = splitUrl(this.props.location.pathname);
+        if (url[0] === 'compete' && url[3] === 'edit') {
+            this.fetchTournament();
+        }
+    }
+
+    fetchTournament = () => {
+        fetch(URL + '/api/database/tournament/viewByName/' + this.props.match.params.tournamentName, {
+            headers: new Headers({
+                ...getAuthorization(),
+                'Content-Type': 'application/json'
+            })
+        }).then(res => res.json()
+        ).then(data => {
+            console.log('hi');
+            console.log(data);
+            this.setState({
+                startDate: moment(data.startingDate),
+                endDate: moment(data.endingDate),
+                name: data.name,
+                description: data.description,
+                privateCode: data.code
+            })
+
+        })
     }
 
     handleChangeStart(date) {
@@ -78,13 +103,43 @@ class CreateTournament extends React.Component {
                 return false;
             }
 
-            if(this.state.location === 'compete' && !validateLength(data.code, 5, 50) && !validateStringCharsNoSpaces(data.code)){
+            if (this.state.location === 'compete' && !validateLength(data.code, 5, 50) && !validateStringCharsNoSpaces(data.code)) {
                 toast.error("Invalid code, it must be between 5 and 50 in length and no special characters.")
                 return false;
             }
         }
 
         return true;
+    }
+
+    editTournament = () => {
+        let data = {
+            name: this.state.name,
+            description: this.state.description,
+            startingDate: this.state.startDate,
+            endingDate: this.state.endDate,
+            code: this.state.privateCode,
+            owner: { username: parseLocalJwt().username }
+        }
+
+        fetch(URL + '/api/database/tournament/update', {
+            headers: new Headers({
+                method: 'POST',
+                body: JSON.stringify(data),
+                ...getAuthorization(),
+                'Content-Type': 'application/json'
+            })
+        }).then(res => res.json()
+        ).then(data => {
+
+            if (this.onCompete()) {
+                window.location.href = "/compete/manage-tournaments"
+            } else {
+                window.location.href = "/manage/tournaments"
+            }
+
+        })
+
     }
 
     createTournament() {
@@ -98,17 +153,14 @@ class CreateTournament extends React.Component {
             owner: { username: parseLocalJwt().username }
         }
 
-        if(this.state.location === 'manage'){
+        if (this.state.location === 'manage') {
             data = {
                 ...data,
-                showWebsite : true
+                showWebsite: true
             }
         }
-        
 
         console.log(data);
-
-
         if (!this.validateTournament(data)) {
             return;
         }
@@ -132,13 +184,34 @@ class CreateTournament extends React.Component {
             }
         }).then(data => {
             console.log(data);
-         //   window.location.href = "/compete/manage-tournaments/" + textToLowerCaseNoSpaces(this.state.name);
+            if (this.onCompete) {
+                window.location.href = "/compete/manage-tournaments/" + textToLowerCaseNoSpaces(this.state.name);
+            } else {
+                window.location.href = "/manage/tournaments/" + textToLowerCaseNoSpaces(this.state.name);
+            }
         }).catch((e) => {
             console.log('errro' + e)
         })
 
     }
 
+    onCompete = () => {
+        let url = splitUrl(this.props.location.pathname);
+        if (url[0] === 'compete') {
+            return true;
+        }
+        return false;
+    }
+
+    pathLinkTitle = () => {
+        let url = splitUrl(this.props.location.pathname);
+        if (url[0] === 'compete') {
+            if (url[3] === 'edit') {
+                return "Edit"
+            }
+        }
+        return "Create Tournament"
+    }
 
     render() {
 
@@ -147,7 +220,7 @@ class CreateTournament extends React.Component {
         return (
             <div className="container">
                 <div className="row">
-                    <PathLink path={this.props.location.pathname} title="Create tournament" />
+                    <PathLink path={this.props.location.pathname} title={this.pathLinkTitle()} />
                     <div className="tournament-creation-container">
                         <div className="tournament-creation-top">
                             <h3 className="page-subtitle">Host your own tournament at Codeflex and compete with your friends.</h3>
@@ -158,14 +231,14 @@ class CreateTournament extends React.Component {
                             <div className="form-group">
                                 <label for="tournamentName" className="col-sm-1 control-label" >Name</label>
                                 <div className="col-sm-5">
-                                    <input type="tournamentName" className="form-control" id="name" onChange={this.handleChange} placeholder="Tournament name" />
+                                    <input type="tournamentName" className="form-control" id="name" onChange={this.handleChange} value={this.state.name} placeholder="Tournament name" />
                                     <small className="fill-info">Length between 5 and 50 characters. No special characters except ':' and '_'</small>
                                 </div>
                             </div>
                             <div className="form-group">
                                 <label for="tournamentDescription" className="col-sm-1 control-label">Description</label>
                                 <div className="col-sm-10">
-                                    <textarea className="form-control" id="description" rows="6" onChange={this.handleChange} placeholder="Short tournament description"></textarea>
+                                    <textarea className="form-control" id="description" rows="6" onChange={this.handleChange} value={this.state.description} placeholder="Short tournament description"></textarea>
                                     <small className="fill-info">Length between 50 and 1000 characters</small>
                                 </div>
                             </div>
@@ -208,13 +281,13 @@ class CreateTournament extends React.Component {
                                 <div className="form-group">
                                     <label htmlFor="tournamentName" className="col-sm-1 control-label">Private Code</label>
                                     <div className="col-sm-4" style={{ display: 'inline-block' }}>
-                                        <input type="code" className="form-control" id="privateCode" onChange={this.handleChange} placeholder="Private code" />
-                                        <small className="fill-info"> Add a private code that you can share with your friends to register on the tournament</small>
+                                        <input type="code" className="form-control" id="privateCode" onChange={this.handleChange} value={this.state.privateCode} placeholder="Private code" />
+                                        <small className="fill-info">Add a private code that you can share with your friends to register on the tournament</small>
                                     </div>
                                 </div> : ''}
                             <div className="form-group">
-                                <div className="col-sm-offset-1 col-sm-11 col-xs-12 col-md-12" style={{ textAlign: 'left'}}>
-                                    <input type="button" id="btn btn-primary" className="btn btn-codeflex" onClick={this.createTournament} value="Create" />
+                                <div className="col-sm-offset-1 col-sm-11 col-xs-12 col-md-12" style={{ textAlign: 'left' }}>
+                                    <input type="button" id="btn btn-primary" className="btn btn-codeflex" onClick={this.createTournament} value="Save" />
                                 </div>
                             </div>
                         </form>
