@@ -4,10 +4,11 @@ import Popup from '../Popup/Popup';
 import LoadFiles from '../LoadFiles/LoadFiles';
 
 import { URL } from '../commons/Constants';
-import { splitUrl, getAuthorization, parseLocalJwt, getRndInteger, readFile } from '../commons/Utils';
+import { splitUrl, getAuthorization, parseLocalJwt, getRndInteger, readFile, isContentManager } from '../commons/Utils';
 
 import '../../node_modules/react-table/react-table.css'
 import './ManageTestCases.css';
+import PageNotFound from '../PageNotFound/PageNotFound';
 
 
 
@@ -22,6 +23,7 @@ class ManageTestCases extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            userIsOwner: true,
             testCases: [],
             input: '',
             popupInfo: [],
@@ -52,7 +54,16 @@ class ManageTestCases extends React.Component {
     }
 
     componentDidMount() {
+        if (!isContentManager()) {
+            this.isUserTournamentOwner();
+        }
         this.fetchTestCases();
+    }
+
+    isUserTournamentOwner = () => {
+        fetch(URL + '/api/database/tournament/isUserTournamentOwner/' + this.props.match.params + "/" + parseLocalJwt().username, {
+            headers: new Headers({ ...getAuthorization() })
+        }).then(res => { if (res.status === 200) { this.setState({ userIsOwner: true }); } else { this.setState({ userIsOwner: false }); } })
     }
 
     onClick(text, mode, title, testCase) {
@@ -247,6 +258,12 @@ class ManageTestCases extends React.Component {
     }
 
     render() {
+
+        if (!this.state.userIsOwner) {
+            return (
+                <PageNotFound />
+            )
+        }
 
         const PopupInformation = () => (
             <div className="tc-popup">

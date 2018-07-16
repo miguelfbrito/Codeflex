@@ -823,12 +823,14 @@ public class DatabaseController {
 		return false;
 	}
 
-	@GetMapping(path = "/Rating/isUserRegisteredInTournamentByNameRE/{username}/{tournamentName}")
-	public ResponseEntity<?> isUserRegisterdInTournamentRE(@PathVariable String username,
+	@GetMapping(path = "/Rating/isUserRegisteredInTournamentTEST/{username}/{tournamentName}")
+	public ResponseEntity<?> isUserRegisterdInTournamentTEST(@PathVariable String username,
 			@PathVariable String tournamentName) {
 		Users user = viewUsersByUsername(username);
 		Tournament tournament = viewTournamentByName(tournamentName);
-
+		
+		System.out.println("Checking: is user registered");
+		
 		if (user != null && tournament != null) {
 
 			Optional<Rating> r = ratingRepository.findById(new RatingID(tournament.getId(), user.getId()));

@@ -6,12 +6,14 @@ import PathLink from '../PathLink/PathLink';
 import ProblemFilter from './ProblemFilter/ProblemFilter';
 
 import './ListProblems.css';
+import PageNotFound from '../PageNotFound/PageNotFound';
 
 class ListProblems extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            registered: true,
             problems: [],
             filteredProblems: [],
             difficulties: []
@@ -25,6 +27,8 @@ class ListProblems extends Component {
     }
 
     componentDidMount() {
+
+        this.isUserRegisteredInTournament();
 
         const url = splitUrl(this.props.location.pathname);
         if (url[0] === 'practise') {
@@ -41,6 +45,19 @@ class ListProblems extends Component {
             }
         })
             .then(res => res.json()).then(data => { this.setState({ difficulties: data }) })
+    }
+
+    isUserRegisteredInTournament = () => {
+        fetch(URL + '/api/database/Rating/isUserRegisteredInTournamentTest/' + parseLocalJwt().username + "/" + this.props.match.params.tournamentName, {
+            headers: { ...getAuthorization() }
+        }).then(res => {
+            if (res.status === 200) {
+                this.setState({ registered: true });
+            } else {
+                this.setState({ registered: false });
+            }
+        })
+
     }
 
     fetchProblemsByTournament() {
@@ -147,6 +164,12 @@ class ListProblems extends Component {
     }
 
     render() {
+
+        if (!this.state.registered) {
+            return (
+                <PageNotFound />
+            )
+        }
         return (
             <div className="container">
                 <div className="row">
@@ -154,7 +177,7 @@ class ListProblems extends Component {
                     <div className="col-sm-10 problems-container">
 
                         {this.state.filteredProblems.sort((a, b) => a.difficulty.id - b.difficulty.id).map((problem, index) => (
-                            
+
                             <div className="problem-container">
                                 <div>
                                     <p id="problem-name">

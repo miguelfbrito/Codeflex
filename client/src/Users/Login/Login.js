@@ -49,8 +49,10 @@ class Login extends Component {
                 "Cache-Control": "no-cache",
             })
         }).then(res => {
-            if (res.status === 403) {
+            if (res.status === 401) {
+                console.log("ERRRROR")
                 toast.error("Invalid credentials", { autoClose: 2500 })
+                return;
             } else {
                 return res.json();
             }

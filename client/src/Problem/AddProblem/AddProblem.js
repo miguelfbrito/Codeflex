@@ -4,18 +4,20 @@ import { Editor } from 'react-draft-wysiwyg';
 import { EditorState, convertToRaw, convertFromRaw } from 'draft-js';
 import { ToastContainer, toast } from 'react-toastify';
 import { URL } from '../../commons/Constants';
-import { splitUrl, getAuthorization, parseLocalJwt } from '../../commons/Utils';
+import { splitUrl, getAuthorization, parseLocalJwt, isContentManager } from '../../commons/Utils';
 import { validateSaveProblem } from './DataValidation';
 
 import 'react-toastify/dist/ReactToastify.css';
 import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import '../../commons/draft-editor.css'
 import './AddProblem.css'
+import PageNotFound from '../../PageNotFound/PageNotFound';
 
 class AddProblem extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            userIsOwner: true,
             problemId: '',
             problemName: '',
             problemMaxScore: 100,
@@ -45,6 +47,10 @@ class AddProblem extends React.Component {
     }
 
     componentDidMount() {
+        if (!isContentManager()) {
+            this.isUserTournamentOwner();
+        }
+
         fetch(URL + '/api/database/difficulty/view', {
             headers: { ...getAuthorization() }
         })
@@ -57,9 +63,15 @@ class AddProblem extends React.Component {
 
         const path = splitUrl(this.props.location.pathname);
 
-        if (path[3] === 'edit' || path[2] === 'edit') {
+        if (path[3] === 'edit' || path[2] === 'edit' || (typeof path[4] != "undefined" && path[4] === 'edit')) {
             this.fetchCurrentProblem();
         }
+    }
+
+    isUserTournamentOwner = () => {
+        fetch(URL + '/api/database/tournament/isUserTournamentOwner/' + this.props.match.params + "/" + parseLocalJwt().username, {
+            headers: new Headers({ ...getAuthorization() })
+        }).then(res => { if (res.status === 200) { this.setState({ userIsOwner: true }); } else { this.setState({ userIsOwner: false }); } })
     }
 
     fetchCurrentProblem() {
@@ -273,6 +285,12 @@ class AddProblem extends React.Component {
 
     render() {
 
+        if (!this.state.userIsOwner) {
+            return (
+                <PageNotFound />
+            )
+        }
+
         const categorySection =
             <div className="row info-section">
                 <div className="col-sm-2 add-problem-desc">
@@ -305,7 +323,7 @@ class AddProblem extends React.Component {
                     </div>
                 </div>
 
-                {splitUrl(this.props.location.pathname)[0] === 'manage' ? <div>{categorySection}</div> : ''}
+                {splitUrl(this.props.location.pathname)[0] === 'manage' && splitUrl(this.props.location.pathname)[1] !== 'tournaments' ? <div>{categorySection}</div> : ''}
 
                 <div className="row info-section">
                     <div className="col-sm-2 add-problem-desc">

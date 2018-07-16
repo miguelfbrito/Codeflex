@@ -1,20 +1,34 @@
 import React from 'react';
 import ReactTable from 'react-table';
 
+import { Redirect } from 'react-router-dom';
 import { URL } from '../commons/Constants';
 import { msToTime, parseLocalJwt, getAuthorization } from '../commons/Utils';
 
 import PathLink from '../PathLink/PathLink';
+import PageNotFound from '../PageNotFound/PageNotFound';
 
 class TournamentLeaderboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            leaderboard: []
+            leaderboard: [],
+            registered: true
         }
     }
 
     componentDidMount() {
+
+        fetch(URL + '/api/database/Rating/isUserRegisteredInTournamentTest/' + parseLocalJwt().username + "/" + this.props.match.params.tournamentName, {
+            headers: { ...getAuthorization() }
+        }).then(res => {
+            if (res.status === 200) {
+                this.setState({ registered: true });
+            } else {
+                this.setState({ registered: false });
+            }
+        })
+
         fetch(URL + '/api/database/Tournament/viewTournamentLeaderboard/' + this.props.match.params.tournamentName, {
             headers: { ...getAuthorization() }
         }).then(res => res.json()).then(data => this.setState({ leaderboard: data })).catch((e) => {
@@ -30,6 +44,13 @@ class TournamentLeaderboard extends React.Component {
         if (JSON.stringify(leaderboardData) != '[]') {
             leaderboardData = leaderboardData.sort((a, b) => { return b.score - a.score || a.totalMilliseconds - b.totalMilliseconds });
         }
+
+        if (!this.state.registered) {
+            return (
+                <PageNotFound />
+            )
+        }
+        
         return (
             <div className="container" >
                 <div className="row">

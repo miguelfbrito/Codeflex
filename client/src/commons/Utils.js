@@ -100,6 +100,14 @@ export const parseLocalJwt = () => {
     return parseJwt(localStorage.getItem('token'));
 }
 
+export const isContentManager = () => {
+    let jwt = parseLocalJwt();
+    if(typeof jwt.role != "undefined" && jwt.role === 'CONTENT_MANAGER') {
+        return true;
+    }
+    return false;
+}
+
 export const getToken = () => {
     if (localStorage.getItem('token')) {
         return localStorage.getItem('token');

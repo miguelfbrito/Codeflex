@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
-
+import { URL } from './commons/Constants';
 import NavBar from './Navbar/Navbar';
 import ListCategories from './ListCategories/ListCategories'
 import ListProblems from './ListProblems/ListProblems'
@@ -22,42 +22,32 @@ import TournamentLeaderboard from './TournamentLeaderboard/TournamentLeaderboard
 import ProfilePage from './Users/ProfilePage/ProfilePage';
 import PageWrapper from './PageWrapper/PageWrapper';
 import LandingPage from './LandingPage/LandingPage';
-import IsUserRegisteredOnTournament from './Permissions/IsUserRegisteredOnTournament';
 
 import './PageWrapper/PageWrapper.css';
 import { parseLocalJwt, splitUrl, getAuthorization } from './commons/Utils';
 
 class App extends Component {
+    constructor(props) {
+        super(props);
+
+    }
 
     manageSectionControl = () => {
         if (this.userLoggedIn()) {
             let jwt = parseLocalJwt();
-            if (typeof jwt.role != 'undefined' && jwt.role === 'CONTENT_MANAGER') {
-                return true;
+            if (jwt) {
+                if (typeof jwt !== "undefined" && jwt.role === 'CONTENT_MANAGER') {
+                    return true;
+                }
             }
         }
         return false;
     }
 
-    componentDidUpdate() {
-        console.log("UPDATING")
-    }
-
     isUserTournamentOwner = () => {
-        let url = splitUrl(window.location.pathname);
-        if (typeof url[2] != "undefined") {
-            fetch(URL + '/api/database/tournament/isUserTournamentOwner/' + url[2] + "/" + parseLocalJwt().username, {
-                headers: new Headers({
-                    ...getAuthorization(),
-                    'Content-Type': 'application/json'
-                })
-            }).then(res => {
-                if (res.status === 200) {
-                    return true;
-                }
-                return false;
-            })
-        }
+        fetch(URL + '/api/database/tournament/isUserTournamentOwner/' + this.props.match.params + "/" + parseLocalJwt().username, {
+            headers: new Headers({ ...getAuthorization() })
+        }).then(res => { if (res.status === 200) { this.setState({ userIsOwner: true }); } else { this.setState({ userIsOwner: false }); } })
     }
 
     userLoggedIn = () => {
@@ -65,7 +55,6 @@ class App extends Component {
     }
 
     render() {
-
 
         if (this.userLoggedIn()) {
             return (
@@ -91,22 +80,25 @@ class App extends Component {
                                 <Route exact path="/compete/create-tournament" component={PageWrapper(CreateTournament)} />
 
                                 {/*verify if user is the owner */}
-                                {this.isUserTournamentOwner() ? <Route exact path="/compete/manage-tournaments/:tournamentName/:problemName/test-cases" component={PageWrapper(ManageTestCases)} /> : ''}
-                                {this.isUserTournamentOwner() ? <Route exact path="/compete/manage-tournaments/:tournamentName/edit/:problemName" component={PageWrapper(AddProblem)} /> : ''}
-                                {this.isUserTournamentOwner() ? <Route exact path="/compete/manage-tournaments/:tournamentName/edit" component={PageWrapper(CreateTournament)} /> : ''}
-                                {this.isUserTournamentOwner() ? <Route exact path="/compete/manage-tournaments/:tournamentName/add" component={PageWrapper(AddProblem)} /> : ''}
-                                {this.isUserTournamentOwner() ? <Route exact path="/compete/manage-tournaments/:tournamentName" component={PageWrapper(ManageProblems)} /> : ''}
+                                <Route exact path="/compete/manage-tournaments/:tournamentName/:problemName/test-cases" component={PageWrapper(ManageTestCases)} />
+                                <Route exact path="/compete/manage-tournaments/:tournamentName/:problemName/edit" component={PageWrapper(AddProblem)} />
+                                <Route exact path="/compete/manage-tournaments/:tournamentName/edit" component={PageWrapper(CreateTournament)} />
+                                <Route exact path="/compete/manage-tournaments/:tournamentName/add" component={PageWrapper(AddProblem)} />
+                                <Route exact path="/compete/manage-tournaments/:tournamentName" component={PageWrapper(ManageProblems)} />
 
                                 <Route exact path="/compete/manage-tournaments" component={PageWrapper(ManageTournaments)} />
 
                                 <Route exact path="/compete" component={PageWrapper(ListTournaments)} />
 
-                                {/*verify if user is registered in the tournament */}
-                                <Route exact path="/compete/:tournamentName/leaderboard" component={IsUserRegisteredOnTournament(PageWrapper(TournamentLeaderboard))} />
-                                <Route exact path="/compete/:tournamentName/edit" component={IsUserRegisteredOnTournament(PageWrapper(CreateTournament))} />
-                                <Route exact path="/compete/:tournamentName/:problemName" component={IsUserRegisteredOnTournament(PageWrapper(Problem))} />
-                                <Route exact path="/compete/:tournamentName" component={IsUserRegisteredOnTournament(PageWrapper(ListProblems))} />
-                                <Route exact path="/compete/:tournamentName/:problemName/view-results" component={IsUserRegisteredOnTournament(PageWrapper(ViewResults))} />
+                                {/*COMPLETED - verify if user is registered in the tournament */}
+                                <Route exact path="/compete/:tournamentName/leaderboard" component={PageWrapper(TournamentLeaderboard)} />
+                                <Route exact path="/compete/:tournamentName/edit" component={(PageWrapper(CreateTournament))} />
+                                <Route exact path="/compete/:tournamentName/:problemName" component={(PageWrapper(Problem))} />
+                                <Route exact path="/compete/:tournamentName" component={(PageWrapper(ListProblems))} />
+
+
+                                <Route exact path="/compete/:tournamentName/:problemName/view-results" component={(PageWrapper(ViewResults))} />
+
 
 
                                 {console.log(window.location.href)}
@@ -119,8 +111,10 @@ class App extends Component {
                                 {this.manageSectionControl() ? <Route exact path="/manage/tournaments" component={PageWrapper(ManageTournaments)} /> : ''}
                                 {this.manageSectionControl() ? <Route exact path="/manage/tournaments/add" component={PageWrapper(CreateTournament)} /> : ''}
                                 {this.manageSectionControl() ? <Route exact path="/manage/tournaments/:tournamentName/edit" component={PageWrapper(CreateTournament)} /> : ''}
+                                {this.manageSectionControl() ? <Route exact path="/manage/tournaments/:tournamentName/add" component={PageWrapper(AddProblem)} /> : ''}
                                 {this.manageSectionControl() ? <Route exact path="/manage/tournaments/:tournamentName" component={PageWrapper(ManageProblems)} /> : ''}
                                 {this.manageSectionControl() ? <Route exact path="/manage/tournaments/:tournamentName/:problemName" component={PageWrapper(ManageProblems)} /> : ''}
+                                {this.manageSectionControl() ? <Route exact path="/manage/tournaments/:tournamentName/:problemName/edit" component={PageWrapper(AddProblem)} /> : ''}
                                 {this.manageSectionControl() ? <Route exact path="/manage/tournaments/:tournamentName/:problemName/test-cases" component={PageWrapper(ManageTestCases)} /> : ''}
                                 {this.manageSectionControl() ? <Route exact path="/manage/categories" component={PageWrapper(ManageCategories)} /> : ''}
 

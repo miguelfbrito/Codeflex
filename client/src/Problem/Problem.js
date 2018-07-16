@@ -26,12 +26,14 @@ import 'brace/theme/monokai';
 import 'brace/theme/terminal';
 
 import './Problem.css';
+import PageNotFound from '../PageNotFound/PageNotFound';
 
 class Problem extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            registered: true,
             mathJaxLoaded: false,
             problemLoaded: false,
             scriptLoaded: false,
@@ -102,6 +104,8 @@ public class Solution {
         let currentProblem = splitUrl(this.props.location.pathname)[2];
         console.log(currentProblem);
 
+        this.isUserRegisteredInTournament();
+
         fetch(URL + '/api/database/problem/getProblemByName/' + currentProblem, { headers: { ...getAuthorization() } })
             .then(res => res.json()).then(data => {
                 console.log('problem')
@@ -122,6 +126,19 @@ public class Solution {
             console.log('Storage doesnt exists');
             localStorage.setItem('problem-page', JSON.stringify(this.state.page));
         }
+
+    }
+
+    isUserRegisteredInTournament = () => {
+        fetch(URL + '/api/database/Rating/isUserRegisteredInTournamentTest/' + parseLocalJwt().username + "/" + this.props.match.params.tournamentName, {
+            headers: { ...getAuthorization() }
+        }).then(res => {
+            if (res.status === 200) {
+                this.setState({ registered: true });
+            } else {
+                this.setState({ registered: false });
+            }
+        })
 
     }
 
@@ -461,6 +478,12 @@ public class Solution {
     }
 
     render() {
+
+        if (!this.state.registered) {
+            return (
+                <PageNotFound />
+            )
+        }
 
         if (this.state.problemLoaded) {
             console.log("PROBLEMMMM")

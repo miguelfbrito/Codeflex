@@ -8,18 +8,29 @@ import { splitUrl, textToLowerCaseNoSpaces, getAuthorization, parseLocalJwt } fr
 
 import '../../node_modules/react-table/react-table.css'
 import './ManageProblems.css';
+import PageNotFound from '../PageNotFound/PageNotFound';
 
 class ManageProblems extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             origin: '',
-            problems: []
+            problems: [],
+            userIsOwner: true
         }
     }
 
     componentDidMount() {
+        if (parseLocalJwt().role != 'CONTENT_MANAGER') {
+            this.isUserTournamentOwner();
+        }
         this.fetchProblems();
+    }
+
+    isUserTournamentOwner = () => {
+        fetch(URL + '/api/database/tournament/isUserTournamentOwner/' + this.props.match.params + "/" + parseLocalJwt().username, {
+            headers: new Headers({ ...getAuthorization() })
+        }).then(res => { if (res.status === 200) { this.setState({ userIsOwner: true }); } else { this.setState({ userIsOwner: false }); } })
     }
 
     fetchProblems = () => {
@@ -83,6 +94,12 @@ class ManageProblems extends React.Component {
 
     render() {
 
+        if (!this.state.userIsOwner) {
+            return (
+                <PageNotFound />
+            )
+        }
+
         let content =
             <div className="add-problem-container">
                 <h3 style={{ marginBottom: '15px' }}>{this.state.origin === 'tournament' ?
@@ -137,7 +154,7 @@ class ManageProblems extends React.Component {
                             id: "icons",
                             accessor: p => (
                                 <div>
-                                    <Link to={this.props.location.pathname + '/edit/' + textToLowerCaseNoSpaces(p.name)}>
+                                    <Link to={this.props.location.pathname + '/' + textToLowerCaseNoSpaces(p.name) + '/edit'}>
                                         <i name="edit" className="material-icons manage-tournament-icon" id="edit">edit</i>
                                     </Link>
                                     <i name="delete" className="material-icons manage-tournament-icon icon-ligth-blue" id="delete" onClick={() => this.deleteProblem(p)}>delete</i>

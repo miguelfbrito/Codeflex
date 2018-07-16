@@ -1,0 +1,16 @@
+.not-found {
+    text-align: center;
+}
+
+.not-found h1 {
+    font-size: 250px;
+    color: #6a44ff;
+    filter: drop-shadow(0px 5px 10px #aaa);
+}
+
+.not-found h2 {
+    margin-top:-25px;
+    margin-bottom: 25px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 24pt;
+}

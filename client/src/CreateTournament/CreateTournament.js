@@ -13,6 +13,7 @@ import '../commons/style.css';
 import '../../node_modules/react-datepicker/dist/react-datepicker.css';
 import './CreateTournament.css';
 import { areStringEqual, validateEmail, validateLength, validateStringChars, isStringEmpty, validateStringCharsNoSpaces } from '../commons/Validation';
+import PageNotFound from '../PageNotFound/PageNotFound';
 
 class CreateTournament extends React.Component {
     constructor(props) {
@@ -23,7 +24,9 @@ class CreateTournament extends React.Component {
             name: '',
             description: '',
             privateCode: '',
-            location: ''
+            location: '',
+            registered: true,
+            userIsOwner: true
         }
 
         this.handleChangeStart = this.handleChangeStart.bind(this);
@@ -33,11 +36,36 @@ class CreateTournament extends React.Component {
     }
 
     componentDidMount() {
+
+        this.isUserTournamentOwner();
+        this.isUserRegistered();
+
         this.setState({ location: splitUrl(this.props.location.pathname)[0] });
         let url = splitUrl(this.props.location.pathname);
         if (url[3] === 'edit') {
             this.fetchTournament();
         }
+
+
+    }
+
+    isUserRegistered = () => {
+        fetch(URL + '/api/database/Rating/isUserRegisteredInTournamentTest/' + parseLocalJwt().username + "/" + this.props.match.params.tournamentName, {
+            headers: { ...getAuthorization() }
+        }).then(res => {
+            if (res.status === 200) {
+                this.setState({ registered: true });
+            } else {
+                this.setState({ registered: false });
+            }
+        })
+
+    }
+
+    isUserTournamentOwner = () => {
+        fetch(URL + '/api/database/tournament/isUserTournamentOwner/' + this.props.match.params + "/" + parseLocalJwt().username, {
+            headers: new Headers({ ...getAuthorization() })
+        }).then(res => { if (res.status === 200) { this.setState({ userIsOwner: true }); } else { this.setState({ userIsOwner: false }); } })
     }
 
     fetchTournament = () => {
@@ -221,6 +249,12 @@ class CreateTournament extends React.Component {
     render() {
 
         const dateFormat = "HH:mm DD/MM/YYYY";
+
+        if (!this.state.registered || !this.state.userIsOwner) {
+            return (
+                <PageNotFound />
+            )
+        }
 
         return (
             <div className="container">
