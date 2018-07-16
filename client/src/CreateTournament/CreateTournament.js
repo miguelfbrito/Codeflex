@@ -3,7 +3,7 @@ import PathLink from '../PathLink/PathLink';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 
-import { textToLowerCaseNoSpaces, splitUrl, parseLocalJwt, getAuthorization } from '../commons/Utils';
+import { textToLowerCaseNoSpaces, splitUrl, parseLocalJwt, getAuthorization, isContentManager } from '../commons/Utils';
 import { Link } from 'react-router-dom';
 import { URL } from '../commons/Constants';
 import { ToastContainer, toast } from 'react-toastify';
@@ -37,8 +37,10 @@ class CreateTournament extends React.Component {
 
     componentDidMount() {
 
-        this.isUserTournamentOwner();
-        this.isUserRegistered();
+        if (!isContentManager()) {
+            this.isUserTournamentOwner();
+            this.isUserRegistered();
+        }
 
         this.setState({ location: splitUrl(this.props.location.pathname)[0] });
         let url = splitUrl(this.props.location.pathname);

@@ -1,4 +1,3 @@
-import { URL } from './Constants';
 
 export const sum = (a, b) => {
     console.log(a + b);
@@ -122,7 +121,6 @@ export const getAuthorization = () => {
     }
 }
 
-
 export const readFile = (file) => {
     let blob = file.slice(0, file.size);
     return blobToString(blob);
@@ -148,27 +146,4 @@ export const dateSameDay = (date1, date2) => {
         }
     }
     return false;
-}
-
-export const isRegistered = () => {
-    console.log("123123 A VERIFICAR REGISTO DO UTILIZADOR ")
-    let url = splitUrl(window.location.pathname);
-    console.log(url);
-    let registered = false;
-    if (typeof url[1] != "undefined") {
-        fetch(URL + '/api/database/rating/isUserRegisteredInTournamentByNameRE/' + parseLocalJwt().username + "/" + url[1], {
-            headers: new Headers({
-                ...getAuthorization(),
-                'Content-Type': 'application/json'
-            })
-        }).then(res => {
-            if (res.status === 200) {
-                console.log("REGISTADO")
-                return true;
-            } else {
-                console.log("NAO ESTA REGISTADo")
-                return false;
-            }
-        })
-    }
 }

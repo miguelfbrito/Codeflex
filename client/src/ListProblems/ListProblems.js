@@ -16,7 +16,8 @@ class ListProblems extends Component {
             registered: true,
             problems: [],
             filteredProblems: [],
-            difficulties: []
+            difficulties: [],
+            tournament : {}
         }
 
         this.checkBoxFilter = React.createRef();
@@ -28,7 +29,10 @@ class ListProblems extends Component {
 
     componentDidMount() {
 
+        this.fetchTournament();
         this.isUserRegisteredInTournament();
+
+
 
         const url = splitUrl(this.props.location.pathname);
         if (url[0] === 'practise') {
@@ -60,6 +64,15 @@ class ListProblems extends Component {
 
     }
 
+    fetchTournament = () => {
+        fetch(URL + '/api/database/Tournament/viewByName/' + this.props.match.params.tournamentName, {
+            headers: { ...getAuthorization() }
+        }).then(res => res.json()
+        ).then(data => {
+            this.setState({tournament : data});
+        })
+
+    }
     fetchProblemsByTournament() {
         const currentTournament = splitUrl(this.props.location.pathname)[1];
         fetch(URL + '/api/database/tournament/getAllProblemsByName/' + currentTournament, {
@@ -165,7 +178,7 @@ class ListProblems extends Component {
 
     render() {
 
-        if (!this.state.registered) {
+        if (!this.state.registered && !this.state.tournament.showWebsite) {
             return (
                 <PageNotFound />
             )

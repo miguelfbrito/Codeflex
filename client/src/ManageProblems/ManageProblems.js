@@ -37,8 +37,13 @@ class ManageProblems extends React.Component {
         const url = splitUrl(this.props.location.pathname);
         let origin = '';
         if (url[0] === 'manage') {
-            this.setState({ origin: 'manage' });
-            origin = 'manage';
+            if (url[1] === 'tournaments') {
+                this.setState({ origin: 'manage-tournaments' })
+                origin = 'manage-tournaments';
+            } else {
+                this.setState({ origin: 'manage' });
+                origin = 'manage';
+            }
         } else {
             this.setState({ origin: 'tournament' });
             origin = 'tournament'
@@ -62,6 +67,15 @@ class ManageProblems extends React.Component {
             } else if (url[1] === 'tournaments') {
                 this.fetchAllProblemsByTournamentName(url[2]);
             }
+        } else if (origin === 'manage-tournaments') {
+            fetch(URL + '/api/database/Tournament/getAllProblemsByName/' + this.props.match.params.tournamentName, {
+                headers: { ...getAuthorization() }
+            }).then(res => res.json())
+                .then(data => {
+                    console.log("PROBLEMS")
+                    console.log(data)
+                    this.setState({ problems: data })
+                })
         }
     }
 
@@ -106,9 +120,10 @@ class ManageProblems extends React.Component {
                     'There are no problems on this tournament yet.' : "You haven't added any problems yet."
                 }</h3>
 
+
                 <Link to={
                     this.state.origin === 'tournament' ? "/compete/manage-tournaments/" + splitUrl(this.props.location.pathname)[2] + "/add"
-                        : "/manage/problems/add"}>
+                        : this.state.origin !== 'manage-tournaments' ? "/manage/problems/add" : "/manage/tournaments/" + this.props.match.params.tournamentName + "/add"}>
                     <input className="btn btn-codeflex" type="button" value="Add problem" />
                 </Link>
             </div>

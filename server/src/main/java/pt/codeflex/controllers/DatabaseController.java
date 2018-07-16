@@ -1367,9 +1367,8 @@ public class DatabaseController {
 
 	@GetMapping(path = "/Tournament/getAllProblemsByName/{name}")
 	public List<Problem> getAllProblemsByTournamentName(@PathVariable String name) {
-
 		Tournament tournament = viewTournamentByName(name);
-
+		System.out.println(tournament.toString());
 		if (tournament == null)
 			return new ArrayList<>();
 
