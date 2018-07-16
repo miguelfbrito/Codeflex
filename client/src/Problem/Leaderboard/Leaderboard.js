@@ -25,7 +25,7 @@ class Leaderboard extends React.Component {
 
     render() {
 
-        let toRender = '';
+        let toRender = '<div></div>';
         if (this.state.problemName != null) {
 
             let leaderboard = this.state.leaderboard.sort((a, b) => { return (b.score - a.score || a.durationMilliseconds - b.durationMilliseconds) });
@@ -33,7 +33,8 @@ class Leaderboard extends React.Component {
 
             console.log('leaderboard')
             console.log(this.state.leaderboard);
-            toRender = <div>
+
+            toRender =
                 <ReactTable
                     noDataText="There is no one on the leaderboard"
                     data={this.state.leaderboard}
@@ -86,15 +87,16 @@ class Leaderboard extends React.Component {
                     showPagination={false}
                     className="-highlight"
                 />
-            </div>
         }
 
         return (
             <div>
 
                 {this.state.leaderboard.length > 0 ?
-                    { toRender }
-                    :  <h3 className="no-data-h3">There are no users on the leaderboard.</h3>
+                    <div>
+                        {toRender}
+                    </div>
+                    : <h3 className="no-data-h3">There are no users on the leaderboard.</h3>
                 }
 
             </div>

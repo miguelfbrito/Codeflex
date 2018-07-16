@@ -208,7 +208,7 @@ public class DatabaseController {
 	@GetMapping(path = "/Leaderboard/viewByProblemName/{problemName}")
 	public List<UsersLeaderboard> getAllLeaderboardsByProblemName(@PathVariable String problemName) {
 
-		Problem findProblembyName = problemRepository.findByName(problemName.replace("-", " "));
+		Problem findProblembyName = viewProblemByName(problemName);
 		List<UsersLeaderboard> userOnLeaderboard = new ArrayList<>();
 
 		if (findProblembyName != null) {
@@ -789,17 +789,17 @@ public class DatabaseController {
 	@GetMapping(path = "/Rating/viewUsersByTournamentId/{tournamentId}")
 	public List<Users> viewUsersByTournamentId(@PathVariable long tournamentId) {
 
-		List<Users> usersInTournament = new ArrayList<Users>();
+		List<Users> usersInTournament = new ArrayList<>();
 		List<Rating> allRatings = getAllRatings();
 
 		Tournament t = viewTournamentById(tournamentId);
 
 		if (t == null) {
-			return null;
+			return usersInTournament;
 		}
 
 		for (Rating r : allRatings) {
-			if (r.getTournament() == t) {
+			if (r.getTournament().getId() == t.getId()) {
 				usersInTournament.add(r.getUser());
 			}
 		}
@@ -1165,9 +1165,12 @@ public class DatabaseController {
 		String username = tournamentLeaderboard.get(0).getUsername();
 
 		List<DateStatus> problemDurations = new ArrayList<>();
+		double totalScore = 0;
 		for (int i = 0; i < tournamentLeaderboard.size(); i++) {
-
+			
 			TournamentLeaderboard t = tournamentLeaderboard.get(i);
+			totalScore += t.getScore();
+			
 			System.out.println(t.getUsername() + " - " + t.getOpeningDate() + " -  " + t.getCompletionDate());
 
 			problemDurations.add(new DateStatus(t.getOpeningDate().getTime(), true));
@@ -1197,19 +1200,19 @@ public class DatabaseController {
 				if (!username.equals(t1.getUsername())) {
 					long ms = DurationCalculation.calculateDuration(problemDurations);
 					t.setTotalMilliseconds(ms);
-					finalLeaderboard.add(new TournamentLeaderboard(t.getUsername(), t.getScore(), null, null,
+					finalLeaderboard.add(new TournamentLeaderboard(t.getUsername(), totalScore, null, null,
 							t.getTotalMilliseconds()));
 					problemDurations = new ArrayList<>();
-
+					totalScore = 0;
 					username = t1.getUsername();
 				}
 			}
 
-			if (i == tournamentLeaderboard.size() - 1) {
+			if (i == tournamentLeaderboard.size() - 1) { // - 1
 				long ms = DurationCalculation.calculateDuration(problemDurations);
 				t.setTotalMilliseconds(ms);
 				finalLeaderboard.add(
-						new TournamentLeaderboard(t.getUsername(), t.getScore(), null, null, t.getTotalMilliseconds()));
+						new TournamentLeaderboard(t.getUsername(), totalScore, null, null, t.getTotalMilliseconds()));
 			}
 
 		}
@@ -1277,7 +1280,7 @@ public class DatabaseController {
 		
 		Users user = viewUsersByUsername(t.getOwner().getUsername());
 		
-		if (tournamentUpdate == null && user != null)
+		if (tournamentUpdate == null && user != null) // ?!
 			return null;
 
 		tournamentUpdate.setCode(t.getCode());
@@ -1431,7 +1434,7 @@ public class DatabaseController {
 			return;
 		}
 
-		List<Users> usersPerTournament = viewUsersByTournamentId(tournamentId);
+		List<Users> usersPerTournament = viewUsersByTournamentId(tournament.getId());
 
 		for (int i = 0; i < usersPerTournament.size(); i++) {
 

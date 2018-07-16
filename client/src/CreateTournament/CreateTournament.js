@@ -130,10 +130,10 @@ class CreateTournament extends React.Component {
                 return false;
             }
 
-            if (new Date(data.endingDate).getTime() - new Date(data.startingDate).getTime() < 60 * 5 * 1000) {
-                toast.error("Tournament has to last for at least 5 minutes")
-                return false;
-            }
+         //   if (new Date(data.endingDate).getTime() - new Date(data.startingDate).getTime() < 60 * 5 * 1000) {
+            //    toast.error("Tournament has to last for at least 5 minutes")
+           //     return false;
+          //  }
 
             if (this.state.location === 'compete' && !validateLength(data.code, 5, 50) && !validateStringCharsNoSpaces(data.code)) {
                 toast.error("Invalid code, it must be between 5 and 50 in length and no special characters.")
@@ -322,7 +322,7 @@ class CreateTournament extends React.Component {
                                         selected={this.state.endDate}
                                         selectsEnd
                                         showTimeSelect
-                                        timeIntervals={4}
+                                        timeIntervals={1}
                                         startDate={this.state.startDate}
                                         endDate={this.state.endDate}
                                         onChange={this.handleChangeEnd}

@@ -56,7 +56,7 @@ class TournamentLeaderboard extends React.Component {
                 <div className="row">
                     <PathLink path={this.props.location.pathname} title="Leaderboard" />
 
-                    {leaderboardData.length == 0 ? <h2>There is no one on the leaderboard.</h2> :
+                    {leaderboardData.length == 0 ? <h3 className="no-data-h3">There is no one on the leaderboard.</h3> :
 
                         <ReactTable
                             noDataText="There is no one on the leaderboard"

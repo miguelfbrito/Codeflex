@@ -41,9 +41,9 @@ public class CodeflexApplication {
 
 	@Bean
 	public Host fetchAndConnectHosts() {
-		Host h1 = new Host("172.31.45.122", 22, "ubuntu", new SSHClient(),
-				"20:0c:b2:25:49:45:59:58:75:c5:2b:c5:84:02:a7:a9", false);
-		//connect(h1);
+		Host h1 = new Host("192.168.1.65", 22, "ubuntu", new SSHClient(),
+				"33:02:cb:3b:13:b1:bd:fa:66:ff:29:96:ea:ff:dc:78", false);
+		connect(h1);
 
 		return h1;
 	}

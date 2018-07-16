@@ -31,7 +31,8 @@ public class ScheduleTasks {
 
 	@Scheduled(fixedDelay = 60000)
 	public void checksTournamentStatus() {
-
+		
+		System.out.println("Updating ratings");
 		// Gets all tournaments
 		List<Tournament> tournaments = db.getAllTournaments();
 
