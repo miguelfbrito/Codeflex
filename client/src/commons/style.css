@@ -76,6 +76,14 @@ p.page-subtitle {
     box-shadow: 0px 0px 5px #ccc;
 }
 
+.textbox-no-radius {
+    margin: 0;
+    padding: 5pt;
+    border: 1px solid #ccc;
+    border-radius: 0;
+    box-shadow: 0px 0px 5px #ccc;
+}
+
 p.span-data-validation {
     font-size: 10pt !important;
     margin-top: 5px !important;

@@ -160,9 +160,9 @@ class ListTournaments extends React.Component {
                         <br />
                         <div style={{ float: 'right', textAlign: 'right', marginTop: '-30px' }}>
                             {this.state.displayInputCode ? <div className="private-code">
-                                <input type="text" style={{ height: '25px', marginBottom: '7px' }} placeholder="Tournament Private Code"
+                                <input type="text" className="textbox-no-radius" style={{ height: '25px', marginBottom: '7px' }} placeholder="Tournament Private Code"
                                     name="privateCode" onChange={(e) => this.onInputChange(e)} value={this.state.privateCode} />
-                                <input type="button" value="Register" onClick={this.onClickEnterPrivateTournament} />
+                                <input style={{maxHeight:'25px'}} type="button" className="" value="Register" onClick={this.onClickEnterPrivateTournament} />
                             </div> :
                                 <a>
                                     <p onClick={this.onClickPrivateTournament} style={{cursor:'pointer'}}>Register in private tournament</p>

@@ -46,7 +46,7 @@ class Navbar extends Component {
                     <ul className="nav navbar-nav">
 
                     </ul>
-                    <ul className="nav navbar-nav navbar-right">
+                    <ul className="nav navbar-nav navbar-right ">
                         <li className={this.url === 'practise' ? 'active-page' : ''}><Link to="/practise"><p>Practise</p></Link></li>
                         <li className={this.url === 'compete' ? 'active-page' : ''}><Link to="/compete"><p>Compete</p></Link></li>
                         <li className={this.url === 'leaderboard' ? 'active-page' : ''}><Link to="/leaderboard"><p>Leaderboard</p></Link></li>

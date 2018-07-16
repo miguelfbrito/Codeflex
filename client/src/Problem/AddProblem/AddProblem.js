@@ -1,6 +1,7 @@
 import React from 'react';
 import PathLink from '../../PathLink/PathLink'
 import { Editor } from 'react-draft-wysiwyg';
+import { Link } from 'react-router-dom';
 import { EditorState, convertToRaw, convertFromRaw } from 'draft-js';
 import { ToastContainer, toast } from 'react-toastify';
 import { URL } from '../../commons/Constants';
@@ -17,6 +18,7 @@ class AddProblem extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            invalidData: true,
             userIsOwner: true,
             problemId: '',
             problemName: '',
@@ -215,6 +217,7 @@ class AddProblem extends React.Component {
             })
         }).then(res => res.json()).then(data => {
             console.log("PROBLEM UPDATED")
+            window.location.href = this.getRedirectDestinationOnSave();
             console.log(data);
         })
     }
@@ -231,12 +234,15 @@ class AddProblem extends React.Component {
     saveProblem() {
 
         let url = splitUrl(this.props.location.pathname)
-        if (this.isEditing()) {
-            this.updateProblem();
+
+        if (!validateSaveProblem(this.state)) {
             return;
         }
 
-        if (!validateSaveProblem(this.state)) {
+
+
+        if (this.isEditing()) {
+            this.updateProblem();
             return;
         }
 
@@ -282,10 +288,22 @@ class AddProblem extends React.Component {
                 return res.json();
             }
         }).then(data => {
-            //  console.log(data.message.split("propertyPath=")[1].split(',')[0]);
-            console.log(data);
-            // TODO : notify the user about invalid data
+            window.location.href = this.getRedirectDestinationOnSave();
         })
+    }
+
+    getRedirectDestinationOnSave = () => {
+        let url = splitUrl(this.props.location.pathname);
+
+        if (url[0] === 'compete') {
+            return "/compete/manage-tournaments/" + this.props.match.params.tournamentName;
+        } else if (url[0] === 'manage') {
+            if (url[1] === 'problems') {
+                return "/manage/problems";
+            } else if (url[1] === 'tournaments') {
+                return "/manage/tournaments/" + this.props.match.params.tournamentName;
+            }
+        }
     }
 
 
@@ -461,9 +479,7 @@ class AddProblem extends React.Component {
                 </div>
                 <div className="row">
                     <div className="col-sm-offset-2 col-sm-10 col-xs-12">
-                        {/*  <Link to={"/compete/manage-tournaments/" + splitUrl(this.props.location.pathname)[2]}>*/}
                         <input type="button" className="btn btn-codeflex" onClick={this.saveProblem} name="" id="save-problem" value="Save problem" />
-                        {/*</Link>*/}
                     </div>
                 </div>
 
