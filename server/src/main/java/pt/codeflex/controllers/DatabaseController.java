@@ -528,6 +528,22 @@ public class DatabaseController {
 		return new ArrayList<>();
 	}
 
+	@GetMapping(path = "/Problem/viewAllWithCategory")
+	public List<Problem> viewAllProblemsWithCategory() {
+		List<Problem> finalProblems = new ArrayList<>();
+		List<Problem> problems = getAllProblems();
+		List<PractiseCategory> categories = viewAllPractiseCategories();
+
+		for (PractiseCategory pc : categories) {
+			for (Problem p : problems) {
+				if (pc.getProblem().contains(p)) {
+					finalProblems.add(p);
+				}
+			}
+		}
+		return finalProblems;
+	}
+
 	@GetMapping(path = "/Problem/viewAllDetails/{problemName}")
 	public AddProblem viewAllProblemDetails(@PathVariable String problemName) {
 		Problem problem = viewProblemByName(problemName);
@@ -828,9 +844,9 @@ public class DatabaseController {
 			@PathVariable String tournamentName) {
 		Users user = viewUsersByUsername(username);
 		Tournament tournament = viewTournamentByName(tournamentName);
-		
+
 		System.out.println("Checking: is user registered");
-		
+
 		if (user != null && tournament != null) {
 
 			Optional<Rating> r = ratingRepository.findById(new RatingID(tournament.getId(), user.getId()));
@@ -841,7 +857,7 @@ public class DatabaseController {
 			}
 
 		}
-		
+
 		System.out.println("O utilizador não está registado");
 		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 	}
@@ -1258,7 +1274,10 @@ public class DatabaseController {
 	@PostMapping("/Tournament/update")
 	public Tournament updateTournament(@RequestBody Tournament t) {
 		Tournament tournamentUpdate = viewTournamentById(t.getId());
-		if (tournamentUpdate == null)
+		
+		Users user = viewUsersByUsername(t.getOwner().getUsername());
+		
+		if (tournamentUpdate == null && user != null)
 			return null;
 
 		tournamentUpdate.setCode(t.getCode());
@@ -1267,7 +1286,7 @@ public class DatabaseController {
 		tournamentUpdate.setLink(t.getLink());
 		tournamentUpdate.setName(t.getName());
 		tournamentUpdate.setOpen(t.getOpen());
-		tournamentUpdate.setOwner(t.getOwner());
+		tournamentUpdate.setOwner(user);
 		tournamentUpdate.setShowWebsite(t.getShowWebsite());
 		tournamentUpdate.setStartingDate(t.getStartingDate());
 

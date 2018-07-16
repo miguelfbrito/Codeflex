@@ -43,6 +43,7 @@ class ManageTournaments extends React.Component {
                     console.log(data);
                 })
         } else if (location === 'manage') {
+            console.log('fetching public tournaments')
             fetch(URL + '/api/database/Tournament/viewAllPublicTournaments', {
                 headers: { ...getAuthorization() }
             }).then(res => res.json())
@@ -101,7 +102,7 @@ class ManageTournaments extends React.Component {
                 if (this.state.location === 'compete') {
                     window.location.href = "/compete/manage-tournaments/" + textToLowerCaseNoSpaces(name) + "/edit";
                 } else {
-                    window.location.href = "/manage/tournaments/" +textToLowerCaseNoSpaces(name) + "/edit"
+                    window.location.href = "/manage/tournaments/" + textToLowerCaseNoSpaces(name) + "/edit"
                 }
                 break;
             default:
@@ -116,70 +117,71 @@ class ManageTournaments extends React.Component {
             <div className="container">
                 <div className="row">
                     <PathLink path={this.props.location.pathname} title="Manage tournaments" />
-                    <div>
-                        <ReactTable
-                            noDataText="You haven't created any tournaments"
-                            data={this.state.tournaments}
-                            columns={[
-                                {
-                                    Header: "Status",
-                                    id: "status",
-                                    accessor: t => (
-                                        new Date(t.tournament.startingDate).getTime() > new Date().getTime() ? "Starting soon" :
-                                            new Date(t.tournament.endingDate).getTime() >= new Date().getTime() ? "Ongoing" :
-                                                "Finished"
-                                    )
-                                },
-                                {
-                                    Header: "Name",
-                                    id: "tournamentName",
-                                    accessor: t => t.tournament.name
-                                },
-                                {
-                                    Header: "Starting on",
-                                    id: "startingDate",
-                                    accessor: t => (
-                                        dateWithHoursAndDay(t.tournament.startingDate)
-                                    )
-                                },
-                                {
-                                    Header: "Ending on",
-                                    id: "endingDate",
-                                    accessor: t => dateWithHoursAndDay(t.tournament.endingDate)
-                                },
-                                {
-                                    Header: "Code",
-                                    id: "code",
-                                    accessor: t => t.tournament.code
-                                },
-                                {
-                                    Header: "Registered users",
-                                    id: "registeredUsers",
-                                    accessor: t => t.users.length
-                                },
 
-                                {
-                                    Header: "",
-                                    id: "icons",
-                                    accessor: t => (
-                                        <div key={t.tournament.id}>
-                                            <i className="material-icons manage-tournament-icon" id="visibility" onClick={(e, name) => this.onIconClick(e, t.tournament.name)} >visibility</i>
-                                            <i className="material-icons manage-tournament-icon" id="edit" onClick={(e, name) => this.onIconClick(e, t.tournament.name)}>edit</i>
-                                            <i className="material-icons manage-tournament-icon" id="delete" onClick={(name) => this.onIconDelete(t.tournament.name)}>delete</i>
+                    {this.state.tournaments.length > 0 ?
+                        <div>
+                            <ReactTable
+                                data={this.state.tournaments}
+                                columns={[
+                                    {
+                                        Header: "Status",
+                                        id: "status",
+                                        accessor: t => (
+                                            new Date(t.tournament.startingDate).getTime() > new Date().getTime() ? "Starting soon" :
+                                                new Date(t.tournament.endingDate).getTime() >= new Date().getTime() ? "Ongoing" :
+                                                    "Finished"
+                                        )
+                                    },
+                                    {
+                                        Header: "Name",
+                                        id: "tournamentName",
+                                        accessor: t => t.tournament.name
+                                    },
+                                    {
+                                        Header: "Starting on",
+                                        id: "startingDate",
+                                        accessor: t => (
+                                            dateWithHoursAndDay(t.tournament.startingDate)
+                                        )
+                                    },
+                                    {
+                                        Header: "Ending on",
+                                        id: "endingDate",
+                                        accessor: t => dateWithHoursAndDay(t.tournament.endingDate)
+                                    },
+                                    {
+                                        Header: "Code",
+                                        id: "code",
+                                        accessor: t => t.tournament.code
+                                    },
+                                    {
+                                        Header: "Registered users",
+                                        id: "registeredUsers",
+                                        accessor: t => t.users.length
+                                    },
+
+                                    {
+                                        Header: "",
+                                        id: "icons",
+                                        accessor: t => (
+                                            <div key={t.tournament.id}>
+                                                <i className="material-icons manage-tournament-icon" id="visibility" onClick={(e, name) => this.onIconClick(e, t.tournament.name)} >visibility</i>
+                                                <i className="material-icons manage-tournament-icon" id="edit" onClick={(e, name) => this.onIconClick(e, t.tournament.name)}>edit</i>
+                                                <i className="material-icons manage-tournament-icon" id="delete" onClick={(name) => this.onIconDelete(t.tournament.name)}>delete</i>
 
 
-                                        </div>
-                                    )
-                                }
-                            ]}
-                            defaultPageSize={rows}
-                            pageSize={Math.min(rows, 15)}
-                            style={{
-                            }}
-                            showPagination={false}
-                            className="-highlight"
-                        />
-                    </div>
+                                            </div>
+                                        )
+                                    }
+                                ]}
+                                defaultPageSize={rows}
+                                pageSize={Math.min(rows, 15)}
+                                style={{
+                                }}
+                                showPagination={false}
+                                className="-highlight"
+                            />
+                        </div> : <h3 className="no-data-h3">There are no tournaments created.</h3>}
                 </div>
                 <Link to={this.state.location === 'compete' ? "/compete/create-tournament" : "/manage/tournaments/add"}> <input type="button" style={{ float: 'right', marginTop: '25px', marginRight: '0' }} className="btn btn-codeflex" value="Create tournament" /></Link>
             </div>

@@ -101,10 +101,14 @@ public class Solution {
     }
 
     componentDidMount() {
-        let currentProblem = splitUrl(this.props.location.pathname)[2];
+        const url = splitUrl(this.props.location.pathname)
+        let currentProblem = url[2];
+
         console.log(currentProblem);
 
-        this.isUserRegisteredInTournament();
+        if (url[0] !== 'practise') {
+            this.isUserRegisteredInTournament();
+        }
 
         fetch(URL + '/api/database/problem/getProblemByName/' + currentProblem, { headers: { ...getAuthorization() } })
             .then(res => res.json()).then(data => {
@@ -486,7 +490,7 @@ public class Solution {
         }
 
         if (this.state.problemLoaded) {
-            console.log("PROBLEMMMM")
+            console.log("PROBLEM")
             console.log(this.state.problem);
             if (this.state.problem.name != null) {
 

@@ -19,6 +19,7 @@ class CreateTournament extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            id : 0,
             startDate: moment(),
             endDate: moment(),
             name: '',
@@ -81,6 +82,7 @@ class CreateTournament extends React.Component {
             console.log('hi');
             console.log(data);
             this.setState({
+                id : data.id,
                 startDate: moment(data.startingDate),
                 endDate: moment(data.endingDate),
                 name: data.name,
@@ -143,13 +145,24 @@ class CreateTournament extends React.Component {
     }
 
     updateTournament = () => {
+
+
         let data = {
+            id: this.state.id,
             name: this.state.name,
             description: this.state.description,
             startingDate: this.state.startDate,
             endingDate: this.state.endDate,
             code: this.state.privateCode,
             owner: { username: parseLocalJwt().username }
+        }
+
+        let url = splitUrl(this.props.location.pathname);
+        if(url[0] === 'manage'){
+            data = {
+                ...data,
+                showWebsite : true
+            }
         }
 
         fetch(URL + '/api/database/tournament/update', {
@@ -211,7 +224,7 @@ class CreateTournament extends React.Component {
             }
         }).then(data => {
             console.log(data);
-            if (this.onCompete) {
+            if (this.onCompete()) {
                 window.location.href = "/compete/manage-tournaments/" + textToLowerCaseNoSpaces(this.state.name);
             } else {
                 window.location.href = "/manage/tournaments/" + textToLowerCaseNoSpaces(this.state.name);

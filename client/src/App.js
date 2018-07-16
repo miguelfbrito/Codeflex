@@ -106,7 +106,7 @@ class App extends Component {
                                 {this.manageSectionControl() ? <Route exact path="/manage" component={PageWrapper(ManageContent)} /> : ''}
                                 {this.manageSectionControl() ? <Route exact path="/manage/problems" component={PageWrapper(ManageProblems)} /> : ''}
                                 {this.manageSectionControl() ? <Route exact path="/manage/problems/add" component={PageWrapper(AddProblem)} /> : ''}
-                                {this.manageSectionControl() ? <Route exact path="/manage/problems/edit/:problemName" component={PageWrapper(AddProblem)} /> : ''}
+                                {this.manageSectionControl() ? <Route exact path="/manage/problems/:problemName/edit" component={PageWrapper(AddProblem)} /> : ''}
                                 {this.manageSectionControl() ? <Route exact path="/manage/problems/:problemName/test-cases" component={PageWrapper(ManageTestCases)} /> : ''}
                                 {this.manageSectionControl() ? <Route exact path="/manage/tournaments" component={PageWrapper(ManageTournaments)} /> : ''}
                                 {this.manageSectionControl() ? <Route exact path="/manage/tournaments/add" component={PageWrapper(CreateTournament)} /> : ''}

@@ -90,3 +90,8 @@ p.span-data-validation {
 .icon-ligth-blue{
     color: #23527C !important;
 }
+
+.no-data-h3 {
+    font-size: 16pt;
+    text-align: center;
+}

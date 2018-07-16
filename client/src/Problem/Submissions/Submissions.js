@@ -80,7 +80,7 @@ class Submissions extends React.Component {
                             }}
                             showPagination={false}
                             className="-highlight"
-                        /> : <p>You have not submitted solutions to this problem</p>}
+                        /> : <h3 className="no-data-h3">You have not submitted solutions to this problem.</h3>}
 
 
                 </div>

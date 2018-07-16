@@ -54,12 +54,12 @@ class ManageProblems extends React.Component {
         } else if (origin === 'manage') {
             if (url[1] === 'problems') {
 
-                fetch(URL + '/api/database/Problem/viewAllByOwnerUsername/' + parseLocalJwt().username, {
+                fetch(URL + '/api/database/Problem/viewAllWithCategory/', {
                     headers: { ...getAuthorization() }
                 })
                     .then(res => res.json())
                     .then(data => {
-                        data = data.filter(d => d.tournament === null);
+                        //data = data.filter(d => d.tournament === null);
                         console.log('Getting problems from manage')
                         console.log(data);
                         this.setState({ problems: data });
@@ -172,7 +172,7 @@ class ManageProblems extends React.Component {
                                     <Link to={this.props.location.pathname + '/' + textToLowerCaseNoSpaces(p.name) + '/edit'}>
                                         <i name="edit" className="material-icons manage-tournament-icon" id="edit">edit</i>
                                     </Link>
-                                    <i name="delete" className="material-icons manage-tournament-icon icon-ligth-blue" id="delete" onClick={() => this.deleteProblem(p)}>delete</i>
+                                    <i name="delete" className="material-icons manage-tournament-icon " id="delete" onClick={() => this.deleteProblem(p)}>delete</i>
                                     {/*this.state.redirect && this.state.redirectDestination === 'edit' ?
                                 <Redirect to={{ pathname: "/compete/manage-tournaments/" + textToLowerCaseNoSpaces(t.tournament.name) }} /> : ''*/}
                                 </div >

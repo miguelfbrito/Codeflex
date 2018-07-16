@@ -17,7 +17,7 @@ class ListProblems extends Component {
             problems: [],
             filteredProblems: [],
             difficulties: [],
-            tournament : {}
+            tournament: {}
         }
 
         this.checkBoxFilter = React.createRef();
@@ -29,17 +29,14 @@ class ListProblems extends Component {
 
     componentDidMount() {
 
-        this.fetchTournament();
-        this.isUserRegisteredInTournament();
-
-
-
         const url = splitUrl(this.props.location.pathname);
         if (url[0] === 'practise') {
             console.log('practise')
             this.fetchProblemsByCategory();
         } else if (url[0] === 'compete') {
             console.log('compete')
+            this.fetchTournament();
+            this.isUserRegisteredInTournament();
             this.fetchProblemsByTournament();
         }
 
@@ -69,7 +66,7 @@ class ListProblems extends Component {
             headers: { ...getAuthorization() }
         }).then(res => res.json()
         ).then(data => {
-            this.setState({tournament : data});
+            this.setState({ tournament: data });
         })
 
     }

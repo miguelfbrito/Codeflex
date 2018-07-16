@@ -18,9 +18,9 @@ class Leaderboard extends React.Component {
     }
 
     componentDidMount() {
-            const problemName = splitUrl(this.props.pathname)[2];
-            fetch(URL + '/api/database/Leaderboard/viewByProblemName/' + problemName, {headers : {...getAuthorization()}}).then(res => res.json())
-                .then(data => { this.setState({ problemName: problemName, leaderboard: data }) })
+        const problemName = splitUrl(this.props.pathname)[2];
+        fetch(URL + '/api/database/Leaderboard/viewByProblemName/' + problemName, { headers: { ...getAuthorization() } }).then(res => res.json())
+            .then(data => { this.setState({ problemName: problemName, leaderboard: data }) })
     }
 
     render() {
@@ -91,7 +91,11 @@ class Leaderboard extends React.Component {
 
         return (
             <div>
-                {toRender}
+
+                {this.state.leaderboard.length > 0 ?
+                    { toRender }
+                    :  <h3 className="no-data-h3">There are no users on the leaderboard.</h3>
+                }
 
             </div>
         );

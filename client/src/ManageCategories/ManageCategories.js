@@ -4,7 +4,7 @@ import Popup from '../Popup/Popup';
 
 import { Link } from 'react-router-dom'
 import { URL } from '../commons/Constants';
-import { textToLowerCaseNoSpaces, parseLocalJwt, getAuthorization} from '../commons/Utils';
+import { textToLowerCaseNoSpaces, parseLocalJwt, getAuthorization } from '../commons/Utils';
 
 import './ManageCategories.css';
 
@@ -25,7 +25,7 @@ class ManageCategories extends React.Component {
     }
 
     fetchCategories = () => {
-        fetch(URL + '/api/database/PractiseCategory/view', {headers : {...getAuthorization()}}).then(res => res.json()).then(data => {
+        fetch(URL + '/api/database/PractiseCategory/view', { headers: { ...getAuthorization() } }).then(res => res.json()).then(data => {
             console.log('Fetching categories')
             console.log(data)
             this.setState({ categories: data })
@@ -36,7 +36,7 @@ class ManageCategories extends React.Component {
         console.log('Deleting category')
         fetch(URL + '/api/database/PractiseCategory/delete/' + pc.id, {
             method: 'POST',
-            ...getAuthorization()
+            headers: { ...getAuthorization() }
         }).then(() => {
             this.fetchCategories();
         });
@@ -57,7 +57,7 @@ class ManageCategories extends React.Component {
 
             let newCategories = this.state.categories;
             newCategories.push(data);
-            this.setState({ categories: newCategories});
+            this.setState({ categories: newCategories });
 
             this.modalAdd.current.closeModal();
 
@@ -96,7 +96,7 @@ class ManageCategories extends React.Component {
                             <hr style={{ borderBottom: 'none', borderLeft: 'none', borderRight: 'none' }} />
                             {c.problem.map((p, i) => (
                                 <div>
-                                    <Link to={"/manage/problems/edit/" + textToLowerCaseNoSpaces(p.name)}>
+                                    <Link to={"/manage/problems/" + textToLowerCaseNoSpaces(p.name) + "/edit"}>
                                         <p style={{ fontFamily: 'Roboto Condensed', fontSize: '10pt' }}>{p.name}</p>
                                     </Link>
                                 </div>

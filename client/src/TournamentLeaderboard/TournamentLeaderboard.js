@@ -50,59 +50,62 @@ class TournamentLeaderboard extends React.Component {
                 <PageNotFound />
             )
         }
-        
+
         return (
             <div className="container" >
                 <div className="row">
                     <PathLink path={this.props.location.pathname} title="Leaderboard" />
 
-                    <ReactTable
-                        noDataText="There is no one on the leaderboard"
-                        data={leaderboardData}
-                        columns={[
-                            {
-                                Header: "Position",
-                                id: "position",
-                                accessor: l => this.state.leaderboard.indexOf(l) + 1
-                            },
-                            {
-                                Header: "Username",
-                                id: "username",
-                                accessor: l => l.username,
-                                getProps: (
-                                    (state, rowInfo, row) => ({
-                                        style: {
-                                            backgroundColor: (rowInfo.row.username === parseLocalJwt().username ? '#aaa' : '')
-                                        }
-                                    })
-                                )
+                    {leaderboardData.length == 0 ? <h2>There is no one on the leaderboard.</h2> :
 
-                            },
-                            {
-                                Header: "Score",
-                                id: "score",
-                                accessor: l => l.score.toFixed(2)
-                            },
-                            {
-                                Header: "Time",
-                                id: "time",
-                                accessor: l => {
-                                    if (l.totalMilliseconds == -1) {
-                                        return '--/--'
-                                    } else {
-                                        return msToTime(l.totalMilliseconds);
+                        <ReactTable
+                            noDataText="There is no one on the leaderboard"
+                            data={leaderboardData}
+                            columns={[
+                                {
+                                    Header: "Position",
+                                    id: "position",
+                                    accessor: l => this.state.leaderboard.indexOf(l) + 1
+                                },
+                                {
+                                    Header: "Username",
+                                    id: "username",
+                                    accessor: l => l.username,
+                                    getProps: (
+                                        (state, rowInfo, row) => ({
+                                            style: {
+                                                backgroundColor: (rowInfo.row.username === parseLocalJwt().username ? '#aaa' : '')
+                                            }
+                                        })
+                                    )
+
+                                },
+                                {
+                                    Header: "Score",
+                                    id: "score",
+                                    accessor: l => l.score.toFixed(2)
+                                },
+                                {
+                                    Header: "Time",
+                                    id: "time",
+                                    accessor: l => {
+                                        if (l.totalMilliseconds == -1) {
+                                            return '--/--'
+                                        } else {
+                                            return msToTime(l.totalMilliseconds);
+                                        }
                                     }
                                 }
-                            }
 
-                        ]}
-                        defaultPageSize={25}
-                        pageSize={Math.min(this.state.leaderboard.length, 25)}
-                        style={{
-                        }}
-                        showPagination={false}
-                        className="-highlight"
-                    />
+                            ]}
+                            defaultPageSize={25}
+                            pageSize={Math.min(this.state.leaderboard.length, 25)}
+                            style={{
+                            }}
+                            showPagination={false}
+                            className="-highlight"
+                        />
+                    }
                 </div>
             </div>
         )

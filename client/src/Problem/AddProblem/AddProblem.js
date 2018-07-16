@@ -63,7 +63,7 @@ class AddProblem extends React.Component {
 
         const path = splitUrl(this.props.location.pathname);
 
-        if (path[3] === 'edit' || path[2] === 'edit' || (typeof path[4] != "undefined" && path[4] === 'edit')) {
+        if (this.isEditing()) {
             this.fetchCurrentProblem();
         }
     }
@@ -219,12 +219,19 @@ class AddProblem extends React.Component {
         })
     }
 
+    isEditing = () => {
+        const path = splitUrl(this.props.location.pathname);
+        if (path[3] === 'edit' || path[2] === 'edit' || (typeof path[4] != "undefined" && path[4] === 'edit')) {
+            return true;
+        }
+        return false;
+    }
 
 
     saveProblem() {
 
         let url = splitUrl(this.props.location.pathname)
-        if (url[3] === 'edit' || url[2] === 'edit') {
+        if (this.isEditing()) {
             this.updateProblem();
             return;
         }

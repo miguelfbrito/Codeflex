@@ -51,6 +51,10 @@ export const getTimeHoursMins = (millisec) => {
     if (hours != "") {
         return hours + ":" + minutes;
     }
+
+    if(minutes < 10){
+        return "00:0"+minutes;
+    }
     return "00 : " + minutes;
 }
 
