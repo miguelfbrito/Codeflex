@@ -7,23 +7,28 @@
     font-family: 'Roboto Condensed', sans-serif;
 }
 
-.react-calendar-heatmap .color-gitlab-0 {
+.react-calendar-heatmap .color-gitlab-0{
     fill: #ededed;
 }
 
-.react-calendar-heatmap .color-gitlab-1 {
+.react-calendar-heatmap .color-gitlab-1,
+.react-calendar-heatmap .color-gitlab-2,
+.react-calendar-heatmap .color-gitlab-3 {
     fill: #acd5f2;
 }
 
-.react-calendar-heatmap .color-gitlab-2 {
+.react-calendar-heatmap .color-gitlab-4,
+.react-calendar-heatmap .color-gitlab-5 {
     fill: #7fa8d1;
 }
 
-.react-calendar-heatmap .color-gitlab-3 {
+.react-calendar-heatmap .color-gitlab-6,
+.react-calendar-heatmap .color-gitlab-7 {
     fill: #49729b;
 }
 
-.react-calendar-heatmap .color-gitlab-4 {
+.react-calendar-heatmap .color-gitlab-8,
+.react-calendar-heatmap .color-gitlab-9 {
     fill: #254e77;
 }
 

@@ -18,6 +18,9 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 @Entity
 public class Problem {
 
@@ -47,9 +50,11 @@ public class Problem {
 	private int maxScore;
 
 	@ManyToOne
+	@NotFound(action = NotFoundAction.IGNORE)
 	private Tournament tournament;
 
 	@ManyToOne
+	@NotFound(action = NotFoundAction.IGNORE)
 	private Users owner;
 
 	@OneToMany(fetch = FetchType.EAGER)
@@ -57,6 +62,7 @@ public class Problem {
 	private List<TestCases> testCases = new ArrayList<>();
 
 	@ManyToOne
+	@NotFound(action = NotFoundAction.IGNORE)
 	private Difficulty difficulty;
 
 	public Problem() {

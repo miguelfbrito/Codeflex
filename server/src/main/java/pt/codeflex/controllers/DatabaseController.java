@@ -814,6 +814,11 @@ public class DatabaseController {
 	@GetMapping(path = "/Rating/isUserRegisteredInTournament/{userId}/{tournamentId}")
 	public boolean isUserRegisteredInTournament(@PathVariable long userId, @PathVariable long tournamentId) {
 		Optional<Rating> r = ratingRepository.findById(new RatingID(tournamentId, userId));
+		Tournament tournament = viewTournamentById(tournamentId);
+
+		if (tournament == null) {
+			return false;
+		}
 
 		if (r.isPresent()) {
 			return true;
@@ -851,7 +856,7 @@ public class DatabaseController {
 
 			Optional<Rating> r = ratingRepository.findById(new RatingID(tournament.getId(), user.getId()));
 
-			if (r.isPresent()) {
+			if (r.isPresent() || (tournament.getShowWebsite())) {
 				System.out.println("O utilizador encontra-se registado");
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
@@ -1167,10 +1172,10 @@ public class DatabaseController {
 		List<DateStatus> problemDurations = new ArrayList<>();
 		double totalScore = 0;
 		for (int i = 0; i < tournamentLeaderboard.size(); i++) {
-			
+
 			TournamentLeaderboard t = tournamentLeaderboard.get(i);
 			totalScore += t.getScore();
-			
+
 			System.out.println(t.getUsername() + " - " + t.getOpeningDate() + " -  " + t.getCompletionDate());
 
 			problemDurations.add(new DateStatus(t.getOpeningDate().getTime(), true));
@@ -1277,9 +1282,9 @@ public class DatabaseController {
 	@PostMapping("/Tournament/update")
 	public Tournament updateTournament(@RequestBody Tournament t) {
 		Tournament tournamentUpdate = viewTournamentById(t.getId());
-		
+
 		Users user = viewUsersByUsername(t.getOwner().getUsername());
-		
+
 		if (tournamentUpdate == null && user != null) // ?!
 			return null;
 

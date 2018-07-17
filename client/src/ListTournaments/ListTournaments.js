@@ -5,7 +5,7 @@ import Popup from '../Popup/Popup';
 
 import { Redirect } from 'react-router-dom';
 import { URL } from '../commons/Constants';
-import { dateWithHoursAndDay, textToLowerCaseNoSpaces, getTimeHoursMins, parseLocalJwt, getAuthorization } from '../commons/Utils';
+import { dateWithHoursAndDay, textToLowerCaseNoSpaces, getTimeHoursMins, parseLocalJwt, getAuthorization, getTimeHoursMinsText } from '../commons/Utils';
 
 import './ListTournaments.css';
 
@@ -114,7 +114,7 @@ class ListTournaments extends React.Component {
                         <p>{t.tournament.name}</p>
                         <p>{t.tournament.description}</p>
                         {new Date(t.tournament.startingDate).getTime() > new Date().getTime() ? <p style={{fontSize:'11pt'}} className="green-text">Starting at {dateWithHoursAndDay(t.tournament.startingDate)}</p>
-                            : <p style={{fontSize:'11pt'}} className="red-text">Finishing in {getTimeHoursMins(new Date(t.tournament.endingDate).getTime() - new Date().getTime())}</p>}
+                            : <p style={{fontSize:'11pt'}} className="red-text">Finishing in {getTimeHoursMinsText(new Date(t.tournament.endingDate).getTime() - new Date().getTime())}</p>}
                     </div>
                     <div className="col-sm-2 col-md-2 col-xs-4 button-container-tournaments" >
                         <input type="submit" className="btn btn-codeflex" value={

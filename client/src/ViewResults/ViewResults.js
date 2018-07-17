@@ -85,9 +85,9 @@ class ViewResults extends Component {
                         <div className="col-sm-4">
                             <div className="col-sm-11 testcase">
                                 <div className="testcase-icons">
-                                    {s.isRight === 1 ? <i className="material-icons green-icon">check_circle_outline</i> :
-                                        s.isRight === 0 ? <i className="material-icons red-icon">highlight_off</i> :
-                                            <i className="material-icons red-icon">error</i>}
+                                    {s.isRight === 1 ? <i className="material-icons green-icon" title="Correct!">check_circle_outline</i> :
+                                        s.isRight === 0 ? <i className="material-icons red-icon" title="Incorrect!">highlight_off</i> :
+                                            <i className="material-icons red-icon" title="RunTimeError/Time Exceeded!">error</i>}
                                 </div>
                                 <p>Test Case {index + 1}</p>
                             </div>

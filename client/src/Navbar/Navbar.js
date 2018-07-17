@@ -65,7 +65,7 @@ class Navbar extends Component {
                                 {parseLocalJwt().role === "CONTENT_MANAGER" ?
                                     <li><Link to="/manage"><p>Manage Content</p></Link></li> : ''
                                 }
-                                <li><Link to="/"><p>Settings</p></Link></li>
+                                {/*<li><Link to="/"><p>Settings</p></Link></li>*/}
                                 <li><Link to="/" onClick={this.logoutUser}><p>Logout</p></Link></li>
                             </ul>
                         </li>

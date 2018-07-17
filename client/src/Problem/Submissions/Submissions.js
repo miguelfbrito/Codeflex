@@ -74,11 +74,11 @@ class Submissions extends React.Component {
                                     )
                                 }
                             ]}
-                            defaultPageSize={25}
-                            pageSize={Math.min(this.state.results.length, 25)}
+                            defaultPageSize={20}
+                            pageSize={Math.min(this.state.results.length, 20)}
                             style={{
                             }}
-                            showPagination={false}
+                            showPagination={Math.min(this.state.results.length, 20) >= 20 ? true : false }
                             className="-highlight"
                         /> : <h3 className="no-data-h3">You have not submitted solutions to this problem.</h3>}
 

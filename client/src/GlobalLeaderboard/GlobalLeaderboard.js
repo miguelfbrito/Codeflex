@@ -16,7 +16,7 @@ class GlobalLeaderboard extends React.Component {
 
     componentDidMount() {
         fetch(URL + '/api/database/Users/viewAllWithLessInfo', {
-            headers : {...getAuthorization()}
+            headers: { ...getAuthorization() }
         }).then(res => res.json())
             .then(data => {
                 console.log("Dataaaa")
@@ -59,11 +59,11 @@ class GlobalLeaderboard extends React.Component {
 
 
                 ]}
-                defaultPageSize={25}
-                pageSize={Math.min(this.state.users.length, 25)}
+                defaultPageSize={20}
+                pageSize={Math.min(this.state.users.length, 20)}
                 style={{
                 }}
-                showPagination={false}
+                showPagination={Math.min(this.state.users.length, 20) >= 20 ? true : false }
                 className="-highlight"
             />
         </div>

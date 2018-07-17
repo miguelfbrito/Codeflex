@@ -131,7 +131,7 @@ class ManageTestCases extends React.Component {
                 break;
         }
 
-        this.setState({ testCases: newArray })
+        this.setState({ testCases: newArray, currentMode : ''})
         this.persistChangesOnDatabase();
     }
 
@@ -166,6 +166,8 @@ class ManageTestCases extends React.Component {
 
             this.addTestCase(data);
         }
+
+        this.setState({currentMode : ''})
     }
 
     changeToBulk = () => {
@@ -252,6 +254,7 @@ class ManageTestCases extends React.Component {
             }
 
             this.modalAdd.current.closeModal();
+            this.setState({currentMode : ''})
         }
 
 

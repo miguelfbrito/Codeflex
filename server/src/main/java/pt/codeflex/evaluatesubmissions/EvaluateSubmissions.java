@@ -251,6 +251,7 @@ public class EvaluateSubmissions implements Runnable {
 
 			// checks all testcases
 			for (TestCases tc : testCases) {
+				System.out.println("INPUT " + tc.getInput());
 				String tcName = "%%%output_" + tc.getId();
 				String s = output;
 				if (!s.equals("")) {
@@ -281,7 +282,6 @@ public class EvaluateSubmissions implements Runnable {
 
 			List<Scoring> scoringBySubmission = scoringRepository.findAllBySubmissions(submission);
 			int totalScoring = scoringBySubmission.size();
-
 			int countCorrectScoring = 0;
 			if (totalScoring == totalTestCasesForProblem) {
 				double totalScore = 0;
@@ -317,6 +317,7 @@ public class EvaluateSubmissions implements Runnable {
 				Tournament currentTounament = submission.getProblem().getTournament();
 				// if the tournament has closed already, won't change the leaderboard.
 				if (currentTounament != null && !currentTounament.getOpen()) {
+					System.out.println("ESTÁ FECHADO");
 					cmd.close();
 					return;
 				}

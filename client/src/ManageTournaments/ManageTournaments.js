@@ -174,11 +174,11 @@ class ManageTournaments extends React.Component {
                                         )
                                     }
                                 ]}
-                                defaultPageSize={rows}
+                                defaultPageSize={15}
                                 pageSize={Math.min(rows, 15)}
                                 style={{
                                 }}
-                                showPagination={false}
+                                showPagination={Math.min(rows,15) >= 15? true : false }
                                 className="-highlight"
                             />
                         </div> : <h3 className="no-data-h3">There are no tournaments created.</h3>}

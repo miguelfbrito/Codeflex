@@ -14,6 +14,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import pt.codeflex.utils.Hash;
@@ -26,6 +29,7 @@ public class Tournament {
 	private long id;
 
 	@ManyToOne
+	@NotFound(action = NotFoundAction.IGNORE)
 	private Users owner;
 
 	@Column(length = 50, unique = true)

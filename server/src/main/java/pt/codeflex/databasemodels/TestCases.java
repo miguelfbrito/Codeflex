@@ -26,12 +26,13 @@ public class TestCases {
 	// for large data
 	// TODO : change 1 -> N to N -> N ?
 
-	@Column(length = 5000)
+	@Column(length = 7500)
 	private String input;
 
-	@Column(length = 5000)
+	@Column(length = 7500)
 	private String output;
 
+	@Column(length = 2500)
 	private String description;
 
 	private boolean shown;

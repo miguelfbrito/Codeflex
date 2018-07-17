@@ -99,7 +99,7 @@ class ListProblems extends Component {
                     this.setState({ problems: newData[0].problem, filteredProblems: newData[0].problem });
                     console.log(newData[0].problem);
                 }
-            })
+            }).catch(err => console.log(err));
     }
 
     onChangeSelectBox(e) {

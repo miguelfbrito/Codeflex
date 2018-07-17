@@ -80,11 +80,11 @@ class Leaderboard extends React.Component {
                         }
 
                     ]}
-                    defaultPageSize={25}
-                    pageSize={Math.min(this.state.leaderboard.length, 25)}
+                    defaultPageSize={20}
+                    pageSize={Math.min(this.state.leaderboard.length, 20)}
                     style={{
                     }}
-                    showPagination={false}
+                    showPagination={Math.min(this.state.leaderboard.length, 20) >= 20 ? true : false}
                     className="-highlight"
                 />
         }

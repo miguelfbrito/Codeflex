@@ -3,6 +3,7 @@ import Script from 'react-load-script';
 import AceEditor from 'react-ace';
 import brace from 'brace';
 import Parser from 'html-react-parser';
+import { ToastContainer, toast } from 'react-toastify';
 import { Redirect, Link } from 'react-router-dom';
 import { URL } from '../commons/Constants';
 import { splitUrl, textToLowerCaseNoSpaces, dateWithDay, getAuthorization, parseLocalJwt } from '../commons/Utils';
@@ -33,6 +34,7 @@ class Problem extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            timeout: false,
             registered: true,
             mathJaxLoaded: false,
             problemLoaded: false,
@@ -53,41 +55,7 @@ class Problem extends Component {
             displayLanguages: [],
             language: { mode: 'java', name: 'Java' },
             theme: 'github',
-            code: `import java.io.*;
-import java.util.*;
-import java.text.*;
-import java.math.*;
-import java.util.regex.*;
-
-public class Solution {
-
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
-        int n = in.nextInt();
-        int scores[] = new int[n];
-        for (int i = 0; i < n; i++) {
-            scores[i] = in.nextInt();
-        }
-        minimumDistances(n, scores);
-    }
-
-    static void minimumDistances(int n, int array[]) {
-        int min = Integer.MAX_VALUE;
-        for (int i = 0; i < n-1; i++) {
-            for(int j = i+1; j<n; j++) {
-                if(array[i] == array[j]){
-                    min = Math.min(min,  Math.abs(i-j));
-                }
-            }
-        }
-        if(min==Integer.MAX_VALUE) {
-            min = -1;
-        }
-        System.out.println(min);
-    }
-
-
-}`
+            code: ``
         }
 
         this.mathJaxRender = React.createRef();
@@ -106,9 +74,9 @@ public class Solution {
 
         console.log(currentProblem);
 
-        if (url[0] !== 'practise') {
-            this.isUserRegisteredInTournament();
-        }
+     //   if (url[0] !== 'practise') {
+      //      this.isUserRegisteredInTournament();
+       // }
 
         fetch(URL + '/api/database/problem/getProblemByName/' + currentProblem, { headers: { ...getAuthorization() } })
             .then(res => res.json()).then(data => {
@@ -131,6 +99,16 @@ public class Solution {
             localStorage.setItem('problem-page', JSON.stringify(this.state.page));
         }
 
+        if (localStorage.getItem("code") != null && localStorage.getItem("theme") != null && localStorage.getItem("language") != null) {
+            this.setState({
+                "code": localStorage.getItem("code"),
+            })
+        }
+
+    }
+
+    componentWillUnmount() {
+        localStorage.setItem("code", this.state.code);
     }
 
     isUserRegisteredInTournament = () => {
@@ -235,6 +213,7 @@ public class Solution {
             console.log(data);
             this.setState({ sentSubmission: { submitting: true, waitingForResults: true, submission: data } })
             //console.log(data.problem.testCases.length);
+            window.secondsWaiting = new Date().getTime();
             window.resultsListener = setInterval(this.fetchForResults, 1000);
         });
 
@@ -254,6 +233,13 @@ public class Solution {
                     })
                     clearInterval(window.resultsListener);
 
+                }
+
+                if (new Date().getTime() - window.secondsWaiting >= 30000) {
+                    toast.error("Your evaluation is taking too long, please try again later.")
+                    clearInterval(window.resultsListener);
+                    this.setState({ submitting: false, waitingForResults: false, problemLoaded : true, sentSubmission : { submitting: false} });
+                    return;
                 }
 
                 if (data.length === 1 && data[0].submissions.result != null) {
@@ -396,6 +382,7 @@ public class Solution {
                 <div className="col-sm-12 ace-editor-container">
                     <div className="ace-editor">
                         <div className="ace-editor-navbar">
+                            <p style={{ float: 'left', padding: '3pt', fontSize: '10pt', color: '#aaa' }}>Classes must be named 'Solution' and include no packages.</p>
                             <select name="language" id="" placeholder="Language" onChange={this.handleSelectBoxChange}>
                                 {this.state.displayLanguages.map(l => (
                                     <option key={l.id} value={l.compilerName}>{l.name}</option>
@@ -483,6 +470,8 @@ public class Solution {
 
     render() {
 
+
+
         if (!this.state.registered) {
             return (
                 <PageNotFound />
@@ -536,6 +525,18 @@ public class Solution {
                             </div>
 
                             {sectionToRender}
+
+                            <ToastContainer
+                                position="top-right"
+                                autoClose={5500}
+                                hideProgressBar={false}
+                                closeOnClick
+                                rtl={false}
+                                pauseOnVisibilityChange
+                                draggable
+                                pauseOnHover
+                                style={{ fontFamily: "'Roboto', sans-serif", fontSize: '12pt', letterSpacing: '1px' }}
+                            />
 
                             {this.state.results.loaded ?
                                 <Redirect to={{

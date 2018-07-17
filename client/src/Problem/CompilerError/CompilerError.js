@@ -13,7 +13,7 @@ class CompilerError extends React.Component {
 
         return (
             <div>
-                <p>Compiler Error</p>
+                <h2 style={{ color: 'red' }}>Compiler Error</h2>
                 <p>{error}</p>
             </div>
         );

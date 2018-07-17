@@ -179,12 +179,12 @@ class ManageProblems extends React.Component {
                             )
                         }
                     ]}
-                    defaultPageSize={25}
-                    pageSize={Math.min(this.state.problems.length, 25)}
+                    defaultPageSize={15}
+                    pageSize={Math.min(this.state.problems.length,15)}
                     style={{
                     }
                     }
-                    showPagination={false}
+                    showPagination={Math.min(this.state.problems.length,15) >= 15 ? true : false }
                     className="-highlight"
                 />
 
