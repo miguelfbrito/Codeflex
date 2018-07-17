@@ -30,14 +30,15 @@ class ListProblems extends Component {
     componentDidMount() {
 
         const url = splitUrl(this.props.location.pathname);
+
+
+
         if (url[0] === 'practise') {
             console.log('practise')
             this.fetchProblemsByCategory();
         } else if (url[0] === 'compete') {
             console.log('compete')
-            this.fetchTournament();
             this.isUserRegisteredInTournament();
-            this.fetchProblemsByTournament();
         }
 
         fetch(URL + '/api/database/difficulty/view', {
@@ -54,6 +55,8 @@ class ListProblems extends Component {
         }).then(res => {
             if (res.status === 200) {
                 this.setState({ registered: true });
+                this.fetchTournament();
+                this.fetchProblemsByTournament();
             } else {
                 this.setState({ registered: false });
             }

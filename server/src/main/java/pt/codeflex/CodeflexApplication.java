@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -33,6 +36,7 @@ public class CodeflexApplication {
 		SpringApplication.run(CodeflexApplication.class, args);
 
 	}
+	
 
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {

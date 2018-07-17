@@ -13,7 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-
 @Entity
 public class Users {
 
@@ -41,7 +40,7 @@ public class Users {
 
 	public Users() {
 	}
-	
+
 	public Users(String username) {
 		this.username = username;
 	}
@@ -50,11 +49,7 @@ public class Users {
 		this.username = username;
 		this.email = email;
 		this.registrationDate = Calendar.getInstance().getTime();
-		if (username.equals("mbrito")) {
-			this.globalRating = (double) 1500;
-		} else {
-			this.globalRating = (double) 2000;
-		}
+		this.globalRating = (double) 1500;
 
 		MessageDigest digest = null;
 
@@ -96,7 +91,6 @@ public class Users {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
 
 	public Date getRegistrationDate() {
 		return registrationDate;

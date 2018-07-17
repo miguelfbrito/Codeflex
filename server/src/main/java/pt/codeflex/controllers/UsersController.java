@@ -6,6 +6,8 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -68,7 +70,7 @@ public class UsersController {
 	}
 
 	@PostMapping("/register")
-	public GenericResponse register(@RequestBody Users user) {
+	public ResponseEntity<?> register(@RequestBody Users user) {
 		GenericResponse genericResponse = null;
 		System.out.println("Registering " + user.toString());
 
@@ -77,48 +79,31 @@ public class UsersController {
 
 		System.out.println("Fetching for possible existent accounts");
 		if (findByUsername != null) {
-
 			System.out.println(findByUsername.toString());
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
 
 		if (findByEmail != null) {
-
 			System.out.println(findByEmail.toString());
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 
-		if (findByUsername != null) {
-			genericResponse = new GenericResponse(0, "Username already in use");
+		Users newUser = new Users(user.getUsername(), user.getEmail(),
+				bCryptPasswordEncoder.encode(user.getPassword()));
 
-			if (findByEmail != null) {
-				genericResponse = new GenericResponse(2, "Username and email in use");
-			}
+		Users savedUser = usersRepository.save(newUser);
+
+		// TEST PURPOSES
+		if (savedUser.getUsername().equals("admin")) {
+			addUsersRoles(new UsersRoles(savedUser, viewRoleById((long) 2)));
 		} else {
-			if (findByEmail != null) {
-				genericResponse = new GenericResponse(1, "Email in use");
-			}
+			addUsersRoles(new UsersRoles(savedUser, viewRoleById((long) 1)));
 		}
 
-		if (genericResponse == null) {
-			Users newUser = new Users(user.getUsername(), user.getEmail(),
-					bCryptPasswordEncoder.encode(user.getPassword()));
+		// UserLessInfo finalUser = new UserLessInfo();
+		// finalUser.convert(newUser);
 
-			Users savedUser = usersRepository.save(newUser);
-
-			// TEST PURPOSES
-			if (savedUser.getUsername().equals("mbrito") || savedUser.getUsername().equals("admin")) {
-				addUsersRoles(new UsersRoles(savedUser, viewRoleById((long) 2)));
-			} else {
-				addUsersRoles(new UsersRoles(savedUser, viewRoleById((long) 1)));
-			}
-			
-
-			// UserLessInfo finalUser = new UserLessInfo();
-			// finalUser.convert(newUser);
-
-			genericResponse = new GenericResponse(3, newUser, "Account created");
-		}
-
-		return genericResponse;
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@GetMapping("/Users/isRegistered/{username}")

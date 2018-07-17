@@ -770,7 +770,7 @@ public class DatabaseController {
 		if (p != null) {
 
 			if (p.getTournament() != null
-					&& !isUserRegisterdInTournament(auth.getName(), p.getTournament().getName())) {
+					&& !isUserRegisteredInTournament(auth.getName(), p.getTournament().getName())) {
 				return new Problem();
 			}
 
@@ -828,19 +828,24 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/Rating/isUserRegisteredInTournamentByName/{username}/{tournamentName}")
-	public boolean isUserRegisterdInTournament(@PathVariable String username, @PathVariable String tournamentName) {
+	public boolean isUserRegisteredInTournament(@PathVariable String username, @PathVariable String tournamentName) {
 		Users user = viewUsersByUsername(username);
 		Tournament tournament = viewTournamentByName(tournamentName);
+
+		System.out.println("Checking: is user registered");
 
 		if (user != null && tournament != null) {
 
 			Optional<Rating> r = ratingRepository.findById(new RatingID(tournament.getId(), user.getId()));
 
-			if (r.isPresent()) {
+			if (r.isPresent() || (tournament.getShowWebsite() && !tournament.getOpen())) {
+				System.out.println("O utilizador encontra-se registado");
 				return true;
 			}
 
 		}
+
+		System.out.println("O utilizador não está registado");
 		return false;
 	}
 
@@ -856,7 +861,7 @@ public class DatabaseController {
 
 			Optional<Rating> r = ratingRepository.findById(new RatingID(tournament.getId(), user.getId()));
 
-			if (r.isPresent() || (tournament.getShowWebsite())) {
+			if (r.isPresent() || (tournament.getShowWebsite() && !tournament.getOpen())) {
 				System.out.println("O utilizador encontra-se registado");
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
@@ -1240,7 +1245,7 @@ public class DatabaseController {
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 
-		if (tournament.getOwner() == user) {
+		if (tournament.getOwner().getId() == user.getId()) {
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 

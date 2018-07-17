@@ -69,37 +69,34 @@ class Problem extends Component {
     }
 
     componentDidMount() {
-        const url = splitUrl(this.props.location.pathname)
-        let currentProblem = url[2];
+        let url = splitUrl(this.props.location.pathname);
 
-        console.log(currentProblem);
+        if (url[0] !== 'practise') {
+            this.isUserRegisteredInTournament();
+        }
 
-     //   if (url[0] !== 'practise') {
-      //      this.isUserRegisteredInTournament();
-       // }
-
-        fetch(URL + '/api/database/problem/getProblemByName/' + currentProblem, { headers: { ...getAuthorization() } })
+        console.log("PROBLEMA NAME")
+        console.log(this.props.match.params.problemName);
+        fetch(URL + '/api/database/problem/getProblemByName/' + this.props.match.params.problemName,
+            { headers: { ...getAuthorization() } })
             .then(res => res.json()).then(data => {
-                console.log('problem')
+                console.log('Output do problema')
                 console.log(data)
                 this.setState({ problem: data, problemLoaded: true });
                 this.setOpenedProblem(data);
             })
 
         fetch(URL + '/api/database/Language/view', { headers: { ...getAuthorization() } }).then(res => res.json()).then(data => {
-            console.log(data)
             this.setState({ displayLanguages: data })
         });
 
         if (localStorage.getItem('problem-page') != null) {
             this.setState({ page: JSON.parse(localStorage.getItem('problem-page')) });
-            console.log('Storage exist');
         } else {
-            console.log('Storage doesnt exists');
             localStorage.setItem('problem-page', JSON.stringify(this.state.page));
         }
 
-        if (localStorage.getItem("code") != null && localStorage.getItem("theme") != null && localStorage.getItem("language") != null) {
+        if (localStorage.getItem("code") != null) {
             this.setState({
                 "code": localStorage.getItem("code"),
             })
@@ -166,13 +163,11 @@ class Problem extends Component {
                 'Content-Type': 'application/json'
             })
         }).then(res => res.json()).then(data => {
-            console.log("OPENING PROBLEM")
             console.log(data)
         });
     }
 
     onAceChange(newValue) {
-        console.log(newValue);
         this.setState({ code: newValue });
     }
 
@@ -188,9 +183,6 @@ class Problem extends Component {
     }
 
     submitSubmission() {
-        console.log(this.state);
-        console.log(this.state.language.mode);
-        console.log(btoa(this.state.code));
         this.setState({ sentSubmission: { submitting: true }, results: { result: [], error: '' } })
         let data = {
             code: btoa(this.state.code),
@@ -199,7 +191,6 @@ class Problem extends Component {
             problem: { name: textToLowerCaseNoSpaces(this.state.problem.name) }
         }
 
-        console.log(data);
 
         fetch(URL + '/submission', {
             method: 'POST',
@@ -209,10 +200,7 @@ class Problem extends Component {
                 'Content-Type': 'application/json'
             })
         }).then(res => res.json()).then(data => {
-            console.log('RESPONSE');
-            console.log(data);
             this.setState({ sentSubmission: { submitting: true, waitingForResults: true, submission: data } })
-            //console.log(data.problem.testCases.length);
             window.secondsWaiting = new Date().getTime();
             window.resultsListener = setInterval(this.fetchForResults, 1000);
         });
@@ -220,7 +208,6 @@ class Problem extends Component {
     }
 
     fetchForResults() {
-        console.log('Fetching results');
         fetch(URL + '/api/database/Scoring/viewBySubmissionId/' + this.state.sentSubmission.submission.id, { headers: { ...getAuthorization() } }).then(res => res.json())
             .then(data => {
                 console.log(data);
@@ -238,7 +225,7 @@ class Problem extends Component {
                 if (new Date().getTime() - window.secondsWaiting >= 30000) {
                     toast.error("Your evaluation is taking too long, please try again later.")
                     clearInterval(window.resultsListener);
-                    this.setState({ submitting: false, waitingForResults: false, problemLoaded : true, sentSubmission : { submitting: false} });
+                    this.setState({ submitting: false, waitingForResults: false, problemLoaded: true, sentSubmission: { submitting: false } });
                     return;
                 }
 
@@ -280,23 +267,19 @@ class Problem extends Component {
     }
 
     onPageClick(e) {
-        console.log(e.target.innerHTML.toLowerCase());
         let newPage = this.state.page;
         for (let property in newPage) {
             if (property === e.target.innerHTML.toLowerCase()) {
                 newPage[property] = true;
-                console.log(property);
             } else {
                 newPage[property] = false;
             }
         }
         this.setState({ page: newPage });
         localStorage.setItem('problem-page', JSON.stringify(newPage));
-        console.log(this.state.page);
     }
 
     handleScriptLoad() {
-        console.log('LOADING SCRIPT');
         this.setState({ scriptLoaded: true })
     }
 
@@ -310,8 +293,6 @@ class Problem extends Component {
             finalString = draft;
         }
 
-        console.log("FINAL STRING")
-        console.log(finalString)
         return (
             <div>
                 {finalString}
@@ -554,7 +535,7 @@ class Problem extends Component {
                 );
             } else {
                 return (
-                    <Redirect to="/" />
+                    <div></div>
                 )
             }
         } else {

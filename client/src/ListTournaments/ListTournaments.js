@@ -27,7 +27,7 @@ class ListTournaments extends React.Component {
         this.fetchTournamentList();
         window.updateEveryMinute = setInterval(() => {
             this.fetchTournamentList();
-        }, 60000);
+        }, 10000);
     }
 
     componentWillUnmount() {
@@ -111,7 +111,7 @@ class ListTournaments extends React.Component {
             availableTournaments = tournaments.availableTournaments.sort((a, b) => a.tournament.endingDate - b.tournament.endingDate).map(t => (
                 <div className="tournament-container">
                     <div key={t.tournament.id} className="col-sm-10 col-md-10 col-xs-12">
-                        <p>{t.tournament.name}</p>
+                        <p style={{fontSize:'15pt'}}>{t.tournament.name}</p>
                         <p>{t.tournament.description}</p>
                         {new Date(t.tournament.startingDate).getTime() > new Date().getTime() ? <p style={{fontSize:'11pt'}} className="green-text">Starting at {dateWithHoursAndDay(t.tournament.startingDate)}</p>
                             : <p style={{fontSize:'11pt'}} className="red-text">Finishing in {getTimeHoursMinsText(new Date(t.tournament.endingDate).getTime() - new Date().getTime())}</p>}
@@ -131,7 +131,7 @@ class ListTournaments extends React.Component {
             archivedTournaments = tournaments.archivedTournaments.map(t => (
                 <div className="tournament-container">
                     <div key={t.tournament.id} className="col-sm-10 col-md-10 col-xs-12">
-                        <p>{t.tournament.name}</p>
+                        <p style={{fontSize:'15pt'}}>{t.tournament.name}</p>
                         <p>{t.tournament.description}</p>
                     </div>
                     <div className="col-sm-2 col-md-2 col-xs-4 button-container-tournaments" >

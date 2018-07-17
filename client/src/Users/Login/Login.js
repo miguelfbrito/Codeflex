@@ -49,7 +49,7 @@ class Login extends Component {
                 "Cache-Control": "no-cache",
             })
         }).then(res => {
-            if (res.status === 401) {
+            if (res.status === 401 || res.status === 403) {
                 console.log("ERRRROR")
                 toast.error("Invalid credentials", { autoClose: 2500 })
                 return;
@@ -118,16 +118,16 @@ class Login extends Component {
                 'Content-Type': 'application/json'
             })
         }).then(res => {
-            res.json()
-        }).then(data => {
-            console.log("Info register")
-            console.log(data);
-
-            /*      if (data.object != null) {
-                      window.location.href = URL_FRONT;
-                      const userData = { id: data.object.id, username: data.object.username, email: data.object.email };
-                      localStorage.setItem('userData', JSON.stringify(userData));
-                  }*/
+            if (res.status === 409 || res.status === 403) {
+                toast.error("Username already in use.", 2500);
+                return;
+            } else {
+                this.setState({
+                    isLoggingIn: true,
+                    isSigninUp: false
+                })
+                toast.success("Account created with success!", { autoClose: 2500 });
+            }
         })
 
     }

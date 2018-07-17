@@ -37,14 +37,14 @@ class CreateTournament extends React.Component {
     }
 
     componentDidMount() {
+        let url = splitUrl(this.props.location.pathname);
 
-        if (!isContentManager()) {
+        if (!isContentManager() && url[1] !== 'create-tournament') {
             this.isUserTournamentOwner();
             this.isUserRegistered();
         }
 
         this.setState({ location: splitUrl(this.props.location.pathname)[0] });
-        let url = splitUrl(this.props.location.pathname);
         if (url[3] === 'edit') {
             this.fetchTournament();
         }
@@ -66,7 +66,7 @@ class CreateTournament extends React.Component {
     }
 
     isUserTournamentOwner = () => {
-        fetch(URL + '/api/database/tournament/isUserTournamentOwner/' + this.props.match.params + "/" + parseLocalJwt().username, {
+        fetch(URL + '/api/database/tournament/isUserTournamentOwner/' + this.props.match.params.tournamentName + "/" + parseLocalJwt().username, {
             headers: new Headers({ ...getAuthorization() })
         }).then(res => { if (res.status === 200) { this.setState({ userIsOwner: true }); } else { this.setState({ userIsOwner: false }); } })
     }

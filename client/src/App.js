@@ -45,7 +45,7 @@ class App extends Component {
     }
 
     isUserTournamentOwner = () => {
-        fetch(URL + '/api/database/tournament/isUserTournamentOwner/' + this.props.match.params + "/" + parseLocalJwt().username, {
+        fetch(URL + '/api/database/tournament/isUserTournamentOwner/' + this.props.match.params.tournamentName + "/" + parseLocalJwt().username, {
             headers: new Headers({ ...getAuthorization() })
         }).then(res => { if (res.status === 200) { this.setState({ userIsOwner: true }); } else { this.setState({ userIsOwner: false }); } })
     }
@@ -99,9 +99,6 @@ class App extends Component {
 
                                 <Route exact path="/compete/:tournamentName/:problemName/view-results" component={(PageWrapper(ViewResults))} />
 
-
-
-                                {console.log(window.location.href)}
                                 {/* REACT.FRAGMENT is breaking the switch */}
                                 {this.manageSectionControl() ? <Route exact path="/manage" component={PageWrapper(ManageContent)} /> : ''}
                                 {this.manageSectionControl() ? <Route exact path="/manage/problems" component={PageWrapper(ManageProblems)} /> : ''}
