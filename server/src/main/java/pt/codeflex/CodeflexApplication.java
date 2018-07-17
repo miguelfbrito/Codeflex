@@ -45,11 +45,14 @@ public class CodeflexApplication {
 
 	@Bean
 	public Host fetchAndConnectHosts() {
-		Host h1 = new Host("192.168.1.65", 22, "ubuntu", new SSHClient(),
-				"33:02:cb:3b:13:b1:bd:fa:66:ff:29:96:ea:ff:dc:78", false);
-		connect(h1);
-
-		return h1;
+//		Host h1 = new Host("192.168.1.65", 22, "ubuntu", new SSHClient(),
+//				"33:02:cb:3b:13:b1:bd:fa:66:ff:29:96:ea:ff:dc:78", false);
+//		connect(h1);
+		
+		Host amazonAws = new Host("172.31.36.238", 22, "ubuntu", new SSHClient(),"", false);
+		connect(amazonAws);
+		
+		return amazonAws;
 	}
 
 	public void connect(Host host) {
@@ -59,11 +62,11 @@ public class CodeflexApplication {
 			ssh.connect(host.getIp(), host.getPort());
 
 			// https://stackoverflow.com/questions/9283556/sshj-keypair-login-to-ec2-instance
-//			PKCS8KeyFile keyFile = new PKCS8KeyFile();
-//			keyFile.init(new File("~/aws.pem"));
-//			ssh.auth("ubuntu", new AuthPublickey(keyFile));
+			PKCS8KeyFile keyFile = new PKCS8KeyFile();
+			keyFile.init(new File("~/aws.pem"));
+			ssh.auth("ubuntu", new AuthPublickey(keyFile));
 
-			 ssh.authPublickey("mbrito");
+//			 ssh.authPublickey("mbrito");
 
 			Session session = ssh.startSession();
 			Command cmd = session.exec("rm -rf Submissions/*");
