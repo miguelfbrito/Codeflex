@@ -1,0 +1,28 @@
+using System;
+
+class Solution
+{
+    public static int FindFibonacci(int n)
+    {
+	int p = 0;
+	int q = 1;
+	for (int i = 0; i < n; i++)
+	{
+	    int temp = p;
+	    p = q;
+	    q = temp + q;
+	}
+	return p;
+    }
+
+    static void Main()
+    {
+
+        int n1 = Convert.ToInt32(Console.ReadLine());
+	    for (int i = 0; i < n1; i++)
+	        {
+	            Console.Write("{0} ",FindFibonacci(i));
+	        }
+	Console.ReadKey();
+    }
+}

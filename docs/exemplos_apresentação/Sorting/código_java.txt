@@ -1,0 +1,22 @@
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Solution {
+	public static void main(String[] args) {
+
+		Scanner in = new Scanner(System.in);
+
+		int n = in.nextInt();
+		int[] arrayOfNumbers = new int[n];
+		for (int i = 0; i < n; i++) {
+			arrayOfNumbers[i] = in.nextInt();
+		}
+		
+		Arrays.sort(arrayOfNumbers);
+		
+		for(int i = 0; i<n; i++) {
+			System.out.print(arrayOfNumbers[i] + " ");
+		}
+
+	}
+}

@@ -1,0 +1,25 @@
+import java.util.Scanner;
+
+public class Solution {
+
+	long[] dictionary;
+
+	public static void main(String[] args) {
+		Scanner in = new Scanner(System.in);
+		int n = in.nextInt();
+
+		Solution f = new Solution();
+
+		for(int i = 0 ; i<n; i++) {
+			System.out.print(f.fibonacciRecursive(i) + " ");
+		}
+	}
+
+	public long fibonacciRecursive(long number) {
+		if ((number == 0) || (number == 1)) // base cases
+			return number;
+		else
+			// recursion step
+			return fibonacciRecursive(number - 1) + fibonacciRecursive(number - 2);
+	}
+}

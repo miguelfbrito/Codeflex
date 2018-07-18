@@ -1,0 +1,38 @@
+import java.util.Scanner;
+
+public class Solution {
+
+	long[] dictionary;
+
+	public static void main(String[] args) {
+		Scanner in = new Scanner(System.in);
+		int n = in.nextInt();
+
+		Solution f = new Solution();
+		f.getFibWithMem(n);
+		f.printFibonacci();
+	}
+
+	public long getFibWithMem(int n) {
+		if (dictionary == null) {
+			dictionary = new long[n];
+		}
+
+		if (dictionary[n - 1] == 0) {
+			if (n <= 2) {
+				dictionary[n - 1] = n - 1;
+			} else {
+				dictionary[n - 1] = getFibWithMem(n - 1) + getFibWithMem(n - 2);
+			}
+		}
+
+		return dictionary[n - 1];
+	}
+
+	public void printFibonacci() {
+		for (int i = 0; i < dictionary.length; i++) {
+			System.out.print(dictionary[i] + " ");
+		}
+	}
+
+}
