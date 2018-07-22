@@ -74,7 +74,7 @@ public class EvaluateSubmissions implements Runnable {
 
 	private static Queue<Submissions> submissionsQueue = new ArrayDeque();
 
-	private static final String SERVER_USER = "ubuntu";
+	private static final String SERVER_USER = "mbrito";
 	private static final String PATH_SPRING = System.getProperty("user.home") + File.separator + "Submissions";
 	private static final String PATH_SERVER = "Submissions";// "/home/mbrito/Desktop/Submissions"
 	private static final String PATH_FIREJAIL = "/home/" + SERVER_USER + "/" + PATH_SERVER;// "/home/mbrito/Desktop/Submissions"
