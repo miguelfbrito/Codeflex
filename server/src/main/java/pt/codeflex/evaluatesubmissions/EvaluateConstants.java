@@ -17,4 +17,14 @@ public class EvaluateConstants {
 	public static final String PATH_FIREJAIL = File.separator + "home" +  File.separator + 
 			SERVER_USER + File.separator + PATH_SERVER;
 
+	// File name used to save code to posterior compilation
+	public static final String CLASS_FILE_NAME = "Solution";
+
+	
+	// --------------------------------------------------------------------------------------------------------//
+	
+	// Format of the name of the file created when a compiler error is thrown
+	public static String compilerErrorFile(long id) {
+		return "compiler_error" + id + ".txt";
+	}
 }
