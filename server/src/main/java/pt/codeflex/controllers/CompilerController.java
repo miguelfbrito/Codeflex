@@ -55,60 +55,11 @@ public class CompilerController {
 	private LanguageRepository languageRepository;
 
 	@Autowired
-	private EvaluateSubmissions evaluateSubmissions;
-
-	@Autowired
 	private Host host;
-
-	private Queue<Submissions> submissionsQueue = new ArrayDeque<>();
-
-	@GetMapping("/ssh")
-	public void startThreads() throws IOException, InterruptedException {
-		long inicial = System.currentTimeMillis();
-
-		System.out.println("\n\n\n\n");
-		long count = 0;
-
-		EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
-		evaluateSubmissions1.setHost(host);
-		evaluateSubmissions1.getSubmissions();
-		taskExecutor.execute(evaluateSubmissions1);
-
-		System.out.println("QUANTIDADE " + count);
-
-		// for (Host h : hostList) {
-		// // System.out.println("Starting thread with host " + h.getIp() + "\n");
-		// EvaluateSubmissions evaluateSubmissions2 =
-		// applicationContext.getBean(EvaluateSubmissions.class);
-		// evaluateSubmissions2.setHost(h);
-		// taskExecutor.execute(evaluateSubmissions1);
-		// System.out.println("\n\n\n");
-		// }
-
-		// Adds all the submissions into a volatile queue. The queue is then distributed
-		// to the threads
-
-		// EvaluateSubmissions evaluateSubmissions3 =
-		// applicationContext.getBean(EvaluateSubmissions.class);
-		// evaluateSubmissions3.setHost(host1);
-		// evaluateSubmissions3.connect(host1);
-		// taskExecutor.execute(evaluateSubmissions3);
-		//
-		// EvaluateSubmissions evaluateSubmissions4 =
-		// applicationContext.getBean(EvaluateSubmissions.class);
-		// evaluateSubmissions4.setHost(host2);
-		// evaluateSubmissions4.connect(host2);
-		// taskExecutor.execute(evaluateSubmissions4);
-
-		System.out.println("TEMPO DE PROCESSAMENTO : " + (System.currentTimeMillis() - inicial));
-	}
 
 	@Transactional
 	@PostMapping("/submission")
 	public Submissions submit(@RequestBody SubmitSubmission submitSubmission) {
-
-		System.out.println("Received submission ");
-		System.out.println(submitSubmission.toString());
 
 		Problem problem = problemRepository.findByName(submitSubmission.getProblem().getName().replaceAll("-", " "));
 		Users user = usersRepository.findByUsername(submitSubmission.getUsers().getUsername());
@@ -116,16 +67,25 @@ public class CompilerController {
 
 		Submissions submission = new Submissions();
 		if (problem != null && language != null && user != null) {
+
 			submission = new Submissions(problem, language, submitSubmission.getCode(), user);
 			submissionsRepository.save(submission);
+
 			try {
-				startThreads();
+				startThread();
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 
-		System.out.println(submission.toString());
 		return submission;
 	}
+
+	public void startThread() throws IOException, InterruptedException {
+		EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
+		evaluateSubmissions1.setHost(host);
+		evaluateSubmissions1.getSubmissions();
+		taskExecutor.execute(evaluateSubmissions1);
+	}
+
 }

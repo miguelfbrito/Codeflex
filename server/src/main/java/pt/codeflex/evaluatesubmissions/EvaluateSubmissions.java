@@ -8,11 +8,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.concurrent.SynchronousQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,25 +36,24 @@ import pt.codeflex.databasemodels.Submissions;
 import pt.codeflex.databasemodels.TestCases;
 import pt.codeflex.databasemodels.Tournament;
 import pt.codeflex.models.Host;
-import pt.codeflex.models.SubmissionWithTestCase;
-import pt.codeflex.models.TasksBeingEvaluated;
-import pt.codeflex.models.TestCaseForExecution;
 import pt.codeflex.repositories.LeaderboardRepository;
 import pt.codeflex.repositories.ResultRepository;
 import pt.codeflex.repositories.ScoringRepository;
 import pt.codeflex.repositories.SubmissionsRepository;
-import pt.codeflex.repositories.UsersRepository;
+
+import static pt.codeflex.evaluatesubmissions.EvaluateConstants.PATH_SPRING;
+import static pt.codeflex.evaluatesubmissions.EvaluateConstants.PATH_SERVER;
+import static pt.codeflex.evaluatesubmissions.EvaluateConstants.PATH_FIREJAIL;
 
 @Component
 @Transactional
 @Scope("prototype")
 public class EvaluateSubmissions implements Runnable {
 
+	private static final Logger LOGGER = Logger.getLogger(EvaluateSubmissions.class.getName());
+	
 	@Autowired
 	private DatabaseController db;
-
-	@Autowired
-	private UsersRepository usersRepository;
 
 	@Autowired
 	private ScoringRepository scoringRepository;
@@ -71,23 +68,20 @@ public class EvaluateSubmissions implements Runnable {
 	private LeaderboardRepository leaderboardRepository;
 
 	private Host host;
-
-	private static Queue<Submissions> submissionsQueue = new ArrayDeque();
-
-	private static final String SERVER_USER = "mbrito";
-	private static final String PATH_SPRING = System.getProperty("user.home") + File.separator + "Submissions";
-	private static final String PATH_SERVER = "Submissions";// "/home/mbrito/Desktop/Submissions"
-	private static final String PATH_FIREJAIL = "/home/" + SERVER_USER + "/" + PATH_SERVER;// "/home/mbrito/Desktop/Submissions"
-
-	private volatile static long count = 0;
 	private long uniqueId;
+	private static Queue<Submissions> submissionsQueue = new ArrayDeque<Submissions>();
 
 	@Override
 	public void run() {
-		System.out.println("Thread starting!");
-		System.out.println("Connection established!");
-		// getSubmissions();
+		LOGGER.log(Level.FINE, "Starting evaluation!");
 		distributeSubmissions();
+	}
+
+	public synchronized void distributeSubmissions() {
+		while (!submissionsQueue.isEmpty()) {
+			Submissions submission = submissionsQueue.poll();
+			compileSubmission(submission);
+		}
 	}
 
 	public List<Submissions> getSubmissions() {
@@ -98,20 +92,12 @@ public class EvaluateSubmissions implements Runnable {
 		for (Submissions s : submissions) {
 			Optional<Submissions> submission = submissionsRepository.findById(s.getId());
 			if (submission.isPresent() && !submissionsQueue.contains(submission.get())) {
-				// finalSubmissions.add(submission.get());
 				submissionsQueue.add(submission.get());
 			}
 		}
 
 		return finalSubmissions;
 
-	}
-
-	public synchronized void distributeSubmissions() {
-		while (!submissionsQueue.isEmpty()) {
-			Submissions submission = submissionsQueue.poll();
-			compileSubmission(submission);
-		}
 	}
 
 	public void compileSubmission(Submissions submission) {
@@ -354,9 +340,6 @@ public class EvaluateSubmissions implements Runnable {
 	}
 
 	public String runTestCasesForSubmission(Submissions submission, String obtainOutput) {
-
-		count++;
-		System.out.println("\nCOUNT " + count + "\n");
 
 		Session session = null;
 		try {

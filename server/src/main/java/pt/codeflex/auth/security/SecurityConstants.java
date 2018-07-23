@@ -1,9 +1,6 @@
 package pt.codeflex.auth.security;
 
 public class SecurityConstants {
-	public class HEADER_STRING {
-
-	}
 	public static final String SECRET = "random51351Key532525ToGenerateJWTs##";
 	public static final long EXPIRATION_TIME =  2592000000L; // 30days
 	public static final String TOKEN_PREFIX = "Bearer ";
