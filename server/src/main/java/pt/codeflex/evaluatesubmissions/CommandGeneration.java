@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import pt.codeflex.databasemodels.Submissions;
+import pt.codeflex.utils.Path;
 
 import static pt.codeflex.evaluatesubmissions.EvaluateConstants.CLASS_FILE_NAME;
 
@@ -17,10 +18,10 @@ public class CommandGeneration {
 	public static CompilationInfo compilation(Submissions submission) {
 
 		long uniqueId = submission.getId();
-		String command = "cd " + PATH_SERVER + File.separator + uniqueId + "_" + submission.getLanguage().getName()
+		String command = "cd " + PATH_SERVER + Path.separator + uniqueId + "_" + submission.getLanguage().getName()
 				+ " && ";
 		String suffix = "";
-		String compilerError = EvaluateConstants.compilerErrorFile(uniqueId);
+		String compilerError = EvaluateConstants.COMPILER_ERROR;
 
 		// TODO : add memory limit
 		// TODO : load compiler commands from files ?!

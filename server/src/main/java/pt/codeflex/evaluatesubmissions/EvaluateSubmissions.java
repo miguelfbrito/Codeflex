@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 
 import javax.transaction.Transactional;
 
+import org.mockito.internal.creation.bytebuddy.SubclassByteBuddyMockMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -40,6 +41,7 @@ import pt.codeflex.repositories.LeaderboardRepository;
 import pt.codeflex.repositories.ResultRepository;
 import pt.codeflex.repositories.ScoringRepository;
 import pt.codeflex.repositories.SubmissionsRepository;
+import pt.codeflex.utils.Path;
 
 import static pt.codeflex.evaluatesubmissions.EvaluateConstants.PATH_SPRING;
 import static pt.codeflex.evaluatesubmissions.EvaluateConstants.PATH_SERVER;
@@ -74,7 +76,8 @@ public class EvaluateSubmissions implements Runnable {
 
 	@Override
 	public void run() {
-		LOGGER.log(Level.FINE, "Starting evaluation!");
+
+		LOGGER.log(Level.INFO, "Starting evaluation!");
 		distributeSubmissions();
 	}
 
@@ -82,6 +85,14 @@ public class EvaluateSubmissions implements Runnable {
 		while (!submissionsQueue.isEmpty()) {
 			Submissions submission = submissionsQueue.poll();
 			compileSubmission(submission);
+			System.out.println("SEPARATOR " + Path.separator);
+			LOGGER.log(Level.INFO, submission.toString());
+
+			if (!compiledSuccessfully(submission)) {
+				String executionOutput = executeTestCases(submission);
+				evaluateExecutedTestCases(submission, executionOutput);
+			}
+
 		}
 	}
 
@@ -102,7 +113,6 @@ public class EvaluateSubmissions implements Runnable {
 	}
 
 	public void compileSubmission(Submissions submission) {
-		Problem problem = submission.getProblem();
 
 		LOGGER.log(Level.FINE, submission.toString());
 
@@ -119,13 +129,18 @@ public class EvaluateSubmissions implements Runnable {
 
 		CompilationInfo compilationInfo = CommandGeneration.compilation(submission);
 
-		String compilerError = EvaluateConstants.compilerErrorFile(submission.getId());
 		String command = compilationInfo.getCommand();
 		String suffix = compilationInfo.getLanguageSuffix();
 
 		Command cmd = null;
 		try {
-			cmd = session.exec("mkdir " + PATH_SERVER + "/" + uniqueId + "_" + submission.getLanguage().getName());
+			String createFolderCommand = "mkdir " + PATH_SERVER + Path.separator + uniqueId + "_"
+					+ submission.getLanguage().getName();
+			System.out.println("Creating folder on server!");
+			System.out.println(createFolderCommand);
+
+			cmd = session.exec(createFolderCommand);
+
 			cmd.close();
 
 		} catch (ConnectionException | TransportException e1) {
@@ -134,11 +149,10 @@ public class EvaluateSubmissions implements Runnable {
 
 		// Create file with the code and send it to the server
 		createFile(new String(Base64.getDecoder().decode(submission.getCode())), "Solution");
-		scp(PATH_SPRING + File.separator + CLASS_FILE_NAME, PATH_SERVER + File.separator + uniqueId + "_"
-				+ submission.getLanguage().getName() + File.separator + "Solution" + suffix);
+		scp(PATH_SPRING + Path.separator + CLASS_FILE_NAME, PATH_SERVER + Path.separator + uniqueId + "_"
+				+ submission.getLanguage().getName() + Path.separator + "Solution" + suffix);
 
-		// Compiles the code using the command generated previously
-
+		// Sends the command created previously to compile the code
 		try {
 			session = host.getSsh().startSession();
 			cmd = session.exec(command);
@@ -147,14 +161,18 @@ public class EvaluateSubmissions implements Runnable {
 		} catch (ConnectionException | TransportException e) {
 			e.printStackTrace();
 		}
-		
-		
-		// Verifica se houve erro
+
+	}
+
+	public boolean compiledSuccessfully(Submissions submission) {
+		Session session;
 		try {
 			session = host.getSsh().startSession();
-			command = "cat " + PATH_SERVER + "/" + uniqueId + "_" + submission.getLanguage().getName() + "/"
-					+ compilerError;
-			cmd = session.exec(command);
+			String compilerError = EvaluateConstants.COMPILER_ERROR;
+			
+			String command = "cat " + PATH_SERVER + Path.separator + uniqueId + "_" + submission.getLanguage().getName()
+					+ Path.separator + compilerError;
+			Command cmd = session.exec(command);
 			String output = IOUtils.readFully(cmd.getInputStream()).toString();
 
 			if (!output.equals("")) {
@@ -179,24 +197,20 @@ public class EvaluateSubmissions implements Runnable {
 
 				submissionsRepository.save(submission);
 				System.out.println("Compiler error!");
-				return;
+				return false;
 			}
-
 		} catch (IOException e) {
-
 			e.printStackTrace();
 		}
-		
-		
-		
-		
-		
-		
-		
 
+		return true;
+	}
+
+	public String executeTestCases(Submissions submission) {
 		List<TestCases> testCases = submission.getProblem().getTestCases();
+
 		String commandsToExecute = "";
-		String dirName = submission.getId() + "_" + submission.getLanguage().getName() + "/";
+		String dirName = submission.getId() + "_" + submission.getLanguage().getName() + Path.separator;
 		String obtainOutput = "(";
 
 		for (TestCases tc : testCases) {
@@ -207,13 +221,14 @@ public class EvaluateSubmissions implements Runnable {
 			obtainOutput += " echo '%%%output_" + tc.getId() + "' && cat output_" + submission.getId() + "_"
 					+ tc.getId() + ".txt && echo 'end%%%' &&";
 		}
-		scp(PATH_SPRING + "/" + dirName,
-				PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName() + "/");
+
+		scp(PATH_SPRING + Path.separator + dirName, PATH_SERVER + Path.separator + submission.getId() + "_"
+				+ submission.getLanguage().getName() + Path.separator);
 
 		// creates jobs to be executed by parallel
 		createFile(commandsToExecute, "jobs.txt");
-		scp(PATH_SPRING + "/" + "jobs.txt",
-				PATH_SERVER + "/" + submission.getId() + "_" + submission.getLanguage().getName() + "/");
+		scp(PATH_SPRING + Path.separator + "jobs.txt", PATH_SERVER + Path.separator + submission.getId() + "_"
+				+ submission.getLanguage().getName() + Path.separator);
 
 		// removes the last unecessary &&
 		if (obtainOutput.length() > 2) {
@@ -221,14 +236,16 @@ public class EvaluateSubmissions implements Runnable {
 		}
 		obtainOutput += " ) 2> err";
 
-		// executes submissions in parallelism
-
 		String output = runTestCasesForSubmission(submission, obtainOutput);
 		System.out.println("\n\n\n" + output + "\n\n\n");
 
-		//
-		// Evaluation
-		//
+		return output;
+
+	}
+
+	public void evaluateExecutedTestCases(Submissions submission, String testCasesOutput) {
+		Problem problem = submission.getProblem();
+		List<TestCases> testCases = problem.getTestCases();
 
 		int totalTestCasesForProblem = problem.getTestCases().size();
 		int givenTestCases = 0;
@@ -237,7 +254,7 @@ public class EvaluateSubmissions implements Runnable {
 		for (TestCases tc : testCases) {
 			System.out.println("INPUT " + tc.getInput());
 			String tcName = "%%%output_" + tc.getId();
-			String s = output;
+			String s = testCasesOutput;
 			if (!s.equals("")) {
 				s = s.substring(s.indexOf(tcName));
 				s = s.substring(0, s.indexOf("end%%%"));
@@ -298,16 +315,10 @@ public class EvaluateSubmissions implements Runnable {
 			Leaderboard newLeaderboard = new Leaderboard(totalScore, submission.getUsers(), submission.getProblem(),
 					submission.getLanguage().getName());
 
-			Tournament currentTounament = submission.getProblem().getTournament();
-			// if the tournament has closed already, won't change the leaderboard.
-			if (currentTounament != null && !currentTounament.getOpen()) {
-				System.out.println("ESTÁ FECHADO");
-				try {
-					cmd.close();
-				} catch (TransportException | ConnectionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			Tournament currentTournament = submission.getProblem().getTournament();
+
+			// Do not change the leaderboard if the tournament is closed
+			if (currentTournament != null && !currentTournament.getOpen()) {
 				return;
 			}
 
@@ -334,7 +345,6 @@ public class EvaluateSubmissions implements Runnable {
 				leaderboardRepository.save(newLeaderboard);
 			}
 		}
-
 	}
 
 	public String runTestCasesForSubmission(Submissions submission, String obtainOutput) {
@@ -347,7 +357,7 @@ public class EvaluateSubmissions implements Runnable {
 		}
 
 		String dirName = submission.getId() + "_" + submission.getLanguage().getName();
-		String command = " cd " + PATH_SERVER + "/" + dirName + " && parallel -j `nproc` < jobs.txt ; ";
+		String command = " cd " + PATH_SERVER + Path.separator + dirName + " && parallel -j `nproc` < jobs.txt ; ";
 		command = command.concat(obtainOutput);
 
 		try {
@@ -370,13 +380,13 @@ public class EvaluateSubmissions implements Runnable {
 	public String getRunCommand(Submissions submission, TestCases testCase) {
 
 		String dirName = submission.getId() + "_" + submission.getLanguage().getName();
-		String command = "firejail --private=" + PATH_FIREJAIL + "/" + dirName + " --quiet --net=none cat " + dirName
-				+ "/" + testCase.getId() + " | ";
+		String command = "firejail --private=" + PATH_FIREJAIL + Path.separator + dirName + " --quiet --net=none cat "
+				+ dirName + Path.separator + testCase.getId() + " | ";
 
 		String fileName = "Solution";
 		String runError = "runtime_error_" + submission.getId() + ".txt";
 		String runOutput = "output_" + submission.getId() + "_" + testCase.getId() + ".txt";
-		String outputPath = PATH_FIREJAIL + "/" + dirName + "/" + runOutput;
+		String outputPath = PATH_FIREJAIL + Path.separator + dirName + Path.separator + runOutput;
 
 		switch (submission.getLanguage().getCompilerName()) {
 		case "Java 8":
@@ -414,7 +424,7 @@ public class EvaluateSubmissions implements Runnable {
 	public void createFile(String text, String file) {
 		PrintWriter writer = null;
 		try {
-			writer = new PrintWriter(PATH_SPRING + "/" + file, "UTF-8");
+			writer = new PrintWriter(PATH_SPRING + Path.separator + file, "UTF-8");
 			writer.print(text);
 			writer.close();
 		} catch (FileNotFoundException e) {
@@ -428,8 +438,8 @@ public class EvaluateSubmissions implements Runnable {
 	public void createFileInFolder(String text, String folder, String file) {
 		PrintWriter writer = null;
 		try {
-			new File(PATH_SPRING + "/" + folder).mkdirs();
-			writer = new PrintWriter(PATH_SPRING + "/" + folder + "/" + file, "UTF-8");
+			new File(PATH_SPRING + Path.separator + folder).mkdirs();
+			writer = new PrintWriter(PATH_SPRING + Path.separator + folder + Path.separator + file, "UTF-8");
 			writer.print(text);
 			writer.close();
 		} catch (FileNotFoundException e) {

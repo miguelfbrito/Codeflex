@@ -1,41 +1,44 @@
 package pt.codeflex;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.TimeZone;
 
-import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.Ordered;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import net.schmizz.sshj.SSHClient;
-import net.schmizz.sshj.common.IOUtils;
-import net.schmizz.sshj.connection.channel.direct.Session;
-import net.schmizz.sshj.connection.channel.direct.Session.Command;
-import net.schmizz.sshj.userauth.keyprovider.PKCS8KeyFile;
-import net.schmizz.sshj.userauth.method.AuthPublickey;
 import pt.codeflex.models.Host;
+
+import static pt.codeflex.evaluatesubmissions.EvaluateConstants.PATH_SERVER;
 
 @SpringBootApplication
 public class CodeflexApplication {
 
+	public static final Logger LOGGER = Logger.getLogger(CodeflexApplication.class.getName());
+
 	public static void main(String[] args) {
+
+		Handler handlerObj = new ConsoleHandler();
+		handlerObj.setLevel(Level.ALL);
+		LOGGER.addHandler(handlerObj);
+		LOGGER.setLevel(Level.ALL);
+		LOGGER.setUseParentHandlers(false);
+
+		LOGGER.log(Level.FINE, "Starting application!");
 		SpringApplication.run(CodeflexApplication.class, args);
+		
+		System.out.println("FILE SEPARATOR " + File.separator);
 
 	}
+	
+	
 	
 
 	@Bean
@@ -45,13 +48,10 @@ public class CodeflexApplication {
 
 	@Bean
 	public Host fetchAndConnectHosts() {
-		Host h1 = new Host("192.168.43.167", 22, "mbrito", new SSHClient(),
+		Host h1 = new Host("192.168.1.65", 22, "mbrito", new SSHClient(),
 				"33:02:cb:3b:13:b1:bd:fa:66:ff:29:96:ea:ff:dc:78", false);
 		connect(h1);
-		
-//		Host amazonAws = new Host("192.168.1.65", 22, "mbrito", new SSHClient(),"", false);
-//		connect(amazonAws);
-		
+
 		return h1;
 	}
 
@@ -61,17 +61,16 @@ public class CodeflexApplication {
 			ssh.addHostKeyVerifier(host.getFingerprint());
 			ssh.connect(host.getIp(), host.getPort());
 
+			// Amazon EC2
 			// https://stackoverflow.com/questions/9283556/sshj-keypair-login-to-ec2-instance
-		//	PKCS8KeyFile keyFile = new PKCS8KeyFile();
-		//	keyFile.init(new File("~/aws.pem"));
-		//	ssh.auth("ubuntu", new AuthPublickey(keyFile));
+			// PKCS8KeyFile keyFile = new PKCS8KeyFile();
+			// keyFile.init(new File("~/aws.pem"));
+			// ssh.auth("ubuntu", new AuthPublickey(keyFile));
 
-			 ssh.authPublickey("mbrito");
+			ssh.authPublickey("mbrito");
+			ssh.startSession().exec("rm -rf " + PATH_SERVER + File.separator + "*");
 
-			Session session = ssh.startSession();
-			Command cmd = session.exec("rm -rf Submissions/*");
-			// System.out.println(IOUtils.readFully(cmd.getInputStream()).toString());
-			System.out.println("Removing previous submissions from host " + host.getIp());
+			LOGGER.log(Level.FINE, "Removing previous submissions from host.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
