@@ -85,10 +85,8 @@ public class EvaluateSubmissions implements Runnable {
 		while (!submissionsQueue.isEmpty()) {
 			Submissions submission = submissionsQueue.poll();
 			compileSubmission(submission);
-			System.out.println("SEPARATOR " + Path.separator);
-			LOGGER.log(Level.INFO, submission.toString());
 
-			if (!compiledSuccessfully(submission)) {
+			if (compiledSuccessfully(submission)) {
 				String executionOutput = executeTestCases(submission);
 				evaluateExecutedTestCases(submission, executionOutput);
 			}
@@ -114,8 +112,6 @@ public class EvaluateSubmissions implements Runnable {
 
 	public void compileSubmission(Submissions submission) {
 
-		LOGGER.log(Level.FINE, submission.toString());
-
 		uniqueId = submission.getId();
 		Session session = null;
 
@@ -136,9 +132,6 @@ public class EvaluateSubmissions implements Runnable {
 		try {
 			String createFolderCommand = "mkdir " + PATH_SERVER + Path.separator + uniqueId + "_"
 					+ submission.getLanguage().getName();
-			System.out.println("Creating folder on server!");
-			System.out.println(createFolderCommand);
-
 			cmd = session.exec(createFolderCommand);
 
 			cmd.close();
@@ -169,7 +162,7 @@ public class EvaluateSubmissions implements Runnable {
 		try {
 			session = host.getSsh().startSession();
 			String compilerError = EvaluateConstants.COMPILER_ERROR;
-			
+
 			String command = "cat " + PATH_SERVER + Path.separator + uniqueId + "_" + submission.getLanguage().getName()
 					+ Path.separator + compilerError;
 			Command cmd = session.exec(command);
@@ -217,7 +210,7 @@ public class EvaluateSubmissions implements Runnable {
 
 			createFileInFolder(tc.getInput(), dirName, String.valueOf(tc.getId()));
 
-			commandsToExecute += getRunCommand(submission, tc) + "\n";
+			commandsToExecute += CommandGeneration.execution(submission, tc) + "\n";
 			obtainOutput += " echo '%%%output_" + tc.getId() + "' && cat output_" + submission.getId() + "_"
 					+ tc.getId() + ".txt && echo 'end%%%' &&";
 		}
@@ -230,7 +223,7 @@ public class EvaluateSubmissions implements Runnable {
 		scp(PATH_SPRING + Path.separator + "jobs.txt", PATH_SERVER + Path.separator + submission.getId() + "_"
 				+ submission.getLanguage().getName() + Path.separator);
 
-		// removes the last unecessary &&
+		// removes the last uneccessary &&
 		if (obtainOutput.length() > 2) {
 			obtainOutput = obtainOutput.substring(0, obtainOutput.length() - 2);
 		}
@@ -275,16 +268,23 @@ public class EvaluateSubmissions implements Runnable {
 					? ((double) submission.getProblem().getMaxScore()
 							/ ((double) totalTestCasesForProblem - (double) givenTestCases))
 					: 0;
-			System.out.println("Score " + score);
+
+			LOGGER.log(Level.INFO, "Score: " + score);
 			Scoring sc = new Scoring(submission, tc, score, isRight);
 			scoringRepository.save(sc);
 
 		}
 
+		updateSubmissionDetailsAndLeaderboard(submission, totalTestCasesForProblem);
+	}
+
+	public void updateSubmissionDetailsAndLeaderboard(Submissions submission, int totalTestCasesForProblem) {
+
 		List<Scoring> scoringBySubmission = scoringRepository.findAllBySubmissions(submission);
-		int totalScoring = scoringBySubmission.size();
+		int amountOfTestCasesScored = scoringBySubmission.size();
 		int countCorrectScoring = 0;
-		if (totalScoring == totalTestCasesForProblem) {
+
+		if (amountOfTestCasesScored == totalTestCasesForProblem) {
 			double totalScore = 0;
 			for (Scoring s : scoringBySubmission) {
 				if (s.getIsRight() == 1) {
@@ -294,12 +294,10 @@ public class EvaluateSubmissions implements Runnable {
 			}
 
 			if (countCorrectScoring == totalTestCasesForProblem) {
-				System.out.println("Correct problem!");
 				submission.setResult(resultRepository.findByName("Correct"));
 
-				// Updates the completion date in order to calculate how much time a user
-				// took
-				// // to solve the problem
+				// Updates the completion date in order to calculate how much time a user took
+				// to solve the problem
 				Durations currentDuration = db.viewDurationsById(submission.getUsers().getId(),
 						submission.getProblem().getId());
 				db.updateDurationsOnProblemCompletion(currentDuration);
@@ -377,41 +375,9 @@ public class EvaluateSubmissions implements Runnable {
 
 	}
 
-	public String getRunCommand(Submissions submission, TestCases testCase) {
-
-		String dirName = submission.getId() + "_" + submission.getLanguage().getName();
-		String command = "firejail --private=" + PATH_FIREJAIL + Path.separator + dirName + " --quiet --net=none cat "
-				+ dirName + Path.separator + testCase.getId() + " | ";
-
-		String fileName = "Solution";
-		String runError = "runtime_error_" + submission.getId() + ".txt";
-		String runOutput = "output_" + submission.getId() + "_" + testCase.getId() + ".txt";
-		String outputPath = PATH_FIREJAIL + Path.separator + dirName + Path.separator + runOutput;
-
-		switch (submission.getLanguage().getCompilerName()) {
-		case "Java 8":
-			command += "timeout 3s java " + fileName + " 2> " + runError + " > " + runOutput + "";
-			break;
-		case "C++11 (gcc 5.4.0)":
-			command += " timeout 2 ./" + fileName + "_exec_" + uniqueId + " 2> " + runError + " > " + runOutput + "";
-			break;
-		case "Python 2.7":
-			command += "timeout 10 python " + fileName + ".py 2> " + runError + " > " + runOutput + "";
-			break;
-		case "C# (mono 4.2.1)":
-			command += "timeout 3 ./" + fileName + "_exec_" + uniqueId + " 2> " + runError + " > " + runOutput + "";
-			break;
-		default:
-			break;
-		}
-
-		return command;
-
-	}
-
 	private int validateResult(String tcOutput, String output) {
-		System.out.println("\n\nComparing results");
-		System.out.println(tcOutput + " - " + output + "\n\n\n");
+		System.out.println("Comparing results");
+		System.out.println(tcOutput + " - " + output + "\n");
 
 		if (tcOutput.trim().equals(output.trim())) {
 			return 1;

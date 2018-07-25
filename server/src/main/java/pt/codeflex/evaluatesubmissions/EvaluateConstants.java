@@ -22,7 +22,10 @@ public class EvaluateConstants {
 	// File name used to save code to posterior compilation
 	public static final String CLASS_FILE_NAME = "Solution";
 
-	
+
+	// ERRORS
 	public static final String COMPILER_ERROR = "compiler_error.txt";
+	public static final String RUN_ERROR = "runtime_error.txt";
+	
 
 }

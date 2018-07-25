@@ -727,8 +727,6 @@ public class DatabaseController {
 		if (p != null) {
 			List<TestCases> testCases = p.getTestCases();
 			for (TestCases tc : testCases) {
-				System.out.println("INPUT " + tc.getInput());
-				System.out.println("OUTPUT " + tc.getOutput());
 				finalTestCases.add(new TestCasesShown(tc.getId(), tc.getInput(), tc.getOutput(), tc.getDescription(),
 						tc.isShown()));
 			}
