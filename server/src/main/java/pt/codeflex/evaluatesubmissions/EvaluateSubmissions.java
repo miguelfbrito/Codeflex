@@ -245,7 +245,7 @@ public class EvaluateSubmissions implements Runnable {
 
 		// checks all testcases
 		for (TestCases tc : testCases) {
-			System.out.println("INPUT " + tc.getInput());
+			System.out.println("Input" + tc.getInput());
 			String tcName = "%%%output_" + tc.getId();
 			String s = testCasesOutput;
 			if (!s.equals("")) {
@@ -253,9 +253,6 @@ public class EvaluateSubmissions implements Runnable {
 				s = s.substring(0, s.indexOf("end%%%"));
 				s = s.replace(tcName, "").trim();
 			}
-
-			System.out.println("TESTCASE " + tc.getId());
-			System.out.println(s.trim());
 
 			// Evaluates test case
 			int isRight = validateResult(tc.getOutput(), s);
@@ -431,14 +428,6 @@ public class EvaluateSubmissions implements Runnable {
 				System.out.println("Trying SCP for the " + count + " time. ");
 			}
 		}
-	}
-
-	public Host getHost() {
-		return host;
-	}
-
-	public void setHost(Host host) {
-		this.host = host;
 	}
 
 }
