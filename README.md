@@ -2,7 +2,10 @@
 
 ### Setup
 
+#### Clone repository
     git clone
+
+#### Run setup scripts (install npm, node, mysql)
     cd /setup/
     ./setup.sh
 
