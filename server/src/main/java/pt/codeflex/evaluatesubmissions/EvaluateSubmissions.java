@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 
 import javax.transaction.Transactional;
 
-import org.mockito.internal.creation.bytebuddy.SubclassByteBuddyMockMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -45,7 +44,6 @@ import pt.codeflex.utils.Path;
 
 import static pt.codeflex.evaluatesubmissions.EvaluateConstants.PATH_SPRING;
 import static pt.codeflex.evaluatesubmissions.EvaluateConstants.PATH_SERVER;
-import static pt.codeflex.evaluatesubmissions.EvaluateConstants.PATH_FIREJAIL;
 import static pt.codeflex.evaluatesubmissions.EvaluateConstants.CLASS_FILE_NAME;
 
 @Component
@@ -430,4 +428,7 @@ public class EvaluateSubmissions implements Runnable {
 		}
 	}
 
+	public void setHost(Host host) {
+		this.host = host;
+	}
 }

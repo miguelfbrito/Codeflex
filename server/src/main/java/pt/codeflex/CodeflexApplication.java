@@ -33,13 +33,7 @@ public class CodeflexApplication {
 
 		LOGGER.log(Level.FINE, "Starting application!");
 		SpringApplication.run(CodeflexApplication.class, args);
-		
-		System.out.println("FILE SEPARATOR " + File.separator);
-
 	}
-	
-	
-	
 
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -48,8 +42,8 @@ public class CodeflexApplication {
 
 	@Bean
 	public Host fetchAndConnectHosts() {
-		Host h1 = new Host("192.168.1.65", 22, "mbrito", new SSHClient(),
-				"33:02:cb:3b:13:b1:bd:fa:66:ff:29:96:ea:ff:dc:78", false);
+		Host h1 = new Host("192.168.1.126", 22, "mbrito", new SSHClient(),
+				"41:fe:3e:1d:f3:b0:9a:f6:85:ab:e4:f6:76:2f:da:b3", false);
 		connect(h1);
 
 		return h1;
