@@ -23,6 +23,11 @@ public class TestsController {
 	@Autowired
 	private CompilerController compiler;
 
+	@GetMapping("/ping")
+	public String ping(){
+		return "Pinging server";
+	}
+
 	@GetMapping("/stress")
 	public void stressCompiler() {
 		Optional<Language> language = databaseController.viewLanguageById(1);

@@ -19,9 +19,8 @@
     Change sql mode:
         
         vi /etc/mysql/conf.d/mysql.cnf
-        sql_mode = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
-        sudo mysql restart
-
+        sql_mode = "STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+        sudo service mysql restart
 
 ### Run application
     

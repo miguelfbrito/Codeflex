@@ -14,6 +14,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import net.schmizz.sshj.SSHClient;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import pt.codeflex.models.Host;
 
 import static pt.codeflex.evaluatesubmissions.EvaluateConstants.PATH_SERVER;
@@ -21,54 +24,55 @@ import static pt.codeflex.evaluatesubmissions.EvaluateConstants.PATH_SERVER;
 @SpringBootApplication
 public class CodeflexApplication {
 
-	public static final Logger LOGGER = Logger.getLogger(CodeflexApplication.class.getName());
+    public static final Logger LOGGER = Logger.getLogger(CodeflexApplication.class.getName());
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		Handler handlerObj = new ConsoleHandler();
-		handlerObj.setLevel(Level.ALL);
-		LOGGER.addHandler(handlerObj);
-		LOGGER.setLevel(Level.ALL);
-		LOGGER.setUseParentHandlers(false);
+        Handler handlerObj = new ConsoleHandler();
+        handlerObj.setLevel(Level.ALL);
+        LOGGER.addHandler(handlerObj);
+        LOGGER.setLevel(Level.ALL);
+        LOGGER.setUseParentHandlers(false);
 
-		LOGGER.log(Level.FINE, "Starting application!");
-		SpringApplication.run(CodeflexApplication.class, args);
-	}
+        LOGGER.log(Level.FINE, "Starting application!");
+        SpringApplication.run(CodeflexApplication.class, args);
 
-	@Bean
-	public BCryptPasswordEncoder bCryptPasswordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    }
 
-	@Bean
-	public Host fetchAndConnectHosts() {
-		Host h1 = new Host("192.168.1.126", 22, "mbrito", new SSHClient(),
-				"41:fe:3e:1d:f3:b0:9a:f6:85:ab:e4:f6:76:2f:da:b3", false);
-		connect(h1);
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-		return h1;
-	}
+    @Bean
+    public Host fetchAndConnectHosts() {
+        Host h1 = new Host("192.168.0.101", 22, "mbrito", new SSHClient(),
+                "41:fe:3e:1d:f3:b0:9a:f6:85:ab:e4:f6:76:2f:da:b3", false);
+        connect(h1);
 
-	public void connect(Host host) {
-		SSHClient ssh = host.getSsh();
-		try {
-			ssh.addHostKeyVerifier(host.getFingerprint());
-			ssh.connect(host.getIp(), host.getPort());
+        return h1;
+    }
 
-			// Amazon EC2
-			// https://stackoverflow.com/questions/9283556/sshj-keypair-login-to-ec2-instance
-			// PKCS8KeyFile keyFile = new PKCS8KeyFile();
-			// keyFile.init(new File("~/aws.pem"));
-			// ssh.auth("ubuntu", new AuthPublickey(keyFile));
+    public void connect(Host host) {
+        SSHClient ssh = host.getSsh();
+        try {
+            ssh.addHostKeyVerifier(host.getFingerprint());
+            ssh.connect(host.getIp(), host.getPort());
 
-			ssh.authPublickey("mbrito");
-			ssh.startSession().exec("rm -rf " + PATH_SERVER + File.separator + "*");
+            // Amazon EC2
+            // https://stackoverflow.com/questions/9283556/sshj-keypair-login-to-ec2-instance
+            // PKCS8KeyFile keyFile = new PKCS8KeyFile();
+            // keyFile.init(new File("~/aws.pem"));
+            // ssh.auth("ubuntu", new AuthPublickey(keyFile));
 
-			LOGGER.log(Level.FINE, "Removing previous submissions from host.");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+            ssh.authPublickey("mbrito");
+            ssh.startSession().exec("rm -rf " + PATH_SERVER + File.separator + "*");
 
-	}
+            LOGGER.log(Level.FINE, "Removing previous submissions from host.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 }
