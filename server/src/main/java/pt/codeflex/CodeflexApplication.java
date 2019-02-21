@@ -46,9 +46,9 @@ public class CodeflexApplication {
 
     @Bean
     public Host fetchAndConnectHosts() {
-        Host h1 = new Host("192.168.0.101", 22, "mbrito", new SSHClient(),
+        Host h1 = new Host("192.168.1.126", 22, "mbrito", new SSHClient(),
                 "41:fe:3e:1d:f3:b0:9a:f6:85:ab:e4:f6:76:2f:da:b3", false);
-        connect(h1);
+       // connect(h1);
 
         return h1;
     }

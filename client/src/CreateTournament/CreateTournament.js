@@ -125,7 +125,7 @@ class CreateTournament extends React.Component {
                 }
             }
 
-            if (validateLength(data.description, 50, 1000)) {
+            if (!validateLength(data.description, 50, 1000)) {
                 toast.error("Description must be between 50 and 1000 characters")
                 return false;
             }

@@ -13,7 +13,7 @@ public class CustomTournamentRepositoryImpl implements CustomTournamentRepositor
 	public double findScoreOfUserInTournament(long userId, long tournamentId) {
 
 		Query query = em.createNativeQuery(
-				"select sum(l.score) from leaderboard l where l.problem_id in (select p.id from problem p where p.tournament_id = :tournamentId ) and l.user_id = :userId ;");
+				"select ifnull(sum(l.score), 0.0) from leaderboard l where l.problem_id in (select p.id from problem p where p.tournament_id = :tournamentId ) and l.user_id = :userId ;");
 
 		query.setParameter("tournamentId", tournamentId);
 		query.setParameter("userId", userId);
