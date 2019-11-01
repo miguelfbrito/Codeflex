@@ -206,6 +206,8 @@ public class EvaluateSubmissions implements Runnable {
 
 		for (TestCases tc : testCases) {
 
+			System.out.println("Before creating file");
+			System.out.println(tc.getInput() + ", "  + dirName + ", " + String.valueOf(tc.getId()));
 			createFileInFolder(tc.getInput(), dirName, String.valueOf(tc.getId()));
 
 			commandsToExecute += CommandGeneration.execution(submission, tc) + "\n";

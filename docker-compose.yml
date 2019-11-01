@@ -1,5 +1,13 @@
 version: "3.3"
 services:
+
+    #  server:
+    #    build: ./server
+    #    ports:
+    #      - 8080:8080
+    #    networks:
+    #      - network_backend
+
   client:
     build: ./client
     ports:
@@ -21,6 +29,7 @@ services:
       - ~/databases/db_event_manager/data:/var/lib/mysql
     ports:
       - 3306:3306
+    command: mysqld --sql_mode="STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
     networks:
       - network_backend
 
@@ -28,6 +37,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-compiler
+    ports:
+        - 22:22
     networks:
       - network_backend
 
