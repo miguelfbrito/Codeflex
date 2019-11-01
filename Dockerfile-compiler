@@ -1,0 +1,10 @@
+FROM ubuntu:18.04
+
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y firejail parallel mono-mcs openjdk-8-jdk-headless openjdk-8-jre-headless
+
+ENTRYPOINT ["tail", "-f", "/dev/null"]
+
+

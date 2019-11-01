@@ -1,0 +1,38 @@
+version: "3.3"
+services:
+  client:
+    build: ./client
+    ports:
+      - 3333:3000
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - network_frontend
+
+  database:
+    image: mysql:5.7.26
+    environment:
+      MYSQL_DATABASE: db_codeflex
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: spring-password!2018
+      MYSQL_ROOT_PASSWORD: spring-password!2018
+    volumes:
+      - ~/databases/db_event_manager/data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    networks:
+      - network_backend
+
+  compiler:
+    build:
+      context: .
+      dockerfile: Dockerfile-compiler
+    networks:
+      - network_backend
+
+networks:
+  network_backend:
+    driver: "bridge"
+  network_frontend:
+    driver: "bridge"
