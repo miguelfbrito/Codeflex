@@ -2,7 +2,7 @@ package pt.codeflex.auth.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import pt.codeflex.databasemodels.Users;
+import pt.codeflex.models.Users;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -11,7 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -65,7 +64,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		
 		
 		// including subject is a must
-		String token = Jwts.builder().setSubject(((User) auth.getPrincipal()).getUsername())
+		String token = Jwts.builder().setSubject(((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername())
 				.claim("username", auth.getName()).claim("role", role).setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
 				.signWith(SignatureAlgorithm.HS512, SECRET.getBytes()).compact();
 		res.getWriter().write("{ \"username\" : \"" + auth.getName() + "\", \"role\" : \"" + role + "\", \"token\" : \""

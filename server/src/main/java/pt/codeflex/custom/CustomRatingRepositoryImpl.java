@@ -1,16 +1,5 @@
 package pt.codeflex.custom;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import pt.codeflex.databasemodels.Rating;
-import pt.codeflex.repositories.RatingRepository;
-
 public class CustomRatingRepositoryImpl implements CustomRatingRepository{
 
 //	@Autowired

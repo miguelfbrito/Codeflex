@@ -6,10 +6,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import pt.codeflex.databasemodels.Leaderboard;
-import pt.codeflex.databasemodels.Problem;
-import pt.codeflex.databasemodels.Users;
-import pt.codeflex.models.TournamentLeaderboard;
+import pt.codeflex.models.Leaderboard;
+import pt.codeflex.models.Problem;
+import pt.codeflex.models.Users;
+import pt.codeflex.dto.TournamentLeaderboard;
 
 public class CustomLeaderboardRepositoryImpl implements CustomLeaderboardRepository{
 	
@@ -17,12 +17,12 @@ public class CustomLeaderboardRepositoryImpl implements CustomLeaderboardReposit
 	private EntityManager em;
 	
 	@Override
-	public List<Leaderboard> findHighestScoreByUserByProblem(Users user, Problem problem) {
+	public List<Leaderboard> findHighestScoreByUserByProblem(Users users, Problem problem) {
 		
 		Query query = em.createNativeQuery("select ifnull(l.id,0) as id, ifnull(max(l.score),-1) as score from users u, problem p, leaderboard l where\r\n" + 
 				"l.user_id = :userId and\r\n" + 
-				"l.problem_id = :problemId ;", "HighestScoreByUserByProblemMapping");
-		query.setParameter("userId", user.getId());
+				"l.problem_id = :problemId ;", "HighestScoreMapping");
+		query.setParameter("userId", users.getId());
 		query.setParameter("problemId", problem.getId());
 		
 		return query.getResultList();

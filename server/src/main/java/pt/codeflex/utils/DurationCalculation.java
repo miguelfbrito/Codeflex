@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import pt.codeflex.models.DateStatus;
+import pt.codeflex.dto.DateStatus;
 
 public class DurationCalculation {
 

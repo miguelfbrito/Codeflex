@@ -1,12 +1,12 @@
 package pt.codeflex.controllers;
 
-import pt.codeflex.databasemodels.Language;
-import pt.codeflex.databasemodels.Problem;
-import pt.codeflex.databasemodels.Submissions;
-import pt.codeflex.databasemodels.Users;
+import pt.codeflex.models.Language;
+import pt.codeflex.models.Problem;
+import pt.codeflex.models.Submissions;
+import pt.codeflex.models.Users;
 import pt.codeflex.evaluatesubmissions.*;
-import pt.codeflex.models.Host;
-import pt.codeflex.models.SubmitSubmission;
+import pt.codeflex.dto.Host;
+import pt.codeflex.dto.SubmitSubmission;
 import pt.codeflex.repositories.LanguageRepository;
 import pt.codeflex.repositories.ProblemRepository;
 import pt.codeflex.repositories.SubmissionsRepository;
@@ -29,54 +29,55 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 public class CompilerController {
 
-	private Queue<Submissions> queue = new ArrayDeque<>();
+    private Queue<Submissions> queue = new ArrayDeque<>();
 
-	@Autowired
-	private TaskExecutor taskExecutor;
+    private TaskExecutor taskExecutor;
+    private ApplicationContext applicationContext;
+    private SubmissionsRepository submissionsRepository;
+    private ProblemRepository problemRepository;
+    private UsersRepository usersRepository;
+    private LanguageRepository languageRepository;
+    private Host host;
 
-	@Autowired
-	private ApplicationContext applicationContext;
+    // TODO : refactor into usage of services instead of repositories
+    @Autowired
+    public CompilerController(TaskExecutor taskExecutor, ApplicationContext applicationContext, SubmissionsRepository submissionsRepository,
+                              ProblemRepository problemRepository, UsersRepository usersRepository, LanguageRepository languageRepository, Host host) {
 
-	@Autowired
-	private SubmissionsRepository submissionsRepository;
+        this.taskExecutor = taskExecutor;
+        this.applicationContext = applicationContext;
+        this.submissionsRepository = submissionsRepository;
+        this.problemRepository = problemRepository;
+        this.usersRepository = usersRepository;
+        this.languageRepository = languageRepository;
+        this.host = host;
+    }
 
-	@Autowired
-	private ProblemRepository problemRepository;
+    @Transactional
+    @PostMapping("/submission")
+    public Submissions submit(@RequestBody SubmitSubmission submitSubmission) {
 
-	@Autowired
-	private UsersRepository usersRepository;
+        Problem problem = problemRepository.findByName(submitSubmission.getProblem().getName().replaceAll("-", " "));
+        Users users = usersRepository.findByUsername(submitSubmission.getUsers().getUsername());
+        Language language = languageRepository.findByName(submitSubmission.getLanguage().getName());
 
-	@Autowired
-	private LanguageRepository languageRepository;
+        Submissions submission = new Submissions();
+        if (problem != null && language != null && users != null) {
 
-	@Autowired
-	private Host host;
+            submission = new Submissions(problem, language, submitSubmission.getCode(), users);
+            submissionsRepository.save(submission);
 
-	@Transactional
-	@PostMapping("/submission")
-	public Submissions submit(@RequestBody SubmitSubmission submitSubmission) {
+            startThread();
+        }
 
-		Problem problem = problemRepository.findByName(submitSubmission.getProblem().getName().replaceAll("-", " "));
-		Users user = usersRepository.findByUsername(submitSubmission.getUsers().getUsername());
-		Language language = languageRepository.findByName(submitSubmission.getLanguage().getName());
+        return submission;
+    }
 
-		Submissions submission = new Submissions();
-		if (problem != null && language != null && user != null) {
-
-			submission = new Submissions(problem, language, submitSubmission.getCode(), user);
-			submissionsRepository.save(submission);
-
-			startThread();
-		}
-
-		return submission;
-	}
-
-	public void startThread() {
-		EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
-		evaluateSubmissions1.setHost(host);
-		evaluateSubmissions1.getSubmissions();
-		taskExecutor.execute(evaluateSubmissions1);
-	}
+    public void startThread() {
+        EvaluateSubmissions evaluateSubmissions1 = applicationContext.getBean(EvaluateSubmissions.class);
+        evaluateSubmissions1.setHost(host);
+        evaluateSubmissions1.getSubmissions();
+        taskExecutor.execute(evaluateSubmissions1);
+    }
 
 }
