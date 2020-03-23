@@ -2,15 +2,11 @@ package pt.codeflex.custom;
 
 import java.util.List;
 
-import javax.persistence.ColumnResult;
-import javax.persistence.ConstructorResult;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.SqlResultSetMapping;
 
-import pt.codeflex.databasemodels.Submissions;
-import pt.codeflex.models.ListCategoriesWithStats;
+import pt.codeflex.dto.ListCategoriesWithStats;
 
 
 
@@ -26,7 +22,7 @@ public class CustomPractiseCategoryRepositoryImpl implements CustomPractiseCateg
 				"s.users_id = :userId and  \r\n" + 
 				" s.problem_id = p.id and  \r\n" + 
 				" p.practise_category_id = pc.id and (select r.name from result r where r.id = s.result_id) = 'Correct' \r\n" + 
-				" group by pc.name order by pc.name;", "CategoriesWithStatsMapping");
+				" group by pc.name order by pc.name;", "CategoriesPlusStatsMapping");
 		
 			query.setParameter("userId", userId);
 		

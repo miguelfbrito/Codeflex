@@ -3,14 +3,11 @@ package pt.codeflex.controllers;
 import java.util.List;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,169 +17,159 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.Authentication;
 
-import pt.codeflex.databasemodels.Role;
-import pt.codeflex.databasemodels.Users;
-import pt.codeflex.databasemodels.UsersRoles;
+import pt.codeflex.models.Role;
+import pt.codeflex.models.Users;
+import pt.codeflex.models.UsersRoles;
 import pt.codeflex.jsonresponses.GenericResponse;
-import pt.codeflex.models.UserLessInfo;
+import pt.codeflex.dto.UserLessInfo;
 import pt.codeflex.repositories.RoleRepository;
 import pt.codeflex.repositories.UsersRepository;
 import pt.codeflex.repositories.UsersRolesRepository;
+import pt.codeflex.services.CRUDService;
 
 @RestController
 @RequestMapping("/api/account")
-public class UsersController {
+public class UsersController extends RESTController<Users, Long> {
 
-	@Autowired
-	private UsersRepository usersRepository;
+    private UsersRepository usersRepository;
+    private RoleRepository roleRepository;
+    private UsersRolesRepository usersRolesRepository;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	@Autowired
-	private RoleRepository roleRepository;
+    @Autowired
+    public UsersController(CRUDService<Users, Long> service) {
+        super(service);
+    }
 
-	@Autowired
-	private UsersRolesRepository usersRolesRepository;
+    @PostMapping("/login")
+    public GenericResponse login(@RequestBody Users users) {
+        Users currentUsers = usersRepository.findByUsername(users.getUsername());
 
-	@Autowired
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
+        System.out.println("Logging in /api/account/login");
+        System.out.println(users.getUsername());
 
-	@PostMapping("/login")
-	public GenericResponse login(@RequestBody Users user) {
-		Users currentUser = usersRepository.findByUsername(user.getUsername());
+        if (currentUsers != null) {
+            if (bCryptPasswordEncoder.matches(users.getPassword(), currentUsers.getPassword())) {
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                System.out.println(auth.getAuthorities());
 
-		System.out.println("Logging in /api/account/login");
-		System.out.println(user.getUsername());
+                UserLessInfo finalUser = new UserLessInfo();
+                finalUser.convert(currentUsers);
 
-		if (currentUser != null) {
+                return new GenericResponse(finalUser, "Logged in");
+            }
+        }
 
-			if (bCryptPasswordEncoder.matches(user.getPassword(), currentUser.getPassword())) {
+        return new GenericResponse(null, "Invalid username or password");
+    }
 
-				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-				System.out.println(auth.getAuthorities());
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody Users users) {
+        Users findByUsername = usersRepository.findByUsername(users.getUsername());
+        Users findByEmail = usersRepository.findByEmail(users.getEmail());
 
-				UserLessInfo finalUser = new UserLessInfo();
-				finalUser.convert(currentUser);
+        if (findByUsername != null) {
+            System.out.println(findByUsername.toString());
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
 
-				return new GenericResponse(finalUser, "Logged in");
-			}
-		}
+        if (findByEmail != null) {
+            System.out.println(findByEmail.toString());
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
 
-		return new GenericResponse(null, "Invalid username or password");
-	}
+        Users newUsers = new Users(users.getUsername(), users.getEmail(),
+                bCryptPasswordEncoder.encode(users.getPassword()));
 
-	@PostMapping("/register")
-	public ResponseEntity<?> register(@RequestBody Users user) {
-		GenericResponse genericResponse = null;
-		System.out.println("Registering " + user.toString());
+        Users savedUsers = usersRepository.save(newUsers);
 
-		Users findByUsername = usersRepository.findByUsername(user.getUsername());
-		Users findByEmail = usersRepository.findByEmail(user.getEmail());
+        // Debug purposes
+        if (savedUsers.getUsername().equals("admin")) {
+            addUsersRoles(new UsersRoles(savedUsers, viewRoleById((long) 2)));
+        } else {
+            addUsersRoles(new UsersRoles(savedUsers, viewRoleById((long) 1)));
+        }
 
-		System.out.println("Fetching for possible existent accounts");
-		if (findByUsername != null) {
-			System.out.println(findByUsername.toString());
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
-		}
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
-		if (findByEmail != null) {
-			System.out.println(findByEmail.toString());
-			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-		}
+    @GetMapping("/Users/isRegistered/{username}")
+    public boolean isUserRegistered(@PathVariable String username) {
+        Users users = usersRepository.findByUsername(username);
+        if (users != null) {
+            return true;
+        }
+        return false;
+    }
 
-		Users newUser = new Users(user.getUsername(), user.getEmail(),
-				bCryptPasswordEncoder.encode(user.getPassword()));
+    // ROLE
 
-		Users savedUser = usersRepository.save(newUser);
+    @GetMapping(path = "/Role/view")
+    public Iterable<Role> getAllRole() {
+        return roleRepository.findAll();
+    }
 
-		// TEST PURPOSES
-		if (savedUser.getUsername().equals("admin")) {
-			addUsersRoles(new UsersRoles(savedUser, viewRoleById((long) 2)));
-		} else {
-			addUsersRoles(new UsersRoles(savedUser, viewRoleById((long) 1)));
-		}
+    @PostMapping(path = "/Role/add")
+    public void addRole(@RequestBody Role role) {
+        roleRepository.save(role);
+    }
 
-		// UserLessInfo finalUser = new UserLessInfo();
-		// finalUser.convert(newUser);
+    @PostMapping(path = "/Role/edit")
+    public void editRole(@RequestParam long id) {
+        Optional<Role> r = roleRepository.findById(id);
 
-		return new ResponseEntity<>(HttpStatus.OK);
-	}
+        if (r.isPresent()) {
+            Role role = r.get();
+            roleRepository.save(role);
+        }
+    }
 
-	@GetMapping("/Users/isRegistered/{username}")
-	public boolean isUserRegistered(@PathVariable String username) {
-		Users user = usersRepository.findByUsername(username);
-		if (user != null) {
-			return true;
-		}
-		return false;
-	}
+    @PostMapping(path = "/Role/delete/{id}")
+    public void deleteRole(@PathVariable long id) {
+        roleRepository.deleteById(id);
+    }
 
-	// ROLE
+    @GetMapping(path = "/Role/view/{id}")
+    public Role viewRoleById(@PathVariable long id) {
 
-	@GetMapping(path = "/Role/view")
-	public Iterable<Role> getAllRole() {
-		return roleRepository.findAll();
-	}
+        Optional<Role> r = roleRepository.findById(id);
+        if (r.isPresent()) {
+            return r.get();
+        }
 
-	@PostMapping(path = "/Role/add")
-	public void addRole(@RequestBody Role role) {
-		roleRepository.save(role);
-	}
+        return null;
+    }
 
-	@PostMapping(path = "/Role/edit")
-	public void editRole(@RequestParam long id) {
-		Optional<Role> r = roleRepository.findById(id);
+    // USERSROLES
 
-		if (r.isPresent()) {
-			Role role = r.get();
-			roleRepository.save(role);
-		}
-	}
+    @GetMapping(path = "/UsersRoles/view")
+    public List<UsersRoles> getAllUsersRoles() {
+        return usersRolesRepository.findAll();
+    }
 
-	@PostMapping(path = "/Role/delete/{id}")
-	public void deleteRole(@PathVariable long id) {
-		roleRepository.deleteById(id);
-	}
+    @PostMapping(path = "/UsersRoles/add")
+    public UsersRoles addUsersRoles(@RequestBody UsersRoles usersRoles) {
+        return usersRolesRepository.save(usersRoles);
+    }
 
-	@GetMapping(path = "/Role/view/{id}")
-	public Role viewRoleById(@PathVariable long id) {
+    @PostMapping(path = "/UsersRoles/edit")
+    public void editUsersRoles(@RequestParam long id) {
+        Optional<UsersRoles> u = usersRolesRepository.findById(id);
 
-		Optional<Role> r = roleRepository.findById(id);
-		if (r.isPresent()) {
-			return r.get();
-		}
+        if (u.isPresent()) {
+            UsersRoles usersRoles = u.get();
+            usersRolesRepository.save(usersRoles);
+        }
+    }
 
-		return null;
-	}
+    @PostMapping(path = "/UsersRoles/delete/{id}")
+    public void deleteUsersRoles(@PathVariable long id) {
+        usersRolesRepository.deleteById(id);
+    }
 
-	// USERSROLES
-
-	@GetMapping(path = "/UsersRoles/view")
-	public List<UsersRoles> getAllUsersRoles() {
-		return usersRolesRepository.findAll();
-	}
-
-	@PostMapping(path = "/UsersRoles/add")
-	public UsersRoles addUsersRoles(@RequestBody UsersRoles usersRoles) {
-		return usersRolesRepository.save(usersRoles);
-	}
-
-	@PostMapping(path = "/UsersRoles/edit")
-	public void editUsersRoles(@RequestParam long id) {
-		Optional<UsersRoles> u = usersRolesRepository.findById(id);
-
-		if (u.isPresent()) {
-			UsersRoles usersRoles = u.get();
-			usersRolesRepository.save(usersRoles);
-		}
-	}
-
-	@PostMapping(path = "/UsersRoles/delete/{id}")
-	public void deleteUsersRoles(@PathVariable long id) {
-		usersRolesRepository.deleteById(id);
-	}
-
-	@GetMapping(path = "/UsersRoles/view/{id}")
-	public Optional<UsersRoles> viewUsersRolesById(@PathVariable long id) {
-		return usersRolesRepository.findById(id);
-	}
+    @GetMapping(path = "/UsersRoles/view/{id}")
+    public Optional<UsersRoles> viewUsersRolesById(@PathVariable long id) {
+        return usersRolesRepository.findById(id);
+    }
 
 }

@@ -8,7 +8,7 @@
 <title>Login</title>
 </head>
 <body>
-	<form:form id="loginForm" modelAttribute="user" action="login"
+	<form:form id="loginForm" modelAttribute="users" action="login"
 		method="post">
 		<table align="center">
 		

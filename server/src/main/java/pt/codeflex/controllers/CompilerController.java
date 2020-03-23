@@ -1,12 +1,12 @@
 package pt.codeflex.controllers;
 
-import pt.codeflex.databasemodels.Language;
-import pt.codeflex.databasemodels.Problem;
-import pt.codeflex.databasemodels.Submissions;
-import pt.codeflex.databasemodels.Users;
+import pt.codeflex.models.Language;
+import pt.codeflex.models.Problem;
+import pt.codeflex.models.Submissions;
+import pt.codeflex.models.Users;
 import pt.codeflex.evaluatesubmissions.*;
-import pt.codeflex.models.Host;
-import pt.codeflex.models.SubmitSubmission;
+import pt.codeflex.dto.Host;
+import pt.codeflex.dto.SubmitSubmission;
 import pt.codeflex.repositories.LanguageRepository;
 import pt.codeflex.repositories.ProblemRepository;
 import pt.codeflex.repositories.SubmissionsRepository;
@@ -57,13 +57,13 @@ public class CompilerController {
 	public Submissions submit(@RequestBody SubmitSubmission submitSubmission) {
 
 		Problem problem = problemRepository.findByName(submitSubmission.getProblem().getName().replaceAll("-", " "));
-		Users user = usersRepository.findByUsername(submitSubmission.getUsers().getUsername());
+		Users users = usersRepository.findByUsername(submitSubmission.getUsers().getUsername());
 		Language language = languageRepository.findByName(submitSubmission.getLanguage().getName());
 
 		Submissions submission = new Submissions();
-		if (problem != null && language != null && user != null) {
+		if (problem != null && language != null && users != null) {
 
-			submission = new Submissions(problem, language, submitSubmission.getCode(), user);
+			submission = new Submissions(problem, language, submitSubmission.getCode(), users);
 			submissionsRepository.save(submission);
 
 			startThread();

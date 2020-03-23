@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import pt.codeflex.custom.CustomTournamentRepository;
-import pt.codeflex.databasemodels.Tournament;
-import pt.codeflex.databasemodels.Users;
+import pt.codeflex.models.Tournament;
+import pt.codeflex.models.Users;
 @CrossOrigin
 @Repository
 public interface TournamentRepository extends JpaRepository<Tournament, Long>, CustomTournamentRepository {

@@ -6,17 +6,12 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,25 +20,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
-
-import pt.codeflex.databasecompositeskeys.DurationsID;
-import pt.codeflex.databasecompositeskeys.RatingID;
-import pt.codeflex.databasemodels.*;
-import pt.codeflex.models.CategoriesWithoutTestCases;
-import pt.codeflex.models.DateStatus;
-import pt.codeflex.models.ListCategoriesWithStats;
-import pt.codeflex.models.AddProblem;
-import pt.codeflex.models.AddTournamentToProblem;
-import pt.codeflex.models.ProblemWithoutTestCases;
-import pt.codeflex.models.RegisterUserOnTournament;
-import pt.codeflex.models.TestCasesShown;
-import pt.codeflex.models.TournamentIsUserRegistrated;
-import pt.codeflex.models.TournamentLeaderboard;
-import pt.codeflex.models.TournamentWithRegisteredUsers;
-import pt.codeflex.models.TournamentsToList;
-import pt.codeflex.models.UserLessInfo;
-import pt.codeflex.models.UsersLeaderboard;
+import pt.codeflex.databasecompositekeys.DurationsID;
+import pt.codeflex.databasecompositekeys.RatingID;
+import pt.codeflex.models.*;
+import pt.codeflex.dto.CategoriesWithoutTestCases;
+import pt.codeflex.dto.DateStatus;
+import pt.codeflex.dto.ListCategoriesWithStats;
+import pt.codeflex.dto.ProblemDetails;
+import pt.codeflex.dto.AddTournamentToProblem;
+import pt.codeflex.dto.ProblemWithoutTestCases;
+import pt.codeflex.dto.RegisterUserOnTournament;
+import pt.codeflex.dto.TestCasesShown;
+import pt.codeflex.dto.TournamentIsUserRegistrated;
+import pt.codeflex.dto.TournamentLeaderboard;
+import pt.codeflex.dto.TournamentWithRegisteredUsers;
+import pt.codeflex.dto.TournamentsToList;
+import pt.codeflex.dto.UserLessInfo;
+import pt.codeflex.dto.UsersLeaderboard;
 import pt.codeflex.repositories.*;
 import pt.codeflex.utils.DurationCalculation;
 import pt.codeflex.utils.RatingCalculator;
@@ -111,11 +104,13 @@ public class DatabaseController {
 
 	// DURATIONS
 
+	// MOVED
 	@GetMapping("/Durations/view")
 	public List<Durations> getAllDurations() {
 		return durationsRepository.findAll();
 	}
 
+	// MOVED
 	@GetMapping("/Durations/viewById/{userId}/{problemId}")
 	public Durations viewDurationsById(@PathVariable long userId, @PathVariable long problemId) {
 		Optional<Durations> d = durationsRepository.findById(new DurationsID(userId, problemId));
@@ -125,40 +120,23 @@ public class DatabaseController {
 		return new Durations();
 	}
 
-	@PostMapping("/Durations/add")
-	public Durations addDurations(@RequestBody Durations duration) {
-		Users user = viewUsersByUsername(duration.getUsers().getUsername());
-		Problem problem = viewProblemById(duration.getProblems().getId());
 
-		Durations newDuration = new Durations();
-		if (user != null) {
-			newDuration.setUsers(user);
-		}
 
-		if (problem != null) {
-			newDuration.setProblems(problem);
-		}
-
-		newDuration.setOpeningDate(duration.getOpeningDate());
-		newDuration.setCompletionDate(duration.getCompletionDate());
-
-		return durationsRepository.save(newDuration);
-	}
-
+	// MOVED
 	@PostMapping("/Durations/onProblemOpening")
 	public Durations addDurationOnProblemOpening(@RequestBody Durations duration) {
 
-		Users user = viewUsersByUsername(duration.getUsers().getUsername());
+		Users users = viewUsersByUsername(duration.getUsers().getUsername());
 		Problem problem = viewProblemById(duration.getProblems().getId());
 
 		Durations newDuration = new Durations();
 
-		if (user != null && problem != null) {
+		if (users != null && problem != null) {
 
-			newDuration.setUsers(user);
+			newDuration.setUsers(users);
 			newDuration.setProblems(problem);
 
-			boolean openedAlready = durationsRepository.existsById(new DurationsID(user.getId(), problem.getId()));
+			boolean openedAlready = durationsRepository.existsById(new DurationsID(users.getId(), problem.getId()));
 
 			if (openedAlready) {
 				return new Durations();
@@ -173,15 +151,16 @@ public class DatabaseController {
 
 	}
 
+	// MOVED
 	@PostMapping("/Durations/onProblemCompletion")
 	public Durations updateDurationsOnProblemCompletion(@RequestBody Durations duration) {
 
-		Users user = viewUsersByUsername(duration.getUsers().getUsername());
+		Users users = viewUsersByUsername(duration.getUsers().getUsername());
 		Problem problem = viewProblemById(duration.getProblems().getId());
 
-		if (user != null && problem != null) {
+		if (users != null && problem != null) {
 
-			Optional<Durations> d = durationsRepository.findById(new DurationsID(user.getId(), problem.getId()));
+			Optional<Durations> d = durationsRepository.findById(new DurationsID(users.getId(), problem.getId()));
 
 			if (d.isPresent()) {
 				Durations currentDuration = d.get();
@@ -200,10 +179,12 @@ public class DatabaseController {
 	}
 	// LEADERBOARD
 
+	// MOVED
 	@GetMapping(path = "/Leaderboard/view")
 	public List<Leaderboard> getAllLeaderboards() {
 		return leaderboardRepository.findAll();
 	}
+
 
 	@GetMapping(path = "/Leaderboard/viewByProblemName/{problemName}")
 	public List<UsersLeaderboard> getAllLeaderboardsByProblemName(@PathVariable String problemName) {
@@ -215,7 +196,7 @@ public class DatabaseController {
 			List<Leaderboard> findByProblem = leaderboardRepository.findAllByProblem(findProblembyName);
 			for (Leaderboard l : findByProblem) {
 
-				Durations currentUserDuration = viewDurationsById(l.getUser().getId(), l.getProblem().getId());
+				Durations currentUserDuration = viewDurationsById(l.getUsers().getId(), l.getProblem().getId());
 				long durationMilliseconds = -1;
 				if (currentUserDuration != null && currentUserDuration.getOpeningDate() != null) {
 					long completionDate;
@@ -226,7 +207,7 @@ public class DatabaseController {
 					}
 					durationMilliseconds = completionDate - currentUserDuration.getOpeningDate().getTime();
 				}
-				userOnLeaderboard.add(new UsersLeaderboard(l.getUser().getUsername(), l.getScore(), l.getLanguage(),
+				userOnLeaderboard.add(new UsersLeaderboard(l.getUsers().getUsername(), l.getScore(), l.getLanguage(),
 						durationMilliseconds));
 			}
 
@@ -237,7 +218,7 @@ public class DatabaseController {
 
 	@PostMapping(path = "/Leaderboard/add")
 	public Leaderboard addLeaderboard(@RequestBody Leaderboard leaderboard) {
-		return leaderboardRepository.save(new Leaderboard(leaderboard.getScore(), leaderboard.getUser(),
+		return leaderboardRepository.save(new Leaderboard(leaderboard.getScore(), leaderboard.getUsers(),
 				leaderboard.getProblem(), leaderboard.getLanguage()));
 	}
 
@@ -411,6 +392,7 @@ public class DatabaseController {
 		return null;
 	}
 
+
 	@GetMapping(path = "/PractiseCategory/viewByProblemName/{problemName}")
 	public PractiseCategory viewPractiseCategoryByProblemName(@PathVariable String problemName) {
 		List<PractiseCategory> allCategories = viewAllPractiseCategories();
@@ -508,16 +490,19 @@ public class DatabaseController {
 
 	// PROBLEM
 
+	// MOVED
 	@GetMapping(path = "/Problem/view")
 	public List<Problem> getAllProblems() {
 		return problemRepository.findAll();
 	}
 
+	// MOVED
 	@GetMapping(path = "/Problem/viewByName/{name}")
 	public Problem viewProblemByName(@PathVariable String name) {
 		return problemRepository.findByName(name.replace("-", " "));
 	}
 
+	// MOVED
 	@GetMapping(path = "/Problem/viewAllByOwnerUsername/{username}")
 	public List<Problem> viewAllByOwnerUsername(@PathVariable String username) {
 		Users owner = viewUsersByUsername(username);
@@ -528,6 +513,7 @@ public class DatabaseController {
 		return new ArrayList<>();
 	}
 
+	// MOVED
 	@GetMapping(path = "/Problem/viewAllWithCategory")
 	public List<Problem> viewAllProblemsWithCategory() {
 		List<Problem> finalProblems = new ArrayList<>();
@@ -544,11 +530,12 @@ public class DatabaseController {
 		return finalProblems;
 	}
 
+	// MOVED
 	@GetMapping(path = "/Problem/viewAllDetails/{problemName}")
-	public AddProblem viewAllProblemDetails(@PathVariable String problemName) {
+	public ProblemDetails viewAllProblemDetails(@PathVariable String problemName) {
 		Problem problem = viewProblemByName(problemName);
 
-		AddProblem p = new AddProblem();
+		ProblemDetails p = new ProblemDetails();
 		if (problem != null) {
 			p.setProblem(problem);
 		}
@@ -561,55 +548,50 @@ public class DatabaseController {
 		return p;
 	}
 
+	// MOVED
 	@PostMapping(path = "/Problem/add")
-	public Problem addProblem(@RequestBody AddProblem addProblem) {
+	public Problem addProblem(@RequestBody ProblemDetails problemDetails) {
 
-		Problem p = addProblem.getProblem();
-
-		System.out.println(addProblem.toString());
-
-		System.out.println(p.toString());
+		Problem p = problemDetails.getProblem();
 
 		if (p == null) {
 			return new Problem();
 		}
 
-		if (addProblem.getDifficulty() != null) {
-			Optional<Difficulty> f = difficultyRepository.findById(addProblem.getDifficulty().getId());
-			if (f.isPresent()) {
-				p.setDifficulty(f.get());
-			}
+		if (problemDetails.getDifficulty() != null) {
+			Optional<Difficulty> f = difficultyRepository.findById(problemDetails.getDifficulty().getId());
+			f.ifPresent(p::setDifficulty);
 		}
 
 		// A problem can only belong to either a Tournament or a Category
-		if (addProblem.getTournament() != null && addProblem.getCategory() != null) {
-			System.out.println(addProblem.getTournament());
-			System.out.println(addProblem.getCategory());
-			System.out.println(addProblem.getProblem().getDifficulty());
-			if (addProblem.getTournament().getName() != null && addProblem.getCategory().getName() != null
-					&& !addProblem.getCategory().getName().equals("")) {
+		if (problemDetails.getTournament() != null && problemDetails.getCategory() != null) {
+			System.out.println(problemDetails.getTournament());
+			System.out.println(problemDetails.getCategory());
+			System.out.println(problemDetails.getProblem().getDifficulty());
+			if (problemDetails.getTournament().getName() != null && problemDetails.getCategory().getName() != null
+					&& !problemDetails.getCategory().getName().equals("")) {
 				return new Problem();
 			}
 		}
 
-		if (addProblem.getTournament() != null) {
-			if (addProblem.getTournament().getName() != null) {
-				Tournament t = viewTournamentByName(addProblem.getTournament().getName());
+		if (problemDetails.getTournament() != null) {
+			if (problemDetails.getTournament().getName() != null) {
+				Tournament t = viewTournamentByName(problemDetails.getTournament().getName());
 				if (t != null) {
 					p.setTournament(t);
 				}
 			}
 		}
 
-		if (addProblem.getOwner() != null) {
-			Optional<Users> u = usersRepository.findById(addProblem.getOwner().getId());
+		if (problemDetails.getOwner() != null) {
+			Optional<Users> u = usersRepository.findById(problemDetails.getOwner().getId());
 			if (u.isPresent()) {
 				System.out.println(u.get().toString());
 				p.setOwner(u.get());
 			} else {
-				Users user = usersRepository.findByUsername(addProblem.getOwner().getUsername());
-				if (u != null) {
-					p.setOwner(user);
+				Users users = usersRepository.findByUsername(problemDetails.getOwner().getUsername());
+				if (u.isPresent()) {
+					p.setOwner(users);
 				}
 			}
 
@@ -623,18 +605,20 @@ public class DatabaseController {
 
 		Problem savedProblem = problemRepository.save(p);
 
-		if (addProblem.getCategory() != null) {
-			PractiseCategory category = viewPractiseCategoryById(addProblem.getCategory().getId());
+		if (problemDetails.getCategory() != null) {
+			PractiseCategory category = viewPractiseCategoryById(problemDetails.getCategory().getId());
 			if (category != null) {
 				category.getProblem().add(p);
 				practiseCategoryRepository.save(category);
 			}
 		}
+
 		return savedProblem;
 	}
 
+	// MOVED
 	@PostMapping("/Problem/update")
-	public Problem updateProblem(@RequestBody AddProblem changes) {
+	public Problem updateProblem(@RequestBody ProblemDetails changes) {
 
 		Problem problemUpdate = viewProblemById(changes.getProblem().getId());
 		if (problemUpdate != null) {
@@ -656,7 +640,6 @@ public class DatabaseController {
 			// updates category
 			// 1. removes the problem from current category
 			List<PractiseCategory> categories = viewAllPractiseCategories();
-			// TODO : check if this will work
 			for (PractiseCategory pc : categories) {
 				if (pc.getProblem().contains(p)) {
 					if (pc.getName().equals(changes.getCategory().getName())) {
@@ -681,9 +664,10 @@ public class DatabaseController {
 		return new Problem();
 	}
 
+	// MOVED
 	@PostMapping(path = "/Problem/addTestCase")
 	public void addTestCasesToProblem(@RequestParam long problemId, @RequestParam long testCaseId) {
-		Optional<TestCases> tc = testCasesRepository.findById(testCaseId);
+		Optional<TestCase> tc = testCasesRepository.findById(testCaseId);
 		Optional<Problem> p = problemRepository.findById(problemId);
 
 		if (p.isPresent() && tc.isPresent()) {
@@ -693,6 +677,7 @@ public class DatabaseController {
 		}
 	}
 
+	// MOVED
 	@PostMapping(path = "/Problem/addTournament")
 	public Problem addTournament(@RequestBody AddTournamentToProblem info) {
 
@@ -709,24 +694,16 @@ public class DatabaseController {
 		return problemRepository.save(problem);
 	}
 
-	@PostMapping(path = "/Problem/edit")
-	public void editProblem(@RequestParam long id) {
-		Optional<Problem> p = problemRepository.findById(id);
 
-		if (p.isPresent()) {
-			Problem problem = p.get();
-			problemRepository.save(problem);
-		}
-	}
-
+	// MOVED
 	@GetMapping("/Problem/viewAllTestCasesByProblemName/{problemName}")
 	public List<TestCasesShown> viewAllTestCasesByProblemName(@PathVariable String problemName) {
 		List<TestCasesShown> finalTestCases = new ArrayList<>();
 		Problem p = viewProblemByName(problemName);
 
 		if (p != null) {
-			List<TestCases> testCases = p.getTestCases();
-			for (TestCases tc : testCases) {
+			List<TestCase> testCases = p.getTestCases();
+			for (TestCase tc : testCases) {
 				finalTestCases.add(new TestCasesShown(tc.getId(), tc.getInput(), tc.getOutput(), tc.getDescription(),
 						tc.isShown()));
 			}
@@ -734,11 +711,13 @@ public class DatabaseController {
 		return finalTestCases;
 	}
 
+	// MOVED
 	@PostMapping(path = "/Problem/delete/{id}")
 	public void deleteProblem(@PathVariable long id) {
 		problemRepository.deleteById(id);
 	}
 
+	//MOVED
 	@PostMapping(path = "/Problem/deleteByName/{name}")
 	public String deleteProblemByName(@PathVariable String name) {
 		Problem p = viewProblemByName(name);
@@ -748,6 +727,7 @@ public class DatabaseController {
 		return "";
 	}
 
+	// MOVED
 	@GetMapping(path = "/Problem/view/{id}")
 	public Problem viewProblemById(@PathVariable long id) {
 		Optional<Problem> problem = problemRepository.findById(id);
@@ -758,6 +738,7 @@ public class DatabaseController {
 		return null;
 	}
 
+	// MOVED
 	@GetMapping(path = "/Problem/getProblemByName/{problemName}")
 	public Problem getProblemByName(@PathVariable String problemName) {
 		problemName = problemName.replace("-", " ");
@@ -768,7 +749,7 @@ public class DatabaseController {
 		if (p != null) {
 
 			if (p.getTournament() != null
-					&& !isUserRegisteredInTournament(auth.getName(), p.getTournament().getName())) {
+					&& !isUserRegisteredInTournament(1,1)) {
 				return new Problem();
 			}
 
@@ -779,11 +760,13 @@ public class DatabaseController {
 
 	// RATING
 
+	// MOVED
 	@GetMapping(path = "/Rating/view")
 	public List<Rating> getAllRatings() {
 		return ratingRepository.findAll();
 	}
 
+	// MOVED
 	@GetMapping(path = "/Rating/viewUsersByTournamentId/{tournamentId}")
 	public List<Users> viewUsersByTournamentId(@PathVariable long tournamentId) {
 
@@ -798,17 +781,15 @@ public class DatabaseController {
 
 		for (Rating r : allRatings) {
 			if (r.getTournament().getId() == t.getId()) {
-				usersInTournament.add(r.getUser());
+				usersInTournament.add(r.getUsers());
 			}
 		}
 
 		return usersInTournament;
 	}
 
-	@PostMapping(path = "/Rating/add")
-	public void addRating() {
-	}
 
+	// MOVED
 	@GetMapping(path = "/Rating/isUserRegisteredInTournament/{userId}/{tournamentId}")
 	public boolean isUserRegisteredInTournament(@PathVariable long userId, @PathVariable long tournamentId) {
 		Optional<Rating> r = ratingRepository.findById(new RatingID(tournamentId, userId));
@@ -825,50 +806,8 @@ public class DatabaseController {
 		return false;
 	}
 
-	@GetMapping(path = "/Rating/isUserRegisteredInTournamentByName/{username}/{tournamentName}")
-	public boolean isUserRegisteredInTournament(@PathVariable String username, @PathVariable String tournamentName) {
-		Users user = viewUsersByUsername(username);
-		Tournament tournament = viewTournamentByName(tournamentName);
 
-		System.out.println("Checking: is user registered");
 
-		if (user != null && tournament != null) {
-
-			Optional<Rating> r = ratingRepository.findById(new RatingID(tournament.getId(), user.getId()));
-
-			if (r.isPresent() || (tournament.getShowWebsite() && !tournament.getOpen())) {
-				System.out.println("O utilizador encontra-se registado");
-				return true;
-			}
-
-		}
-
-		System.out.println("O utilizador não está registado");
-		return false;
-	}
-
-	@GetMapping(path = "/Rating/isUserRegisteredInTournamentTEST/{username}/{tournamentName}")
-	public ResponseEntity<?> isUserRegisterdInTournamentTEST(@PathVariable String username,
-			@PathVariable String tournamentName) {
-		Users user = viewUsersByUsername(username);
-		Tournament tournament = viewTournamentByName(tournamentName);
-
-		System.out.println("Checking: is user registered");
-
-		if (user != null && tournament != null) {
-
-			Optional<Rating> r = ratingRepository.findById(new RatingID(tournament.getId(), user.getId()));
-
-			if (r.isPresent() || (tournament.getShowWebsite() && !tournament.getOpen())) {
-				System.out.println("O utilizador encontra-se registado");
-				return new ResponseEntity<>(HttpStatus.OK);
-			}
-
-		}
-
-		System.out.println("O utilizador não está registado");
-		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-	}
 
 	/*
 	 * @PostMapping(path = "/Rating/edit") public void editRating(@RequestParam long
@@ -896,7 +835,7 @@ public class DatabaseController {
 	public void addScoring(@RequestParam long submissionsId, @RequestParam long testCasesId, @RequestParam double value,
 			@RequestParam boolean isRight) {
 		Optional<Submissions> s = submissionsRepository.findById(submissionsId);
-		Optional<TestCases> tc = testCasesRepository.findById(testCasesId);
+		Optional<TestCase> tc = testCasesRepository.findById(testCasesId);
 
 		// TODO : alterar de boolean para int puro
 		int tmp = 1;
@@ -946,12 +885,12 @@ public class DatabaseController {
 
 	@GetMapping(path = "/Submissions/viewByUsername/{username}")
 	public List<Submissions> getAllSubmissionsByUsername(@PathVariable String username) {
-		Users user = usersRepository.findByUsername(username.trim());
+		Users users = usersRepository.findByUsername(username.trim());
 		List<Submissions> submissions = submissionsRepository.findAll();
 		List<Submissions> finalSubmissions = new ArrayList<>();
-		if (user != null && submissions != null) {
+		if (users != null && submissions != null) {
 			for (Submissions s : submissions) {
-				if (s.getUsers() == user) {
+				if (s.getUsers() == users) {
 					finalSubmissions.add(s);
 				}
 			}
@@ -1006,13 +945,13 @@ public class DatabaseController {
 		Optional<Problem> p = problemRepository.findById(problemId);
 
 		if (u.isPresent() && p.isPresent()) {
-			Users user = u.get();
+			Users users = u.get();
 			Problem problem;
 			if (p.isPresent()) {
 				problem = p.get();
 				Language lang = languageRepository.findByName(language);
 
-				Submissions s = new Submissions(problem, lang, code, user);
+				Submissions s = new Submissions(problem, lang, code, users);
 				submissionsRepository.save(s);
 			}
 		}
@@ -1042,26 +981,26 @@ public class DatabaseController {
 	// TESTCASES
 
 	@GetMapping(path = "/TestCases/view")
-	public Iterable<TestCases> getAllTestCases() {
+	public Iterable<TestCase> getAllTestCases() {
 		return testCasesRepository.findAll();
 	}
 
 	@PostMapping(path = "/TestCases/add-deprecated")
 	public void addTestCasesDeprecated(@RequestParam String input, @RequestParam String output) {
-		TestCases tc = new TestCases(input, output);
+		TestCase tc = new TestCase(input, output);
 		testCasesRepository.save(tc);
 	}
 
 	@PostMapping(path = "/TestCases/add")
-	public TestCases addTestCases(@RequestBody TestCasesShown t) {
-		TestCases tc = new TestCases(t.getInput(), t.getOutput(), t.getDescription(), t.isShown());
+	public TestCase addTestCases(@RequestBody TestCasesShown t) {
+		TestCase tc = new TestCase(t.getInput(), t.getOutput(), t.getDescription(), t.isShown());
 		return testCasesRepository.save(tc);
 	}
 
 	@PostMapping("/TestCases/addToProblem/{problemName}")
 	public void addTestCasesToProblem(@RequestBody TestCasesShown t, @PathVariable String problemName) {
 
-		TestCases testCase = addTestCases(t);
+		TestCase testCase = addTestCases(t);
 
 		if (testCase == null) {
 			return;
@@ -1080,11 +1019,11 @@ public class DatabaseController {
 
 	@PostMapping(path = "/TestCases/edit")
 	public void editTestCases(@RequestParam long id) {
-		Optional<TestCases> t = testCasesRepository.findById(id);
+		Optional<TestCase> t = testCasesRepository.findById(id);
 
 		if (t.isPresent()) {
-			TestCases testCases = t.get();
-			testCasesRepository.save(testCases);
+			TestCase testCase = t.get();
+			testCasesRepository.save(testCase);
 		}
 	}
 
@@ -1094,15 +1033,15 @@ public class DatabaseController {
 	}
 
 	@GetMapping(path = "/TestCases/view/{id}")
-	public Optional<TestCases> viewTestCasesById(@PathVariable long id) {
+	public Optional<TestCase> viewTestCasesById(@PathVariable long id) {
 		return testCasesRepository.findById(id);
 	}
 
 	@PostMapping("/TestCases/update")
-	public TestCases updateTestCase(@RequestBody TestCasesShown testCaseReq) {
-		Optional<TestCases> tc = viewTestCasesById(testCaseReq.getId());
+	public TestCase updateTestCase(@RequestBody TestCasesShown testCaseReq) {
+		Optional<TestCase> tc = viewTestCasesById(testCaseReq.getId());
 		if (tc.isPresent()) {
-			TestCases testCase = tc.get();
+			TestCase testCase = tc.get();
 
 			testCase.setInput(testCaseReq.getInput());
 			testCase.setOutput(testCaseReq.getOutput());
@@ -1111,7 +1050,7 @@ public class DatabaseController {
 
 			return testCasesRepository.save(testCase);
 		}
-		return new TestCases();
+		return new TestCase();
 	}
 
 	@PostMapping(path = "/TestCases/updateList")
@@ -1231,9 +1170,9 @@ public class DatabaseController {
 	@GetMapping("/Tournament/isUserTournamentOwner/{tournamentName}/{username}")
 	public ResponseEntity<?> isUserTournamentOwner(@PathVariable String tournamentName, @PathVariable String username) {
 
-		Users user = viewUsersByUsername(username);
+		Users users = viewUsersByUsername(username);
 
-		if (user == null) {
+		if (users == null) {
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 
@@ -1243,7 +1182,7 @@ public class DatabaseController {
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 
-		if (tournament.getOwner().getId() == user.getId()) {
+		if (tournament.getOwner().getId() == users.getId()) {
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 
@@ -1286,9 +1225,9 @@ public class DatabaseController {
 	public Tournament updateTournament(@RequestBody Tournament t) {
 		Tournament tournamentUpdate = viewTournamentById(t.getId());
 
-		Users user = viewUsersByUsername(t.getOwner().getUsername());
+		Users users = viewUsersByUsername(t.getOwner().getUsername());
 
-		if (tournamentUpdate == null && user != null) // ?!
+		if (tournamentUpdate == null && users != null) // ?!
 			return null;
 
 		tournamentUpdate.setCode(t.getCode());
@@ -1297,7 +1236,7 @@ public class DatabaseController {
 		tournamentUpdate.setLink(t.getLink());
 		tournamentUpdate.setName(t.getName());
 		tournamentUpdate.setOpen(t.getOpen());
-		tournamentUpdate.setOwner(user);
+		tournamentUpdate.setOwner(users);
 		tournamentUpdate.setShowWebsite(t.getShowWebsite());
 		tournamentUpdate.setStartingDate(t.getStartingDate());
 
@@ -1359,9 +1298,9 @@ public class DatabaseController {
 	@GetMapping(path = "/Tournament/viewTournamentsToList/{username}")
 	public TournamentsToList getAllTournamentsToList(@PathVariable String username) {
 
-		Users user = viewUsersByUsername(username);
+		Users users = viewUsersByUsername(username);
 
-		if (user == null) {
+		if (users == null) {
 			return null;
 		}
 
@@ -1375,7 +1314,7 @@ public class DatabaseController {
 		boolean registered;
 		for (Tournament t : allTournaments) {
 
-			registered = isUserRegisteredInTournament(user.getId(), t.getId());
+			registered = isUserRegisteredInTournament(users.getId(), t.getId());
 
 			if (!t.getShowWebsite() && !registered)
 				continue;
@@ -1409,7 +1348,7 @@ public class DatabaseController {
 	@PostMapping(path = "/Tournament/registerUser")
 	public TournamentsToList registerUserOnTournament(@RequestBody RegisterUserOnTournament register) {
 
-		Users userByUsername = viewUsersByUsername(register.getUser().getUsername());
+		Users usersByUsername = viewUsersByUsername(register.getUsers().getUsername());
 
 		System.out.println("TOURNAMENT ID" + register.getTournament().getId());
 		Tournament tournament = null;
@@ -1419,16 +1358,16 @@ public class DatabaseController {
 			tournament = tournamentRepository.findByCode(register.getTournament().getCode());
 		}
 		System.out.println(register.toString());
-		if (userByUsername == null || tournament == null
+		if (usersByUsername == null || tournament == null
 				|| (tournament.getCode() != null && register.getTournament().getCode() != null
 						&& (!tournament.getCode().equals(register.getTournament().getCode())))) {
-			return getAllTournamentsToList(userByUsername.getUsername()); // ?!
+			return getAllTournamentsToList(usersByUsername.getUsername()); // ?!
 		}
 
-		Rating r = new Rating(tournament, userByUsername, (double) -1);
+		Rating r = new Rating(tournament, usersByUsername, (double) -1);
 		ratingRepository.save(r);
 
-		return getAllTournamentsToList(userByUsername.getUsername());
+		return getAllTournamentsToList(usersByUsername.getUsername());
 
 	}
 
@@ -1446,7 +1385,7 @@ public class DatabaseController {
 
 		for (int i = 0; i < usersPerTournament.size(); i++) {
 
-			Users currentUser = usersPerTournament.get(i);
+			Users currentUsers = usersPerTournament.get(i);
 
 			double sumExpectedRating = 0;
 			double sumPoints = 0;
@@ -1454,13 +1393,13 @@ public class DatabaseController {
 			for (int j = 0; j < usersPerTournament.size(); j++) {
 
 				Users opponent = usersPerTournament.get(j);
-				if (currentUser == opponent)
+				if (currentUsers == opponent)
 					continue;
 
-				sumExpectedRating += RatingCalculator.expectedRating(currentUser.getGlobalRating(),
+				sumExpectedRating += RatingCalculator.expectedRating(currentUsers.getGlobalRating(),
 						opponent.getGlobalRating());
 
-				double scoreA = tournamentRepository.findScoreOfUserInTournament(currentUser.getId(),
+				double scoreA = tournamentRepository.findScoreOfUserInTournament(currentUsers.getId(),
 						tournament.getId());
 				double scoreB = tournamentRepository.findScoreOfUserInTournament(opponent.getId(), tournament.getId());
 
@@ -1468,20 +1407,20 @@ public class DatabaseController {
 
 			}
 
-			double calculatedRating = (currentUser.getGlobalRating()
+			double calculatedRating = (currentUsers.getGlobalRating()
 					+ RatingCalculator.K * (sumPoints - sumExpectedRating));
 
 			// Updates rating for current tournament
 			Optional<Rating> currentRating = ratingRepository
-					.findById(new RatingID(tournament.getId(), currentUser.getId()));
+					.findById(new RatingID(tournament.getId(), currentUsers.getId()));
 			if (currentRating.isPresent()) {
 				currentRating.get().setElo(calculatedRating);
 			}
 
 			// Updates rating on overall leaderboard
-			Users user = currentUser;
-			user.setGlobalRating(calculatedRating);
-			usersUpdated.add(user);
+			Users users = currentUsers;
+			users.setGlobalRating(calculatedRating);
+			usersUpdated.add(users);
 		}
 
 		// saves all ratings after calculating.
@@ -1558,8 +1497,8 @@ public class DatabaseController {
 	}
 
 	@PostMapping(path = "/Users/add")
-	public void addUsers(@RequestBody Users user) {
-		usersController.register(user);
+	public void addUsers(@RequestBody Users users) {
+		usersController.register(users);
 	}
 
 	@PostMapping(path = "/Users/edit")
