@@ -2,13 +2,13 @@ package pt.codeflex.custom;
 
 import java.util.List;
 
-import pt.codeflex.databasemodels.Leaderboard;
-import pt.codeflex.databasemodels.Problem;
-import pt.codeflex.databasemodels.Users;
-import pt.codeflex.models.TournamentLeaderboard;
+import pt.codeflex.models.Leaderboard;
+import pt.codeflex.models.Problem;
+import pt.codeflex.models.Users;
+import pt.codeflex.dto.TournamentLeaderboard;
 
 public interface CustomLeaderboardRepository {
-	List<Leaderboard> findHighestScoreByUserByProblem(Users user, Problem problem);
+	List<Leaderboard> findHighestScoreByUserByProblem(Users users, Problem problem);
 	List<TournamentLeaderboard> getInformationForTournamentLeaderboard(long tournamentId);
 	
 }

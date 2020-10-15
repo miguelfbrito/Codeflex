@@ -1,12 +1,16 @@
 version: "3.3"
 services:
 
-    #  server:
-    #    build: ./server
-    #    ports:
-    #      - 8080:8080
-    #    networks:
-    #      - network_backend
+  server:
+    image: maven:3.6.3-jdk-8
+    command: mvn spring-boot:run
+    ports:
+      - 8080:8080
+    volumes:
+      - ./server:/usr/src/mymaven:rw
+    working_dir: /usr/src/mymaven   
+    networks:
+        - network_backend
 
   client:
     build: ./client
@@ -16,34 +20,32 @@ services:
       - ./frontend:/usr/src/app
       - /usr/src/app/node_modules
     networks:
-      - network_frontend
+        - network_backend
 
   database:
-    image: mysql:5.7.26
+    image: mysql:5.7.31
     environment:
       MYSQL_DATABASE: db_codeflex
       MYSQL_USER: admin
       MYSQL_PASSWORD: spring-password!2018
       MYSQL_ROOT_PASSWORD: spring-password!2018
     volumes:
-      - ~/databases/db_event_manager/data:/var/lib/mysql
+      - ~/databases/db_codeflex/data:/var/lib/mysql
     ports:
       - 3306:3306
     command: mysqld --sql_mode="STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
     networks:
-      - network_backend
+        - network_backend
 
-  compiler:
+  code_executor:
     build:
       context: .
       dockerfile: Dockerfile-compiler
     ports:
         - 22:22
     networks:
-      - network_backend
+        - network_backend
 
 networks:
   network_backend:
-    driver: "bridge"
-  network_frontend:
     driver: "bridge"

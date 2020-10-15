@@ -1,0 +1,63 @@
+package pt.codeflex.dto;
+
+import pt.codeflex.models.Language;
+import pt.codeflex.models.Problem;
+import pt.codeflex.models.Users;
+
+public class SubmitSubmission {
+
+	private String code;
+	private Language language;
+	private Users users;
+	private Problem problem;
+
+	public SubmitSubmission() {
+	}
+
+	public SubmitSubmission(String code, Language language, Users users, Problem problem) {
+		super();
+		this.code = code;
+		this.language = language;
+		this.users = users;
+		this.problem = problem;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public Users getUsers() {
+		return users;
+	}
+
+	public void setUsers(Users users) {
+		this.users = users;
+	}
+
+	public Problem getProblem() {
+		return problem;
+	}
+
+	public void setProblem(Problem problem) {
+		this.problem = problem;
+	}
+
+	public Language getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(Language language) {
+		this.language = language;
+	}
+
+	@Override
+	public String toString() {
+		return "SubmitSubmission [code=" + code + ", language=" + language + ", users=" + users + ", problem=" + problem
+				+ "]";
+	}
+
+}

@@ -9,11 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import pt.codeflex.controllers.DatabaseController;
-import pt.codeflex.databasemodels.Submissions;
-import pt.codeflex.databasemodels.Tournament;
-import pt.codeflex.models.Host;
-import pt.codeflex.models.SubmissionWithTestCase;
-import pt.codeflex.models.TasksBeingEvaluated;
+import pt.codeflex.models.Tournament;
 
 @EnableScheduling
 @Component

@@ -11,31 +11,22 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.Ordered;
 
-import static pt.codeflex.auth.security.SecurityConstants.SIGN_UP_URL;
+import static pt.codeflex.auth.security.SecurityConstants.ACCESSIBLE;
 
-import java.util.Arrays;
-import java.util.Collections;
-
-import static pt.codeflex.auth.security.SecurityConstants.ACESSABLE;
-
-import javax.servlet.ServletRequest;
 import javax.sql.DataSource;
 
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 	private UserDetailsService userDetailsService;
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-	@Autowired
 	private DataSource dataSource;
 
-	public WebSecurity(UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+	@Autowired
+	public WebSecurity(DataSource dataSource, UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+		this.dataSource = dataSource;
 		this.userDetailsService = userDetailsService;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 	}
@@ -45,21 +36,31 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 
 		// Comment to disable authentication
-		http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.POST, ACESSABLE).permitAll()
+		/*
+		http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.POST, ACCESSIBLE).permitAll()
 				.anyRequest().authenticated().and().addFilter(new JWTAuthenticationFilter(authenticationManager()))
 				.addFilter(new JWTAuthorizationFilter(authenticationManager()))
 				// this disables session creation on Spring Security
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+		 */
 	}
+
 
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		// auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+
+		/*
+		// Temporarily disable authentication
+
 		auth.jdbcAuthentication().dataSource(dataSource)
 				.usersByUsernameQuery("select username, password, 1 from users where username=?")
 				.authoritiesByUsernameQuery(
 						"select u.username, r.name from users_roles ur, users u, role r where u.username = ? and ur.users_id = u.id and ur.role_id = r.id")
 				.passwordEncoder(bCryptPasswordEncoder);
+
+		 */
 	}
 
 	// @Bean
