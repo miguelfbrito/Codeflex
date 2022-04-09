@@ -14,7 +14,7 @@
     "html-to-draftjs": "^1.4.0",
     "immutable": "^3.8.2",
     "jquery": "^3.4.0",
-    "moment": "^2.22.2",
+    "moment": "^2.29.2",
     "moment-range": "^4.0.1",
     "moment-timezone": "^0.5.17",
     "react": "^16.4.0",
