@@ -16,7 +16,7 @@
     "jquery": "^3.4.0",
     "moment": "^2.22.2",
     "moment-range": "^4.0.1",
-    "moment-timezone": "^0.5.17",
+    "moment-timezone": "^0.5.35",
     "react": "^16.4.0",
     "react-ace": "^6.1.1",
     "react-addons-css-transition-group": "^15.6.2",
